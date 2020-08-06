@@ -55,16 +55,16 @@ suspend fun main() {
         val messages = message.flatten()
 
         val target = LinkedList<Member>()
-        messages.forEach { it ->
+        messages.forEach {
             if (it is At) {
                 val currentTargetId = it.target
 
                 if (currentTargetId == self.id) {
                     target.add(group.botAsMember)
                 } else {
-                    members.forEach {
-                        if (it.id == currentTargetId) {
-                            target.add(it)
+                    members.forEach { _it ->
+                        if (_it.id == currentTargetId) {
+                            target.add(_it)
                         }
                     }
                 }
@@ -77,7 +77,7 @@ suspend fun main() {
         if (target.isEmpty()) {
             response.add(At(sender))
         } else {
-            target.forEach { it ->
+            target.forEach {
                 response.add(At(it))
             }
         }
