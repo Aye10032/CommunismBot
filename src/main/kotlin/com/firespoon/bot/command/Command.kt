@@ -8,7 +8,6 @@ open class Command<E : MessageEvent>
     var builder: suspend (E) -> CommandBody<E>?,
     val action: suspend CommandBody<E>.() -> Unit
 ) {
-
     constructor (
         regex: Regex,
         action: suspend CommandBody<E>.() -> Unit
