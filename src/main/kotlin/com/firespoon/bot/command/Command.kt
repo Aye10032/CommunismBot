@@ -1,18 +1,32 @@
 package com.firespoon.bot.command
 
-import net.mamoe.mirai.contact.User
+import com.firespoon.bot.commandbody.CommandBody
 import net.mamoe.mirai.message.MessageEvent
-import net.mamoe.mirai.message.data.Message
 
-open class Command
-    constructor(protected val event: MessageEvent, val args: Array<String>) {
-    open val sender: User
-        get() = event.sender
-    val message: Message
-        get() = event.message
+open class Command<E : MessageEvent>
+    (
+    regex: Regex,
+    val action: suspend CommandBody<E>.() -> Unit,
+    val builder: suspend (E) -> CommandBody<E>? = { event ->
+        CommandAnalyzer.analyze(event, regex)
+    }
+) {
+    constructor(
+        keyword: String,
+        action: suspend CommandBody<E>.() -> Unit
+    ) : this(
+        //  \s* .{keyword} (\s*[^\s]+)* \s*
+        Regex("(?:\\s*\\.${keyword})((\\s*[^\\s]+)*)(?:\\s*)")
+        , action
+    )
 
-    val self = event.bot
-
-    suspend fun reply(message: Message) = event.reply(message)
-    suspend fun reply(message: String) = event.reply(message)
+    constructor(
+        keyword: String,
+        action: suspend CommandBody<E>.() -> Unit,
+        builder: suspend (E) -> CommandBody<E>?
+    ) : this(
+        //  \s* .{keyword} (\s*[^\s]+)* \s*
+        Regex("(?:\\s*\\.${keyword})((\\s*[^\\s]+)*)(?:\\s*)")
+        , action, builder
+    )
 }

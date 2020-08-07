@@ -1,17 +1,14 @@
 package com.firespoon.bot
 
 import com.firespoon.bot.command.Command
-import com.firespoon.bot.command.CommandAnalyzer
-import com.firespoon.bot.command.FriendCommand
-import com.firespoon.bot.command.GroupCommand
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.alsoLogin
+import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.event.Event
 import net.mamoe.mirai.event.subscribeAlways
 import net.mamoe.mirai.join
-import net.mamoe.mirai.message.FriendMessageEvent
-import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.MessageEvent
+import net.mamoe.mirai.message.data.Message
 import net.mamoe.mirai.message.data.time
 import java.util.*
 
@@ -32,7 +29,14 @@ constructor(qqID: Long, password: String) {
         bot.join()
     }
 
-    inline fun <reified E : Event> registerListener(crossinline callback: suspend E.(E) -> Unit) {
+    suspend fun sendMessageTo(message: Message, target: Contact) {
+        target.sendMessage(message)
+    }
+
+    inline fun <reified E : Event>
+            registerListener(
+        crossinline callback: suspend E.(E) -> Unit
+    ) {
         val handler = bot.subscribeAlways<E> { event ->
             event.callback(event)
         }
@@ -40,64 +44,16 @@ constructor(qqID: Long, password: String) {
         listenerList.add(handler)
     }
 
-    inline fun <reified E : MessageEvent, reified C : Command> registerCommand(
-        keyword: String,
-        crossinline action: suspend C.() -> Unit,
-        crossinline factory: (E, Array<String>) -> C
-    ) {
-        val pattern = "(?:\\s*\\.${keyword})((\\s*[^\\s]+)*)(?:\\s*)"
-        val regex = Regex(pattern)
-
+    inline fun <reified E : MessageEvent>
+            registerCommand(command: Command<E>) {
         registerListener<E> { event ->
             val messageTime = message.time
             if (messageTime > bootTime) {
-                CommandAnalyzer.analyze(event, regex, factory)?.action()
+                val commandBody = command.builder(event)
+                commandBody?.(command.action)()
             }
         }
-    }
 
-    fun registerAllCommand(
-        keyword: String,
-        action: suspend Command.() -> Unit
-    ) {
-        val pattern = "(?:\\s*\\.${keyword})((\\s*[^\\s]+)*)(?:\\s*)"
-        val regex = Regex(pattern)
-
-        registerListener<MessageEvent> { event ->
-            val messageTime = message.time
-            if (messageTime > bootTime) {
-                CommandAnalyzer.analyze(event, regex)?.action()
-            }
-        }
-    }
-
-    inline fun registerGroupCommand(
-        keyword: String,
-        crossinline action: suspend GroupCommand.() -> Unit
-    ) {
-        val pattern = "(?:\\s*\\.${keyword})((\\s*[^\\s]+)*)(?:\\s*)"
-        val regex = Regex(pattern)
-
-        registerListener<GroupMessageEvent> { event ->
-            val messageTime = message.time
-            if (messageTime > bootTime) {
-                CommandAnalyzer.analyze(event, regex)?.action()
-            }
-        }
-    }
-
-    inline fun registerFriendCommand(
-        keyword: String,
-        crossinline action: suspend FriendCommand.() -> Unit
-    ) {
-        val pattern = "(?:\\s*\\.${keyword})((\\s*[^\\s]+)*)(?:\\s*)"
-        val regex = Regex(pattern)
-
-        registerListener<FriendMessageEvent> { event ->
-            val messageTime = message.time
-            if (messageTime > bootTime) {
-                CommandAnalyzer.analyze(event, regex)?.action()
-            }
-        }
     }
 }
+

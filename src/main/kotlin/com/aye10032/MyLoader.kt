@@ -1,5 +1,5 @@
 package com.aye10032
-
+/*
 import kotlinx.coroutines.*
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.alsoLogin
@@ -20,3 +20,4 @@ suspend fun main() {
     }
     miraiBot.join() // 等待 Bot 离线, 避免主线程退出
 }
+*/
