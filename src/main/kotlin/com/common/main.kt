@@ -1,17 +1,24 @@
 package com.common
 
-import com.firespoon.bot.FSBot
 import com.firespoon.bot.command.DiceCommand
-import com.firespoon.bot.command.TiangouCommand
+import com.firespoon.bot.command.FlattererCommand
+import com.firespoon.bot.command.MultTestCommand
+import com.firespoon.bot.core.boot
+import com.firespoon.bot.core.registerCommandAlways
+import net.mamoe.mirai.Bot
+import net.mamoe.mirai.join
 
 suspend fun main() {
     val qqID = 744821060L
     val password = "1!2@3#skyYZ"
 
-    val bot = FSBot(qqID, password)
+    val bot = Bot(qqID, password)
+
     bot.boot()
-    bot.registerCommand(DiceCommand.diceCommand)
-    bot.registerCommand(TiangouCommand.tiangouCommand)
+
+    bot.registerCommandAlways(DiceCommand.command)
+    bot.registerCommandAlways(FlattererCommand.command)
+    bot.registerCommandAlways(MultTestCommand.command)
 
     bot.join()
 }
