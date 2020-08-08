@@ -38,9 +38,9 @@ abstract class MultTestCommand {
                                     if (sender == triggerSender) {
                                         bot.closeListener("MultTestConfirm")
                                         if (message.content == "y") {
-                                            reply("已确认")
+                                            reply("已执行")
                                         } else if (message.content == "n") {
-                                            reply("已否认")
+                                            reply("未执行")
                                         }
                                     }
                                 }
