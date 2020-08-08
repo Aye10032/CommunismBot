@@ -4,23 +4,31 @@ import com.firespoon.bot.commandbody.CommandBody
 import net.mamoe.mirai.message.MessageEvent
 
 open class Command<E : MessageEvent>
-    (
-    var builder: suspend (E) -> CommandBody<E>?,
-    val action: suspend CommandBody<E>.() -> Unit
+(
+        val name: String,
+        val builder: suspend (E) -> CommandBody<E>?,
+        val action: suspend CommandBody<E>.() -> Unit
 ) {
     constructor (
-        regex: Regex,
-        action: suspend CommandBody<E>.() -> Unit
-    ) : this({ event ->
-        CommandAnalyzer.analyze(event, regex)
-    }, action)
+            name: String,
+            regex: Regex,
+            action: suspend CommandBody<E>.() -> Unit
+    ) : this(
+            name = name,
+            builder = { event ->
+                CommandAnalyzer.analyze(event, regex)
+            },
+            action = action
+    )
 
     constructor(
-        keyword: String,
-        action: suspend CommandBody<E>.() -> Unit
+            name: String,
+            keyword: String,
+            action: suspend CommandBody<E>.() -> Unit
     ) : this(
-        //  pattern = \s*.{keyword}(\s*[^\s]+)* \s*
-        Regex("(?:\\s*\\.${keyword})((\\s*[^\\s]+)*)(?:\\s*)")
-        , action
+            name = name,
+            //  pattern = \s*.{keyword}(\s*[^\s]+)* \s*
+            regex = Regex("(?:\\s*\\.${keyword})((\\s*[^\\s]+)*)(?:\\s*)"),
+            action = action
     )
 }
