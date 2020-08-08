@@ -1,5 +1,6 @@
 package com.aye10032
 
+import com.aye10032.command.MHWCommand
 import com.aye10032.command.NMSLCommand
 import com.firespoon.bot.command.DiceCommand
 import com.firespoon.bot.core.boot
@@ -17,6 +18,7 @@ suspend fun main() {
     bot.boot()
 
     bot.registerCommandAlways(NMSLCommand.command)
+    bot.registerCommandAlways(MHWCommand.command)
 
     bot.join()
 }
