@@ -3,6 +3,7 @@ package com.firespoon.bot.command
 import com.firespoon.bot.core.closeListener
 import com.firespoon.bot.core.registerCommandAlways
 import net.mamoe.mirai.contact.Group
+import net.mamoe.mirai.event.Listener
 import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.MessageEvent
 import net.mamoe.mirai.message.data.content
@@ -24,10 +25,10 @@ abstract class MultTestCommand {
                     }
 
                     val confirmCommand = Command<MessageEvent>(
+                            priority = Listener.EventPriority.HIGH,
                             name = "MultTestConfirm",
-                            regex = Regex("([y/n])"),
+                            regex = Regex("([yYnN])"),
                             action = {
-                                val event = this.event
                                 if (
                                         ((fromGroup && event is GroupMessageEvent) &&
                                                 (event.group == triggerGroup && sender == triggerSender)) ||
@@ -35,12 +36,12 @@ abstract class MultTestCommand {
 
                                 ) {
                                     if (sender == triggerSender) {
+                                        bot.closeListener("MultTestConfirm")
                                         if (message.content == "y") {
                                             reply("已确认")
                                         } else if (message.content == "n") {
                                             reply("已否认")
                                         }
-                                        bot.closeListener<MessageEvent>("MultTestConfirm")
                                     }
                                 }
                             }
