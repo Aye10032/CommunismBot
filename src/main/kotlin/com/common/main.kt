@@ -1,5 +1,6 @@
 package com.common
 
+import com.aye10032.Zibenbot
 import com.firespoon.bot.command.DiceCommand
 import com.firespoon.bot.command.FlattererCommand
 import com.firespoon.bot.command.MultTestCommand
@@ -13,12 +14,16 @@ suspend fun main() {
     val password = "1!2@3#skyYZ"
 
     val bot = Bot(qqID, password)
+    val zibenbot = Zibenbot(bot)
+    zibenbot.startup()
 
     bot.boot()
 
     bot.registerCommandAlways(DiceCommand.command)
     bot.registerCommandAlways(FlattererCommand.command)
     bot.registerCommandAlways(MultTestCommand.command)
+
+    bot.registerCommandAlways(zibenbot.command)
 
     bot.join()
 }

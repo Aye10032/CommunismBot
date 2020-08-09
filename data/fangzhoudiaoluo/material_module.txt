@@ -1,0 +1,15 @@
+
+[信用商店：【{credit_store_value}】]
+[绿票商店：【{green_ticket_value}】]
+[黄票商店：【{golden_ticket_value}】]
+
+[效率最优副本：
+    {lowest_ap_stages}]
+[平衡最优副本：
+    {balanced_stages}]
+[掉率最优副本：
+    {drop_rate_first_stage}]
+
+
+
+
