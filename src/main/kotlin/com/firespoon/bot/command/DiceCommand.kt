@@ -6,7 +6,6 @@ import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.Message
 import net.mamoe.mirai.message.data.asMessageChain
 import net.mamoe.mirai.message.data.toMessage
-import java.lang.Exception
 import java.util.*
 
 abstract class DiceCommand {

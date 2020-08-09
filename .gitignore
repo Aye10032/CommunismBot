@@ -3,3 +3,7 @@
 /build/
 /.idea/
 *.iml
+/data/dragraliatemp/
+/out/
+local.properties
+

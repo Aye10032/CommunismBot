@@ -1,0 +1,5 @@
+[关卡名称：【{code}】]
+[额外掉落：
+    【{extra_drop}】]
+[效率：【{efficiency}】]
+[单件理智：【{ap_per_item}】]

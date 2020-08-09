@@ -39,8 +39,8 @@ val Bot.bootTime: Int
     }
 
 suspend fun Bot.boot() {
-    alsoLogin()
-
+    //alsoLogin()
+    login()
     val bootTime = (Calendar.getInstance().timeInMillis / 1000).toInt()
     val listeners = HashMap<String, Listener<*>>()
     val metaInfo = FSBotMetaInfo(bootTime, listeners)
