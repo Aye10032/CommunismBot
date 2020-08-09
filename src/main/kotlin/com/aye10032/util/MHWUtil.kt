@@ -11,13 +11,11 @@ class MHWUtil {
             val random = Random()
             val m = random.nextInt(monsterList.size + monsterListIce.size)
             val n = random.nextInt(armsList.size)
-            var aim = ""
-            aim = if (m > monsterList.size) {
+            return if (m > monsterList.size) {
                 "用" + armsList[n] + "打" + monsterListIce[m - monsterList.size]
             } else {
                 "用" + armsList[n] + "打" + monsterList[m]
             }
-            return aim
         }
 
     val iceAim: String

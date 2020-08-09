@@ -1,8 +1,9 @@
 package com.common
 
-import com.firespoon.bot.command.DiceCommand
-import com.firespoon.bot.command.FlattererCommand
-import com.firespoon.bot.command.MultTestCommand
+import com.aye10032.command.MHWCommand
+import com.aye10032.command.NMSLCommand
+import com.firespoon.command.DiceCommand
+import com.firespoon.command.FlattererCommand
 import com.firespoon.bot.core.boot
 import com.firespoon.bot.core.registerCommandAlways
 import net.mamoe.mirai.Bot
@@ -18,7 +19,8 @@ suspend fun main() {
 
     bot.registerCommandAlways(DiceCommand.command)
     bot.registerCommandAlways(FlattererCommand.command)
-    bot.registerCommandAlways(MultTestCommand.command)
+    bot.registerCommandAlways(NMSLCommand.command)
+    bot.registerCommandAlways(MHWCommand.command)
 
     bot.join()
 }
