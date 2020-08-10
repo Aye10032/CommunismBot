@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.firespoon'
-version '0.0.1'
+version '0.0.3'
 
 repositories {
     maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
