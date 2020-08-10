@@ -48,17 +48,10 @@ import java.util.regex.Pattern;
 
 public class Zibenbot {
 
-    public static Class aClass = int.class;
-
     public static Proxy proxy = null;
     public static Logger logger = Logger.getLogger("zibenbot");
     private static Pattern AT_REGEX = Pattern.compile("\\[mirai:at:(\\d+),[\\S|\\s]+]");
-    private static Function2<? super CommandBody<MessageEvent>, ? super Continuation<? super Unit>, ?> msgAction = new Function2() {
-        @Override
-        public Unit invoke(Object o, Object o2) {
-            return Unit.INSTANCE;
-        }
-    };
+    private static Function2<? super CommandBody<MessageEvent>, ? super Continuation<? super Unit>, ?> msgAction = (o, o2) -> Unit.INSTANCE;
     //时间任务池
     public TimeTaskPool pool = new TimeTaskPool();
     public SubscriptManager subManager = new SubscriptManager(this);
@@ -83,6 +76,8 @@ public class Zibenbot {
         return null;
     };
     private Command<MessageEvent> command = new ZibenbotController("Zibenbot", msgBuilder, msgAction);
+    private Map<String, Image> miraiImageMap = new ConcurrentHashMap<>();
+    private Map<Integer, File> imageMap = new ConcurrentHashMap<>();
 
     {
 
@@ -106,7 +101,6 @@ public class Zibenbot {
         appDirectory = "\\data\\";
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
     }
-
 
     public Zibenbot(Bot bot) {
         this.bot = bot;
@@ -137,7 +131,7 @@ public class Zibenbot {
         try {
             Matcher matcher = AT_REGEX.matcher(s);
             if (matcher.find()) {
-                return Long.parseLong(matcher.group(0));
+                return Long.parseLong(matcher.group(1));
             } else {
                 return -1;
             }
@@ -150,9 +144,10 @@ public class Zibenbot {
         List<Long> rets = new ArrayList<>();
         try {
             Matcher matcher = AT_REGEX.matcher(s);
-            int count = matcher.groupCount();
-            for (int i = 0; i < count; i++) {
-                rets.add(Long.parseLong(matcher.group(i)));
+            int i = 0;
+            while (matcher.find(i)) {
+                rets.add(Long.parseLong(matcher.group(1)));
+                i = matcher.start() + 1;
             }
             return rets;
         } catch (Exception e) {
@@ -234,6 +229,11 @@ public class Zibenbot {
         }
     }
 
+/*    public int toTeamspeakMsg(String msg) {
+        teamspeakBot.api.sendChannelMessage(msg);
+        return 1;
+    }*/
+
     private User findUser(long clientId) {
         try {
             return bot.getFriend(clientId);
@@ -256,11 +256,6 @@ public class Zibenbot {
             //todo 找不到群log输出
         }
     }
-
-/*    public int toTeamspeakMsg(String msg) {
-        teamspeakBot.api.sendChannelMessage(msg);
-        return 1;
-    }*/
 
     public void replyMsg(SimpleMsg fromMsg, String msg) {
         if (fromMsg.isGroupMsg()) {
@@ -293,8 +288,6 @@ public class Zibenbot {
             //todo
         }
     }
-
-    private Map<String, Image> miraiImageMap = new ConcurrentHashMap<>();
 
     private MessageChain toMessChain(Contact contact, String msg){
         MessageChainBuilder builder = new MessageChainBuilder();
@@ -441,8 +434,6 @@ public class Zibenbot {
         }*/
         return 0;
     }
-
-    private Map<Integer, File> imageMap = new ConcurrentHashMap<>();
 
     public String getMiraiImg(String path) {
         File file = new File(path);

@@ -2,7 +2,6 @@ package com.firespoon.bot.core
 
 import com.firespoon.bot.command.Command
 import net.mamoe.mirai.Bot
-import net.mamoe.mirai.alsoLogin
 import net.mamoe.mirai.event.*
 import net.mamoe.mirai.message.MessageEvent
 import net.mamoe.mirai.message.data.time
