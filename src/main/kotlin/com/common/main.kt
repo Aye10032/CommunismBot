@@ -1,8 +1,6 @@
 package com.common
 
 import com.aye10032.Zibenbot
-import com.aye10032.command.MHWCommand
-import com.aye10032.command.NMSLCommand
 import com.firespoon.bot.command.DiceCommand
 import com.firespoon.bot.core._subscribeAlways
 import com.firespoon.bot.core.boot
@@ -21,12 +19,7 @@ suspend fun main() {
 
     val bot = Bot(qqID, password) {fileBasedDeviceInfo("device.json")}
     val zibenbot = Zibenbot(bot)
-
-    bot.boot()
-
-    bot.registerCommandAlways(DiceCommand.command)
-    bot.registerCommandAlways(zibenbot.command)
-    bot.registerListener(Listener.EventPriority.LOW, "ZibenbotStartup", {
+    bot.registerListener(Listener.EventPriority.HIGHEST, "ZibenbotStartup", {
             event: BotReloginEvent ->
         run {
             zibenbot.startup()
@@ -34,8 +27,14 @@ suspend fun main() {
         }
     }, Bot::_subscribeAlways)
 
-    bot.registerCommandAlways(NMSLCommand.command)
-    bot.registerCommandAlways(MHWCommand.command)
+    bot.boot()
+    bot.registerCommandAlways(DiceCommand.command)
+    bot.registerCommandAlways(zibenbot.command)
+    //bot.registerCommandAlways(NMSLCommand.command)
+    //bot.registerCommandAlways(MHWCommand.command)
+
 
     bot.join()
+
+
 }
