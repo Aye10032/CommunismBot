@@ -1,8 +1,8 @@
 package com.aye10032;
 
 import com.aye10032.Functions.*;
-import com.aye10032.Functions.funcutil.SimpleMsg;
 import com.aye10032.Functions.funcutil.IFunc;
+import com.aye10032.Functions.funcutil.SimpleMsg;
 import com.aye10032.NLP.DataCollect;
 import com.aye10032.TimeTask.DragraliaTask;
 import com.aye10032.TimeTask.SimpleSubscription;
@@ -11,6 +11,7 @@ import com.aye10032.Utils.SeleniumUtils;
 import com.aye10032.Utils.TimeUtil.ITimeAdapter;
 import com.aye10032.Utils.TimeUtil.SubscriptManager;
 import com.aye10032.Utils.TimeUtil.TimeTaskPool;
+import com.dazo66.message.MiraiSerializationKt;
 import com.firespoon.bot.command.Command;
 import com.firespoon.bot.commandbody.CommandBody;
 import kotlin.Unit;
@@ -23,8 +24,7 @@ import net.mamoe.mirai.contact.Member;
 import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.Listener;
 import net.mamoe.mirai.message.MessageEvent;
-import net.mamoe.mirai.message.data.At;
-import net.mamoe.mirai.message.data.Image;
+import net.mamoe.mirai.message.data.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -36,6 +36,7 @@ import java.net.Proxy;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +47,8 @@ import java.util.regex.Pattern;
 //msg = msg.replace("&#91;", "[").replace("&#93;", "]");
 
 public class Zibenbot {
+
+    public static Class aClass = int.class;
 
     public static Proxy proxy = null;
     public static Logger logger = Logger.getLogger("zibenbot");
@@ -68,19 +71,16 @@ public class Zibenbot {
     FileHandler fh;
     private Bot bot;
     private Function2<Object, Object, ?>
-            msgBuilder = new Function2() {
-        @Override
-        public Object invoke(Object o, Object o2) {
-            if (o instanceof MessageEvent) {
-                SimpleMsg simpleMsg = new SimpleMsg((MessageEvent) o);
-                if(simpleMsg.isGroupMsg() && !enableGroup.contains(simpleMsg.getFromGroup())) {
-                    return null;
-                } else {
-                    runFuncs(simpleMsg);
-                }
+            msgBuilder = (o, o2) -> {
+        if (o instanceof MessageEvent) {
+            SimpleMsg simpleMsg = new SimpleMsg((MessageEvent) o);
+            if (simpleMsg.isGroupMsg() && !enableGroup.contains(simpleMsg.getFromGroup())) {
+                return null;
+            } else {
+                runFuncs(simpleMsg);
             }
-            return null;
         }
+        return null;
     };
     private Command<MessageEvent> command = new ZibenbotController("Zibenbot", msgBuilder, msgAction);
 
@@ -146,7 +146,7 @@ public class Zibenbot {
         }
     }
 
-    public List<Long> getAtMembers(String s){
+    public List<Long> getAtMembers(String s) {
         List<Long> rets = new ArrayList<>();
         try {
             Matcher matcher = AT_REGEX.matcher(s);
@@ -160,11 +160,11 @@ public class Zibenbot {
         }
     }
 
-    public void muteMember (Member member, int second){
+    public void muteMember(Member member, int second) {
         member.mute(second);
     }
 
-    public void muteMember (long groupId, long memberId, int second){
+    public void muteMember(long groupId, long memberId, int second) {
         getGroup(groupId).get(memberId).mute(second);
     }
 
@@ -172,11 +172,11 @@ public class Zibenbot {
         getGroup(groupId).getSettings().setMuteAll(muteAll);
     }
 
-    public void unMute(Member member){
+    public void unMute(Member member) {
         member.unmute();
     }
 
-    public void unMute(long groupId, long memberId){
+    public void unMute(long groupId, long memberId) {
         getGroup(groupId).get(memberId).unmute();
     }
 
@@ -228,7 +228,7 @@ public class Zibenbot {
     public void toPrivateMsg(long clientId, String msg) {
         Contact contact = findUser(clientId);
         if (contact != null) {
-            contact.sendMessage(msg);
+            contact.sendMessage(toMessChain(contact, msg));
         } else {
             //todo 找不到渠道log输出
         }
@@ -250,7 +250,8 @@ public class Zibenbot {
 
     public void toGroupMsg(long groupId, String msg) {
         try {
-            bot.getGroup(groupId).sendMessage(msg);
+            Group group = bot.getGroup(groupId);
+            group.sendMessage(toMessChain(group, msg));
         } catch (NoSuchElementException e) {
             //todo 找不到群log输出
         }
@@ -263,25 +264,26 @@ public class Zibenbot {
 
     public void replyMsg(SimpleMsg fromMsg, String msg) {
         if (fromMsg.isGroupMsg()) {
-            Zibenbot.logger.log(Level.INFO,
-                    String.format("回复群[%s]%s消息:%s",
-                            bot.getGroup(fromMsg.getFromGroup()).getName(),
-                            bot.getGroup(fromMsg.getFromGroup()).get(fromMsg.getFromClient()).toString(),
-                            msg));
-            if (fromMsg.getEvent() != null) {
-                fromMsg.getEvent().getSubject().sendMessage(msg);
-            } else {
-                toGroupMsg(fromMsg.getFromGroup(), msg);
+            Contact contact = getGroup(fromMsg.getFromGroup());
+            if (contact != null) {
+                MessageChain chain = toMessChain(contact, msg);
+                contact.sendMessage(chain);
+                Zibenbot.logger.log(Level.INFO,
+                        String.format("回复群[%s]%s消息:%s",
+                                bot.getGroup(fromMsg.getFromGroup()).getName(),
+                                bot.getGroup(fromMsg.getFromGroup()).get(fromMsg.getFromClient()).toString(),
+                                chain));
             }
         } else if (fromMsg.isPrivateMsg()) {
-            Zibenbot.logger.log(Level.INFO,
-                    String.format("回复成员[%s]消息:%s",
-                            fromMsg.getFromClient(),
-                            msg));
-            if (fromMsg.getEvent() != null) {
-                fromMsg.getEvent().getSubject().sendMessage(msg);
-            } else {
-                toPrivateMsg(fromMsg.getFromClient(), msg);
+            Contact contact = findUser(fromMsg.getFromClient());
+            if (contact != null) {
+                MessageChain chain = toMessChain(contact, msg);
+                Zibenbot.logger.log(Level.INFO,
+                        String.format("回复成员[%s]消息:%s",
+                                fromMsg.getFromClient(),
+                                chain.toString()));
+                contact.sendMessage(chain);
+
             }
         } else if (fromMsg.isTeamspealMsg()) {
 /*            Zibenbot.logger.log(Level.INFO,
@@ -290,6 +292,24 @@ public class Zibenbot {
                             msg));*/
             //todo
         }
+    }
+
+    private Map<String, Image> miraiImageMap = new ConcurrentHashMap<>();
+
+    private MessageChain toMessChain(Contact contact, String msg){
+        MessageChainBuilder builder = new MessageChainBuilder();
+        MessageChain temp = MiraiSerializationKt.parseMiraiCode(toMiraiImage(contact, msg));
+        temp.forEachContent((Message m) -> {
+            if (m instanceof OfflineImage) {
+                if (miraiImageMap.containsKey(((OfflineImage) m).getImageId())) {
+                    builder.add(miraiImageMap.get(((OfflineImage) m).getImageId()));
+                }
+            } else {
+                builder.add(m);
+            }
+            return Unit.INSTANCE;
+        });
+        return builder.build();
     }
 
     public int startup() {
@@ -350,8 +370,13 @@ public class Zibenbot {
         Date date = calendar.getTime();
         //创建订阅器对象
         SimpleSubscription maiyao = new SimpleSubscription(this, maiyaoCycle,
-                getMiraiImg(appDirectory + "/image/提醒买药小助手.jpg")) {
+                "") {
             private final static String NAME = "提醒买药小助手";
+
+            @Override
+            public void run() {
+                replyAll(getMiraiImg(appDirectory + "/image/提醒买药小助手.jpg"));
+            }
 
             @Override
             public String getName() {
@@ -417,20 +442,17 @@ public class Zibenbot {
         return 0;
     }
 
+    private Map<Integer, File> imageMap = new ConcurrentHashMap<>();
+
     public String getMiraiImg(String path) {
-        try {
-            return Image.DefaultImpls.toMiraiCode(bot.getSelfQQ().uploadImage(new File(path)));
-        } catch (Exception e) {
-            return "图片读取异常：" + e.getMessage();
-        }
+        File file = new File(path);
+        imageMap.put(file.hashCode(), file);
+        return String.valueOf(file.hashCode());
     }
 
     public String getMiraiImg(File file) {
-        try {
-            return Image.DefaultImpls.toMiraiCode(bot.getSelfQQ().uploadImage(file));
-        } catch (Exception e) {
-            return "图片读取异常：" + e.getMessage();
-        }
+        imageMap.put(file.hashCode(), file);
+        return String.valueOf(file.hashCode());
     }
 
     public Group getGroup(long id) {
@@ -441,17 +463,35 @@ public class Zibenbot {
         }
     }
 
+    private String toMiraiImage(Contact contact, String msg){
+        //[mirai:image:{FE417B3B-F6F2-7BA0-3F2D-1FEF5DB15E4E}.mirai]
+        //[mirai:image:/895981998-3405930276-FE417B3BF6F27BA03F2D1FEF5DB15E4E]
+        for (Map.Entry<Integer, File> entry : imageMap.entrySet()) {
+            String key = String.valueOf(entry.getKey());
+            if (msg.contains(key)) {
+                String img = "[图片]";
+                if (contact != null) {
+                    Image image = contact.uploadImage(entry.getValue());
+                    miraiImageMap.put(image.getImageId(), image);
+                    img = image.toMiraiCode();
+                }
+                msg = msg.replace(key, img);
+            }
+        }
+        return msg;
+    }
+
     public void runFuncs(SimpleMsg simpleMsg) {
 
-            for (IFunc func : registerFunc) {
-                if (enableCollFunc.isEnable(simpleMsg.getFromGroup(), func)) {
-                    try {
-                        func.run(simpleMsg);
-                    } catch (Exception e) {
-                        replyMsg(simpleMsg, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
-                    }
+        for (IFunc func : registerFunc) {
+            if (enableCollFunc.isEnable(simpleMsg.getFromGroup(), func)) {
+                try {
+                    func.run(simpleMsg);
+                } catch (Exception e) {
+                    replyMsg(simpleMsg, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
                 }
             }
+        }
 
     }
 
@@ -469,8 +509,6 @@ public class Zibenbot {
     }*/
 
     static class ZibenbotController extends Command<MessageEvent> {
-
-
         public ZibenbotController(@NotNull String name, @NotNull Function2<? super MessageEvent, ? super Continuation<? super CommandBody<MessageEvent>>, ?> builder, @NotNull Function2<? super CommandBody<MessageEvent>, ? super Continuation<? super Unit>, ?> action) {
             super(Listener.EventPriority.NORMAL, name, builder, action);
         }
