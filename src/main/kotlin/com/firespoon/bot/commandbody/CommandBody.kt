@@ -9,6 +9,9 @@ import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.MessageEvent
 import net.mamoe.mirai.message.data.Message
 
+/**
+ * Command中的action调用时的接收者
+ */
 open class CommandBody<E : MessageEvent>
 (val event: E, val args: Array<Any>) {
     open val sender: User
