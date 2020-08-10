@@ -6,6 +6,9 @@ import net.mamoe.mirai.message.GroupMessageEvent;
 import net.mamoe.mirai.message.MessageEvent;
 import net.mamoe.mirai.message.TempMessageEvent;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * CQMsg的包装对象 每个传入的消息都进行包装后交由模块执行
  * @author Dazo66
@@ -35,8 +38,19 @@ public class SimpleMsg implements ICommand {
             type = MsgType.PRIVATE_MSG;
         }
         fromClient = event.getSender().getId();
-        msg = event.getMessage().toString();
+        msg = getMsgFromEvent(event);
         this.event = event;
+    }
+
+    private String getMsgFromEvent(MessageEvent event){
+        String s = event.getMessage().contentToString();
+        Matcher matcher = MIRAI_PATTERN.matcher(s);
+        String s1 = "";
+        try {
+            matcher.find();
+            s1 = matcher.group();
+        } catch (Exception e) {}
+        return s.substring(s1.length());
     }
 
     public long getFromGroup() {
@@ -105,4 +119,6 @@ public class SimpleMsg implements ICommand {
     public static SimpleMsg getTempMsg(String testMsg){
         return new SimpleMsg(995497677L, 2375985957L, testMsg, MsgType.GROUP_MSG);
     }
+
+    private static Pattern MIRAI_PATTERN = Pattern.compile("(\\[mirai:source[\\S|\\s]+])");
 }
