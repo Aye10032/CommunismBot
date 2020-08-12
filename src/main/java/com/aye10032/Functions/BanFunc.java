@@ -1,6 +1,7 @@
 package com.aye10032.Functions;
 
 import com.aye10032.Functions.funcutil.BaseFunc;
+import com.aye10032.Functions.funcutil.FuncExceptionHandler;
 import com.aye10032.Functions.funcutil.SimpleMsg;
 import com.aye10032.Utils.BanUtil.BanRecord;
 import com.aye10032.Zibenbot;
@@ -22,6 +23,7 @@ public class BanFunc extends BaseFunc {
     public BanFunc(Zibenbot zibenbot) {
         super(zibenbot);
         commander = new CommanderBuilder<SimpleMsg>()
+                .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
                 .or("肃静"::equals)
                 .run((cqmsg) -> {
@@ -46,9 +48,9 @@ public class BanFunc extends BaseFunc {
                         .or(NumberUtils::isDigits)
                         .run((cqmsg) -> {
                     String[] strings = cqmsg.getCommandPieces();
-
+                    long banId = zibenbot.getAtMember(cqmsg.getMsg());
                     try {
-                        if (zibenbot.getAtMember(cqmsg.getMsg()) == 2375985957L) {
+                        if (banId == 2375985957L) {
                             zibenbot.replyMsg(cqmsg, "对不起，做不到。");
                             if (cqmsg.getFromClient() != 2375985957L) {
                                 if (cqmsg.getFromClient() == 895981998L) {
@@ -60,18 +62,17 @@ public class BanFunc extends BaseFunc {
                                     banRecord.getGroupObject(cqmsg.getFromGroup()).addMemebrBanedTime(cqmsg.getFromClient(), cqmsg.getFromClient());
                                 }
                             }
-                        } else if (zibenbot.getAtMember(cqmsg.getMsg()) == 895981998L) {
-                            zibenbot.muteMember(cqmsg.getFromGroup(),
-                                    zibenbot.getAtMember(cqmsg.getMsg()), 100);
-                            banRecord.getGroupObject(cqmsg.getFromGroup()).addBan(zibenbot.getAtMember(cqmsg.getMsg()));
-                            banRecord.getGroupObject(cqmsg.getFromGroup()).addMemebrBanedTime(cqmsg.getFromClient(), zibenbot.getAtMember(cqmsg.getMsg()));
+                        } else if (banId == 895981998L) {
+                            zibenbot.muteMember(cqmsg.getFromGroup(), banId, 100);
+                            banRecord.getGroupObject(cqmsg.getFromGroup()).addBan(banId);
+                            banRecord.getGroupObject(cqmsg.getFromGroup()).addMemebrBanedTime(cqmsg.getFromClient(), banId);
 
 
                         } else {
-                            zibenbot.muteMember(cqmsg.getFromGroup(), zibenbot.getAtMember(cqmsg.getMsg()),
+                            zibenbot.muteMember(cqmsg.getFromGroup(), banId,
                                     Integer.parseInt(strings[2]));
-                            banRecord.getGroupObject(cqmsg.getFromGroup()).addBan(zibenbot.getAtMember(cqmsg.getMsg()));
-                            banRecord.getGroupObject(cqmsg.getFromGroup()).addMemebrBanedTime(cqmsg.getFromClient(), zibenbot.getAtMember(cqmsg.getMsg()));
+                            banRecord.getGroupObject(cqmsg.getFromGroup()).addBan(banId);
+                            banRecord.getGroupObject(cqmsg.getFromGroup()).addMemebrBanedTime(cqmsg.getFromClient(), banId);
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
@@ -101,11 +102,16 @@ public class BanFunc extends BaseFunc {
                 .build();
     }
 
+    @Override
+    public void run(SimpleMsg CQmsg) {
+        commander.execute(CQmsg);
+    }
+
     public void done(long fromGroup) {
         String msg;
         List<Member> wasBanMembers = new ArrayList<>();
         for (Member member : zibenbot.getGroup(fromGroup).getMembers()) {
-            if (member.getMuteTimeRemaining() <= 0) {
+            if (member.getMuteTimeRemaining() > 0) {
                 wasBanMembers.add(member);
             }
         }
@@ -140,11 +146,6 @@ public class BanFunc extends BaseFunc {
             }
         }
 
-    }
-
-    @Override
-    public void run(SimpleMsg CQmsg) {
-        commander.execute(CQmsg);
     }
 
     @Override

@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class ExceptionUtils {
 
-    public static String printStack(Exception e) {
+    public static String printStack(Throwable e) {
         StringBuilder builder = new StringBuilder();
         builder.append(e).append("\n");
         Arrays.stream(e.getStackTrace()).forEach(element -> builder.append("\n").append(element));

@@ -54,15 +54,15 @@ public class BiliFunc extends BaseFunc {
                 }
                 String pvideo = "\n预览：" + "视频太短，不提供预览。";
                 if (biliInfo.hasPvdeo && biliInfo.getDuration() >= 12) {
-                    pvideo = "\n预览：" + zibenbot.getMiraiImg(new File(appDirectory + "\\image\\pvideo.gif"));
+                    pvideo = "\n预览：" + zibenbot.getImg(new File(appDirectory + "\\image\\pvideo.gif"));
                 } else if (!biliInfo.hasPvdeo) {
                     pvideo = "";
                 }
                 send = biliInfo.getTitle() + "\n"
                         + biliInfo.getVideourl() + "\n"
-                        + "封面：" + zibenbot.getMiraiImg(new File(appDirectory + "\\image\\img.jpg"))
+                        + "封面：" + zibenbot.getImg(new File(appDirectory + "\\image\\img.jpg"))
                         + pvideo
-                        + "\nup主：" + biliInfo.getUp() + zibenbot.getMiraiImg(new File(appDirectory + "\\image\\head.jpg"))
+                        + "\nup主：" + biliInfo.getUp() + zibenbot.getImg(new File(appDirectory + "\\image\\head.jpg"))
                         + "\n播放：" + formatToW(biliInfo.getView())
                         + " 弹幕：" + formatToW(biliInfo.getDanmaku())
                         + "\n点赞：" + formatToW(biliInfo.getLike())

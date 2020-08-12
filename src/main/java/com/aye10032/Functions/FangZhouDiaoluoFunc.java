@@ -136,7 +136,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                 }
             } else {
                 if (zibenbot != null && !cqmsg.isTeamspealMsg()) {
-                    zibenbot.replyMsg(cqmsg, zibenbot.getMiraiImg(new File(arkonegraphFile)));
+                    zibenbot.replyMsg(cqmsg, zibenbot.getImg(new File(arkonegraphFile)));
                 } else if (cqmsg.isTeamspealMsg()) {
                     zibenbot.replyMsg(cqmsg, "ts频道无法发图片，请从群聊或者私聊查询");
                 }

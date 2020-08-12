@@ -28,7 +28,6 @@ public class DataCollect extends BaseFunc {
                 Class.forName("org.sqlite.JDBC");
                 c = DriverManager.getConnection("jdbc:sqlite:" + zibenbot.appDirectory +
                         "\\nlpdata\\botnlpdata.db");
-                System.out.println("Opened database successfully");
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -61,9 +60,9 @@ public class DataCollect extends BaseFunc {
                 stmt.executeUpdate(sql);
                 stmt.close();
                 c.close();
-                Zibenbot.logger.log(Level.WARNING, "Creat table successfully");
+                zibenbot.log(Level.WARNING, "Creat table successfully");
             } catch (Exception e) {
-                Zibenbot.logger.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage());
+                zibenbot.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage());
             }
         }
     }
@@ -104,7 +103,7 @@ public class DataCollect extends BaseFunc {
                 zibenbot.toPrivateMsg(2375985957L, "已添加数据集：" + CQmsg.getMsg());
                 replyMsg(CQmsg, "[" + ft.format(dNow) + "][INFO] 本条对话已添加NLP待处理数据集");
             } catch (Exception e) {
-                Zibenbot.logger.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage());
+                zibenbot.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage());
             }
         }
     }

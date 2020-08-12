@@ -73,7 +73,7 @@ public class SimpleMsg implements ICommand {
             }
             return Unit.INSTANCE;
         });
-        return builder.build().contentToString();
+        return builder.build().toString();
     }
 
     public long getFromGroup() {

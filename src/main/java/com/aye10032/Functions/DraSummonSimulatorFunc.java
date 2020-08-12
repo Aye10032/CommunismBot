@@ -286,7 +286,7 @@ public class DraSummonSimulatorFunc extends BaseFunc {
 
     public void update() {
         long current = System.currentTimeMillis();
-        Zibenbot.logger.info("DraSummonSimulator setup start");
+        zibenbot.logInfo("DraSummonSimulator setup start");
         JsonArray object = null;
         JsonArray charArray = null;
         JsonArray draArray = null;
@@ -320,7 +320,7 @@ public class DraSummonSimulatorFunc extends BaseFunc {
                     break;
                 }
             }
-            Zibenbot.logger.info("根数据读取完成：耗时：" + ((float) (current =
+            zibenbot.logInfo("根数据读取完成：耗时：" + ((float) (current =
                     ((System.currentTimeMillis() - current) / 1000))) + "秒");
             charArray =
                     parser.parse(cleanMsg(HttpUtils.getStringFromNet(charUrl, client))).getAsJsonArray();
@@ -331,7 +331,7 @@ public class DraSummonSimulatorFunc extends BaseFunc {
             summArray =
                     parser.parse(StringEscapeUtils.unescapeHtml4(HttpUtils.getStringFromNet(summonEventUrl, client))).getAsJsonArray();
 
-            Zibenbot.logger.info("常规数据读取完成：耗时：" + ((float) (current =
+            zibenbot.logInfo("常规数据读取完成：耗时：" + ((float) (current =
                     ((System.currentTimeMillis() - current) / 1000))) + "秒");
             all_ele.clear();
             all_summon_event.clear();
@@ -350,12 +350,12 @@ public class DraSummonSimulatorFunc extends BaseFunc {
 
 
 
-            Zibenbot.logger.info("数据解析完成：耗时：" + ((float) (current =
+            zibenbot.logInfo("数据解析完成：耗时：" + ((float) (current =
                     ((System.currentTimeMillis() - current) / 1000))) + "秒");
-            Zibenbot.logger.info("DraSummonSimulator setup successful!");
+            zibenbot.logInfo("DraSummonSimulator setup successful!");
         } catch (Exception e) {
             e.printStackTrace();
-            Zibenbot.logger.info("根数据网络读取异常，转为本地缓存\n" + "e:" + ExceptionUtils.printStack(e));
+            zibenbot.logInfo("根数据网络读取异常，转为本地缓存\n" + "e:" + ExceptionUtils.printStack(e));
             all_ele.clear();
             all_summon_event.clear();
             Config config = summon_loader.load();
@@ -377,7 +377,7 @@ public class DraSummonSimulatorFunc extends BaseFunc {
             }.getType());
             all_summon_event.forEach(event -> event.setup(all_ele));
 
-            Zibenbot.logger.info("本地缓存读取完成。");
+            zibenbot.logInfo("本地缓存读取完成。");
         }
         updateUserDate();
         save();

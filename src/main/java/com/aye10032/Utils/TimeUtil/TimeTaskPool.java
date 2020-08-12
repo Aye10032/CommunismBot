@@ -44,9 +44,10 @@ public class TimeTaskPool {
     }
 
     public void add(TimedTaskBase task) {
+        task.setTiggerTime(task.getNextTiggerTime());
         tasks.add(task);
         flow.flush();
-        Zibenbot.logger.log(Level.INFO, String.format("添加时间任务 触发时间：%s 当前时间%s",
+        Zibenbot.logger.info(String.format("添加时间任务 触发时间：%s 当前时间%s",
                 task.getTiggerTime().toString(), new Date().toString()));
     }
 
