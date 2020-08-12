@@ -6,10 +6,8 @@ import com.aye10032.Zibenbot;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
 
 /**
- *
  * 时间任务的流程处理类
  * 包含一个守护线程 即主时间线程 和 多任务的线程池
  * 主线程通过任务的下次运行时间 依次运行
@@ -42,16 +40,16 @@ public class TimeFlow implements Runnable {
 
     @Override
     public void run() {
-        Zibenbot.logger.log(Level.INFO, "Time Thread Start ");
+        Zibenbot.logger.info("Time Thread Start ");
         //监听中断异常，有中断异常就跳出
         while (!Thread.currentThread().isInterrupted()) {
             //如果没有任务 就使线程长时间休眠
             if (pool.getNextTasks().size() == 0) {
                 try {
+                    Zibenbot.logger.info("Thread Sleep Because No Task To Run");
                     Thread.sleep(1111114514);
-                    Zibenbot.logger.log(Level.INFO, "Thread Sleep Because No Task To Run");
                 } catch (InterruptedException e) {
-                    System.out.println("线程刷新");
+                    Zibenbot.logger.info("Time Thread Flush");
                     break;//捕获到异常之后，执行break跳出循环。
                 }
             }
@@ -62,14 +60,16 @@ public class TimeFlow implements Runnable {
                     Thread.sleep(timeInterval);
                 }
             } catch (InterruptedException e) {
-                Zibenbot.logger.log(Level.INFO, "Time Thread Flush");
+                Zibenbot.logger.info("Time Thread Flush");
                 break;//捕获到异常之后，执行break跳出循环。
             }
 
             for (TimedTaskBase task : pool.nextTasks) {
                 try {
                     if (!(task instanceof AsynchronousTaskPool)) {
-                        Zibenbot.logger.log(Level.INFO, String.format("触发任务: %s 时间：%s ", task.getClass().getSimpleName(), task.getTiggerTime()));
+                        Zibenbot.logger.info(String.format("触发任务: %s 时间：%s ", task.getClass().getSimpleName(), task.getTiggerTime()));
+                    } else {
+                        Zibenbot.logger.info("守护线程运行中");
                     }
 
                     if (task.getTimes() > 0 || task.getTimes() == -1) {
@@ -84,7 +84,7 @@ public class TimeFlow implements Runnable {
                                     task.run(current);
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    Zibenbot.logger.log(Level.WARNING, String.format("运行任务：[%s]时出现异常[%s]\n%s", this.getClass().getName(), e.getMessage(), ExceptionUtils.printStack(e)));
+                                    Zibenbot.logger.warning(String.format("运行任务：[%s]时出现异常[%s]\n%s", this.getClass().getName(), e.getMessage(), ExceptionUtils.printStack(e)));
                                 }
                             }
                         });
@@ -95,7 +95,7 @@ public class TimeFlow implements Runnable {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Zibenbot.logger.log(Level.WARNING, String.format("运行任务：[%s]时出现异常[%s]", task.getClass().getName(), e.getMessage()));
+                    Zibenbot.logger.warning(String.format("运行任务：[%s]时出现异常[%s]", task.getClass().getName(), e.getMessage()));
                 }
             }
         }

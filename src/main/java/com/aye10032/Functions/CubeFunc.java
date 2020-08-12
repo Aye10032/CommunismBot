@@ -75,17 +75,17 @@ public class CubeFunc extends BaseFunc {
                 return;
             }
             if (CQmsg.getMsg().contains("F2L") || CQmsg.getMsg().contains("f2l")) {
-                zibenbot.replyMsg(CQmsg, zibenbot.getMiraiImg(new File(zibenbot.appDirectory + "\\image\\CFOP2.jpg")));
+                zibenbot.replyMsg(CQmsg, zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\CFOP2.jpg")));
             } else if (CQmsg.getMsg().contains("OLL") || CQmsg.getMsg().contains("oll")) {
-                zibenbot.replyMsg(CQmsg, zibenbot.getMiraiImg(new File(zibenbot.appDirectory + "\\image\\CFOP3.jpg")));
+                zibenbot.replyMsg(CQmsg, zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\CFOP3.jpg")));
             } else if (CQmsg.getMsg().contains("PLL") || CQmsg.getMsg().contains("pll")) {
-                zibenbot.replyMsg(CQmsg, zibenbot.getMiraiImg(new File(zibenbot.appDirectory + "\\image\\CFOP4.jpg")));
+                zibenbot.replyMsg(CQmsg, zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\CFOP4.jpg")));
             } else {
                 zibenbot.replyMsg(CQmsg,
-                        zibenbot.getMiraiImg(new File(zibenbot.appDirectory + "\\image\\CFOP1.jpg"))
-                                + zibenbot.getMiraiImg(new File(zibenbot.appDirectory + "\\image\\CFOP2.jpg"))
-                                + zibenbot.getMiraiImg(new File(zibenbot.appDirectory + "\\image\\CFOP3.jpg"))
-                                + zibenbot.getMiraiImg(new File(zibenbot.appDirectory + "\\image\\CFOP4.jpg")));
+                        zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\CFOP1.jpg"))
+                                + zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\CFOP2.jpg"))
+                                + zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\CFOP3.jpg"))
+                                + zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\CFOP4.jpg")));
             }
         }
     }

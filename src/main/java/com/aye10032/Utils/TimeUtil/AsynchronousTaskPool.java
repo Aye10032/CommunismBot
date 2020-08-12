@@ -1,10 +1,7 @@
 package com.aye10032.Utils.TimeUtil;
 
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,7 +32,7 @@ public class AsynchronousTaskPool extends TimedTaskBase {
      * @param runnables 可运行的列表
      */
     public void execute(Runnable callback, Runnable... runnables){
-        List<Future<?>> list = new ArrayList<>();
+        List<Future<?>> list = Collections.synchronizedList(new ArrayList<>());
         for (Runnable run : runnables) {
             list.add(pool.submit(run));
         }

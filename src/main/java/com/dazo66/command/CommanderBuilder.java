@@ -33,22 +33,22 @@ public class CommanderBuilder<S extends ICommand> {
     private static final ExceptionHandler JUST_PRINT = new ExceptionHandler() {
         @Override
         public void checkExceptionCetch(CheckException e) {
-            System.out.println(ExceptionUtils.getMessage(e));
+            System.out.println(ExceptionUtils.getStackTrace(e.getCause()));
         }
 
         @Override
         public void commandRuntimeExceptionCatch(CommandRuntimeException e) {
-            System.out.println(ExceptionUtils.getMessage(e));
+            System.out.println(ExceptionUtils.getStackTrace(e.getCause()));
         }
 
         @Override
         public void ifNotRunntimeExceptionCatch(IfNotRuntiomeException e) {
-            System.out.println(ExceptionUtils.getMessage(e));
+            System.out.println(ExceptionUtils.getStackTrace(e.getCause()));
         }
 
         @Override
         public void redundantParametersExceptionCatch(RedundantParametersException e) {
-            System.out.println(ExceptionUtils.getMessage(e));
+            System.out.println(ExceptionUtils.getStackTrace(e.getCause()));
         }
     };
     private ExceptionHandler eHandler = JUST_PRINT;

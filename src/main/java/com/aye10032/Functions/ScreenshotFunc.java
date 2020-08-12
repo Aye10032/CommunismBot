@@ -53,9 +53,9 @@ public class ScreenshotFunc extends BaseFunc {
             zibenbot.pool.timeoutEvent(1, () -> {
                 try {
                     if (args.length == 3) {
-                        replyMsg(CQmsg, zibenbot.getMiraiImg(getScreenshot(args[1], Integer.parseInt(args[2]))));
+                        replyMsg(CQmsg, zibenbot.getImg(getScreenshot(args[1], Integer.parseInt(args[2]))));
                     } else if (args.length == 2) {
-                        replyMsg(CQmsg, zibenbot.getMiraiImg(getScreenshot(args[1], 4000)));
+                        replyMsg(CQmsg, zibenbot.getImg(getScreenshot(args[1], 4000)));
                     } else {
                         replyMsg(CQmsg, "参数异常，Example：网页快照 [url] [timeout]");
                     }

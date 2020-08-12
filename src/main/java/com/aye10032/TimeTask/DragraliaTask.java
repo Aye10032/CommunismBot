@@ -55,7 +55,7 @@ public abstract class DragraliaTask extends SubscribableBase {
             articles.forEach(a -> this.sendArticle(a, getRecipients()));
         } catch (Exception e) {
             e.printStackTrace();
-            Zibenbot.logger.log(Level.WARNING, ExceptionUtils.printStack(e));
+            zibenbot.log(Level.WARNING, ExceptionUtils.printStack(e));
         }
     };
 
@@ -186,7 +186,7 @@ public abstract class DragraliaTask extends SubscribableBase {
                 builder.append("【").append(a.category_name).append("】 ").append(a.title_name).append("\n");
                 if (!"".equals(a.image_path)) {
                     try {
-                        builder.append(zibenbot.getMiraiImg(new File(getFileName(a.image_path))));
+                        builder.append(zibenbot.getImg(new File(getFileName(a.image_path))));
                         builder.append("\n");
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -199,7 +199,7 @@ public abstract class DragraliaTask extends SubscribableBase {
                 if (len > 300) {
                     if (screenshotFile.get() != null && screenshotFile.get().exists()) {
                         try {
-                            builder.append("公告详情：").append("\n").append(zibenbot.getMiraiImg(screenshotFile.get()));
+                            builder.append("公告详情：").append("\n").append(zibenbot.getImg(screenshotFile.get()));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -279,7 +279,7 @@ public abstract class DragraliaTask extends SubscribableBase {
             File file = new File(getFileName(matcher1.group()));
             if (file.exists()) {
                 try {
-                    msg = msg.replace(tag, zibenbot.getMiraiImg(file));
+                    msg = msg.replace(tag, zibenbot.getImg(file));
                 } catch (Exception e) {
                     msg = msg.replace(tag, "[图片加载错误]");
                 }
@@ -394,7 +394,7 @@ public abstract class DragraliaTask extends SubscribableBase {
                 i++;
             }
         }
-        Zibenbot.logger.info("清理了三天前的缓存 " + i + " 张。");
+        zibenbot.logInfo("清理了三天前的缓存 " + i + " 张。");
     }
 
     private static final String NUMBER_PATTERN = "\\d+";

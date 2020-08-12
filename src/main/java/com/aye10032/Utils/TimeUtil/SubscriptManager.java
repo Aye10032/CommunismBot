@@ -1,8 +1,8 @@
 package com.aye10032.Utils.TimeUtil;
 
-import com.aye10032.Functions.funcutil.SimpleMsg;
 import com.aye10032.Functions.funcutil.IFunc;
 import com.aye10032.Functions.funcutil.MsgType;
+import com.aye10032.Functions.funcutil.SimpleMsg;
 import com.aye10032.Utils.ConfigLoader;
 import com.aye10032.Zibenbot;
 import com.google.gson.reflect.TypeToken;
@@ -193,11 +193,11 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
      * [sub/订阅/unsub/取消订阅] [Subscribable Name]
      * 不带参数返回所有可用的和已用的Subscribable
      *
-     * @param CQmsg 传入的消息
+     * @param msg 传入的消息
      */
     @Override
-    public void run(SimpleMsg CQmsg) {
-        String[] msgs = CQmsg.getMsg().trim().split(" ");
+    public void run(SimpleMsg msg) {
+        String[] msgs = msg.getMsg().trim().split(" ");
         Boolean sw = null;
         if ("sub".equals(msgs[0]) || "订阅".equals(msgs[0])) {
             sw = true;
@@ -210,13 +210,13 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 StringBuilder builder = new StringBuilder();
                 builder.append("当前已订阅的有：\n");
                 for (ISubscribable subscription : allSubscription) {
-                    if (hasSub(CQmsg, subscription)) {
+                    if (hasSub(msg, subscription)) {
                         builder.append("\t").append(subscription.getName()).append("\n");
                     }
                 }
                 builder.append("当前未订阅的有：\n");
                 for (int i = 0; i < allSubscription.size(); i++) {
-                    if (!hasSub(CQmsg, allSubscription.get(i))) {
+                    if (!hasSub(msg, allSubscription.get(i))) {
                         builder.append("\t").append(allSubscription.get(i).getName());
                         if (i == allSubscription.size() - 1) {
                             builder.append("\n");
@@ -225,7 +225,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 }
                 //重新读取后刷新收件人
                 flushRecipients();
-                replyMsg(CQmsg, builder.toString());
+                replyMsg(msg, builder.toString());
             } else if (msgs.length == 2) {
                 if ("调试".equals(msgs[1]) || "debug".equals(msgs[1])) {
                     StringBuilder builder = new StringBuilder();
@@ -247,7 +247,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                     if (builder.length() == 0) {
                         builder.append("当前队列中没有任务");
                     }
-                    replyMsg(CQmsg, builder.toString());
+                    replyMsg(msg, builder.toString());
                     return;
                 }
                 boolean flag = false;
@@ -259,22 +259,22 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 }
                 if (flag) {
                     if (sw) {
-                        subscribe(CQmsg, msgs[1]);
-                        replyMsg(CQmsg, String.format("【%s】 已订阅 【%s】", CQmsg.isGroupMsg() ?
-                                "群:" + CQmsg.getFromClient() : "用户:" + CQmsg.getFromClient(), msgs[1]));
+                        subscribe(msg, msgs[1]);
+                        replyMsg(msg, String.format("【%s】 已订阅 【%s】", msg.isGroupMsg() ?
+                                "群:" + msg.getFromGroup() : "用户:" + msg.getFromClient(), msgs[1]));
                     } else {
 
-                        unSubscribe(CQmsg, msgs[1]);
-                        replyMsg(CQmsg, String.format("【%s】 已取消订阅 【%s】", CQmsg.isGroupMsg() ?
-                                "群:" + CQmsg.getFromClient() : "用户:" + CQmsg.getFromClient(), msgs[1]));
+                        unSubscribe(msg, msgs[1]);
+                        replyMsg(msg, String.format("【%s】 已取消订阅 【%s】", msg.isGroupMsg() ?
+                                "群:" + msg.getFromGroup() : "用户:" + msg.getFromClient(), msgs[1]));
                     }
                     //订阅后刷新收件人
                     flushRecipients();
                 } else {
-                    replyMsg(CQmsg, "找不到这个订阅器：" + msgs[1]);
+                    replyMsg(msg, "找不到这个订阅器：" + msgs[1]);
                 }
             } else {
-                replyMsg(CQmsg, "参数有误");
+                replyMsg(msg, "参数有误");
             }
         }
     }
@@ -447,7 +447,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 zibenbot.pool.flush();
             }
         } else {
-            Zibenbot.logger.log(Level.WARNING, "不允许重复的订阅名字");
+            zibenbot.log(Level.WARNING, "不允许重复的订阅名字");
         }
     }
 
@@ -490,7 +490,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
         for (ISubscribable s : list) {
             if (s.getRecipients() != null && !s.getRecipients().isEmpty()) {
                 //运行各个订阅器
-                Zibenbot.logger.log(Level.INFO, "SubscriptManager run start:" + s.toString() + current);
+                zibenbot.log(Level.INFO, "SubscriptManager run start:" + s.toString() + current);
                 s.run();
             }
         }

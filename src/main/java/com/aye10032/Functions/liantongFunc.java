@@ -32,7 +32,7 @@ public class liantongFunc extends BaseFunc {
                 return;
             }
             if (random.nextDouble() < 0.2d) {
-                zibenbot.replyMsg(CQmsg, zibenbot.getMiraiImg(new File(zibenbot.appDirectory + "\\image\\liantong.jpg")));
+                zibenbot.replyMsg(CQmsg, zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\liantong.jpg")));
             }
         }
     }

@@ -18,18 +18,21 @@ import kotlin.Unit;
 import kotlin.coroutines.Continuation;
 import kotlin.jvm.functions.Function2;
 import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.contact.Member;
-import net.mamoe.mirai.contact.User;
+import net.mamoe.mirai.contact.*;
 import net.mamoe.mirai.event.Listener;
+import net.mamoe.mirai.event.events.MemberMuteEvent;
+import net.mamoe.mirai.event.events.NewFriendRequestEvent;
 import net.mamoe.mirai.message.MessageEvent;
-import net.mamoe.mirai.message.data.*;
+import net.mamoe.mirai.message.data.At;
+import net.mamoe.mirai.message.data.Image;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.utils.MiraiLogger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -37,10 +40,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,19 +49,18 @@ import java.util.regex.Pattern;
 public class Zibenbot {
 
     public static Proxy proxy = null;
-    public static Logger logger = Logger.getLogger("zibenbot");
+    public static MiraiLogger logger;
     private static Pattern AT_REGEX = Pattern.compile("\\[mirai:at:(\\d+),[\\S|\\s]+]");
     private static Function2<? super CommandBody<MessageEvent>, ? super Continuation<? super Unit>, ?> msgAction = (o, o2) -> Unit.INSTANCE;
     //时间任务池
-    public TimeTaskPool pool = new TimeTaskPool();
+    public TimeTaskPool pool;
     public SubscriptManager subManager = new SubscriptManager(this);
     //public TeamspeakBot teamspeakBot;
     public BotConfigFunc config;
     public FuncEnableFunc enableCollFunc;
     public List<Long> enableGroup = new ArrayList<>();
     public String appDirectory;
-    List<IFunc> registerFunc = new ArrayList<IFunc>();
-    FileHandler fh;
+    List<IFunc> registerFunc = new ArrayList<>();
     private Bot bot;
     private Function2<Object, Object, ?>
             msgBuilder = (o, o2) -> {
@@ -76,7 +75,7 @@ public class Zibenbot {
         return null;
     };
     private Command<MessageEvent> command = new ZibenbotController("Zibenbot", msgBuilder, msgAction);
-    private Map<String, Image> miraiImageMap = new ConcurrentHashMap<>();
+    //private Map<String, Image> miraiImageMap = new ConcurrentHashMap<>();
     private Map<Integer, File> imageMap = new ConcurrentHashMap<>();
 
     {
@@ -98,12 +97,14 @@ public class Zibenbot {
         enableGroup.add(814843368L);
         enableGroup.add(1098042439L);
         enableGroup.add(1107287775L);
-        appDirectory = "\\data\\";
+        appDirectory = "data\\";
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
     }
 
     public Zibenbot(Bot bot) {
         this.bot = bot;
+        logger = bot.getLogger();
+        pool = new TimeTaskPool();
     }
 
     public static Proxy getProxy() {
@@ -128,14 +129,10 @@ public class Zibenbot {
     }
 
     public long getAtMember(String s) {
-        try {
-            Matcher matcher = AT_REGEX.matcher(s);
-            if (matcher.find()) {
-                return Long.parseLong(matcher.group(1));
-            } else {
-                return -1;
-            }
-        } catch (Exception e) {
+        List<Long> list = getAtMembers(s);
+        if (list.size() != 0) {
+            return list.get(0);
+        } else {
             return -1;
         }
     }
@@ -151,6 +148,7 @@ public class Zibenbot {
             }
             return rets;
         } catch (Exception e) {
+            System.out.println(rets);
             return rets;
         }
     }
@@ -160,7 +158,7 @@ public class Zibenbot {
     }
 
     public void muteMember(long groupId, long memberId, int second) {
-        getGroup(groupId).get(memberId).mute(second);
+        muteMember(getGroup(groupId).get(memberId), second);
     }
 
     public void setMuteAll(long groupId, boolean muteAll) {
@@ -172,7 +170,21 @@ public class Zibenbot {
     }
 
     public void unMute(long groupId, long memberId) {
-        getGroup(groupId).get(memberId).unmute();
+        unMute(getGroup(groupId).get(memberId));
+    }
+
+    public void onMute(MemberMuteEvent event){
+        setMuteTimeLocal(event.getMember(), event.getDurationSeconds());
+    }
+
+    private void setMuteTimeLocal(Member member, int time){
+        try {
+            Field field = member.getClass().getDeclaredField("_muteTimestamp");
+            field.setAccessible(true);
+            field.set(member, new Long(System.currentTimeMillis() / 1000).intValue() + time);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -257,83 +269,83 @@ public class Zibenbot {
         }
     }
 
-    public void replyMsg(SimpleMsg fromMsg, String msg) {
-        if (fromMsg.isGroupMsg()) {
-            Contact contact = getGroup(fromMsg.getFromGroup());
-            if (contact != null) {
-                MessageChain chain = toMessChain(contact, msg);
-                contact.sendMessage(chain);
-                Zibenbot.logger.log(Level.INFO,
-                        String.format("回复群[%s]%s消息:%s",
-                                bot.getGroup(fromMsg.getFromGroup()).getName(),
-                                bot.getGroup(fromMsg.getFromGroup()).get(fromMsg.getFromClient()).toString(),
-                                chain));
-            }
-        } else if (fromMsg.isPrivateMsg()) {
-            Contact contact = findUser(fromMsg.getFromClient());
-            if (contact != null) {
-                MessageChain chain = toMessChain(contact, msg);
-                Zibenbot.logger.log(Level.INFO,
-                        String.format("回复成员[%s]消息:%s",
-                                fromMsg.getFromClient(),
-                                chain.toString()));
-                contact.sendMessage(chain);
+    public void log(Level level, String msg) {
+        if (level == Level.WARNING) {
+            logWarning(msg);
+        } else if (level == Level.ALL) {
+                logVerbose(msg);
+        } else {
+            logInfo(msg);
+        }
 
-            }
-        } else if (fromMsg.isTeamspealMsg()) {
+    }
+
+    public void logInfo(String info) {
+        logger.info(info);
+    }
+
+    public void logDebug(String debugMsg) {
+        logger.debug(debugMsg);
+    }
+
+    public void logError(String errorMsg) {
+        logger.error(errorMsg);
+    }
+
+    public void logWarning(String warnMsg){
+        logger.warning(warnMsg);
+    }
+
+    public void logVerbose(String verboseMsg){
+        logger.verbose(verboseMsg);
+    }
+
+    public void replyMsg(SimpleMsg fromMsg, String msg) {
+        try {
+            if (fromMsg.isGroupMsg()) {
+                Contact contact = getGroup(fromMsg.getFromGroup());
+                if (contact != null) {
+                    MessageChain chain = toMessChain(contact, msg);
+                    contact.sendMessage(chain);
+                }
+            } else if (fromMsg.isPrivateMsg()) {
+                Contact contact = findUser(fromMsg.getFromClient());
+                if (contact != null) {
+                    MessageChain chain = toMessChain(contact, msg);
+                    contact.sendMessage(chain);
+
+                }
+            } else if (fromMsg.isTeamspealMsg()) {
 /*            Zibenbot.logger.log(Level.INFO,
                     String.format("回复ts频道[%s]消息:%s",
                             fromMsg.fromGroup,
                             msg));*/
-            //todo
+                //todo
+            }
+        } catch (IllegalStateException e) {
+            toPrivateMsg(fromMsg.getFromClient(), "发送消息失败，可能需要添加好友后才可以。");
         }
     }
 
-    private MessageChain toMessChain(Contact contact, String msg){
-        MessageChainBuilder builder = new MessageChainBuilder();
-        MessageChain temp = MiraiSerializationKt.parseMiraiCode(toMiraiImage(contact, msg));
-        temp.forEachContent((Message m) -> {
-            if (m instanceof OfflineImage) {
-                if (miraiImageMap.containsKey(((OfflineImage) m).getImageId())) {
-                    builder.add(miraiImageMap.get(((OfflineImage) m).getImageId()));
-                }
-            } else {
-                builder.add(m);
-            }
-            return Unit.INSTANCE;
-        });
-        return builder.build();
+    public void onFriendEvent(NewFriendRequestEvent event){
+        if (findUser(event.getFromId()) != null) {
+            event.accept();
+        }
+    }
+
+    private MessageChain toMessChain(Contact send, String msg){
+        String s = toMiraiImage(send, msg);
+        if (send instanceof Friend) {
+            String fromto = String.valueOf(bot.getId()) + "-" + String.valueOf(send.getId());
+            s = s.replaceAll("\\[mirai:image:\\{(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})}.mirai]", "[mirai:image:/" + fromto + "-$1$2$3$4$5"+"]");
+        } else {
+            s = s.replaceAll("\\[mirai:image:/(\\d+)-(\\d+)-(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})]", "[mirai:image:{$3-$4-$5-$6-$7}.mirai]");
+        }
+        return MiraiSerializationKt.parseMiraiCode(s);
     }
 
     public int startup() {
-        // 获取应用数据目录(无需储存数据时，请将此行注释)
-        // 返回如：D:\CoolQ\data\app\org.meowy.cqp.jcq\data\app\com.example.demo\
-        // 应用的所有数据、配置【必须】存放于此目录，避免给用户带来困扰。
-
-        //建立时间任务池 这里就两个任务 如果任务多的话 可以新建类进行注册
-
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
-
-        try {
-            File log_dir = new File(appDirectory + "\\log\\");
-            if (!log_dir.exists()) {
-                log_dir.mkdirs();
-            }
-            // This block configure the logger with handler and formatter
-            fh = new FileHandler(appDirectory + "\\log\\" + new Date().toString().replace(" ", "_").replace(":", "_") + ".log");
-            logger.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-
-            // the following statement is used to log any messages
-            logger.info("My first log");
-
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         ITimeAdapter maiyaoCycle = date1 -> {
             Calendar c = Calendar.getInstance();
             c.setTime(date1);
@@ -355,7 +367,7 @@ public class Zibenbot {
         };
 
 
-        Zibenbot.logger.log(Level.INFO, "registe time task start");
+        logInfo("registe time task start");
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
@@ -363,13 +375,8 @@ public class Zibenbot {
         Date date = calendar.getTime();
         //创建订阅器对象
         SimpleSubscription maiyao = new SimpleSubscription(this, maiyaoCycle,
-                "") {
+                getImg(appDirectory + "/image/提醒买药小助手.jpg")) {
             private final static String NAME = "提醒买药小助手";
-
-            @Override
-            public void run() {
-                replyAll(getMiraiImg(appDirectory + "/image/提醒买药小助手.jpg"));
-            }
 
             @Override
             public String getName() {
@@ -391,9 +398,9 @@ public class Zibenbot {
         //把订阅管理器注册进可用的模块里
         registerFunc.add(subManager);
 
-        Zibenbot.logger.log(Level.INFO, "registe time task end");
+        logInfo("registe time task end");
         //改成了手动注册
-        Zibenbot.logger.log(Level.INFO, "registe func start");
+        log(Level.INFO, "registe func start");
 
         registerFunc.add(config = new BotConfigFunc(this));
         registerFunc.add(enableCollFunc = new FuncEnableFunc(this));
@@ -420,10 +427,10 @@ public class Zibenbot {
             try {
                 func.setUp();
             } catch (Exception e) {
-                logger.warning(() -> "初始化：" + func.getClass().getName() + "出现异常");
+                logWarning("初始化：" + func.getClass().getName() + "出现异常");
             }
         }
-        Zibenbot.logger.log(Level.INFO, "registe func end");
+        log(Level.INFO, "registe func end");
 
 /*        //创建teamspeakbot对象
         teamspeakBot = new TeamspeakBot(this);
@@ -435,13 +442,13 @@ public class Zibenbot {
         return 0;
     }
 
-    public String getMiraiImg(String path) {
+    public String getImg(String path) {
         File file = new File(path);
         imageMap.put(file.hashCode(), file);
         return String.valueOf(file.hashCode());
     }
 
-    public String getMiraiImg(File file) {
+    public String getImg(File file) {
         imageMap.put(file.hashCode(), file);
         return String.valueOf(file.hashCode());
     }
@@ -462,8 +469,9 @@ public class Zibenbot {
             if (msg.contains(key)) {
                 String img = "[图片]";
                 if (contact != null) {
-                    Image image = contact.uploadImage(entry.getValue());
-                    miraiImageMap.put(image.getImageId(), image);
+                    Image image;
+                    image = contact.uploadImage(entry.getValue());
+                    //miraiImageMap.put(image.getImageId(), image);
                     img = image.toMiraiCode();
                 }
                 msg = msg.replace(key, img);

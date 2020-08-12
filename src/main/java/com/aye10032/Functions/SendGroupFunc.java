@@ -67,7 +67,7 @@ public class SendGroupFunc extends BaseFunc {
             zibenbot.runFuncs(CQmsg);
         } catch (Exception e) {
             replyMsg(CQmsg, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
-            Zibenbot.logger.log(Level.WARNING, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
+            zibenbot.log(Level.WARNING, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
         }
     }
 
@@ -84,7 +84,7 @@ public class SendGroupFunc extends BaseFunc {
             zibenbot.runFuncs(CQmsg);
         } catch (Exception e) {
             replyMsg(CQmsg, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
-            Zibenbot.logger.log(Level.WARNING, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
+            zibenbot.log(Level.WARNING, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
         }
     }
 }
