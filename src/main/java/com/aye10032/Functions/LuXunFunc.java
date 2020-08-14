@@ -13,7 +13,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.opencv.core.Core.vconcat;
 import static org.opencv.highgui.HighGui.waitKey;
@@ -23,25 +25,27 @@ import static org.opencv.imgcodecs.Imgcodecs.imwrite;
 import static org.opencv.imgproc.Imgproc.resize;
 
 public class LuXunFunc {
+    Map<Integer, String> ImgMap = new HashMap<>();
 
     public LuXunFunc(String AppPath) {
         System.load(AppPath + "\\opencv_java430.dll");
+        ImgMap.put(1, "data\\image\\biaoqing\\luxun.jpg");
     }
 
     public static void main(String[] args) {
         File os = new File("data\\cv");
 
         LuXunFunc luXunFunc = new LuXunFunc(os.getAbsolutePath());
-        luXunFunc.addText("我没说过 --鲁迅");
+        luXunFunc.addText(1, "我没说过 --鲁迅");
     }
 
-    public void addText(String text) {
-        Mat src = imread("data\\image\\biaoqing\\luxun.jpg");
+    public void addText(int flag, String text) {
+        Mat src = imread(ImgMap.get(flag));
 
         float height = src.rows();
         float width = src.cols();
 
-        System.out.println(width + " " +height);
+        System.out.println(width + " " + height);
         Mat dst = src.clone();
 
         Font font = new Font("微软雅黑", Font.PLAIN, 130);
@@ -51,15 +55,15 @@ public class LuXunFunc {
             Mat text_src = imread("data\\image\\biaoqing\\text.png");
             float text_height = text_src.rows();
             float text_width = text_src.cols();
-            System.out.println(text_width+" "+text_height);
-            text_height = (width/text_width)*text_height;
-            System.out.println(text_width+" "+text_height);
-            resize(text_src,text_src,new Size(width,text_height), 0, 0, Imgproc.INTER_AREA);
+            System.out.println(text_width + " " + text_height);
+            text_height = (width / text_width) * text_height;
+            System.out.println(text_width + " " + text_height);
+            resize(text_src, text_src, new Size(width, text_height), 0, 0, Imgproc.INTER_AREA);
 
             List<Mat> imgs = new ArrayList<>();
             imgs.add(dst);
             imgs.add(text_src);
-            vconcat(imgs,dst);
+            vconcat(imgs, dst);
             imwrite("data\\image\\biaoqing\\text.jpg", dst);
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,7 +94,7 @@ public class LuXunFunc {
 
         Graphics2D g = image.createGraphics();
         image = g.getDeviceConfiguration().createCompatibleImage(width, height, Transparency.TRANSLUCENT);
-        g=image.createGraphics();
+        g = image.createGraphics();
 
         g.setColor(Color.WHITE);
 
