@@ -10,6 +10,7 @@ package com.dazo66.message
 
  */
 
+import net.mamoe.mirai.LowLevelAPI
 import net.mamoe.mirai.message.data.*
 
 
@@ -60,6 +61,7 @@ internal inline fun String.forEachMiraiCode(crossinline block: (origin: String, 
     }
 }
 
+@OptIn(LowLevelAPI::class)
 internal object MiraiCodeParsers : Map<String, MiraiCodeParser> by mapOf(
     "at" to MiraiCodeParser(Regex("""(\d*),(.*)""")) { (target, display) ->
         At._lowLevelConstructAtInstance(target.toLong(), display)
