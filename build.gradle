@@ -1,9 +1,13 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
+        classpath "gradle.plugin.ua.eshepelyuk:ManifestClasspath:1.0.0"
     }
 }
 
@@ -13,6 +17,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
+apply plugin: "ua.eshepelyuk.ManifestClasspath"
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 
@@ -57,7 +62,12 @@ dependencies {
     // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
     compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
 
-    compile group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.3'
+    //JavaCV相关
+//    compile group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.3'
+    compile group: 'org.bytedeco', name: 'javacv', version: '1.5.3'
+    compile group: 'org.bytedeco', name: 'javacpp-platform', version: '1.5.3'
+    compile group: 'org.bytedeco', name: 'opencv', version: '4.3.0-1.5.3', classifier: 'windows-x86_64'
+    compile group: 'org.bytedeco', name: 'openblas', version: '0.3.9-1.5.3', classifier: 'windows-x86_64'
 
 }
 
