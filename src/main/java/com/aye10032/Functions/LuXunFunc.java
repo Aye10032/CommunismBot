@@ -20,9 +20,8 @@ import java.util.Map;
 import static org.opencv.core.Core.vconcat;
 import static org.opencv.highgui.HighGui.waitKey;
 import static org.opencv.highgui.HighGui.imshow;
-import static org.opencv.imgcodecs.Imgcodecs.imread;
-import static org.opencv.imgcodecs.Imgcodecs.imwrite;
-import static org.opencv.imgproc.Imgproc.resize;
+import static org.opencv.imgcodecs.Imgcodecs.*;
+import static org.opencv.imgproc.Imgproc.*;
 
 public class LuXunFunc {
     Map<Integer, String> ImgMap = new HashMap<>();
@@ -36,7 +35,8 @@ public class LuXunFunc {
         File os = new File("data\\cv");
 
         LuXunFunc luXunFunc = new LuXunFunc(os.getAbsolutePath());
-        luXunFunc.addText(1, "我没说过 --鲁迅");
+//        luXunFunc.addText(1, "我没说过 --鲁迅");
+        luXunFunc.addBlack_White("data\\image\\biaoqing\\test.png",new String[]{" 人固有一死 "," people always die "});
     }
 
     public void addText(int flag, String text) {
@@ -71,6 +71,43 @@ public class LuXunFunc {
 
 //        imshow("aa", dst);
 
+//        waitKey(0);
+    }
+
+    public void addBlack_White(String img,String[] texts){
+        Mat src = imread(img,IMREAD_GRAYSCALE);
+
+        float width = src.cols();
+
+        Mat dst = src.clone();
+
+        List<Mat> imgs = new ArrayList<>();
+        imgs.add(dst);
+
+        Font font = new Font("微软雅黑", Font.PLAIN, 130);
+        for (String text:texts){
+            try {
+                createImage(text, font, new File("data\\image\\biaoqing\\text.png"));
+
+                Mat text_src = imread("data\\image\\biaoqing\\text.png");
+                float text_height = text_src.rows();
+                float text_width = text_src.cols();
+                System.out.println(text_width + " " + text_height);
+                text_height = (width / text_width) * text_height;
+                System.out.println(text_width + " " + text_height);
+                resize(text_src, text_src, new Size(width, text_height), 0, 0, Imgproc.INTER_AREA);
+
+                cvtColor(text_src,text_src,COLOR_BGR2GRAY);
+                imgs.add(text_src);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        vconcat(imgs, dst);
+        imwrite("data\\image\\biaoqing\\text.jpg", dst);
+//        imshow("test",dst);
+//
 //        waitKey(0);
     }
 
