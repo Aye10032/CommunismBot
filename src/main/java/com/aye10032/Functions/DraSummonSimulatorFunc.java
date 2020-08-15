@@ -354,8 +354,7 @@ public class DraSummonSimulatorFunc extends BaseFunc {
                     ((System.currentTimeMillis() - current) / 1000))) + "秒");
             zibenbot.logInfo("DraSummonSimulator setup successful!");
         } catch (Exception e) {
-            e.printStackTrace();
-            zibenbot.logInfo("根数据网络读取异常，转为本地缓存\n" + "e:" + ExceptionUtils.printStack(e));
+            zibenbot.logWarning("根数据网络读取异常，转为本地缓存\n" + "e:" + ExceptionUtils.printStack(e));
             all_ele.clear();
             all_summon_event.clear();
             Config config = summon_loader.load();

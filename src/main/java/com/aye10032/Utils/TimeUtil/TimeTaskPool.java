@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
+import java.util.zip.ZipEntry;
 
 /**
  *
@@ -44,11 +44,15 @@ public class TimeTaskPool {
     }
 
     public void add(TimedTaskBase task) {
-        task.setTiggerTime(task.getNextTiggerTime());
-        tasks.add(task);
-        flow.flush();
-        Zibenbot.logger.info(String.format("添加时间任务 触发时间：%s 当前时间%s",
-                task.getTiggerTime().toString(), new Date().toString()));
+        if (!tasks.contains(task)) {
+            task.setTiggerTime(task.getNextTiggerTime());
+            tasks.add(task);
+            flow.flush();
+            Zibenbot.logger.info(String.format("添加时间任务 触发时间：%s 当前时间%s",
+                    task.getTiggerTime().toString(), new Date().toString()));
+        } else {
+            Zibenbot.logger.warning("重复的时间任务：" + task.getClass().getName());
+        }
     }
 
     public void flush(){
@@ -70,13 +74,11 @@ public class TimeTaskPool {
     public List<TimedTaskBase> getNextTasks() {
         nextTasks.clear();
         for (TimedTaskBase task : tasks) {
-            if (task.getTiggerTime() == null) {
-                continue;
-            }
-            if (nextTasks.size() == 0 && task.getTiggerTime().getTime() > System.currentTimeMillis()) {
+            long date = task.getTiggerTime().getTime();
+            if (nextTasks.size() == 0) {
                 nextTasks.add(task);
-            } else if (nextTasks.size() > 0) {
-                int flag = task.getTiggerTime().compareTo(nextTasks.get(0).getTiggerTime());
+            } else {
+                long flag = date - nextTasks.get(0).getTiggerTime().getTime();
                 if (flag == 0) {
                     nextTasks.add(task);
                 } else if (flag < 0) {

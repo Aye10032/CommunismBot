@@ -1,10 +1,11 @@
 package com.aye10032.TimeTask;
 
-import com.aye10032.Utils.TimeUtil.SubscribableBase;
 import com.aye10032.Utils.TimeUtil.ITimeAdapter;
+import com.aye10032.Utils.TimeUtil.SubscribableBase;
 import com.aye10032.Zibenbot;
 
 import java.util.Date;
+import java.util.function.Supplier;
 
 /**
  *
@@ -16,18 +17,22 @@ import java.util.Date;
  */
 public abstract class SimpleSubscription extends SubscribableBase {
 
-    private final String msg;
+    private Supplier<String> supplier;
     private ITimeAdapter cycle;
 
     public SimpleSubscription(Zibenbot zibenbot, ITimeAdapter cycle, String msg) {
+        this(zibenbot, cycle, () -> msg);
+    }
+
+    public SimpleSubscription(Zibenbot zibenbot, ITimeAdapter adapter, Supplier<String> supplier) {
         super(zibenbot);
-        this.msg = msg;
-        this.cycle = cycle;
+        this.cycle = adapter;
+        this.supplier = supplier;
     }
 
     @Override
     public void run() {
-        replyAll(msg);
+        replyAll(supplier.get());
     }
 
 

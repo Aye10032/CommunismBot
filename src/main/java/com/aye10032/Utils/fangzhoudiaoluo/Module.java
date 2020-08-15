@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -35,35 +36,27 @@ public class Module {
         rawModules = getModules(rawModule);
     }
 
-    public static void update() throws IOException {
-
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-
+    public static void update(String dir) throws IOException {
         HttpClient client1 = HttpClientBuilder.create().setDefaultHeaders(Arrays.asList(FangZhouDiaoluoFunc.getHeaders())).build();
 
-        InputStream stream = HttpUtils.getInputStreamFromNet(
-                "https://gitee.com/aye10032/Zibenbot/raw/master/res/fangzhoudiaoluo/module.txt", client);
-        module = new Module(IOUtils.toString(stream));
-        stream.close();
+        FileReader reader = new FileReader(dir + "/fangzhoudiaoluo/module.txt");
+        module = new Module(IOUtils.toString(reader));
+        reader.close();
 
-        stream = HttpUtils.getInputStreamFromNet(
-                "https://gitee.com/aye10032/Zibenbot/raw/master/res/fangzhoudiaoluo/material_module.txt", client);
-        moduleMaterial = new ModuleMaterial(IOUtils.toString(stream));
-        stream.close();
+        reader = new FileReader(dir + "/fangzhoudiaoluo/material_module.txt");
+        moduleMaterial = new ModuleMaterial(IOUtils.toString(reader));
+        reader.close();
 
-        stream = HttpUtils.getInputStreamFromNet(
-                "https://gitee.com/aye10032/Zibenbot/raw/master/res/fangzhoudiaoluo/stages_module.txt", client);
-        moduleStage = new ModuleStage(IOUtils.toString(stream));
-        stream.close();
+        reader = new FileReader(dir + "/fangzhoudiaoluo/stages_module.txt");
+        moduleStage = new ModuleStage(IOUtils.toString(reader));
+        reader.close();
 
-        stream = HttpUtils.getInputStreamFromNet(
-                "https://gitee.com/aye10032/Zibenbot/raw/master/res/fangzhoudiaoluo/extera_drop_module.txt", client);
-        moduleDrop = new ModuleDrop(IOUtils.toString(stream));
-        stream.close();
+        reader = new FileReader(dir + "/fangzhoudiaoluo/extera_drop_module.txt");
+        moduleDrop = new ModuleDrop(IOUtils.toString(reader));
+        reader.close();
 
         JsonParser parser = new JsonParser();
-        stream = HttpUtils.getInputStreamFromNet("https://arkonegraph.herokuapp.com/materials/gacha", client1);
+        InputStream stream = HttpUtils.getInputStreamFromNet("https://arkonegraph.herokuapp.com/materials/gacha/CN", client1);
 
         String last = parser.parse(IOUtils.toString(stream))
                 .getAsJsonObject().get("material")
@@ -73,7 +66,6 @@ public class Module {
         IOUtils.closeQuietly(stream);
         DateFormat format1 = new SimpleDateFormat("yyyy/MM/dd HH:mm");
         lastUpdate = format1.format(new Date(last));
-
     }
 
     public static String getVer(String rawModule) {

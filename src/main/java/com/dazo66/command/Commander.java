@@ -27,7 +27,7 @@ public class Commander<S extends ICommand> {
      * 短路寻找符合要求的分支
      * 如果没有分支符合要求，则返回最接近的分支，并执行错误回调
      *
-     * 如果命令片段超过判定的路径则报超过异常//todo
+     * 如果命令片段超过判定的路径则报超过异常
      *
      * math add 1 2
      * -> 3
@@ -36,7 +36,7 @@ public class Commander<S extends ICommand> {
      * math add 1 x
      * -> wrong at d2
      * math add 1 2 3
-     * -> more args nothing todo
+     * -> more args nothing
      * math add
      * -> wrong at d1
      *

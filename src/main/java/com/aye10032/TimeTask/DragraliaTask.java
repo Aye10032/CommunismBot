@@ -44,6 +44,7 @@ public abstract class DragraliaTask extends SubscribableBase {
     private JsonParser jsonParser = new JsonParser();
     private ArticleUpateDate date = null;
     public Runnable runnable = () -> {
+        client = client.newBuilder().proxy(Zibenbot.getProxy()).build();
         try {
             try {
                 date = getUpdateDate();
@@ -54,7 +55,6 @@ public abstract class DragraliaTask extends SubscribableBase {
             Set<Article> articles = getNewArticles();
             articles.forEach(a -> this.sendArticle(a, getRecipients()));
         } catch (Exception e) {
-            e.printStackTrace();
             zibenbot.log(Level.WARNING, ExceptionUtils.printStack(e));
         }
     };

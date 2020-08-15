@@ -85,15 +85,19 @@ public class TimeConstant {
     /**
      * 当前时间的下一个
      * 不断运行cycel的循环直到找到现在的下一个
+     * 不包括当前
      *
      * @param date    基准时间
      * @param adapter 时间适配器 得到下个时间
      * @return
      */
     public static Date getNextTimeFromNow(Date date, ITimeAdapter adapter) {
-        Date now = new Date();
+        return getNextTimeFromNow(date, new Date(), adapter);
+    }
+
+    public static Date getNextTimeFromNow(Date date, Date now, ITimeAdapter adapter) {
         Date ret = (Date) date.clone();
-        while (now.compareTo(ret) >= 0) {
+        while (now.compareTo(ret) > 0) {
             ret.setTime(adapter.getNextTime(ret).getTime());
         }
         return ret;
