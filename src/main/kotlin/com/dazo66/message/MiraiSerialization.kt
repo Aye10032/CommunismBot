@@ -10,7 +10,6 @@ package com.dazo66.message
 
  */
 
-import net.mamoe.mirai.LowLevelAPI
 import net.mamoe.mirai.message.data.*
 
 
