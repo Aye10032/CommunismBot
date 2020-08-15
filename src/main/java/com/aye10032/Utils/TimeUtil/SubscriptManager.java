@@ -32,6 +32,14 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
      * 所有的订阅器
      */
     private List<ISubscribable> allSubscription = Collections.synchronizedList(new ArrayList<>());
+    private ITimeAdapter adapter = date -> {
+        Date temp = null;
+        for (ISubscribable subscribable : allSubscription) {
+            Date temp1 = subscribable.getNextTime(date);
+            temp = temp == null ? temp1 : temp.compareTo(temp1) > 0 ? temp1 : temp;
+        }
+        return temp;
+    };
     /**
      * 暂存的下一次要运行的东西
      */
@@ -49,7 +57,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
             while (true) {
                 if (date2.getTime() < current.getTime()) {
                     date2 = s.getNextTime(date2);
-                } else if (date2.getTime() == current.getTime()) {
+                } else if (date2.getTime() == current.getTime() && date2.getTime() != begin.getTime()) {
                     ret.add(s);
                     break;
                 } else {
@@ -117,6 +125,11 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
         return recipients;
     }
 
+    @Override
+    public ITimeAdapter getCycle() {
+        return adapter;
+    }
+
     /**
      * 禁用了这个方法
      *
@@ -148,14 +161,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
      */
     @Override
     public Date getNextTiggerTime() {
-        Date date = null;
-        for (ISubscribable s : allSubscription) {
-            Date temp = TimeConstant.getNextTimeFromNow(getTiggerTime(), s);
-            if (date == null || temp.before(date)) {
-                date = temp;
-            }
-        }
-        return date;
+        return getNextTiggerTimeFrom(getTiggerTime());
     }
 
     /**
@@ -170,14 +176,14 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
     }
 
     private Date getNextTiggerTimeFrom(Date from) {
-        Date date = null;
+        Date begin = getBegin();
+        Date temp = null;
         for (ISubscribable s : allSubscription) {
-            Date temp = s.getNextTime((Date) from.clone());
-            if (date == null || temp.before(date)) {
-                date = temp;
-            }
+            Date date1 = TimeConstant.getNextTimeFromNow(begin, from, s);
+            temp = temp == null ? date1 : temp.compareTo(date1) < 0 ? temp : date1;
+
         }
-        return date;
+        return temp;
     }
 
     /**
@@ -357,7 +363,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
     public boolean hasSub(SimpleMsg msg, String subName) {
         switch (msg.getType()) {
             case GROUP_MSG:
-                return hasSub(msg.getType(), msg.getFromClient(), subName);
+                return hasSub(msg.getType(), msg.getFromGroup(), subName);
             case TEAMSPEAK_MSG:
                 return hasSub(msg.getType(), msg.getFromClient(), subName);
             case PRIVATE_MSG:
@@ -376,7 +382,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
     public void subscribe(SimpleMsg simpleMsg, String sub) {
         switch (simpleMsg.getType()) {
             case GROUP_MSG:
-                subscribe(simpleMsg.getType(), simpleMsg.getFromClient(), sub);
+                subscribe(simpleMsg.getType(), simpleMsg.getFromGroup(), sub);
                 return;
             case TEAMSPEAK_MSG:
                 subscribe(simpleMsg.getType(), simpleMsg.getFromClient(), sub);
@@ -406,7 +412,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
     public void unSubscribe(SimpleMsg simpleMsg, String sub) {
         switch (simpleMsg.getType()) {
             case GROUP_MSG:
-                unSubscribe(simpleMsg.getType(), simpleMsg.getFromClient(), sub);
+                unSubscribe(simpleMsg.getType(), simpleMsg.getFromGroup(), sub);
                 return;
             case TEAMSPEAK_MSG:
                 unSubscribe(simpleMsg.getType(), simpleMsg.getFromClient(), sub);

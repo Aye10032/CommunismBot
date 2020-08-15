@@ -1,11 +1,16 @@
 package com.aye10032.Utils.TimeUtil;
 
 
+import com.aye10032.Utils.ExceptionUtils;
+import com.aye10032.Zibenbot;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * 异步线程池，同时执行多个Runnable 结束后执行回调方法
@@ -34,7 +39,14 @@ public class AsynchronousTaskPool extends TimedTaskBase {
     public void execute(Runnable callback, Runnable... runnables){
         List<Future<?>> list = Collections.synchronizedList(new ArrayList<>());
         for (Runnable run : runnables) {
-            list.add(pool.submit(run));
+            StackTraceElement[] traceElements = Thread.currentThread().getStackTrace();
+            list.add(pool.submit(() -> {
+                try {
+                    run.run();
+                } catch (Exception e) {
+                    Zibenbot.logger.warning("异步线程执行出错！:" + e + "\n" + ExceptionUtils.printStack(traceElements));
+                }
+            }));
         }
         runnableMap.put(callback, list);
     }

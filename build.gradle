@@ -46,8 +46,19 @@ dependencies {
 
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.common.Main.kt'
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"

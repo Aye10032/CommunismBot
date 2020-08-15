@@ -11,5 +11,11 @@ public class ExceptionUtils {
         return builder.toString();
     }
 
+    public static String printStack(StackTraceElement[] e) {
+        StringBuilder builder = new StringBuilder();
+        Arrays.stream(e).forEach(element -> builder.append("\n").append(element));
+        return builder.toString();
+    }
+
 
 }

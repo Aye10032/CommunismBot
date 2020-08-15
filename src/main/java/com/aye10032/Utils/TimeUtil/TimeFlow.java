@@ -44,20 +44,20 @@ public class TimeFlow implements Runnable {
         //监听中断异常，有中断异常就跳出
         while (!Thread.currentThread().isInterrupted()) {
             //如果没有任务 就使线程长时间休眠
+            long timeInterval;
             if (pool.getNextTasks().size() == 0) {
-                try {
-                    Zibenbot.logger.info("Thread Sleep Because No Task To Run");
-                    Thread.sleep(1111114514);
-                } catch (InterruptedException e) {
-                    Zibenbot.logger.info("Time Thread Flush");
-                    break;//捕获到异常之后，执行break跳出循环。
-                }
+                timeInterval = 100000L;
+            } else {
+                //得到下个任务的时间间隔 并休眠
+                timeInterval = pool.nextTasks.get(0).getTiggerTime().getTime() - System.currentTimeMillis();
             }
-            //得到下个任务的时间间隔 并休眠
-            long timeInterval = pool.nextTasks.get(0).getTiggerTime().getTime() - System.currentTimeMillis();
             try {
                 if (timeInterval > 0) {
                     Thread.sleep(timeInterval);
+                } else {
+                    pool.nextTasks.forEach(task ->
+                            task.setTiggerTime(TimeConstant.getNextTimeFromNow(task.getTiggerTime(), task.getCycle())));
+                    continue;
                 }
             } catch (InterruptedException e) {
                 Zibenbot.logger.info("Time Thread Flush");
@@ -67,9 +67,9 @@ public class TimeFlow implements Runnable {
             for (TimedTaskBase task : pool.nextTasks) {
                 try {
                     if (!(task instanceof AsynchronousTaskPool)) {
-                        Zibenbot.logger.info(String.format("触发任务: %s 时间：%s ", task.getClass().getSimpleName(), task.getTiggerTime()));
+                        Zibenbot.logger.info(String.format("触发任务: %s 时间：%s %d ", task.getClass().getSimpleName(), task.getTiggerTime(), task.getTiggerTime().getTime()));
                     } else {
-                        Zibenbot.logger.info("守护线程运行中");
+                        //Zibenbot.logger.info("守护线程运行中");
                     }
 
                     if (task.getTimes() > 0 || task.getTimes() == -1) {
@@ -83,18 +83,17 @@ public class TimeFlow implements Runnable {
                                 try {
                                     task.run(current);
                                 } catch (Exception e) {
-                                    e.printStackTrace();
                                     Zibenbot.logger.warning(String.format("运行任务：[%s]时出现异常[%s]\n%s", this.getClass().getName(), e.getMessage(), ExceptionUtils.printStack(e)));
                                 }
                             }
                         });
+                        //设置下次触发时间
                         task.setTiggerTime(task.getNextTiggerTime());
                     }
                     if (task.getTimes() == 0) {
                         pool.remove(task);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
                     Zibenbot.logger.warning(String.format("运行任务：[%s]时出现异常[%s]", task.getClass().getName(), e.getMessage()));
                 }
             }

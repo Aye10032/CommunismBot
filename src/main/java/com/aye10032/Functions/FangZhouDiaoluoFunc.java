@@ -19,10 +19,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 import static com.aye10032.Utils.TimeUtil.TimeConstant.NEXT_DAY;
@@ -172,16 +169,16 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
     }
 
     public void update() {
-        System.out.println(arkonegraphFile);
+        //System.out.println(arkonegraphFile);
         Zibenbot.logger.info("fangzhoudiaoluo update start");
         File file = new File(cacheFile);
-        Gson gson = new GsonBuilder().registerTypeAdapter(DiaoluoType.class, new DiaoluoTypeDeserializer()).create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(DiaoluoType.class, new DiaoluoTypeDeserializer()).setLenient().create();
         CloseableHttpClient client = HttpClientBuilder.create().setDefaultHeaders(Arrays.asList(getHeaders())).build();
         //更新掉落数据
         DiaoluoType diaoluoType = null;
         try {
             for (int i = 1; i <= 5; i++) {
-                InputStream stream = HttpUtils.getInputStreamFromNet("https://arkonegraph.herokuapp.com/materials/tier/" + String.valueOf(i), client);
+                InputStream stream = HttpUtils.getInputStreamFromNet("https://arkonegraph.herokuapp.com/materials/tier/" + String.valueOf(i)+"/CN", client);
                 if (diaoluoType == null) {
                     diaoluoType = gson.fromJson(new InputStreamReader(stream), DiaoluoType.class);
                 } else {
@@ -191,8 +188,8 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
 
             }
             this.type = diaoluoType;
-            InputStream stream = HttpUtils.getInputStreamFromNet("https://gitee.com/aye10032/Zibenbot/raw/master/res/fangzhoudiaoluo/name-id.txt", client);
-            List<String> strings = IOUtils.readLines(new InputStreamReader(stream));
+            FileReader reader;
+            List<String> strings = IOUtils.readLines(reader = new FileReader(zibenbot.appDirectory + "/fangzhoudiaoluo/name-id.txt"));
             List<DiaoluoType.HeChenType> list = new ArrayList<>();
             for (String s : strings) {
                 if ("".equals(s.trim()) || s.startsWith("//")) {
@@ -204,8 +201,8 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                 }
             }
             name_idList = list;
-            stream.close();
-            Module.update();
+            reader.close();
+            Module.update(zibenbot.appDirectory);
             module = Module.module;
 
             String img_url = "https://aog.wiki/";
@@ -213,7 +210,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
 
             client.close();
         } catch (Exception e) {
-            Zibenbot.logger.info("方舟掉落更新出错：" + ExceptionUtils.getStackTrace(e));
+            Zibenbot.logger.warning("方舟掉落更新出错：" + ExceptionUtils.getStackTrace(e));
         }
         Zibenbot.logger.info("fangzhoudiaoluo update end");
     }

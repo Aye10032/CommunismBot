@@ -1,5 +1,7 @@
 package com.common
 
+import com.aye10032.TimeTask.SimpleSubscription
+import com.aye10032.Utils.TimeUtil.TimeConstant
 import com.aye10032.Zibenbot
 import com.firespoon.bot.command.DiceCommand
 import com.firespoon.bot.core._subscribeAlways
@@ -12,8 +14,11 @@ import net.mamoe.mirai.event.events.BotReloginEvent
 import net.mamoe.mirai.event.events.MemberMuteEvent
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.join
+import java.util.*
+import java.util.function.Supplier
 
-suspend fun main() {
+suspend fun main(args: Array<String>) {
+    println(args)
     /*val qqID = 744821060L
     val password = "1!2@3#skyYZ"*/
     val qqID = 1969631968L

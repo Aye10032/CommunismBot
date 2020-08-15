@@ -103,8 +103,8 @@ public class BanFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg CQmsg) {
-        commander.execute(CQmsg);
+    public void run(SimpleMsg msg) {
+        commander.execute(msg);
     }
 
     public void done(long fromGroup) {

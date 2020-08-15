@@ -10,15 +10,17 @@ package com.dazo66.message
 
  */
 
+import net.mamoe.mirai.LowLevelAPI
 import net.mamoe.mirai.message.data.*
 
 
 @Suppress("RegExpRedundantEscape") // required on android
 internal val codeRegex = Regex("""(?:\[mirai:([^\]]*)?:(.*?)?\])|(?:\[mirai:([^:]+)\])""")
 
+@net.mamoe.mirai.LowLevelAPI
 fun parseMiraiCode(s:String): MessageChain = s.parseMiraiCodeImpl()
 
-
+@net.mamoe.mirai.LowLevelAPI
 fun String.parseMiraiCodeImpl(): MessageChain = buildMessageChain {
     forEachMiraiCode { origin, name, args ->
         if (name == null) {
@@ -60,6 +62,7 @@ internal inline fun String.forEachMiraiCode(crossinline block: (origin: String, 
     }
 }
 
+@net.mamoe.mirai.LowLevelAPI
 internal object MiraiCodeParsers : Map<String, MiraiCodeParser> by mapOf(
     "at" to MiraiCodeParser(Regex("""(\d*),(.*)""")) { (target, display) ->
         At._lowLevelConstructAtInstance(target.toLong(), display)

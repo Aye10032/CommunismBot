@@ -10,6 +10,7 @@ import com.aye10032.Utils.ExceptionUtils;
 import com.aye10032.Utils.SeleniumUtils;
 import com.aye10032.Utils.TimeUtil.ITimeAdapter;
 import com.aye10032.Utils.TimeUtil.SubscriptManager;
+import com.aye10032.Utils.TimeUtil.TimeConstant;
 import com.aye10032.Utils.TimeUtil.TimeTaskPool;
 import com.dazo66.message.MiraiSerializationKt;
 import com.firespoon.bot.command.Command;
@@ -40,6 +41,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -97,7 +99,7 @@ public class Zibenbot {
         enableGroup.add(814843368L);
         enableGroup.add(1098042439L);
         enableGroup.add(1107287775L);
-        appDirectory = "data\\";
+        appDirectory = "data";
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
     }
 
@@ -312,7 +314,19 @@ public class Zibenbot {
                 Contact contact = findUser(fromMsg.getFromClient());
                 if (contact != null) {
                     MessageChain chain = toMessChain(contact, msg);
-                    contact.sendMessage(chain);
+                    AtomicBoolean flag = new AtomicBoolean(false);
+                    if (contact instanceof Member) {
+                        chain.forEach((m) -> {
+                            if (m instanceof Image) {
+                                flag.set(true);
+                            }
+                        });
+                    }
+                    if (!flag.get()) {
+                        contact.sendMessage(chain);
+                    } else {
+                        contact.sendMessage("发送消息失败，可能需要添加好友后才可以。\n原始消息如下：\n" + msg);
+                    }
 
                 }
             } else if (fromMsg.isTeamspealMsg()) {
@@ -322,8 +336,8 @@ public class Zibenbot {
                             msg));*/
                 //todo
             }
-        } catch (IllegalStateException e) {
-            toPrivateMsg(fromMsg.getFromClient(), "发送消息失败，可能需要添加好友后才可以。");
+        } catch (Exception e) {
+            logWarning(ExceptionUtils.printStack(e));
         }
     }
 
@@ -373,6 +387,13 @@ public class Zibenbot {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         Date date = calendar.getTime();
+        /*subManager.addSubscribable(new SimpleSubscription(this, TimeConstant.NEXT_MIN, () -> new Date().toString()) {
+            @Override
+            public String getName() {
+                return "test";
+            }
+        });*/
+
         //创建订阅器对象
         SimpleSubscription maiyao = new SimpleSubscription(this, maiyaoCycle,
                 getImg(appDirectory + "/image/提醒买药小助手.jpg")) {
