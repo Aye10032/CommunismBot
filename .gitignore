@@ -7,4 +7,9 @@
 /out/
 local.properties
 /src/test/
+/classes/
+/data/image/head.jpg
+/data/image/img.jpg
+/data/npldata
+/data/screenshot/
 

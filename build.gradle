@@ -71,12 +71,6 @@ dependencies {
 
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'com.common.Main.kt'
-    }
-}
-
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
@@ -98,7 +92,7 @@ shadowJar {
     // 生成包的命名规则： baseName-version-classifier.jar
     manifest {
         attributes(
-                'Main-Class': 'com.common.main'//入口点
+                'Main-Class': 'com.common.MainKt'//入口点
         )
     }
 
