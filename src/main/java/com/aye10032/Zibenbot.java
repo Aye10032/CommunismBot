@@ -10,7 +10,6 @@ import com.aye10032.Utils.ExceptionUtils;
 import com.aye10032.Utils.SeleniumUtils;
 import com.aye10032.Utils.TimeUtil.ITimeAdapter;
 import com.aye10032.Utils.TimeUtil.SubscriptManager;
-import com.aye10032.Utils.TimeUtil.TimeConstant;
 import com.aye10032.Utils.TimeUtil.TimeTaskPool;
 import com.dazo66.message.MiraiSerializationKt;
 import com.firespoon.bot.command.Command;
@@ -24,9 +23,7 @@ import net.mamoe.mirai.event.Listener;
 import net.mamoe.mirai.event.events.MemberMuteEvent;
 import net.mamoe.mirai.event.events.NewFriendRequestEvent;
 import net.mamoe.mirai.message.MessageEvent;
-import net.mamoe.mirai.message.data.At;
-import net.mamoe.mirai.message.data.Image;
-import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.MiraiLogger;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +38,6 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -243,6 +239,36 @@ public class Zibenbot {
         }
     }
 
+    public void toPrivateMsg(long clientId, MessageChain chain, boolean flag) {
+        Contact contact = findUser(clientId);
+        if (!flag) {
+            contact.sendMessage(chain);
+            return;
+        }
+        if (contact != null) {
+            try {
+                contact.sendMessage(chain);
+            } catch (IllegalStateException e){
+                String s = e.getMessage();
+                if (s.contains("resultType=10")) {
+                    if (contact instanceof Member) {
+                        contact.sendMessage("发送消息失败，可能需要添加好友。");
+                        return;
+                    }
+                    contact.sendMessage("发送消息失败，消息过长，将分段发送。");
+                    longMsgSplit(chain, 250).forEach(c->toPrivateMsg(clientId , c, false));
+                } else if (s.contains("resultType=32")) {
+                    contact.sendMessage("发送消息失败，请尝试添加好友再获取。");
+                }
+                else {
+                    logWarning(ExceptionUtils.printStack(e));
+                }
+            }
+        } else {
+            //todo 找不到渠道log输出
+        }
+    }
+
 /*    public int toTeamspeakMsg(String msg) {
         teamspeakBot.api.sendChannelMessage(msg);
         return 1;
@@ -311,24 +337,8 @@ public class Zibenbot {
                     contact.sendMessage(chain);
                 }
             } else if (fromMsg.isPrivateMsg()) {
-                Contact contact = findUser(fromMsg.getFromClient());
-                if (contact != null) {
-                    MessageChain chain = toMessChain(contact, msg);
-                    AtomicBoolean flag = new AtomicBoolean(false);
-                    if (contact instanceof Member) {
-                        chain.forEach((m) -> {
-                            if (m instanceof Image) {
-                                flag.set(true);
-                            }
-                        });
-                    }
-                    if (!flag.get()) {
-                        contact.sendMessage(chain);
-                    } else {
-                        contact.sendMessage("发送消息失败，可能需要添加好友后才可以。\n原始消息如下：\n" + msg);
-                    }
-
-                }
+                    MessageChain chain = toMessChain(findUser(fromMsg.getFromClient()), msg);
+                    toPrivateMsg(fromMsg.getFromClient(), chain, true);
             } else if (fromMsg.isTeamspealMsg()) {
 /*            Zibenbot.logger.log(Level.INFO,
                     String.format("回复ts频道[%s]消息:%s",
@@ -339,6 +349,59 @@ public class Zibenbot {
         } catch (Exception e) {
             logWarning(ExceptionUtils.printStack(e));
         }
+    }
+
+    private static List<String> split(String s, int length){
+        List<String> ret = new ArrayList<>();
+        int size = s.length() / length + 1;
+        for (int i = 0; i < size ;i++) {
+            int i1 = (i + 1) * length;
+            if (i1 > s.length()) {
+                i1 = s.length();
+            }
+            ret.add(s.substring(i * length, i1));
+        }
+        return ret;
+    }
+
+    private static List<MessageChain> longMsgSplit(MessageChain chain, int MAX_LENGTH) {
+        List<Message> list = new ArrayList<>();
+
+        for (Message message : chain) {
+            if (message.toString().length() >= MAX_LENGTH) {
+                if (message instanceof PlainText) {
+                    String s = message.toString();
+                    String[] strings = s.split("\n");
+                    for (String s2 : strings) {
+                        if (s2.length() > MAX_LENGTH) {
+                            split(s2, MAX_LENGTH).forEach(s1 -> list.add(new PlainText(s1)));
+                            list.add(new PlainText("\n"));
+                        } else {
+                            list.add(new PlainText(s2));
+                            list.add(new PlainText("\n"));
+                        }
+                    }
+                    list.remove(list.size() - 1);
+                }
+            } else {
+                list.add(message);
+            }
+        }
+        List<MessageChain> ret = new ArrayList<>();
+        int i = 0;
+        MessageChainBuilder builder = new MessageChainBuilder();
+        for (Message message : list) {
+            String s = message.toString();
+            if (i + s.length() >= MAX_LENGTH) {
+                ret.add(builder.build());
+                builder = new MessageChainBuilder();
+                i = 0;
+            } else {
+                builder.add(message);
+                i += s.length();
+            }
+        }
+        return ret;
     }
 
     public void onFriendEvent(NewFriendRequestEvent event){
