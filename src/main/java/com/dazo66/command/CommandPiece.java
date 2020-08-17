@@ -1,6 +1,5 @@
 package com.dazo66.command;
 
-import com.dazo66.command.exceptions.CheckException;
 import com.dazo66.command.interfaces.CommandRun;
 import com.dazo66.command.interfaces.ExceptionHandler;
 import com.dazo66.command.interfaces.ICommand;
@@ -46,7 +45,7 @@ public class CommandPiece<S extends ICommand> {
                     r.add(or);
                 }
             } catch (Exception e) {
-                handler.checkExceptionCetch(new CheckException("Check Exception", e));
+                handler.checkExceptionCetch(e);
             }
         }
         return r;

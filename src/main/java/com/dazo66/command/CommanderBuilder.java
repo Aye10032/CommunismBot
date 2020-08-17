@@ -1,8 +1,5 @@
 package com.dazo66.command;
 
-import com.dazo66.command.exceptions.CheckException;
-import com.dazo66.command.exceptions.CommandRuntimeException;
-import com.dazo66.command.exceptions.IfNotRuntiomeException;
 import com.dazo66.command.exceptions.RedundantParametersException;
 import com.dazo66.command.interfaces.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -32,23 +29,23 @@ public class CommanderBuilder<S extends ICommand> {
 
     private static final ExceptionHandler JUST_PRINT = new ExceptionHandler() {
         @Override
-        public void checkExceptionCetch(CheckException e) {
-            System.out.println(ExceptionUtils.getStackTrace(e.getCause()));
+        public void checkExceptionCetch(Exception e) {
+            System.out.println(ExceptionUtils.getStackTrace(e));
         }
 
         @Override
-        public void commandRuntimeExceptionCatch(CommandRuntimeException e) {
-            System.out.println(ExceptionUtils.getStackTrace(e.getCause()));
+        public void commandRuntimeExceptionCatch(Exception e) {
+            System.out.println(ExceptionUtils.getStackTrace(e));
         }
 
         @Override
-        public void ifNotRunntimeExceptionCatch(IfNotRuntiomeException e) {
-            System.out.println(ExceptionUtils.getStackTrace(e.getCause()));
+        public void ifNotRunntimeExceptionCatch(Exception e) {
+            System.out.println(ExceptionUtils.getStackTrace(e));
         }
 
         @Override
         public void redundantParametersExceptionCatch(RedundantParametersException e) {
-            System.out.println(ExceptionUtils.getStackTrace(e.getCause()));
+            System.out.println(ExceptionUtils.getStackTrace(e));
         }
     };
     private ExceptionHandler eHandler = JUST_PRINT;
