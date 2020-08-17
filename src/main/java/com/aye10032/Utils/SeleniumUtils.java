@@ -16,9 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class SeleniumUtils {
 
     private static ChromeOptions options = new ChromeOptions();
-    public static List<WebDriver> webDrivers = Collections.synchronizedList(new ArrayList<>());
     private static String dir;
-    private static WebDriver driver;
 
 
     public static void setup (String driverDir) {
@@ -30,17 +28,6 @@ public class SeleniumUtils {
 
         options.addArguments("headless");
         options.addArguments("disable-infobars");
-
-        Runtime rt = Runtime.getRuntime();
-        rt.addShutdownHook(new Thread(() -> {
-            for (WebDriver driver : webDrivers) {
-                try {
-                    closeDriver(driver);
-                } catch (Exception e) {
-                    //ignore
-                }
-            }
-        }));//register to the jvm
     }
 
     public static JavascriptExecutor getDriverJs(WebDriver driver) {
@@ -48,12 +35,7 @@ public class SeleniumUtils {
     }
 
     public static WebDriver getDriver() {
-        if (driver != null) {
-            return driver;
-        } else {
-            driver = getNewDriver();
-            return driver;
-        }
+        return getNewDriver();
     }
 
     private static WebDriver getNewDriver(){
@@ -68,7 +50,6 @@ public class SeleniumUtils {
         driver.manage().timeouts().setScriptTimeout(1, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
         //open browser with desried URL
-        webDrivers.add(driver);
         return driver;
     }
 

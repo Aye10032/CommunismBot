@@ -104,7 +104,7 @@ public class ScreenshotFunc extends BaseFunc {
             throw e;
         } finally {
             //释放资源
-            driver.get("about:blank");
+            SeleniumUtils.closeDriver(driver);
         }
         return new File(outFileName);
     }
