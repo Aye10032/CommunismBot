@@ -50,7 +50,7 @@ public class ScreenshotFunc extends BaseFunc {
         if (msg.startsWith("网页快照") || msg.startsWith(".网页快照")){
             msg = msg.replaceAll(" +", " ");
             String[] args = msg.split(" ");
-            zibenbot.pool.timeoutEvent(1, () -> {
+            zibenbot.pool.timeoutEvent(10, () -> {
                 try {
                     if (args.length == 3) {
                         replyMsg(CQmsg, zibenbot.getImg(getScreenshot(args[1], Integer.parseInt(args[2]))));

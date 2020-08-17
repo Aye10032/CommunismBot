@@ -39,7 +39,7 @@ public class DragraliaNewsFunc extends BaseFunc {
     @Override
     public void run(SimpleMsg CQmsg) {
         String s = CQmsg.getMsg();
-        if (s.startsWith(".龙约公告")) {
+        if (s.startsWith(".龙约公告") || s.startsWith("龙约公告")) {
             s = s.replaceAll(" +", " ");
             String[] strings = s.trim().split(" ");
             if (strings.length == 1) {

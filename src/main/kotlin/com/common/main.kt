@@ -15,9 +15,6 @@ import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.join
 
 suspend fun main(args: Array<String>) {
-    println(args)
-    /*val qqID = 744821060L
-    val password = "1!2@3#skyYZ"*/
     val qqID = args[0].toLong()
     val password = args[1]
 
