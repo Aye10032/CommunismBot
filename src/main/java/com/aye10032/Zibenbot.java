@@ -89,16 +89,16 @@ public class Zibenbot {
         // || fromGroup == 947657871
         // || fromGroup == 456919710L
         // || fromGroup == 792797914L
-        enableGroup.add(995497677L);
-        enableGroup.add(792666782L);
-        enableGroup.add(517709950L);
-        enableGroup.add(295904863L);
-        enableGroup.add(947657871L);
-        enableGroup.add(456919710L);
-        enableGroup.add(792797914L);
-        enableGroup.add(814843368L);
-        enableGroup.add(1098042439L);
-        enableGroup.add(1107287775L);
+        enableGroup.add(995497677L); //提醒人
+        enableGroup.add(792666782L); //实验室
+        enableGroup.add(517709950L); //植物群
+        enableGroup.add(295904863L); //魔方社
+        enableGroup.add(947657871L); //TIS内群
+        enableGroup.add(456919710L); //红石科技搬运组
+        enableGroup.add(792797914L); //TIS Lab
+        enableGroup.add(814843368L); //dazo群
+        enableGroup.add(1107287775L); //Test
+        enableGroup.add(980042772L); //公会
         appDirectory = "data";
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
     }
