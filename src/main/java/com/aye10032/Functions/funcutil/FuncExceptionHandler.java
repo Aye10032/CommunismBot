@@ -2,9 +2,6 @@ package com.aye10032.Functions.funcutil;
 
 import com.aye10032.Utils.ExceptionUtils;
 import com.aye10032.Zibenbot;
-import com.dazo66.command.exceptions.CheckException;
-import com.dazo66.command.exceptions.CommandRuntimeException;
-import com.dazo66.command.exceptions.IfNotRuntiomeException;
 import com.dazo66.command.exceptions.RedundantParametersException;
 import com.dazo66.command.interfaces.ExceptionHandler;
 
@@ -16,22 +13,22 @@ public class FuncExceptionHandler implements ExceptionHandler {
     public static final FuncExceptionHandler INSTENCE = new FuncExceptionHandler();
 
     @Override
-    public void checkExceptionCetch(CheckException e) {
-        Zibenbot.logger.warning(ExceptionUtils.printStack(e.getCause()));
+    public void checkExceptionCetch(Exception e) {
+        Zibenbot.logger.warning(ExceptionUtils.printStack(e));
     }
 
     @Override
-    public void commandRuntimeExceptionCatch(CommandRuntimeException e) {
-        Zibenbot.logger.warning(ExceptionUtils.printStack(e.getCause()));
+    public void commandRuntimeExceptionCatch(Exception e) {
+        Zibenbot.logger.warning(ExceptionUtils.printStack(e));
     }
 
     @Override
-    public void ifNotRunntimeExceptionCatch(IfNotRuntiomeException e) {
-        Zibenbot.logger.warning(ExceptionUtils.printStack(e.getCause()));
+    public void ifNotRunntimeExceptionCatch(Exception e) {
+        Zibenbot.logger.warning(ExceptionUtils.printStack(e));
     }
 
     @Override
     public void redundantParametersExceptionCatch(RedundantParametersException e) {
-        Zibenbot.logger.warning(ExceptionUtils.printStack(e.getCause()));
+        Zibenbot.logger.warning(ExceptionUtils.printStack(e));
     }
 }
