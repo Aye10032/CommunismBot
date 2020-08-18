@@ -1,7 +1,5 @@
 package com.dazo66.command;
 
-import com.dazo66.command.exceptions.CommandRuntimeException;
-import com.dazo66.command.exceptions.IfNotRuntiomeException;
 import com.dazo66.command.exceptions.RedundantParametersException;
 import com.dazo66.command.interfaces.ExceptionHandler;
 import com.dazo66.command.interfaces.ICommand;
@@ -36,7 +34,7 @@ public class Commander<S extends ICommand> {
      * math add 1 x
      * -> wrong at d2
      * math add 1 2 3
-     * -> more args nothing
+     * -> more args nothing to do
      * math add
      * -> wrong at d1
      *
@@ -56,8 +54,7 @@ public class Commander<S extends ICommand> {
                 try {
                     or.getRun().run(s);
                 } catch (Exception e) {
-                    eHandler.commandRuntimeExceptionCatch(new CommandRuntimeException(
-                            "Exception on CommandRun", e));
+                    eHandler.commandRuntimeExceptionCatch(e);
                 }
             }
         } else {
@@ -77,8 +74,7 @@ public class Commander<S extends ICommand> {
                         try {
                             p.getIfNot().run(s);
                         } catch (Exception e) {
-                            eHandler.ifNotRunntimeExceptionCatch(new IfNotRuntiomeException(
-                                    "Exception on ifnot", e));
+                            eHandler.ifNotRunntimeExceptionCatch(e);
                         }
                     }
                 } else {
@@ -86,8 +82,7 @@ public class Commander<S extends ICommand> {
                         try {
                             p.getIfNot().run(s);
                         } catch (Exception e) {
-                            eHandler.ifNotRunntimeExceptionCatch(new IfNotRuntiomeException(
-                                    "Exception on ifnot", e));
+                            eHandler.ifNotRunntimeExceptionCatch(e);
                         }
                     }
                 }

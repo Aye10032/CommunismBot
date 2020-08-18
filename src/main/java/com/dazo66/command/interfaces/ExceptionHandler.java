@@ -1,8 +1,5 @@
 package com.dazo66.command.interfaces;
 
-import com.dazo66.command.exceptions.CheckException;
-import com.dazo66.command.exceptions.CommandRuntimeException;
-import com.dazo66.command.exceptions.IfNotRuntiomeException;
 import com.dazo66.command.exceptions.RedundantParametersException;
 
 /**
@@ -11,11 +8,11 @@ import com.dazo66.command.exceptions.RedundantParametersException;
  */
 public interface ExceptionHandler {
 
-    void checkExceptionCetch(CheckException e);
+    void checkExceptionCetch(Exception e);
 
-    void commandRuntimeExceptionCatch(CommandRuntimeException e);
+    void commandRuntimeExceptionCatch(Exception e);
 
-    void ifNotRunntimeExceptionCatch(IfNotRuntiomeException e);
+    void ifNotRunntimeExceptionCatch(Exception e);
 
     void redundantParametersExceptionCatch(RedundantParametersException e);
 
