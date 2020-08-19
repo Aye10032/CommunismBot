@@ -42,17 +42,17 @@ public abstract class DragraliaTask extends SubscribableBase {
     OkHttpClient client =
             new OkHttpClient.Builder().callTimeout(30, TimeUnit.SECONDS).proxy(Zibenbot.proxy).build();
     private JsonParser jsonParser = new JsonParser();
-    private ArticleUpateDate date = null;
     public Runnable runnable = () -> {
         client = client.newBuilder().proxy(Zibenbot.getProxy()).build();
         try {
+            ArticleUpateDate date = null;
             try {
                 date = getUpdateDate();
             } catch (Exception e) {
                 e.printStackTrace();
                 //zibenbot.replyMsg(cqMsg, "公告获取异常");
             }
-            Set<Article> articles = getNewArticles();
+            Set<Article> articles = getNewArticles(date);
             articles.forEach(a -> this.sendArticle(a, getRecipients()));
         } catch (Exception e) {
             zibenbot.log(Level.WARNING, ExceptionUtils.printStack(e));
@@ -86,7 +86,7 @@ public abstract class DragraliaTask extends SubscribableBase {
         runnable.run();
     }
 
-    private synchronized Set<Article> getNewArticles() {
+    private synchronized Set<Article> getNewArticles(ArticleUpateDate date) {
         Set<Article> set = new HashSet<>();
         ArticleUpateDate last = gson.fromJson(config.getWithDafault("last_update_date", "{}"),
                 ArticleUpateDate.class);
@@ -113,9 +113,9 @@ public abstract class DragraliaTask extends SubscribableBase {
         });
         date.update_article_list.forEach(i -> {
             ArticleUpateDate.UpdateDate d = null;
-            for (ArticleUpateDate.UpdateDate date : last.update_article_list) {
-                if (date.id == i.id) {
-                    d = date;
+            for (ArticleUpateDate.UpdateDate date1 : last.update_article_list) {
+                if (date1.id == i.id) {
+                    d = date1;
                     break;
                 }
             }
