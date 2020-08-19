@@ -25,10 +25,13 @@ import net.mamoe.mirai.event.events.NewFriendRequestEvent;
 import net.mamoe.mirai.message.MessageEvent;
 import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.MiraiLogger;
+import net.mamoe.mirai.utils.PlatformLogger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -36,6 +39,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -99,10 +103,40 @@ public class Zibenbot {
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
     }
 
+    private PrintStream LOGGER_FILE = null;
+
+    private synchronized PrintStream getLoggerStream() {
+        if (LOGGER_FILE == null) {
+            File logDir = new File(appDirectory + "\\log");
+            if (!logDir.exists()) {
+                logDir.mkdirs();
+            }
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            File file = new File(appDirectory + "\\log\\log-" + format.format(new Date()) + ".log");
+            try {
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                LOGGER_FILE = new PrintStream(new FileOutputStream(file, true), true);
+                LOGGER_FILE.println("------------------------------------------------------------------");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return LOGGER_FILE;
+
+    }
+
     public Zibenbot(Bot bot) {
         this.bot = bot;
-        logger = bot.getLogger();
+        logger = new PlatformLogger("zibenbot", (String s) -> {
+            System.out.println(s);
+            getLoggerStream().println(s);
+            return Unit.INSTANCE;
+        }, true);
+        bot.getLogger().plus(logger);
         pool = new TimeTaskPool();
+
     }
 
     public static Proxy getProxy() {
