@@ -1,6 +1,7 @@
 package com.aye10032.NLP;
 
 import com.aye10032.Functions.funcutil.BaseFunc;
+import com.aye10032.Functions.funcutil.IFunc;
 import com.aye10032.Functions.funcutil.SimpleMsg;
 import com.aye10032.Zibenbot;
 
@@ -86,6 +87,13 @@ public class DataCollect extends BaseFunc {
                     !((CQmsg.getMsg().equals("aye") || CQmsg.getMsg().equals("Aye") || CQmsg.getMsg().equals("阿叶")
                     || CQmsg.getMsg().equals("小叶") || CQmsg.getMsg().equals("叶受") || CQmsg.getMsg().equals("叶哥哥")))) {
                 flag = true;
+            }
+        }
+
+        if (flag) {
+            if (CQmsg.getFromGroup() == 947657871L){
+                if (CQmsg.getMsg().length() <= 6)
+                    flag = false;
             }
         }
 
