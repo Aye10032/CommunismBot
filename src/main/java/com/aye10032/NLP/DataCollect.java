@@ -6,10 +6,7 @@ import com.aye10032.Functions.funcutil.SimpleMsg;
 import com.aye10032.Zibenbot;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +17,22 @@ public class DataCollect extends BaseFunc {
     private Connection c = null;
 
     public static void main(String[] args) {
-
+        /*Connection c = null;
+        Statement stmt;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:" + "D:\\program\\GitHub\\FSBot"+
+                    "\\data\\nlpdata\\botnlpdata.db");
+            stmt = c.createStatement();
+            String sql = "SELECT * FROM question where msg='叶受A';";
+            ResultSet rs = stmt.executeQuery(sql);
+            System.out.println(rs.next());
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }*/
     }
 
     public Connection getConnection(){
@@ -101,15 +113,24 @@ public class DataCollect extends BaseFunc {
             Statement stmt;
             try {
                 stmt = getConnection().createStatement();
+                String sql = "SELECT * FROM question where msg='"+CQmsg.getMsg()+"';";
+                ResultSet rs = stmt.executeQuery(sql);
+                boolean hasMSG = rs.next();
+                rs.close();
                 Date dNow = new Date();
                 SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                String sql =
-                        "INSERT INTO question (msg,fromQQ,fromGroup,time) " + "VALUES ('" + CQmsg.getMsg() + "', '" + CQmsg.getFromClient() + "', '" + CQmsg.getFromGroup() + "', '" + ft.format(dNow) + "' );";
-                stmt.executeUpdate(sql);
+                if (!hasMSG) {
+                    sql =
+                            "INSERT INTO question (msg,fromQQ,fromGroup,time) " + "VALUES ('" + CQmsg.getMsg() + "', '" + CQmsg.getFromClient() + "', '" + CQmsg.getFromGroup() + "', '" + ft.format(dNow) + "' );";
+                    stmt.executeUpdate(sql);
+                    zibenbot.toPrivateMsg(2375985957L, "已添加数据集：" + CQmsg.getMsg());
+                    replyMsg(CQmsg, "[" + ft.format(dNow) + "][INFO] 本条对话已添加NLP待处理数据集");
+                }
+                /*else {
+                    replyMsg(CQmsg, "[" + ft.format(dNow) + "][INFO] 已存在此数据");
+                }*/
                 stmt.close();
                 c.close();
-                zibenbot.toPrivateMsg(2375985957L, "已添加数据集：" + CQmsg.getMsg());
-                replyMsg(CQmsg, "[" + ft.format(dNow) + "][INFO] 本条对话已添加NLP待处理数据集");
             } catch (Exception e) {
                 zibenbot.log(Level.WARNING, e.getClass().getName() + ": " + e.getMessage());
             }
