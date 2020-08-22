@@ -75,6 +75,47 @@ public class CubeFunc extends BaseFunc {
                                     + zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\2X202.png"))
                                     + zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\2X203.png")));
                 })
+                .or(".彳亍"::equals)
+                .run((cqmsg) ->{
+                    zibenbot.replyMsg(cqmsg,
+                            zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\chichu01.png"))
+                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\chichu02.png"))
+                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\chichu03.png"))
+                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\chichu04.png"))
+                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\chichu05.png")));
+                })
+                .next()
+                    .or("编码"::equals)
+                    .run((cqmsg) ->{
+                        zibenbot.replyMsg(cqmsg,
+                                zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\chichu_bianma.png")));
+                    })
+                    .or("角"::equals)
+                    .run((cqmsg) ->{
+                        zibenbot.replyMsg(cqmsg,
+                                zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\chichu_jiao.png")));
+                    })
+                    .or("棱1"::equals)
+                    .run((cqmsg) ->{
+                        zibenbot.replyMsg(cqmsg,
+                                zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\chichu_leng.png")));
+                    })
+                    .or("棱2"::equals)
+                    .run((cqmsg) ->{
+                        zibenbot.replyMsg(cqmsg,
+                                zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\chichu_leng2.png")));
+                    })
+                    .or("翻棱"::equals)
+                    .run((cqmsg) ->{
+                        zibenbot.replyMsg(cqmsg,
+                                zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\chichu_fanleng.png")));
+                    })
+                    .or("翻角"::equals)
+                    .run((cqmsg) ->{
+                        zibenbot.replyMsg(cqmsg,
+                                zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\chichu_fanjiao.png")));
+                    })
+                .pop()
                 .build();
     }
 
@@ -100,7 +141,8 @@ public class CubeFunc extends BaseFunc {
                 .append(".3 -----三阶打乱\n")
                 .append(".CFOP [F2L|OLL|PLL] -----CFOP公式\n")
                 .append(".22 -----二阶面先法公式\n")
-                .append(".MEGA -----五魔方公式\n");
+                .append(".MEGA -----五魔方公式\n")
+                .append(".彳亍 [编码|角|棱1|棱2|翻棱|翻角|编码] -----盲拧彳亍法公式，其中棱1是以DF为缓冲；棱2是以UF为缓冲块");
 
         return infoBuilder.toString();
     }
