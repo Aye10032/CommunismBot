@@ -6,6 +6,7 @@ import com.aye10032.TimeTask.DragraliaTask;
 import com.aye10032.Utils.ArticleUpateDate;
 import com.aye10032.Utils.Config;
 import com.aye10032.Utils.ConfigLoader;
+import com.aye10032.Utils.ExceptionUtils;
 import com.aye10032.Zibenbot;
 
 import java.io.IOException;
@@ -57,9 +58,10 @@ public class DragraliaNewsFunc extends BaseFunc {
                             articles.add(Objects.requireNonNull(task.getArticleFromNet(integer, false)));
                         } catch (Exception e) {
                             DragraliaTask.Article a = new DragraliaTask.Article();
-                            a.title_name = "获取公告异常";
+                            a.title_name = "获取公告异常 " + e;
                             a.article_id = integer;
                             articles.add(a);
+                            zibenbot.logWarning(ExceptionUtils.printStack(e));
                         }
                     }));
                     date.update_article_list.forEach(date1 -> rs.add(() -> {
@@ -67,9 +69,10 @@ public class DragraliaNewsFunc extends BaseFunc {
                             articles.add(Objects.requireNonNull(task.getArticleFromNet(date1.id, false)));
                         } catch (Exception e) {
                             DragraliaTask.Article a = new DragraliaTask.Article();
-                            a.title_name = "获取公告异常";
+                            a.title_name = "获取公告异常 " + e;
                             a.article_id = date1.id;
                             articles.add(a);
+                            zibenbot.logWarning(ExceptionUtils.printStack(e));
                         }
                     }));
                     zibenbot.pool.getAsynchronousPool().execute(() -> {
@@ -102,7 +105,7 @@ public class DragraliaNewsFunc extends BaseFunc {
                         a = task.getArticleFromNet(id, false);
                     } catch (Exception e) {
                         replyMsg(CQmsg, "获取公告异常，公告id：" + id);
-                        e.printStackTrace();
+                        zibenbot.logWarning(ExceptionUtils.printStack(e));
                         continue;
                     }
                     ArrayList<SimpleMsg> list = new ArrayList<>();
