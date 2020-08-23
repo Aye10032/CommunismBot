@@ -1,0 +1,333 @@
+{
+  "material": [{
+    "_id": "5e12607817b9f026ec0b3951",
+    "id": "30011",
+    "tier": 1,
+    "name": "源岩",
+    "credit_store_value": 2.607,
+    "type": "Material",
+    "Order_id": 1,
+    "Notes": "",
+    "lowest_ap_stages": [{
+      "extra_drop": [{
+        "name": "聚酸酯组",
+        "id": "30033"
+      }],
+      "code": "2-6",
+      "drop_rate": 0.41,
+      "efficiency": 1,
+      "ap_per_item": 29.22
+    }],
+    "balanced_stages": [],
+    "drop_rate_first_stages": [{
+      "extra_drop": [],
+      "code": "S2-5",
+      "drop_rate": 3.61,
+      "efficiency": 0.57,
+      "ap_per_item": 3.33
+    }],
+    "last_updated": "Mon Feb 24 2020 08:10:56 GMT+0000 (Coordinated Universal Time)"
+  }, {
+    "_id": "5e1260f317b9f026ec0b3956",
+    "id": "30051",
+    "tier": 1,
+    "name": "双酮",
+    "credit_store_value": 4.137,
+    "type": "Material",
+    "Order_id": 2,
+    "Notes": "",
+    "lowest_ap_stages": [{
+      "extra_drop": [{
+        "name": "轻锰矿",
+        "id": "30083"
+      }, {
+        "name": "三水锰矿",
+        "id": "30084"
+      }],
+      "code": "6-2",
+      "drop_rate": 0.32,
+      "efficiency": 1,
+      "ap_per_item": 56.64
+    }, {
+      "extra_drop": [{
+        "name": "研磨石",
+        "id": "30093"
+      }, {
+        "name": "五水研磨石",
+        "id": "30094"
+      }],
+      "code": "4-8",
+      "drop_rate": 0.32,
+      "efficiency": 1,
+      "ap_per_item": 64.82
+    }, {
+      "extra_drop": [{
+        "name": "RMA70-12",
+        "id": "30103"
+      }, {
+        "name": "RMA70-24",
+        "id": "30104"
+      }],
+      "code": "4-9",
+      "drop_rate": 0.32,
+      "efficiency": 1,
+      "ap_per_item": 66.39
+    }, {
+      "extra_drop": [{
+        "name": "酮凝集组",
+        "id": "30053"
+      }, {
+        "name": "酮阵列",
+        "id": "30054"
+      }],
+      "code": "4-5",
+      "drop_rate": 0.33,
+      "efficiency": 1,
+      "ap_per_item": 54.81
+    }, {
+      "extra_drop": [{
+        "name": "凝胶",
+        "id": "31013"
+      }, {
+        "name": "聚合凝胶",
+        "id": "31014"
+      }],
+      "code": "S5-7",
+      "drop_rate": 0.32,
+      "efficiency": 1,
+      "ap_per_item": 55.67
+    }, {
+      "extra_drop": [{
+        "name": "聚酸酯组",
+        "id": "30033"
+      }, {
+        "name": "聚酸酯块",
+        "id": "30034"
+      }],
+      "code": "6-4",
+      "drop_rate": 0.33,
+      "efficiency": 0.99,
+      "ap_per_item": 54.99
+    }],
+    "balanced_stages": [],
+    "drop_rate_first_stages": [{
+      "extra_drop": [],
+      "code": "S2-9",
+      "drop_rate": 1.94,
+      "efficiency": 0.64,
+      "ap_per_item": 6.19
+    }],
+    "last_updated": "Mon Feb 24 2020 08:10:56 GMT+0000 (Coordinated Universal Time)"
+  }, {
+    "_id": "5e1260d917b9f026ec0b3955",
+    "id": "30041",
+    "tier": 1,
+    "name": "异铁碎片",
+    "credit_store_value": 3.949,
+    "type": "Material",
+    "Order_id": 3,
+    "Notes": "",
+    "lowest_ap_stages": [{
+      "extra_drop": [{
+        "name": "异铁组",
+        "id": "30043"
+      }, {
+        "name": "异铁块",
+        "id": "30044"
+      }],
+      "code": "S4-1",
+      "drop_rate": 0.14,
+      "efficiency": 1,
+      "ap_per_item": 132.55
+    }],
+    "balanced_stages": [{
+      "extra_drop": [{
+        "name": "糖组",
+        "id": "30023"
+      }],
+      "code": "2-5",
+      "drop_rate": 0.2,
+      "efficiency": 0.94,
+      "ap_per_item": 58.67
+    }],
+    "drop_rate_first_stages": [{
+      "extra_drop": [],
+      "code": "S2-8",
+      "drop_rate": 1.91,
+      "efficiency": 0.63,
+      "ap_per_item": 6.27
+    }],
+    "last_updated": "Mon Feb 24 2020 08:10:56 GMT+0000 (Coordinated Universal Time)"
+  }, {
+    "_id": "5e12609217b9f026ec0b3952",
+    "id": "30061",
+    "tier": 1,
+    "name": "破损装置",
+    "credit_store_value": 4.164,
+    "type": "Material",
+    "Order_id": 4,
+    "Notes": "green",
+    "lowest_ap_stages": [{
+      "extra_drop": [{
+        "name": "聚酸酯组",
+        "id": "30033"
+      }],
+      "code": "2-6",
+      "drop_rate": 0.16,
+      "efficiency": 1,
+      "ap_per_item": 75.61
+    }],
+    "balanced_stages": [],
+    "drop_rate_first_stages": [{
+      "extra_drop": [],
+      "code": "2-3",
+      "drop_rate": 1.4,
+      "efficiency": 0.63,
+      "ap_per_item": 8.54
+    }],
+    "last_updated": "Mon Feb 24 2020 08:10:56 GMT+0000 (Coordinated Universal Time)"
+  }, {
+    "_id": "5e1260a617b9f026ec0b3953",
+    "id": "30031",
+    "tier": 1,
+    "name": "酯原料",
+    "credit_store_value": 3.914,
+    "type": "Material",
+    "Order_id": 5,
+    "Notes": "",
+    "lowest_ap_stages": [{
+      "extra_drop": [{
+        "name": "轻锰矿",
+        "id": "30083"
+      }, {
+        "name": "三水锰矿",
+        "id": "30084"
+      }],
+      "code": "6-2",
+      "drop_rate": 0.42,
+      "efficiency": 1,
+      "ap_per_item": 43.25
+    }, {
+      "extra_drop": [{
+        "name": "研磨石",
+        "id": "30093"
+      }, {
+        "name": "五水研磨石",
+        "id": "30094"
+      }],
+      "code": "4-8",
+      "drop_rate": 0.4,
+      "efficiency": 1,
+      "ap_per_item": 52.27
+    }, {
+      "extra_drop": [{
+        "name": "RMA70-12",
+        "id": "30103"
+      }, {
+        "name": "RMA70-24",
+        "id": "30104"
+      }],
+      "code": "4-9",
+      "drop_rate": 0.4,
+      "efficiency": 1,
+      "ap_per_item": 52.28
+    }, {
+      "extra_drop": [{
+        "name": "酮凝集组",
+        "id": "30053"
+      }, {
+        "name": "酮阵列",
+        "id": "30054"
+      }],
+      "code": "4-5",
+      "drop_rate": 0.41,
+      "efficiency": 1,
+      "ap_per_item": 43.95
+    }, {
+      "extra_drop": [{
+        "name": "凝胶",
+        "id": "31013"
+      }, {
+        "name": "聚合凝胶",
+        "id": "31014"
+      }],
+      "code": "S5-7",
+      "drop_rate": 0.4,
+      "efficiency": 1,
+      "ap_per_item": 44.55
+    }, {
+      "extra_drop": [{
+        "name": "聚酸酯组",
+        "id": "30033"
+      }, {
+        "name": "聚酸酯块",
+        "id": "30034"
+      }],
+      "code": "6-4",
+      "drop_rate": 0.41,
+      "efficiency": 0.99,
+      "ap_per_item": 43.96
+    }],
+    "balanced_stages": [],
+    "drop_rate_first_stages": [{
+      "extra_drop": [],
+      "code": "S2-7",
+      "drop_rate": 2.51,
+      "efficiency": 0.65,
+      "ap_per_item": 4.78
+    }],
+    "last_updated": "Mon Feb 24 2020 08:10:56 GMT+0000 (Coordinated Universal Time)"
+  }, {
+    "_id": "5e1260bd17b9f026ec0b3954",
+    "id": "30021",
+    "tier": 1,
+    "name": "代糖",
+    "credit_store_value": 3.456,
+    "type": "Material",
+    "Order_id": 6,
+    "Notes": "",
+    "lowest_ap_stages": [{
+      "extra_drop": [{
+        "name": "异铁组",
+        "id": "30043"
+      }, {
+        "name": "异铁块",
+        "id": "30044"
+      }],
+      "code": "S4-1",
+      "drop_rate": 0.17,
+      "efficiency": 1,
+      "ap_per_item": 108.04
+    }, {
+      "extra_drop": [{
+        "name": "糖组",
+        "id": "30023"
+      }, {
+        "name": "糖聚块",
+        "id": "30024"
+      }],
+      "code": "4-2",
+      "drop_rate": 0.17,
+      "efficiency": 1,
+      "ap_per_item": 108.55
+    }],
+    "balanced_stages": [{
+      "extra_drop": [{
+        "name": "糖组",
+        "id": "30023"
+      }],
+      "code": "2-5",
+      "drop_rate": 0.26,
+      "efficiency": 0.94,
+      "ap_per_item": 46.72
+    }],
+    "drop_rate_first_stages": [{
+      "extra_drop": [],
+      "code": "S2-6",
+      "drop_rate": 2.45,
+      "efficiency": 0.6,
+      "ap_per_item": 4.9
+    }],
+    "last_updated": "Mon Feb 24 2020 08:10:56 GMT+0000 (Coordinated Universal Time)"
+  }]
+}
