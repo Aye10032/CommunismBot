@@ -31,7 +31,7 @@ public class CubeFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .or(commandCheck(new String[]{".cube",".CUBE"}))
+                .or(".cube"::equalsIgnoreCase)
                 .run((cqmsg) -> {
                     zibenbot.replyMsg(cqmsg, funcInfo());
                 })
@@ -40,7 +40,7 @@ public class CubeFunc extends BaseFunc {
                     newCuberandom();
                     zibenbot.replyMsg(cqmsg, getCuberandom());
                 })
-                .or(commandCheck(new String[]{".cfop",".CFOP"}))
+                .or(".cfop"::equalsIgnoreCase)
                 .run((cqmsg) ->{
                     zibenbot.replyMsg(cqmsg,
                             zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\CFOP1.jpg"))
@@ -49,20 +49,20 @@ public class CubeFunc extends BaseFunc {
                                     + zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\CFOP4.jpg")));
                 })
                 .next()
-                    .or(commandCheck(new String[]{"F2L","f2l"}))
+                    .or("f2l"::equalsIgnoreCase)
                     .run((cqmsg) ->{
                         zibenbot.replyMsg(cqmsg, zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\CFOP2.jpg")));
                     })
-                    .or(commandCheck(new String[]{"OLL","oll"}))
+                    .or("oll"::equalsIgnoreCase)
                     .run((cqmsg) ->{
                         zibenbot.replyMsg(cqmsg, zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\CFOP3.jpg")));
                     })
-                    .or(commandCheck(new String[]{"PLL","pll"}))
+                    .or("pll"::equalsIgnoreCase)
                     .run((cqmsg) ->{
                         zibenbot.replyMsg(cqmsg, zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\CFOP4.jpg")));
                     })
                 .pop()
-                .or(commandCheck(new String[]{".MEGA",".mega"}))
+                .or(".mega"::equalsIgnoreCase)
                 .run((cqmsg) ->{
                     zibenbot.replyMsg(cqmsg,
                             zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\cube\\Mega1.jpg"))
