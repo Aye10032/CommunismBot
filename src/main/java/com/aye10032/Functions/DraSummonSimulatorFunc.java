@@ -136,7 +136,7 @@ public class DraSummonSimulatorFunc extends BaseFunc {
                 } else if (strings[1].endsWith("连")) {
                     UserDate date = getUser(CQmsg.getFromClient());
                     if (date.todayCount > 2 && CQmsg.isGroupMsg()) {
-                        replyMsg(CQmsg, new At((Member) CQmsg.getEvent().getSender()) +
+                        replyMsg(CQmsg, zibenbot.at(CQmsg.getFromClient()) +
                                 "今天的抽卡次数已经用完，请明天或者私聊抽卡。");
                     } else {
                         int x = 0;
@@ -174,7 +174,7 @@ public class DraSummonSimulatorFunc extends BaseFunc {
                 } else if ("单抽".equals(strings[1])) {
                     UserDate date = getUser(CQmsg.getFromClient());
                     if (date.todayCount > 2 && CQmsg.isGroupMsg()) {
-                        replyMsg(CQmsg, zibenbot.at((Member) CQmsg.getEvent().getSender()) +
+                        replyMsg(CQmsg, zibenbot.at(CQmsg.getFromClient()) +
                                 "今天的抽卡次数已经用完，请明天或者私聊抽卡。");
                     } else {
                         StringBuilder builder = new StringBuilder();

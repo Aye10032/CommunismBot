@@ -53,6 +53,8 @@ public class CommanderBuilder<S extends ICommand> {
     private CommandPiece<S> main = new CommandPiece<>();
     private CommandPiece<S> current;
     private or<S> currentOr;
+    private GlobeCheck<S> globeCheck;
+    private CommandRun<S> callBack;
 
     /**
      * 设置异常处理器
@@ -66,13 +68,46 @@ public class CommanderBuilder<S extends ICommand> {
     }
 
     /**
+     * 传入命令的全局检查方法，在每次匹配后运行前会执行此方法进行检查
+     * 开始构建，在开始之前一定要运行此方法，进行初始化
+     * @param globeCheck 全局检查参数 回在匹配后进行检查，返回false则取消执行
+     * @return this
+     */
+    public CommanderBuilder<S> start(GlobeCheck<S> globeCheck) {
+        return start(globeCheck, null);
+    }
+
+    /**
+     * 传入命令的全局检查方法，在每次匹配后运行前会执行此方法进行检查
+     * 开始构建，在开始之前一定要运行此方法，进行初始化
+     * @param globeCheck 全局检查参数 回在匹配后进行检查，返回false则取消执行
+     * @param callBack 全局检查函数返回false后的回调
+     * @return this
+     */
+    public CommanderBuilder<S> start(GlobeCheck<S> globeCheck, CommandRun<S> callBack) {
+        current = main;
+        stack.push(current);
+        this.globeCheck = globeCheck;
+        this.callBack = callBack;
+        return this;
+    }
+
+    public CommanderBuilder<S> setGlobeCheck(GlobeCheck<S> globeCheck) {
+        this.globeCheck = globeCheck;
+        return this;
+    }
+
+    public CommanderBuilder<S> setGlobeCheckCallBack(CommandRun<S> callBack) {
+        this.callBack = callBack;
+        return this;
+    }
+
+    /**
      * 开始构建，在开始之前一定要运行此方法，进行初始化
      * @return this
      */
     public CommanderBuilder<S> start() {
-        current = main;
-        stack.push(current);
-        return this;
+        return start(s -> true);
     }
 
     /**
@@ -152,9 +187,7 @@ public class CommanderBuilder<S extends ICommand> {
      */
     public Commander<S> build(){
         Commander<S> ret = new Commander<>();
-        ret.seteHandler(eHandler);
-        ret.setPiece(main);
-        return ret;
+        return _build(ret);
     }
 
     /**
@@ -164,8 +197,14 @@ public class CommanderBuilder<S extends ICommand> {
      */
     public Commander<S> build(CommanderFactory<S> factory){
         Commander<S> ret = factory.build();
+        return _build(ret);
+    }
+
+    private Commander<S> _build(Commander<S> ret){
         ret.seteHandler(eHandler);
         ret.setPiece(main);
+        ret.setGlobeCheck(globeCheck);
+        ret.setCallback(callBack);
         return ret;
     }
 }

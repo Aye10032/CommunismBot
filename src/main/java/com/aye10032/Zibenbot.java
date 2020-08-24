@@ -48,6 +48,9 @@ import java.util.regex.Pattern;
 
 //msg = msg.replace("&#91;", "[").replace("&#93;", "]");
 
+/**
+ * @author Dazo66
+ */
 public class Zibenbot {
 
     public static Proxy proxy = null;
@@ -185,24 +188,45 @@ public class Zibenbot {
         }
     }
 
-    public void muteMember(Member member, int second) {
+    private void muteMember(Member member, int second) {
         member.mute(second);
     }
 
     public void muteMember(long groupId, long memberId, int second) {
-        muteMember(getGroup(groupId).get(memberId), second);
+
+        Member member = null;
+        try {
+            member = _getGroup(groupId).get(memberId);
+        } catch (Exception e) {
+            logWarning("禁言失败：" + memberId + e);
+            return;
+        }
+
+        muteMember(member, second);
     }
 
     public void setMuteAll(long groupId, boolean muteAll) {
-        getGroup(groupId).getSettings().setMuteAll(muteAll);
+        Group g = _getGroup(groupId);
+        if (g == null) {
+            logWarning("全体禁言失败，找不到group：" + groupId);
+            return;
+        }
+        g.getSettings().setMuteAll(muteAll);
     }
 
-    public void unMute(Member member) {
+    private void unMute(Member member) {
         member.unmute();
     }
 
     public void unMute(long groupId, long memberId) {
-        unMute(getGroup(groupId).get(memberId));
+        Member member = null;
+        try {
+            member = _getGroup(groupId).get(memberId);
+        } catch (Exception e) {
+            logWarning("禁言失败：" + memberId + e);
+            return;
+        }
+        unMute(member);
     }
 
     public void onMute(MemberMuteEvent event){
@@ -235,7 +259,7 @@ public class Zibenbot {
         }
     }
 
-    public String at(User user) {
+    private String at(User user) {
         if (user == null) {
             return "null";
         }
@@ -265,42 +289,40 @@ public class Zibenbot {
     }
 
     public void toPrivateMsg(long clientId, String msg) {
-        Contact contact = findUser(clientId);
-        if (contact != null) {
-            contact.sendMessage(toMessChain(contact, msg));
-        } else {
-            //todo 找不到渠道log输出
-        }
+        toPrivateMsg(clientId, toMessChain(findUser(clientId), msg));
     }
 
-    public void toPrivateMsg(long clientId, MessageChain chain, boolean flag) {
+    private void toPrivateMsg(long clientId, MessageChain chain, boolean flag) {
         Contact contact = findUser(clientId);
+        if (contact == null) {
+            logWarning("找不到Contact：" + clientId);
+            return;
+        }
         if (!flag) {
             contact.sendMessage(chain);
             return;
         }
-        if (contact != null) {
-            try {
-                contact.sendMessage(chain);
-            } catch (IllegalStateException e){
-                String s = e.getMessage();
-                if (s.contains("resultType=10")) {
-                    if (contact instanceof Member) {
-                        contact.sendMessage("发送消息失败，可能需要添加好友。");
-                        return;
-                    }
-                    contact.sendMessage("发送消息失败，消息过长，将分段发送。");
-                    longMsgSplit(chain, 250).forEach(c->toPrivateMsg(clientId , c, false));
-                } else if (s.contains("resultType=32")) {
-                    contact.sendMessage("发送消息失败，请尝试添加好友再获取。");
+        try {
+            contact.sendMessage(chain);
+        } catch (IllegalStateException e) {
+            String s = e.getMessage();
+            if (s.contains("resultType=10")) {
+                if (contact instanceof Member) {
+                    contact.sendMessage("发送消息失败，可能需要添加好友。");
+                    return;
                 }
-                else {
-                    logWarning(ExceptionUtils.printStack(e));
-                }
+                contact.sendMessage("发送消息失败，消息过长，将分段发送。");
+                longMsgSplit(chain, 250).forEach(c -> toPrivateMsg(clientId, c, false));
+            } else if (s.contains("resultType=32")) {
+                contact.sendMessage("发送消息失败，请尝试添加好友再获取。");
+            } else {
+                logWarning(ExceptionUtils.printStack(e));
             }
-        } else {
-            //todo 找不到渠道log输出
         }
+    }
+
+    public void toPrivateMsg(long clientId, MessageChain chain) {
+        toPrivateMsg(clientId, chain, true);
     }
 
 /*    public int toTeamspeakMsg(String msg) {
@@ -315,7 +337,7 @@ public class Zibenbot {
             for (Group group : bot.getGroups()) {
                 try {
                     return group.get(clientId);
-                } catch (NoSuchElementException e1) {
+                } catch (NoSuchElementException ignored) {
                 }
             }
         }
@@ -323,12 +345,12 @@ public class Zibenbot {
     }
 
     public void toGroupMsg(long groupId, String msg) {
-        try {
-            Group group = bot.getGroup(groupId);
-            group.sendMessage(toMessChain(group, msg));
-        } catch (NoSuchElementException e) {
-            //todo 找不到群log输出
+        Group group = _getGroup(groupId);
+        if (group == null) {
+            logWarning("找不到Group：" + groupId);
+            return;
         }
+        group.sendMessage(toMessChain(group, msg));
     }
 
     public void log(Level level, String msg) {
@@ -365,14 +387,14 @@ public class Zibenbot {
     public void replyMsg(SimpleMsg fromMsg, String msg) {
         try {
             if (fromMsg.isGroupMsg()) {
-                Contact contact = getGroup(fromMsg.getFromGroup());
+                Contact contact = _getGroup(fromMsg.getFromGroup());
                 if (contact != null) {
                     MessageChain chain = toMessChain(contact, msg);
                     contact.sendMessage(chain);
                 }
             } else if (fromMsg.isPrivateMsg()) {
                     MessageChain chain = toMessChain(findUser(fromMsg.getFromClient()), msg);
-                    toPrivateMsg(fromMsg.getFromClient(), chain, true);
+                    toPrivateMsg(fromMsg.getFromClient(), chain);
             } else if (fromMsg.isTeamspealMsg()) {
 /*            Zibenbot.logger.log(Level.INFO,
                     String.format("回复ts频道[%s]消息:%s",
@@ -398,7 +420,7 @@ public class Zibenbot {
         return ret;
     }
 
-    private static List<MessageChain> longMsgSplit(MessageChain chain, int MAX_LENGTH) {
+    private static List<MessageChain> longMsgSplit(MessageChain chain, final int MAX_LENGTH) {
         List<Message> list = new ArrayList<>();
 
         for (Message message : chain) {
@@ -429,11 +451,16 @@ public class Zibenbot {
             if (i + s.length() >= MAX_LENGTH) {
                 ret.add(builder.build());
                 builder = new MessageChainBuilder();
-                i = 0;
+                builder.add(message);
+                i = s.length();
             } else {
                 builder.add(message);
                 i += s.length();
             }
+        }
+        //把剩余的加进去
+        if (builder.size() != 0) {
+            ret.add(builder.build());
         }
         return ret;
     }
@@ -560,22 +587,76 @@ public class Zibenbot {
         return 0;
     }
 
+    /**
+     * 根据文件路径返回图片字符串
+     * @param path 文件路径
+     * @return 图片字符串
+     */
     public String getImg(String path) {
         File file = new File(path);
         imageMap.put(file.hashCode(), file);
         return String.valueOf(file.hashCode());
     }
 
+    /**
+     * 根据文件返回图片字符串
+     * @param file 文件
+     * @return 图片字符串
+     */
     public String getImg(File file) {
         imageMap.put(file.hashCode(), file);
         return String.valueOf(file.hashCode());
     }
 
-    public Group getGroup(long id) {
+    /**
+     * 根据groupid返回group对象
+     * @param id groupid
+     * @return 返回group对象 找不到时返回null
+     */
+    private Group _getGroup(long id) {
         try {
             return bot.getGroup(id);
         } catch (NoSuchElementException e) {
             return null;
+        }
+    }
+
+    public List<Long> getGroups() {
+        List<Long> list = new ArrayList<>();
+        bot.getGroups().forEach(group -> list.add(group.getId()));
+        return list;
+    }
+
+    public List<Long> getFriends() {
+        List<Long> list = new ArrayList<>();
+        bot.getFriends().forEach(friend -> list.add(friend.getId()));
+        return list;
+    }
+
+    public List<Long> getMembers(long groupId) {
+        List<Long> list = new ArrayList<>();
+        Group group = _getGroup(groupId);
+        if (group != null) {
+            group.getMembers().forEach(member -> list.add(member.getId()));
+        }
+        return list;
+    }
+
+    public String getUserName(long userId){
+        User user = findUser(userId);
+        if (user != null) {
+            return user.getNick();
+        }
+        return "null";
+    }
+
+    public int getMuteTimeRemaining(long groupId, long memberId) {
+        Group group = _getGroup(groupId);
+        try {
+            Member member = group.get(memberId);
+            return member.getMuteTimeRemaining();
+        } catch (Exception e) {
+            return 0;
         }
     }
 

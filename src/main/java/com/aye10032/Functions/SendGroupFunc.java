@@ -1,8 +1,8 @@
 package com.aye10032.Functions;
 
 import com.aye10032.Functions.funcutil.BaseFunc;
-import com.aye10032.Functions.funcutil.SimpleMsg;
 import com.aye10032.Functions.funcutil.MsgType;
+import com.aye10032.Functions.funcutil.SimpleMsg;
 import com.aye10032.Utils.ExceptionUtils;
 import com.aye10032.Zibenbot;
 
@@ -63,7 +63,6 @@ public class SendGroupFunc extends BaseFunc {
             CQmsg.setFromGroup(group);
             CQmsg.setType(MsgType.GROUP_MSG);
             CQmsg.setMsg(msg);
-            CQmsg.setEvent(null);
             zibenbot.runFuncs(CQmsg);
         } catch (Exception e) {
             replyMsg(CQmsg, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
@@ -80,7 +79,6 @@ public class SendGroupFunc extends BaseFunc {
             CQmsg.setFromGroup(group);
             CQmsg.setType(MsgType.GROUP_MSG);
             CQmsg.setMsg(msg);
-            CQmsg.setEvent(null);
             zibenbot.runFuncs(CQmsg);
         } catch (Exception e) {
             replyMsg(CQmsg, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
