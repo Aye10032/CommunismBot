@@ -1,7 +1,9 @@
 package com.dazo66.command;
 
 import com.dazo66.command.exceptions.RedundantParametersException;
+import com.dazo66.command.interfaces.CommandRun;
 import com.dazo66.command.interfaces.ExceptionHandler;
+import com.dazo66.command.interfaces.GlobeCheck;
 import com.dazo66.command.interfaces.ICommand;
 import com.google.common.collect.Lists;
 
@@ -19,6 +21,8 @@ public class Commander<S extends ICommand> {
 
     private ExceptionHandler eHandler;
     private CommandPiece<S> piece;
+    private GlobeCheck<S> globeCheck;
+    private CommandRun<S> callback;
 
     /**
      * 执行命令，多个空格视为一个空格，忽略前后空格
@@ -46,13 +50,22 @@ public class Commander<S extends ICommand> {
      * @param s 要执行的命令
      */
     public void execute(S s) {
+        if (callback == null) {
+            if (!globeCheck.check(s)) {
+                return;
+            }
+        }
         List<String> list = Lists.newArrayList(s.getCommandPieces());
         or<S> or = findPiece(list, piece);
         List<CommandPiece<S>> patchs = getRoad(list, piece);
         if (or != null) {
             if (list.size() == patchs.size() || or.hasArrayCheck()) {
                 try {
-                    or.getRun().run(s);
+                    if (globeCheck.check(s)) {
+                        or.getRun().run(s);
+                    } else if (callback != null) {
+                        callback.run(s);
+                    }
                 } catch (Exception e) {
                     eHandler.commandRuntimeExceptionCatch(e);
                 }
@@ -88,6 +101,7 @@ public class Commander<S extends ICommand> {
                 }
             }
         }
+
     }
 
     protected or<S> findPiece(List<String> strings, CommandPiece<S> main) {
@@ -176,6 +190,14 @@ public class Commander<S extends ICommand> {
 
     protected void setPiece(CommandPiece<S> piece) {
         this.piece = piece;
+    }
+
+    protected void setGlobeCheck(GlobeCheck<S> globeCheck) {
+        this.globeCheck = globeCheck;
+    }
+
+    protected void setCallback(CommandRun<S> callback) {
+        this.callback = callback;
     }
 
     protected void seteHandler(ExceptionHandler eHandler) {

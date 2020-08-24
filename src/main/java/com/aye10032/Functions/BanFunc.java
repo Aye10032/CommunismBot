@@ -7,8 +7,6 @@ import com.aye10032.Utils.BanUtil.BanRecord;
 import com.aye10032.Zibenbot;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
-import net.mamoe.mirai.contact.ContactList;
-import net.mamoe.mirai.contact.Member;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.text.SimpleDateFormat;
@@ -24,26 +22,14 @@ public class BanFunc extends BaseFunc {
         super(zibenbot);
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
-                .start()
+                .start(SimpleMsg::isGroupMsg, simpleMsg -> zibenbot.replyMsg(simpleMsg, "对不起，此功能未对私聊或teamspeak开放。"))
                 .or("肃静"::equals)
-                .run((cqmsg) -> {
-                    if (cqmsg.isGroupMsg()) {
-                        shutup(cqmsg.getFromGroup());
-                    } else {
-                        zibenbot.replyMsg(cqmsg, "对不起，此功能未对私聊或teamspeak开放。");
-                    }
-                })
+                .run((cqmsg) -> shutup(cqmsg.getFromGroup()))
                 .or("大赦"::equals)
-                .run((cqmsg) -> {
-                    if (cqmsg.isGroupMsg()) {
-                        done(cqmsg.getFromGroup());
-                    } else {
-                        zibenbot.replyMsg(cqmsg, "对不起，此功能未对私聊或teamspeak开放。");
-                    }
-                })
+                .run((cqmsg) -> done(cqmsg.getFromGroup()))
                 .or("禁言"::equals)
                 .next()
-                    .or(s -> true)
+                    .or(s -> zibenbot.getAtMember(s) != -1)
                     .next()
                         .or(NumberUtils::isDigits)
                         .run((cqmsg) -> {
@@ -82,22 +68,18 @@ public class BanFunc extends BaseFunc {
                     .pop()
                 .or("击杀榜"::equals)
                 .run((cqmsg) -> {
-                    if (!cqmsg.isGroupMsg()) {
-                        zibenbot.replyMsg(cqmsg, "对不起，此功能未对私聊或teamspeak开放。");
-                    } else {
-                        List<String> list = banRecord.getKillRank(cqmsg.getFromGroup());
-                        StringBuilder msgs = new StringBuilder();
-                        if (list.size() >= 10) {
-                            for (int i = 0; i < 10; i++) {
-                                msgs.append(list.get(i));
-                            }
-                        } else {
-                            for (String temp : list) {
-                                msgs.append(temp);
-                            }
+                    List<String> list = banRecord.getKillRank(cqmsg.getFromGroup());
+                    StringBuilder msgs = new StringBuilder();
+                    if (list.size() >= 10) {
+                        for (int i = 0; i < 10; i++) {
+                            msgs.append(list.get(i));
                         }
-                        zibenbot.replyMsg(cqmsg, msgs.toString());
+                    } else {
+                        for (String temp : list) {
+                            msgs.append(temp);
+                        }
                     }
+                    zibenbot.replyMsg(cqmsg, msgs.toString());
                 })
                 .build();
     }
@@ -109,9 +91,9 @@ public class BanFunc extends BaseFunc {
 
     public void done(long fromGroup) {
         String msg;
-        List<Member> wasBanMembers = new ArrayList<>();
-        for (Member member : zibenbot.getGroup(fromGroup).getMembers()) {
-            if (member.getMuteTimeRemaining() > 0) {
+        List<Long> wasBanMembers = new ArrayList<>();
+        for (long member : zibenbot.getMembers(fromGroup)) {
+            if (zibenbot.getMuteTimeRemaining(fromGroup, member) > 0) {
                 wasBanMembers.add(member);
             }
         }
@@ -120,8 +102,8 @@ public class BanFunc extends BaseFunc {
             SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd hh:mm");
             msg = ft.format(date) + " 群臣奏请大赦天下，王曰：“善”。举目四望，狱无系囚，天下太平，无人可赦。王大喜，遂大宴群臣于园中，众人大醉而归\n";
         } else {
-            for (Member persion : wasBanMembers) {
-                zibenbot.unMute(fromGroup, persion.getId());
+            for (long persion : wasBanMembers) {
+                zibenbot.unMute(fromGroup, persion);
             }
             Date date = new Date();
             SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd hh:mm");
@@ -138,11 +120,10 @@ public class BanFunc extends BaseFunc {
     }
 
     private void shutup(long fromGroup) {
-        ContactList<Member> memberList = zibenbot.getGroup(fromGroup).getMembers();
-        for (Member persion : memberList) {
-            long qq = persion.getId();
-            if (qq != 2375985957L) {
-                zibenbot.muteMember(fromGroup, qq, 114514);
+        List<Long> memberList = zibenbot.getMembers(fromGroup);
+        for (long persion : memberList) {
+            if (persion != 2375985957L) {
+                zibenbot.muteMember(fromGroup, persion, 114514);
             }
         }
 

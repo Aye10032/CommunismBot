@@ -21,7 +21,6 @@ public class SimpleMsg implements ICommand {
     private long fromClient = -1;
     private String msg;
     private MsgType type;
-    private MessageEvent event = null;
 
     public SimpleMsg(long fromGroup, long fromClient, String msg, MsgType type) {
         this.fromGroup = fromGroup;
@@ -41,7 +40,6 @@ public class SimpleMsg implements ICommand {
         }
         fromClient = event.getSender().getId();
         msg = getMsgFromEvent(event);
-        this.event = event;
     }
 
     private String getMsgFromEvent(MessageEvent event){
@@ -106,14 +104,6 @@ public class SimpleMsg implements ICommand {
 
     public void setType(MsgType type) {
         this.type = type;
-    }
-
-    public MessageEvent getEvent() {
-        return event;
-    }
-
-    public void setEvent(MessageEvent event) {
-        this.event = event;
     }
 
     public boolean isGroupMsg(){
