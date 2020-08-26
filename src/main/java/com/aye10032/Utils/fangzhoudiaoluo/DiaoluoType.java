@@ -70,6 +70,9 @@ public class DiaoluoType {
         }
 
         public boolean isThis(String name) {
+            if (name.startsWith("*")) {
+                name = name.substring(1);
+            }
             for (String s : names) {
                 if (s.trim().equals(name)) {
                     return true;

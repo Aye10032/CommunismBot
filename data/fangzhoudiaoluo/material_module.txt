@@ -8,7 +8,7 @@
 [平衡最优副本：
     {balanced_stages}]
 [掉率最优副本：
-    {drop_rate_first_stage}]
+    {drop_rate_first_stages}]
 
 
 
