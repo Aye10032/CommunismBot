@@ -71,13 +71,15 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         zibenbot.pool.add(task);
     }
 
+    private boolean lastEnforce = false;
+
     @Override
     public void run(SimpleMsg cqmsg) {
         String msg = cqmsg.getMsg().trim();
         if (last !=null) {
             if (cqmsg.getFromClient() == last.getKey()) {
                 if (("是".equals(msg) || "yes".equals(msg) || "Yes".equals(msg) || "Y".equals(msg) || "y".equals(msg) || "确实".equals(msg) || "对".equals(msg))) {
-                    retMsg(last.getValue(), cqmsg);
+                    retMsg(false, last.getValue(), cqmsg);
                 }
                 last = null;
             }
@@ -104,22 +106,24 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                     }
                     for (DiaoluoType.HeChenType type : name_idList) {
                         if (type.isThis(strings[i])) {
-                            retMsg(type, cqmsg);
+                            retMsg(strings[i].startsWith("*"), type, cqmsg);
                             flag = false;
                             break;
                         }
                     }
                     if (flag) {
+                        String raw = strings[i].startsWith("*") ? strings[i].substring(1) : strings[i];
+                        lastEnforce = strings[i].startsWith("*");
                         Pair<DiaoluoType.HeChenType, Float> max = Pair.of(null, 0f);
                         for (DiaoluoType.HeChenType type : name_idList) {
-                            float f = type.maxSimilarity(strings[i]);
+                            float f = type.maxSimilarity(raw);
                             max = f > max.getValue() ? Pair.of(type, f) : max;
                         }
                         if (max.getValue() < 0.5f) {
                             if (zibenbot != null) {
-                                zibenbot.replyMsg(cqmsg, "找不到素材：【" + strings[i] + "】");
+                                zibenbot.replyMsg(cqmsg, "找不到素材：【" + raw + "】");
                             } else if (zibenbot == null) {
-                                System.out.println("找不到素材：【" + strings[i] + "】");
+                                System.out.println("找不到素材：【" + raw + "】");
                             }
                         } else {
                             last = Pair.of(cqmsg.getFromClient(), max.getKey());
@@ -141,9 +145,9 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         }
     }
 
-    private void retMsg(DiaoluoType.HeChenType type, SimpleMsg msg){
+    private void retMsg(boolean enforce, DiaoluoType.HeChenType type, SimpleMsg msg){
         String ret;
-        if (type.calls.length == 0) {
+        if (type.calls.length == 0 || enforce) {
             ret = module.getString(this.type.getMaterialFromID(type.id));
         } else {
             StringBuilder s = new StringBuilder();

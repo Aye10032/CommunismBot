@@ -67,10 +67,15 @@ public class AsynchronousTaskPool extends TimedTaskBase {
                     list.add(runnable);
                 }
             }
-            for (Runnable r : list) {
-                runnableMap.remove(r);
-                r.run();
-            }
+            //一定要先移除 再运行
+            list.forEach(r -> runnableMap.remove(r));
+            list.forEach(r -> {
+                try {
+                    r.run();
+                } catch (Exception e) {
+                    Zibenbot.logger.warning("异步线程回调执行异常", e);
+                }
+            });
         }
     }
 
