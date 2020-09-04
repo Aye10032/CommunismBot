@@ -56,29 +56,33 @@ public class CheruUtil {
         StringBuilder stringBuilder = new StringBuilder();
 
         msg = msg.substring(msg.indexOf("切噜～") + 4);
-        String[] msgs = msg.split(split_text);
+        if (msg.length()%4 != 0){
+            stringBuilder.append("格式不对切噜");
+        }else {
+            String[] msgs = msg.split(split_text);
 
-        for (String word : msgs) {
-            Matcher matcher = pattern.matcher(word);
-            if (!matcher.find()) {
-                if (word.startsWith("切")) {
-                    word = word.substring(1);
-                    char[] thischar = word.toCharArray();
-                    List<Byte> bytes = new ArrayList<>();
-                    for (int i = 0; i < thischar.length; i += 2) {
-                        int x1 = Arrays.binarySearch(chars, thischar[i]);
-                        int x2 = Arrays.binarySearch(chars, thischar[i + 1]);
-                        int x = x2 << 4 | x1;
-                        bytes.add((byte) x);
+            for (String word : msgs) {
+                Matcher matcher = pattern.matcher(word);
+                if (!matcher.find()) {
+                    if (word.startsWith("切")) {
+                        word = word.substring(1);
+                        char[] thischar = word.toCharArray();
+                        List<Byte> bytes = new ArrayList<>();
+                        for (int i = 0; i < thischar.length; i += 2) {
+                            int x1 = Arrays.binarySearch(chars, thischar[i]);
+                            int x2 = Arrays.binarySearch(chars, thischar[i + 1]);
+                            int x = x2 << 4 | x1;
+                            bytes.add((byte) x);
+                        }
+                        byte[] bt = new byte[bytes.size()];
+                        for (int i = 0; i < bt.length; i++) {
+                            bt[i] = bytes.get(i);
+                        }
+                        stringBuilder.append(Charset.forName("GB18030").decode(ByteBuffer.wrap(bt)));
                     }
-                    byte[] bt = new byte[bytes.size()];
-                    for (int i = 0; i < bt.length; i++) {
-                        bt[i] = bytes.get(i);
-                    }
-                    stringBuilder.append(Charset.forName("GB18030").decode(ByteBuffer.wrap(bt)));
+                } else {
+                    stringBuilder.append(word);
                 }
-            } else {
-                stringBuilder.append(word);
             }
         }
         return stringBuilder.toString();
