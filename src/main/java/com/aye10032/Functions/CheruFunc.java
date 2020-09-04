@@ -29,7 +29,7 @@ public class CheruFunc extends BaseFunc {
             }
             zibenbot.replyMsg(CQmsg, msg);
         } else if (CQmsg.getMsg().startsWith("切噜～")) {
-            String msg = "";
+            String msg = CQmsg.getMsg();
             try {
                 msg = cheruUtil.toStr(msg);
             } catch (Exception e) {
