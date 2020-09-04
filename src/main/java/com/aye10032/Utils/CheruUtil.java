@@ -21,7 +21,7 @@ public class CheruUtil {
 
     public static void main(String[] args) {
         CheruUtil cheruUtil = new CheruUtil();
-        System.out.println(cheruUtil.toStr("切噜～♪切叮噼叮蹦噜巴哔拉叮咧切切"));
+        System.out.println(cheruUtil.toStr("切噜～♪切切噜巴哔噼唎噼咧蹦嘭巴切噜巴噜"));
     }
 
     public String toCheru(String msg) {
@@ -56,7 +56,7 @@ public class CheruUtil {
         StringBuilder stringBuilder = new StringBuilder();
 
         msg = msg.substring(msg.indexOf("切噜～") + 4);
-        if (msg.length()%4 != 0){
+        if (msg.length()%4 != 1){
             stringBuilder.append("格式不对切噜");
         }else {
             String[] msgs = msg.split(split_text);
