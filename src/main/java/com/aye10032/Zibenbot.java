@@ -566,6 +566,7 @@ public class Zibenbot {
         registerFunc.add(new SendGroupFunc(this));
         //registerFunc.add(new INMFunc(this));
         registerFunc.add(new DataCollect(this));
+        registerFunc.add(new CheruFunc(this));
 
         //对功能进行初始化
         for (IFunc func : registerFunc) {
