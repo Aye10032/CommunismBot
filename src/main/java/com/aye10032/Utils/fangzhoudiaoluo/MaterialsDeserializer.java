@@ -6,11 +6,13 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiaoluoTypeDeserializer implements JsonDeserializer<DiaoluoType> {
+/**
+ * @author Dazo66
+ */
+public class MaterialsDeserializer implements JsonDeserializer<DiaoluoType.Material[]> {
     @Override
-    public DiaoluoType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        DiaoluoType type = new DiaoluoType();
-        JsonArray raw_materials = json.getAsJsonObject().get("material").getAsJsonArray();
+    public DiaoluoType.Material[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        JsonArray raw_materials = json.getAsJsonArray();
         List<DiaoluoType.Material> list = new ArrayList<>();
         raw_materials.forEach(jsonElement -> {
             DiaoluoType.Material material = new DiaoluoType.Material();
@@ -28,7 +30,6 @@ public class DiaoluoTypeDeserializer implements JsonDeserializer<DiaoluoType> {
             try {material.drop_rate_first_stages = context.deserialize(jsonElement.getAsJsonObject().get("drop_rate_first_stages").getAsJsonObject().get("event").getAsJsonArray(), DiaoluoType.Stage[].class);}catch (Exception ignored) {}
             list.add(material);
         });
-        type.material = list.toArray(new DiaoluoType.Material[0]);
-        return type;
+        return list.toArray(new DiaoluoType.Material[0]);
     }
 }

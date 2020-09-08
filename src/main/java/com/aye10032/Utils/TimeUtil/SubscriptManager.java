@@ -199,11 +199,11 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
      * [sub/订阅/unsub/取消订阅] [Subscribable Name]
      * 不带参数返回所有可用的和已用的Subscribable
      *
-     * @param msg 传入的消息
+     * @param simpleMsg 传入的消息
      */
     @Override
-    public void run(SimpleMsg msg) {
-        String[] msgs = msg.getMsg().trim().split(" ");
+    public void run(SimpleMsg simpleMsg) {
+        String[] msgs = simpleMsg.getMsg().trim().split(" ");
         Boolean sw = null;
         if ("sub".equals(msgs[0]) || "订阅".equals(msgs[0])) {
             sw = true;
@@ -216,13 +216,13 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 StringBuilder builder = new StringBuilder();
                 builder.append("当前已订阅的有：\n");
                 for (ISubscribable subscription : allSubscription) {
-                    if (hasSub(msg, subscription)) {
+                    if (hasSub(simpleMsg, subscription)) {
                         builder.append("\t").append(subscription.getName()).append("\n");
                     }
                 }
                 builder.append("当前未订阅的有：\n");
                 for (int i = 0; i < allSubscription.size(); i++) {
-                    if (!hasSub(msg, allSubscription.get(i))) {
+                    if (!hasSub(simpleMsg, allSubscription.get(i))) {
                         builder.append("\t").append(allSubscription.get(i).getName());
                         if (i == allSubscription.size() - 1) {
                             builder.append("\n");
@@ -231,7 +231,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 }
                 //重新读取后刷新收件人
                 flushRecipients();
-                replyMsg(msg, builder.toString());
+                replyMsg(simpleMsg, builder.toString());
             } else if (msgs.length == 2) {
                 if ("调试".equals(msgs[1]) || "debug".equals(msgs[1])) {
                     StringBuilder builder = new StringBuilder();
@@ -253,7 +253,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                     if (builder.length() == 0) {
                         builder.append("当前队列中没有任务");
                     }
-                    replyMsg(msg, builder.toString());
+                    replyMsg(simpleMsg, builder.toString());
                     return;
                 }
                 boolean flag = false;
@@ -265,22 +265,22 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 }
                 if (flag) {
                     if (sw) {
-                        subscribe(msg, msgs[1]);
-                        replyMsg(msg, String.format("【%s】 已订阅 【%s】", msg.isGroupMsg() ?
-                                "群:" + msg.getFromGroup() : "用户:" + msg.getFromClient(), msgs[1]));
+                        subscribe(simpleMsg, msgs[1]);
+                        replyMsg(simpleMsg, String.format("【%s】 已订阅 【%s】", simpleMsg.isGroupMsg() ?
+                                "群:" + simpleMsg.getFromGroup() : "用户:" + simpleMsg.getFromClient(), msgs[1]));
                     } else {
 
-                        unSubscribe(msg, msgs[1]);
-                        replyMsg(msg, String.format("【%s】 已取消订阅 【%s】", msg.isGroupMsg() ?
-                                "群:" + msg.getFromGroup() : "用户:" + msg.getFromClient(), msgs[1]));
+                        unSubscribe(simpleMsg, msgs[1]);
+                        replyMsg(simpleMsg, String.format("【%s】 已取消订阅 【%s】", simpleMsg.isGroupMsg() ?
+                                "群:" + simpleMsg.getFromGroup() : "用户:" + simpleMsg.getFromClient(), msgs[1]));
                     }
                     //订阅后刷新收件人
                     flushRecipients();
                 } else {
-                    replyMsg(msg, "找不到这个订阅器：" + msgs[1]);
+                    replyMsg(simpleMsg, "找不到这个订阅器：" + msgs[1]);
                 }
             } else {
-                replyMsg(msg, "参数有误");
+                replyMsg(simpleMsg, "参数有误");
             }
         }
     }

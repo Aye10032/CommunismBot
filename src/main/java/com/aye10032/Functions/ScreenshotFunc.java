@@ -45,23 +45,23 @@ public class ScreenshotFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg CQmsg) {
-        String msg = CQmsg.getMsg();
+    public void run(SimpleMsg simpleMsg) {
+        String msg = simpleMsg.getMsg();
         if (msg.startsWith("网页快照") || msg.startsWith(".网页快照")){
             msg = msg.replaceAll(" +", " ");
             String[] args = msg.split(" ");
             zibenbot.pool.timeoutEvent(10, () -> {
                 try {
                     if (args.length == 3) {
-                        replyMsg(CQmsg, zibenbot.getImg(getScreenshot(args[1], Integer.parseInt(args[2]))));
+                        replyMsg(simpleMsg, zibenbot.getImg(getScreenshot(args[1], Integer.parseInt(args[2]))));
                     } else if (args.length == 2) {
-                        replyMsg(CQmsg, zibenbot.getImg(getScreenshot(args[1], 4000)));
+                        replyMsg(simpleMsg, zibenbot.getImg(getScreenshot(args[1], 4000)));
                     } else {
-                        replyMsg(CQmsg, "参数异常，Example：网页快照 [url] [timeout]");
+                        replyMsg(simpleMsg, "参数异常，Example：网页快照 [url] [timeout]");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    replyMsg(CQmsg, "获取网页快照失败，可能是网页不支持" + e);
+                    replyMsg(simpleMsg, "获取网页快照失败，可能是网页不支持" + e);
                 }
             });
 

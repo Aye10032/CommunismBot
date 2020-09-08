@@ -15,13 +15,13 @@ public class PixivFunc extends BaseFunc {
 
     }
 
-    public void run(SimpleMsg CQmsg) {
-        if (CQmsg.getMsg().equals(".p站") || CQmsg.getMsg().equals(".pixiv") || CQmsg.getMsg().equals(".P站")) {
-            if (CQmsg.isTeamspealMsg()) {
-                zibenbot.replyMsg(CQmsg, "ts频道无法发图片，请从群聊或者私聊获取");
+    public void run(SimpleMsg simpleMsg) {
+        if (simpleMsg.getMsg().equals(".p站") || simpleMsg.getMsg().equals(".pixiv") || simpleMsg.getMsg().equals(".P站")) {
+            if (simpleMsg.isTeamspealMsg()) {
+                zibenbot.replyMsg(simpleMsg, "ts频道无法发图片，请从群聊或者私聊获取");
                 return;
             }
-            zibenbot.replyMsg(CQmsg, zibenbot.getImg(new SetuUtil(zibenbot.appDirectory).getImage()));
+            zibenbot.replyMsg(simpleMsg, zibenbot.getImg(new SetuUtil(zibenbot.appDirectory).getImage()));
         }
     }
 }

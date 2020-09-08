@@ -24,56 +24,56 @@ public class EatFunc extends BaseFunc {
         this.foodUtil = new FoodUtil();
     }
 
-    public void run(SimpleMsg CQmsg) {
-        if (CQmsg.getMsg().equals("晚饭")) {
-            if (CQmsg.getFromGroup() == 792666782L) {
-                if (foodClaass.getTimes(CQmsg.getFromClient()) == 99) {
-                    foodClaass.resetTimes(CQmsg.getFromClient());
+    public void run(SimpleMsg simpleMsg) {
+        if (simpleMsg.getMsg().equals("晚饭")) {
+            if (simpleMsg.getFromGroup() == 792666782L) {
+                if (foodClaass.getTimes(simpleMsg.getFromClient()) == 99) {
+                    foodClaass.resetTimes(simpleMsg.getFromClient());
                     String[] food = foodUtil.eatGuaranteed(3);
-                    zibenbot.replyMsg(CQmsg, food[0]);
+                    zibenbot.replyMsg(simpleMsg, food[0]);
                 } else {
                     String[] food = foodUtil.eatWhatWithSSR();
-                    zibenbot.replyMsg(CQmsg, food[0]);
+                    zibenbot.replyMsg(simpleMsg, food[0]);
                     if (food[1].equals("3")) {
-                        foodClaass.resetTimes(CQmsg.getFromClient());
+                        foodClaass.resetTimes(simpleMsg.getFromClient());
                     } else {
-                        foodClaass.addOne(CQmsg.getFromClient());
+                        foodClaass.addOne(simpleMsg.getFromClient());
                     }
                 }
             } else {
                 String food = foodUtil.eatWhat();
-                zibenbot.replyMsg(CQmsg, food);
+                zibenbot.replyMsg(simpleMsg, food);
             }
             ConfigLoader.save(zibenbot.appDirectory + "/foodData.json", FoodClaass.class, foodClaass);
-        } else if (CQmsg.getFromGroup() == 792666782L && CQmsg.getMsg().equals("晚饭十连")) {
+        } else if (simpleMsg.getFromGroup() == 792666782L && simpleMsg.getMsg().equals("晚饭十连")) {
             StringBuilder foodBuilder = new StringBuilder();
             boolean hasSSR = false;
             for (int i = 0; i < 9; i++) {
-                if (foodClaass.getTimes(CQmsg.getFromClient()) == 99) {
-                    foodClaass.resetTimes(CQmsg.getFromClient());
+                if (foodClaass.getTimes(simpleMsg.getFromClient()) == 99) {
+                    foodClaass.resetTimes(simpleMsg.getFromClient());
                     String[] food = foodUtil.eatGuaranteed(3);
-                    zibenbot.replyMsg(CQmsg, food[0]);
+                    zibenbot.replyMsg(simpleMsg, food[0]);
                 } else {
                     String[] food = foodUtil.eatWhatWithSSR();
                     foodBuilder.append(food[0]).append("\n");
                     switch (food[1]) {
                         case "1":
-                            foodClaass.addOne(CQmsg.getFromClient());
+                            foodClaass.addOne(simpleMsg.getFromClient());
                             break;
                         case "2":
                             hasSSR = true;
-                            foodClaass.addOne(CQmsg.getFromClient());
+                            foodClaass.addOne(simpleMsg.getFromClient());
                             break;
                         case "3":
                             hasSSR = true;
-                            foodClaass.resetTimes(CQmsg.getFromClient());
+                            foodClaass.resetTimes(simpleMsg.getFromClient());
                             break;
                     }
                 }
             }
 
-            if (foodClaass.getTimes(CQmsg.getFromClient()) == 99) {
-                foodClaass.resetTimes(CQmsg.getFromClient());
+            if (foodClaass.getTimes(simpleMsg.getFromClient()) == 99) {
+                foodClaass.resetTimes(simpleMsg.getFromClient());
                 String[] food = foodUtil.eatGuaranteed(3);
                 foodBuilder.append(food[0]);
             } else {
@@ -82,9 +82,9 @@ public class EatFunc extends BaseFunc {
                     foodBuilder.append(food[0]);
 
                     if (food[1].equals("3")) {
-                        foodClaass.resetTimes(CQmsg.getFromClient());
+                        foodClaass.resetTimes(simpleMsg.getFromClient());
                     } else {
-                        foodClaass.addOne(CQmsg.getFromClient());
+                        foodClaass.addOne(simpleMsg.getFromClient());
                     }
 
                 } else {
@@ -92,20 +92,20 @@ public class EatFunc extends BaseFunc {
                     foodBuilder.append(food[0]);
                     switch (food[1]) {
                         case "1":
-                            foodClaass.addOne(CQmsg.getFromClient());
+                            foodClaass.addOne(simpleMsg.getFromClient());
                             break;
                         case "2":
                             hasSSR = true;
-                            foodClaass.addOne(CQmsg.getFromClient());
+                            foodClaass.addOne(simpleMsg.getFromClient());
                             break;
                         case "3":
                             hasSSR = true;
-                            foodClaass.resetTimes(CQmsg.getFromClient());
+                            foodClaass.resetTimes(simpleMsg.getFromClient());
                             break;
                     }
                 }
             }
-            zibenbot.replyMsg(CQmsg, foodBuilder.toString());
+            zibenbot.replyMsg(simpleMsg, foodBuilder.toString());
             ConfigLoader.save(zibenbot.appDirectory + "/foodData.json", FoodClaass.class, foodClaass);
         }
     }

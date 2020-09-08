@@ -22,14 +22,14 @@ public class DianGuaiFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg cqmsg) {
-        if (cqmsg.getMsg().startsWith("点怪")) {
-            if(cqmsg.getMsg().contains("冰原")){
+    public void run(SimpleMsg simpleMsg) {
+        if (simpleMsg.getMsg().startsWith("点怪")) {
+            if(simpleMsg.getMsg().contains("冰原")){
                 String aim = mhwUtil.getIceAim();
-                zibenbot.replyMsg(cqmsg, aim);
+                zibenbot.replyMsg(simpleMsg, aim);
             }else {
                 String aim = mhwUtil.getAim();
-                zibenbot.replyMsg(cqmsg, aim);
+                zibenbot.replyMsg(simpleMsg, aim);
             }
         }
     }

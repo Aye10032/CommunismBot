@@ -25,14 +25,14 @@ public class liantongFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg CQmsg) {
-        if (CQmsg.getMsg().contains("炼铜")) {
-            if (CQmsg.isTeamspealMsg()) {
-                zibenbot.replyMsg(CQmsg, "ts频道无法发图片，请从群聊或者私聊获取");
+    public void run(SimpleMsg simpleMsg) {
+        if (simpleMsg.getMsg().contains("炼铜")) {
+            if (simpleMsg.isTeamspealMsg()) {
+                zibenbot.replyMsg(simpleMsg, "ts频道无法发图片，请从群聊或者私聊获取");
                 return;
             }
             if (random.nextDouble() < 0.2d) {
-                zibenbot.replyMsg(CQmsg, zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\liantong.jpg")));
+                zibenbot.replyMsg(simpleMsg, zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\liantong.jpg")));
             }
         }
     }

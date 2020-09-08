@@ -14,9 +14,9 @@ public interface IFunc {
 
     /**
      * 执行模块
-     * @param CQmsg
+     * @param simpleMsg
      */
-    void run(SimpleMsg CQmsg);
+    void run(SimpleMsg simpleMsg);
 
 
 }

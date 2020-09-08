@@ -45,9 +45,9 @@ public class BotConfigFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg CQmsg) {
-        if (CQmsg.getMsg().startsWith(".setconfig") || CQmsg.getMsg().startsWith(".setConfig")) {
-            String[] strings = CQmsg.getMsg().split(" ", 3);
+    public void run(SimpleMsg simpleMsg) {
+        if (simpleMsg.getMsg().startsWith(".setconfig") || simpleMsg.getMsg().startsWith(".setConfig")) {
+            String[] strings = simpleMsg.getMsg().split(" ", 3);
             if (strings.length == 3) {
                 config.set(strings[1], strings[2]);
                 loader.save(config);
@@ -56,17 +56,17 @@ public class BotConfigFunc extends BaseFunc {
                         try {
                             listener.run();
                         } catch (Exception e) {
-                            replyMsg(CQmsg, "监听器运行出错：" + e.getMessage());
+                            replyMsg(simpleMsg, "监听器运行出错：" + e.getMessage());
                         }
-                        replyMsg(CQmsg, "已将[" + strings[1] + "]设置为[" + strings[2] + "]");
+                        replyMsg(simpleMsg, "已将[" + strings[1] + "]设置为[" + strings[2] + "]");
                     }
                 }
             } else {
-                replyMsg(CQmsg, "设置参数不足!");
+                replyMsg(simpleMsg, "设置参数不足!");
             }
         }
-        if (CQmsg.getMsg().startsWith(".getconfig") || CQmsg.getMsg().startsWith(".getConfig")) {
-            String[] strings = CQmsg.getMsg().split(" ", 2);
+        if (simpleMsg.getMsg().startsWith(".getconfig") || simpleMsg.getMsg().startsWith(".getConfig")) {
+            String[] strings = simpleMsg.getMsg().split(" ", 2);
             if (strings.length == 2) {
                 if ("*".equals(strings[1])) {
                     StringBuilder builder = new StringBuilder();
@@ -82,10 +82,10 @@ public class BotConfigFunc extends BaseFunc {
                         }
                         builder.append("\n");
                     }
-                    replyMsg(CQmsg, builder.toString());
+                    replyMsg(simpleMsg, builder.toString());
                 }else {
                     String s = config.get(strings[1]);
-                    replyMsg(CQmsg, "[" + strings[1] + "]=" + (s == null ? "null" : s));
+                    replyMsg(simpleMsg, "[" + strings[1] + "]=" + (s == null ? "null" : s));
                 }
             }
         }

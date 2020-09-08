@@ -19,30 +19,30 @@ public class PaomianFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg CQmsg) {
-        if (CQmsg.getMsg().equals("泡面")) {
+    public void run(SimpleMsg simpleMsg) {
+        if (simpleMsg.getMsg().equals("泡面")) {
             String paomian = paomianUtil.getType();
-            zibenbot.replyMsg(CQmsg, paomian);
-        } else if (CQmsg.getMsg().startsWith("泡面")) {
-            String[] strings = CQmsg.getMsg().split(" ");
+            zibenbot.replyMsg(simpleMsg, paomian);
+        } else if (simpleMsg.getMsg().startsWith("泡面")) {
+            String[] strings = simpleMsg.getMsg().split(" ");
             if (strings.length == 2) {
                 String paomian;
                 switch (strings[1]) {
                     case "统一":
                         paomian = paomianUtil.getType(1);
-                        zibenbot.replyMsg(CQmsg, paomian);
+                        zibenbot.replyMsg(simpleMsg, paomian);
                         break;
                     case "康师傅":
                         paomian = paomianUtil.getType(2);
-                        zibenbot.replyMsg(CQmsg, paomian);
+                        zibenbot.replyMsg(simpleMsg, paomian);
                         break;
                     case "汤达人":
                         paomian = paomianUtil.getType(3);
-                        zibenbot.replyMsg(CQmsg, paomian);
+                        zibenbot.replyMsg(simpleMsg, paomian);
                         break;
                     case "合味道":
                         paomian = paomianUtil.getType(4);
-                        zibenbot.replyMsg(CQmsg, paomian);
+                        zibenbot.replyMsg(simpleMsg, paomian);
                         break;
                 }
             }

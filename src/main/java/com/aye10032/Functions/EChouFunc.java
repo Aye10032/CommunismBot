@@ -23,7 +23,7 @@ public class EChouFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg CQmsg) {
+    public void run(SimpleMsg simpleMsg) {
 
     }
 }
