@@ -1,19 +1,13 @@
 package com.aye10032.Utils.fangzhoudiaoluo;
 
 import com.aye10032.Functions.FangZhouDiaoluoFunc;
-import com.aye10032.Utils.HttpUtils;
-import com.google.gson.JsonParser;
-import okhttp3.OkHttpClient;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 
@@ -54,18 +48,6 @@ public class Module {
         reader = new FileReader(dir + "/fangzhoudiaoluo/extera_drop_module.txt");
         moduleDrop = new ModuleDrop(IOUtils.toString(reader));
         reader.close();
-
-        JsonParser parser = new JsonParser();
-        InputStream stream = HttpUtils.getInputStreamFromNet("https://arkonegraph.herokuapp.com/materials/gacha/CN", client1);
-
-        String last = parser.parse(IOUtils.toString(stream))
-                .getAsJsonObject().get("material")
-                .getAsJsonArray().get(0)
-                .getAsJsonObject().get("last_updated")
-                .getAsString();
-        IOUtils.closeQuietly(stream);
-        DateFormat format1 = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-        lastUpdate = format1.format(new Date(last));
     }
 
     public static String getVer(String rawModule) {

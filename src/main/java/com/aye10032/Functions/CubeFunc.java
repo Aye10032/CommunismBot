@@ -178,8 +178,8 @@ public class CubeFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg CQmsg) {
-        commander.execute(CQmsg);
+    public void run(SimpleMsg simpleMsg) {
+        commander.execute(simpleMsg);
     }
 
     private PieceCheck commandCheck(String[] strings){

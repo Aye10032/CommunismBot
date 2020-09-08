@@ -38,8 +38,8 @@ public class DragraliaNewsFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg CQmsg) {
-        String s = CQmsg.getMsg();
+    public void run(SimpleMsg simpleMsg) {
+        String s = simpleMsg.getMsg();
         if (s.startsWith(".龙约公告") || s.startsWith("龙约公告")) {
             s = s.replaceAll(" +", " ");
             String[] strings = s.trim().split(" ");
@@ -88,7 +88,7 @@ public class DragraliaNewsFunc extends BaseFunc {
                         } else {
                             builder.append("今天无事发生。");
                         }
-                        replyMsg(CQmsg, builder.toString());
+                        replyMsg(simpleMsg, builder.toString());
                     }, rs.toArray(new Runnable[]{}));
                 }
             } else if (strings.length > 1) {
@@ -97,19 +97,19 @@ public class DragraliaNewsFunc extends BaseFunc {
                     try {
                         id = Integer.parseInt(strings[i]);
                     } catch (Exception e) {
-                        replyMsg(CQmsg, "id格式错误：" + strings[i] + " 应该全是数字。");
+                        replyMsg(simpleMsg, "id格式错误：" + strings[i] + " 应该全是数字。");
                         continue;
                     }
                     DragraliaTask.Article a;
                     try {
                         a = task.getArticleFromNet(id, false);
                     } catch (Exception e) {
-                        replyMsg(CQmsg, "获取公告异常，公告id：" + id);
+                        replyMsg(simpleMsg, "获取公告异常，公告id：" + id);
                         zibenbot.logWarning(ExceptionUtils.printStack(e));
                         continue;
                     }
                     ArrayList<SimpleMsg> list = new ArrayList<>();
-                    list.add(CQmsg);
+                    list.add(simpleMsg);
                     task.sendArticle(a, list);
                 }
             }

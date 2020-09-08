@@ -66,8 +66,8 @@ public class DraSummonSimulatorFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg CQmsg) {
-        String msg = CQmsg.getMsg();
+    public void run(SimpleMsg simpleMsg) {
+        String msg = simpleMsg.getMsg();
         msg = msg.trim().replaceAll(" +", " ");
         for (Pattern pattern : experHDPatterns) {
             if (pattern.matcher(msg).find()) {
@@ -118,7 +118,7 @@ public class DraSummonSimulatorFunc extends BaseFunc {
                 if (ret.endsWith("\n")) {
                     ret = ret.substring(0, ret.length() - 1);
                 }
-                replyMsg(CQmsg, ret);
+                replyMsg(simpleMsg, ret);
                 return;
             }
         }
@@ -128,15 +128,15 @@ public class DraSummonSimulatorFunc extends BaseFunc {
             if (strings.length == 2) {
                 if ("卡池更新".equals(strings[1])) {
                     update();
-                    replyMsg(CQmsg, "卡池更新完成");
+                    replyMsg(simpleMsg, "卡池更新完成");
                 } else if ("超龙".equals(strings[1])) {
-                    replyMsg(CQmsg, getExperHD());
+                    replyMsg(simpleMsg, getExperHD());
                 } else if ("卡池列表".equals(strings[1]) || "卡池".equals(strings[1])) {
-                    replyMsg(CQmsg, "当前可用卡池：\n" + getPoolList());
+                    replyMsg(simpleMsg, "当前可用卡池：\n" + getPoolList());
                 } else if (strings[1].endsWith("连")) {
-                    UserDate date = getUser(CQmsg.getFromClient());
-                    if (date.todayCount > 2 && CQmsg.isGroupMsg()) {
-                        replyMsg(CQmsg, zibenbot.at(CQmsg.getFromClient()) +
+                    UserDate date = getUser(simpleMsg.getFromClient());
+                    if (date.todayCount > 2 && simpleMsg.isGroupMsg()) {
+                        replyMsg(simpleMsg, zibenbot.at(simpleMsg.getFromClient()) +
                                 "今天的抽卡次数已经用完，请明天或者私聊抽卡。");
                     } else {
                         int x = 0;
@@ -148,37 +148,37 @@ public class DraSummonSimulatorFunc extends BaseFunc {
                         }
                         if (x > 0) {
                             if (x > 1000) {
-                                replyMsg(CQmsg, "最多只支持1000连");
+                                replyMsg(simpleMsg, "最多只支持1000连");
                                 return;
                             }
                             StringBuilder builder = new StringBuilder();
-                            builder.append(at(CQmsg)).append("的第");
+                            builder.append(at(simpleMsg)).append("的第");
                             builder.append(date.total).append("-").append(date.total + x).append("抽:\n").append(getXSummonString(x, date));
                             float f = 100 * (date.currentEvent.o5 + date.current / 10 * 0.005f);
                             java.text.DecimalFormat df = new java.text.DecimalFormat("##0.0");
                             builder.append("\n").append("当前概率：").append(df.format(f)).append("%");
                             builder.append("\n").append("当前卡池：").append(i18n(date.currentEvent.title));
                             builder.append("\n").append("抽卡结果仅供参考，实际以游戏内为准。");
-                            replyMsg(CQmsg, builder.toString());
-                            if (CQmsg.isGroupMsg()) {
+                            replyMsg(simpleMsg, builder.toString());
+                            if (simpleMsg.isGroupMsg()) {
                                 date.todayCount += 1;
                             }
                             user_config.set("userdates", gson.toJson(userDates));
                             user_loader.save(user_config);
                             i18n_loader.save(i18n);
                         } else {
-                            replyMsg(CQmsg, "请输入正确的抽卡次数");
+                            replyMsg(simpleMsg, "请输入正确的抽卡次数");
                             return;
                         }
                     }
                 } else if ("单抽".equals(strings[1])) {
-                    UserDate date = getUser(CQmsg.getFromClient());
-                    if (date.todayCount > 2 && CQmsg.isGroupMsg()) {
-                        replyMsg(CQmsg, zibenbot.at(CQmsg.getFromClient()) +
+                    UserDate date = getUser(simpleMsg.getFromClient());
+                    if (date.todayCount > 2 && simpleMsg.isGroupMsg()) {
+                        replyMsg(simpleMsg, zibenbot.at(simpleMsg.getFromClient()) +
                                 "今天的抽卡次数已经用完，请明天或者私聊抽卡。");
                     } else {
                         StringBuilder builder = new StringBuilder();
-                        builder.append(at(CQmsg)).append("的第");
+                        builder.append(at(simpleMsg)).append("的第");
                         builder.append(date.total);
                         SummonEle ele = single(date);
                         builder.append("抽:\n\t").append(getString(ele));
@@ -189,8 +189,8 @@ public class DraSummonSimulatorFunc extends BaseFunc {
                         builder.append("\n").append("当前概率：").append(df.format(f)).append("%");
                         builder.append("\n").append("当前卡池：").append(i18n(date.currentEvent.title));
                         builder.append("\n").append("抽卡结果仅供参考，实际以游戏内为准。");
-                        replyMsg(CQmsg, builder.toString());
-                        if (CQmsg.isGroupMsg()) {
+                        replyMsg(simpleMsg, builder.toString());
+                        if (simpleMsg.isGroupMsg()) {
                             date.todayCount += 1;
                         }
                         user_config.set("userdates", gson.toJson(userDates));
@@ -198,15 +198,15 @@ public class DraSummonSimulatorFunc extends BaseFunc {
                         i18n_loader.save(i18n);
                     }
                 } else if ("重置".equals(strings[1]) || "reset".equals(strings[1])) {
-                    UserDate date = getUser(CQmsg.getFromClient());
+                    UserDate date = getUser(simpleMsg.getFromClient());
                     date.reset();
-                    replyMsg(CQmsg, at(CQmsg) + "的抽卡数据已重置");
+                    replyMsg(simpleMsg, at(simpleMsg) + "的抽卡数据已重置");
                     user_config.set("userdates", gson.toJson(userDates));
                     user_loader.save(user_config);
                 } else if ("抽卡统计".equals(strings[1]) || "统计".equals(strings[1])) {
-                    UserDate date = getUser(CQmsg.getFromClient());
+                    UserDate date = getUser(simpleMsg.getFromClient());
                     StringBuilder builder = new StringBuilder();
-                    builder.append(at(CQmsg));
+                    builder.append(at(simpleMsg));
                     builder.append("的抽卡结果统计：");
                     builder.append("\n\t").append("一共抽了").append(date.total).append("抽").append(
                             "\n");
@@ -221,15 +221,15 @@ public class DraSummonSimulatorFunc extends BaseFunc {
                             builder.append("(").append(v).append(")").append("\n");
                         }
                     });
-                    replyMsg(CQmsg, builder.toString());
+                    replyMsg(simpleMsg, builder.toString());
                     i18n_loader.save(i18n);
                 } else {
-                    replyMsg(CQmsg, getUsages());
+                    replyMsg(simpleMsg, getUsages());
                 }
             } else if (strings.length == 3) {
                 if ("卡池切换".equals(strings[1]) || "切换卡池".equals(strings[1]) || "卡池".equals(strings[1])) {
                     int i = -1;
-                    UserDate date = getUser(CQmsg.getFromClient());
+                    UserDate date = getUser(simpleMsg.getFromClient());
                     try {
                         i = Integer.valueOf(strings[2]);
                         if (i == -1) {
@@ -238,7 +238,7 @@ public class DraSummonSimulatorFunc extends BaseFunc {
                             user_config.set("userdates", gson.toJson(userDates));
                             date.current = 0;
                             user_loader.save(user_config);
-                            replyMsg(CQmsg, "用户：" + at(CQmsg) +
+                            replyMsg(simpleMsg, "用户：" + at(simpleMsg) +
                                     "的卡池切换到最新卡池并保持最新");
                             return;
                         }
@@ -247,14 +247,14 @@ public class DraSummonSimulatorFunc extends BaseFunc {
                         user_config.set("userdates", gson.toJson(userDates));
                         date.current = 0;
                         user_loader.save(user_config);
-                        replyMsg(CQmsg, "用户：" + at(CQmsg) +
+                        replyMsg(simpleMsg, "用户：" + at(simpleMsg) +
                                 "的卡池切换到 【" + i18n(date.currentEvent.title) + "】");
                         i18n_loader.save(i18n);
                     } catch (Exception e) {
-                        replyMsg(CQmsg, "卡池序号有误");
+                        replyMsg(simpleMsg, "卡池序号有误");
                     }
                 } else {
-                    replyMsg(CQmsg, getUsages());
+                    replyMsg(simpleMsg, getUsages());
                 }
             } else if (msg.startsWith(".龙约 i18n ")) {
                 String[] strings1 = _split_1(" ", msg);
@@ -263,12 +263,12 @@ public class DraSummonSimulatorFunc extends BaseFunc {
                     String zh_name = strings1[3];
                     i18n.set(en_name, zh_name);
                     i18n_loader.save(i18n);
-                    replyMsg(CQmsg, "已将[" + en_name + "]设置为[" + zh_name + "]");
+                    replyMsg(simpleMsg, "已将[" + en_name + "]设置为[" + zh_name + "]");
                 } else {
-                    replyMsg(CQmsg, "i18n参数异常:" + Arrays.toString(strings1));
+                    replyMsg(simpleMsg, "i18n参数异常:" + Arrays.toString(strings1));
                 }
             } else {
-                replyMsg(CQmsg, getUsages());
+                replyMsg(simpleMsg, getUsages());
             }
         }
     }

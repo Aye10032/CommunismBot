@@ -29,10 +29,10 @@ public class FuncEnableFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg CQmsg) {
+    public void run(SimpleMsg simpleMsg) {
         //加载数据
         disableList = load();
-        String[] msgs = CQmsg.getMsg().trim().split(" ");
+        String[] msgs = simpleMsg.getMsg().trim().split(" ");
         Boolean flag = null;
         if (msgs[0].equals("disable") || msgs[0].equals("禁用") || msgs[0].equals(".disable") || msgs[0].equals(".禁用")) {
             flag = false;
@@ -44,7 +44,7 @@ public class FuncEnableFunc extends BaseFunc {
         // true 启用模式
         // false 禁用模式
         if (flag != null) {
-            if (CQmsg.isGroupMsg()) {
+            if (simpleMsg.isGroupMsg()) {
                 //没有方法名称
                 //返回所有方法
                 if (msgs.length == 1) {
@@ -54,7 +54,7 @@ public class FuncEnableFunc extends BaseFunc {
                     IFunc func;
                     for (int i = 0; i < list.size(); i++) {
                         func = list.get(i);
-                        if (func != this && isEnable(CQmsg.getFromGroup(), func)) {
+                        if (func != this && isEnable(simpleMsg.getFromGroup(), func)) {
                             builder.append("\t").append(func.getClass().getSimpleName());
                             builder.append("\n");
                         }
@@ -62,14 +62,14 @@ public class FuncEnableFunc extends BaseFunc {
                     builder.append("本群当前禁用的模块有：\n");
                     for (int i = 0; i < list.size(); i++) {
                         func = list.get(i);
-                        if (func != this && !isEnable(CQmsg.getFromGroup(), func)) {
+                        if (func != this && !isEnable(simpleMsg.getFromGroup(), func)) {
                             builder.append("\t").append(func.getClass().getSimpleName());
                             if (i != list.size() - 1) {
                                 builder.append("\n");
                             }
                         }
                     }
-                    replyMsg(CQmsg, builder.toString());
+                    replyMsg(simpleMsg, builder.toString());
                 //有方法名称
                 } else if (msgs.length == 2) {
                     //查找是否有对应的
@@ -86,15 +86,15 @@ public class FuncEnableFunc extends BaseFunc {
                     //有对应的进行启用/禁用
                     if (a) {
                         if (flag) {
-                            setEnable(CQmsg.getFromGroup(), msgs[1]);
-                            replyMsg(CQmsg, "已启用：" + msgs[1]);
+                            setEnable(simpleMsg.getFromGroup(), msgs[1]);
+                            replyMsg(simpleMsg, "已启用：" + msgs[1]);
                         } else {
-                            setDisable(CQmsg.getFromGroup(), msgs[1]);
-                            replyMsg(CQmsg, "已禁用：" + msgs[1]);
+                            setDisable(simpleMsg.getFromGroup(), msgs[1]);
+                            replyMsg(simpleMsg, "已禁用：" + msgs[1]);
                         }
                     //没有对应的 返回
                     } else {
-                        replyMsg(CQmsg, "模块名称有误，或者不存在：" + msgs[1]);
+                        replyMsg(simpleMsg, "模块名称有误，或者不存在：" + msgs[1]);
                     }
                 }
                 //保存数据
@@ -102,7 +102,7 @@ public class FuncEnableFunc extends BaseFunc {
             } else {
                 //私聊功能暂时封闭
                 //考虑以后私聊对群进行操作
-                replyMsg(CQmsg, "只可以对群启用/禁用功能");
+                replyMsg(simpleMsg, "只可以对群启用/禁用功能");
             }
         }
 

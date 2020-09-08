@@ -5,11 +5,10 @@ import com.aye10032.Functions.funcutil.SimpleMsg;
 import com.aye10032.Utils.HttpUtils;
 import com.aye10032.Utils.TimeUtil.TimedTaskBase;
 import com.aye10032.Utils.fangzhoudiaoluo.DiaoluoType;
-import com.aye10032.Utils.fangzhoudiaoluo.DiaoluoTypeDeserializer;
+import com.aye10032.Utils.fangzhoudiaoluo.MaterialsDeserializer;
 import com.aye10032.Utils.fangzhoudiaoluo.Module;
 import com.aye10032.Zibenbot;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -19,7 +18,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.aye10032.Utils.TimeUtil.TimeConstant.NEXT_DAY;
@@ -74,12 +78,12 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
     private boolean lastEnforce = false;
 
     @Override
-    public void run(SimpleMsg cqmsg) {
-        String msg = cqmsg.getMsg().trim();
+    public void run(SimpleMsg simpleMsg) {
+        String msg = simpleMsg.getMsg().trim();
         if (last !=null) {
-            if (cqmsg.getFromClient() == last.getKey()) {
+            if (simpleMsg.getFromClient() == last.getKey()) {
                 if (("是".equals(msg) || "yes".equals(msg) || "Yes".equals(msg) || "Y".equals(msg) || "y".equals(msg) || "确实".equals(msg) || "对".equals(msg))) {
-                    retMsg(false, last.getValue(), cqmsg);
+                    retMsg(false, last.getValue(), simpleMsg);
                 }
                 last = null;
             }
@@ -90,7 +94,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
             int len = strings.length;
             if (len == 2 && "更新".equals(strings[1])) {
                 update();
-                replyMsg(cqmsg, "数据更新完成，数据时间："+Module.lastUpdate);
+                replyMsg(simpleMsg, "数据更新完成，数据时间："+Module.lastUpdate);
                 return;
             }
             if (len >= 2) {
@@ -100,13 +104,13 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                         if (zibenbot == null) {
                             System.out.println("方舟掉落：初始化异常");
                         } else {
-                            zibenbot.replyMsg(cqmsg, "方舟掉落：初始化异常");
+                            zibenbot.replyMsg(simpleMsg, "方舟掉落：初始化异常");
                         }
                         return;
                     }
                     for (DiaoluoType.HeChenType type : name_idList) {
                         if (type.isThis(strings[i])) {
-                            retMsg(strings[i].startsWith("*"), type, cqmsg);
+                            retMsg(strings[i].startsWith("*"), type, simpleMsg);
                             flag = false;
                             break;
                         }
@@ -121,14 +125,14 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                         }
                         if (max.getValue() < 0.5f) {
                             if (zibenbot != null) {
-                                zibenbot.replyMsg(cqmsg, "找不到素材：【" + raw + "】");
+                                zibenbot.replyMsg(simpleMsg, "找不到素材：【" + raw + "】");
                             } else if (zibenbot == null) {
                                 System.out.println("找不到素材：【" + raw + "】");
                             }
                         } else {
-                            last = Pair.of(cqmsg.getFromClient(), max.getKey());
+                            last = Pair.of(simpleMsg.getFromClient(), max.getKey());
                             if (zibenbot != null) {
-                                zibenbot.replyMsg(cqmsg, "你要找的是不是：【" + max.getKey().names[0] + "】");
+                                zibenbot.replyMsg(simpleMsg, "你要找的是不是：【" + max.getKey().names[0] + "】");
                             } else if (zibenbot == null) {
                                 System.out.println("你要找的是不是：【" + max.getKey().names[0] + "】");
                             }
@@ -136,10 +140,10 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                     }
                 }
             } else {
-                if (zibenbot != null && !cqmsg.isTeamspealMsg()) {
-                    zibenbot.replyMsg(cqmsg, zibenbot.getImg(new File(arkonegraphFile)));
-                } else if (cqmsg.isTeamspealMsg()) {
-                    zibenbot.replyMsg(cqmsg, "ts频道无法发图片，请从群聊或者私聊查询");
+                if (zibenbot != null && !simpleMsg.isTeamspealMsg()) {
+                    zibenbot.replyMsg(simpleMsg, zibenbot.getImg(new File(arkonegraphFile)));
+                } else if (simpleMsg.isTeamspealMsg()) {
+                    zibenbot.replyMsg(simpleMsg, "ts频道无法发图片，请从群聊或者私聊查询");
                 }
             }
         }
@@ -174,23 +178,28 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
 
     public void update() {
         //System.out.println(arkonegraphFile);
-        Zibenbot.logger.info("fangzhoudiaoluo update start");
+        Zibenbot.logger.info("fangzhoudiaoluo load start");
         File file = new File(cacheFile);
-        Gson gson = new GsonBuilder().registerTypeAdapter(DiaoluoType.class, new DiaoluoTypeDeserializer()).setLenient().create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(DiaoluoType.Material[].class, new MaterialsDeserializer()).setLenient().create();
+        JsonParser parser = new JsonParser();
         CloseableHttpClient client = HttpClientBuilder.create().setDefaultHeaders(Arrays.asList(getHeaders())).build();
         //更新掉落数据
-        DiaoluoType diaoluoType = null;
+        DiaoluoType diaoluoType = new DiaoluoType();
         try {
+            InputStream stream = HttpUtils.getInputStreamFromNet("https://arkonegraph.herokuapp.com/total/CN", client);
+            JsonObject jsonObject = parser.parse(IOUtils.toString(stream)).getAsJsonObject();
+            stream.close();
             for (int i = 1; i <= 5; i++) {
-                InputStream stream = HttpUtils.getInputStreamFromNet("https://arkonegraph.herokuapp.com/materials/tier/" + String.valueOf(i)+"/CN", client);
-                if (diaoluoType == null) {
-                    diaoluoType = gson.fromJson(new InputStreamReader(stream), DiaoluoType.class);
-                } else {
-                    diaoluoType.material = ArrayUtils.addAll(diaoluoType.material, gson.fromJson(new InputStreamReader(stream), DiaoluoType.class).material);
-                }
-                stream.close();
-
+                    JsonArray array = jsonObject.get("tier").getAsJsonObject().get(String.format("t%d", i)).getAsJsonArray();
+                    DiaoluoType.Material[] materials = gson.fromJson(array, DiaoluoType.Material[].class);
+                    if (diaoluoType.material != null) {
+                        diaoluoType.material = ArrayUtils.addAll(diaoluoType.material, materials);
+                    } else {
+                        diaoluoType.material = materials;
+                    }
             }
+
+
             this.type = diaoluoType;
             FileReader reader;
             List<String> strings = IOUtils.readLines(reader = new FileReader(zibenbot.appDirectory + "/fangzhoudiaoluo/name-id.txt"));
@@ -209,6 +218,12 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
             Module.update(zibenbot.appDirectory);
             module = Module.module;
 
+            String last = jsonObject.get("gacha")
+                    .getAsJsonObject().get("last_updated")
+                    .getAsString();
+            IOUtils.closeQuietly(stream);
+            DateFormat format1 = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+            Module.lastUpdate = format1.format(new Date(last));
             String img_url = "https://aog.wiki/";
             //update_img(img_url);
 
@@ -216,7 +231,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         } catch (Exception e) {
             Zibenbot.logger.warning("方舟掉落更新出错：" + ExceptionUtils.getStackTrace(e));
         }
-        Zibenbot.logger.info("fangzhoudiaoluo update end");
+        Zibenbot.logger.info("fangzhoudiaoluo load end");
     }
 
     private void update_img(String img_url) throws IOException {

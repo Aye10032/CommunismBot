@@ -19,23 +19,23 @@ public class CheruFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg CQmsg) {
-        if (CQmsg.getMsg().startsWith("切噜") && (CQmsg.getMsg().split(" ").length == 2)) {
+    public void run(SimpleMsg simpleMsg) {
+        if (simpleMsg.getMsg().startsWith("切噜") && (simpleMsg.getMsg().split(" ").length == 2)) {
             String msg = "";
             try {
-                msg = cheruUtil.toCheru(CQmsg.getMsg().split(" ")[1]);
+                msg = cheruUtil.toCheru(simpleMsg.getMsg().split(" ")[1]);
             } catch (Exception e) {
                 msg = e.toString();
             }
-            zibenbot.replyMsg(CQmsg, msg);
-        } else if (CQmsg.getMsg().startsWith("切噜～")) {
-            String msg = CQmsg.getMsg();
+            zibenbot.replyMsg(simpleMsg, msg);
+        } else if (simpleMsg.getMsg().startsWith("切噜～")) {
+            String msg = simpleMsg.getMsg();
             try {
                 msg = cheruUtil.toStr(msg);
             } catch (Exception e) {
                 msg = e.toString();
             }
-            zibenbot.replyMsg(CQmsg, msg);
+            zibenbot.replyMsg(simpleMsg, msg);
         }
     }
 }

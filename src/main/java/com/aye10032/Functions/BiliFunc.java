@@ -33,8 +33,8 @@ public class BiliFunc extends BaseFunc {
     }
 
     @Override
-    public void run(SimpleMsg CQmsg) {
-        AyeCompile compile = new AyeCompile(CQmsg.getMsg());
+    public void run(SimpleMsg simpleMsg) {
+        AyeCompile compile = new AyeCompile(simpleMsg.getMsg());
         if (compile.hasAV() | compile.hasBV()) {
             BiliInfo biliInfo;
             if (compile.hasBV()) {
@@ -43,13 +43,13 @@ public class BiliFunc extends BaseFunc {
                 biliInfo = new BiliInfo(compile.getAVString(), appDirectory);
             }
             String send = "";
-            if (CQmsg.isPrivateMsg() || CQmsg.isGroupMsg()) {
+            if (simpleMsg.isPrivateMsg() || simpleMsg.isGroupMsg()) {
                 if (!biliInfo.hasVideo) {
                     send += "错误代码：";
                     send += biliInfo.code;
                     send += " ";
                     send += code_msg.get(biliInfo.code);
-                    replyMsg(CQmsg, send);
+                    replyMsg(simpleMsg, send);
                     return;
                 }
                 String pvideo = "\n预览：" + "视频太短，不提供预览。";
@@ -70,7 +70,7 @@ public class BiliFunc extends BaseFunc {
                         + " 收藏：" + formatToW(biliInfo.getFavorite())
                         + " 评论：" + formatToW(biliInfo.getReply())
                         + "\n简介：" + biliInfo.getDescription();
-            } else if (CQmsg.isTeamspealMsg()) {
+            } else if (simpleMsg.isTeamspealMsg()) {
                 send = biliInfo.getTitle() + "\n"
                         + biliInfo.getVideourl() + "\n"
                         + "\nup主：" + biliInfo.getUp()
@@ -82,7 +82,7 @@ public class BiliFunc extends BaseFunc {
                         + " 评论：" + formatToW(biliInfo.getReply())
                         + "\n简介：" + biliInfo.getDescription();
             }
-            replyMsg(CQmsg, send);
+            replyMsg(simpleMsg, send);
 
         }
     }
