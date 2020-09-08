@@ -151,7 +151,7 @@ public class RedStoneFunc extends BaseFunc {
             if (c == null || c.isClosed()) {
                 Class.forName("org.sqlite.JDBC");
                 c = DriverManager.getConnection("jdbc:sqlite:" + zibenbot.appDirectory +
-                        "\\nlpdata\\botnlpdata.db");
+                        "\\videodata.db");
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
