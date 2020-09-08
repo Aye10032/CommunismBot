@@ -504,6 +504,23 @@ public class Zibenbot {
             return c.getTime();
         };
 
+        ITimeAdapter dakaCycle = date2 -> {
+            Calendar c = Calendar.getInstance();
+            c.setTime(date2);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            int min = c.get(Calendar.MINUTE);
+            if (0 <= hour && hour < 8 && min < 30) {
+                c.set(Calendar.HOUR_OF_DAY, 8);
+                c.set(Calendar.MINUTE,30);
+            } else {
+                c.setTime(new Date(c.getTimeInMillis() + 86400 * 1000));
+            }
+
+            return c.getTime();
+        };
+
 
         logInfo("registe time task start");
         Calendar calendar = Calendar.getInstance();

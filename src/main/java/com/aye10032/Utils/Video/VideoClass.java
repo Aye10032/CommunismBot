@@ -1,5 +1,7 @@
 package com.aye10032.Utils.Video;
 
+import com.aye10032.Zibenbot;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -120,7 +122,7 @@ public class VideoClass {
         return new String(returnMSG);
     }
 
-    public String getTranslateList(){
+    public String getTranslateList(Zibenbot zibenbot){
         StringBuilder returnMSG = new StringBuilder("");
         if (getVideoNum() == 0) {
             returnMSG.append("当前列表中无视频");
@@ -139,7 +141,7 @@ public class VideoClass {
                         returnMSG.append("翻译中:");
 
                         for (Map.Entry<Long, String> entry : data.getTransList().entrySet()) {
-                            returnMSG.append("\n    ").append("[CQ:at,qq=").append(entry.getKey()).append("] : ").append(entry.getValue());
+                            returnMSG.append("\n    ").append(zibenbot.at(entry.getKey())).append(entry.getValue());
                         }
                     }
                 }
