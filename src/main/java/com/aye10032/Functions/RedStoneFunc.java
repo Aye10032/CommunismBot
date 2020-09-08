@@ -201,6 +201,8 @@ public class RedStoneFunc extends BaseFunc {
                             + msg + "', '"
                             + ft.format(dNow) + "' );";
             stmt.executeUpdate(sql);
+            sql = "UPDATE videoinfo SET ISTRANS = 1 WHERE ID = " + ID + ";";
+            stmt.executeUpdate(sql);
             stmt.close();
             c.close();
 
