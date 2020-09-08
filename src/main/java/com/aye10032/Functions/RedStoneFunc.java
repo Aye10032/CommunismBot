@@ -66,7 +66,7 @@ public class RedStoneFunc extends BaseFunc {
         if (simpleMsg.getFromGroup()==456919710L || simpleMsg.getFromClient() ==2375985957L) {
             if (simpleMsg.getMsg().equals("接坑")) {
                 videoClass.updateList();
-                zibenbot.replyMsg(simpleMsg, videoClass.getTranslateList());
+                zibenbot.replyMsg(simpleMsg, videoClass.getTranslateList(zibenbot));
                 ConfigLoader.save(zibenbot.appDirectory + "/videoData.json", VideoClass.class, videoClass);
             } else if (simpleMsg.getMsg().startsWith("已搬 ")) {
                 videoClass.VideoDone(strlist[1]);
@@ -88,7 +88,7 @@ public class RedStoneFunc extends BaseFunc {
                     }
                 }
                 videoClass.updateList();
-                zibenbot.replyMsg(simpleMsg, videoClass.getTranslateList());
+                zibenbot.replyMsg(simpleMsg, videoClass.getTranslateList(zibenbot));
                 ConfigLoader.save(zibenbot.appDirectory + "/videoData.json", VideoClass.class, videoClass);
             }
         }
