@@ -167,15 +167,9 @@ public abstract class DragraliaTask extends SubscribableBase {
             }
         }
         if (len <= 300) {
-            img_list.forEach(img -> runs.add(() -> {
-                downloadImg(img);
-            }));
+            img_list.forEach(img -> runs.add(() -> downloadImg(img)));
         } else {
-            try {
-                screenshotFile.set(getScreenshot(a));
-            } catch (Exception e) {
-                //ignore
-            }
+            screenshotFile.set(getScreenshot(a));
         }
         if (!"".equals(a.image_path)) {
             runs.add(() -> downloadImg(a.image_path));
@@ -264,8 +258,9 @@ public abstract class DragraliaTask extends SubscribableBase {
             WebDriver driver = SeleniumUtils.getDriver();
             return ScreenshotFunc.getScreenshot(driver, url, outputfile, 4000, "for(item of " +
                     "document.getElementsByTagName('details')) {\n" + "    item.open = true;\n" + "}");
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            zibenbot.logWarning("截图龙约公告出错：" + ExceptionUtils.printStack(e));
         }
         return null;
     }
