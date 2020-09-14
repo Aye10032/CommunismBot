@@ -1,12 +1,9 @@
 package com.aye10032.test;
 
-import com.aye10032.Functions.funcutil.IFunc;
-
 import java.io.File;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
 
 public class RedstonTest {
 

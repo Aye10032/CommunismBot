@@ -1,16 +1,16 @@
 package com.aye10032;
 
-import com.aye10032.Functions.*;
-import com.aye10032.Functions.funcutil.IFunc;
-import com.aye10032.Functions.funcutil.SimpleMsg;
+import com.aye10032.functions.*;
+import com.aye10032.functions.funcutil.IFunc;
+import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.NLP.DataCollect;
-import com.aye10032.TimeTask.DragraliaTask;
-import com.aye10032.TimeTask.SimpleSubscription;
-import com.aye10032.Utils.ExceptionUtils;
-import com.aye10032.Utils.SeleniumUtils;
-import com.aye10032.Utils.TimeUtil.ITimeAdapter;
-import com.aye10032.Utils.TimeUtil.SubscriptManager;
-import com.aye10032.Utils.TimeUtil.TimeTaskPool;
+import com.aye10032.timetask.DragraliaTask;
+import com.aye10032.timetask.SimpleSubscription;
+import com.aye10032.utils.ExceptionUtils;
+import com.aye10032.utils.SeleniumUtils;
+import com.aye10032.utils.timeutil.ITimeAdapter;
+import com.aye10032.utils.timeutil.SubscriptManager;
+import com.aye10032.utils.timeutil.TimeTaskPool;
 import com.dazo66.message.MiraiSerializationKt;
 import com.firespoon.bot.command.Command;
 import com.firespoon.bot.commandbody.CommandBody;
@@ -503,6 +503,35 @@ public class Zibenbot {
 
             return c.getTime();
         };
+        ITimeAdapter jiaomieCycle = date -> {
+            Calendar c = Calendar.getInstance();
+            c.setTime(date);
+            int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            if (1 == dayOfWeek) {
+                if (hour < 22) {
+                } else {
+                    c.set(Calendar.DAY_OF_WEEK, 2);
+                }
+                c.set(Calendar.HOUR_OF_DAY, 22);
+
+            } else if (2 == dayOfWeek) {
+                if (hour < 22) {
+                } else {
+                    c.set(Calendar.WEEK_OF_YEAR, c.get(Calendar.WEEK_OF_YEAR) + 1);
+                    c.set(Calendar.DAY_OF_WEEK, 1);
+                }
+                c.set(Calendar.HOUR_OF_DAY, 22);
+            } else {
+                c.set(Calendar.WEEK_OF_YEAR, c.get(Calendar.WEEK_OF_YEAR) + 1);
+                c.set(Calendar.DAY_OF_WEEK, 1);
+                c.set(Calendar.HOUR_OF_DAY, 22);
+            }
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+            return c.getTime();
+        };
 
         ITimeAdapter dakaCycle = date2 -> {
             Calendar c = Calendar.getInstance();
@@ -545,8 +574,16 @@ public class Zibenbot {
                 return NAME;
             }
         };
+        SimpleSubscription jiaomie = new SimpleSubscription(this, jiaomieCycle,
+                getImg(appDirectory + "/image/提醒剿灭小助手.jpg")) {
+            @Override
+            public String getName() {
+                return "提醒剿灭小助手";
+            }
+        };
         subManager.setTiggerTime(date);
         subManager.addSubscribable(maiyao);
+        subManager.addSubscribable(jiaomie);
         subManager.addSubscribable(new DragraliaTask(this) {
             private final static String NAME = "龙约公告转发小助手";
 
