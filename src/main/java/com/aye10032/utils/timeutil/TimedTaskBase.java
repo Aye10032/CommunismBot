@@ -1,4 +1,4 @@
-package com.aye10032.Utils.TimeUtil;
+package com.aye10032.utils.timeutil;
 
 import java.util.Date;
 
@@ -52,7 +52,7 @@ public abstract class TimedTaskBase {
     }
 
     public Date getNextTiggerTime() {
-        return TimeConstant.getNextTimeFromNow(getTiggerTime(), getCycle());
+        return TimeConstant.getNextTimeFromNowInclude(getTiggerTime(), getCycle());
     }
 
     public TimedTaskBase setTimes(int times) {

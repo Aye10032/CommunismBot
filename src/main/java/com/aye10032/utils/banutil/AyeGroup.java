@@ -1,4 +1,4 @@
-package com.aye10032.Utils.BanUtil;
+package com.aye10032.utils.banutil;
 
 import java.util.*;
 

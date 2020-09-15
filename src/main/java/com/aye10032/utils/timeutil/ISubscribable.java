@@ -1,6 +1,6 @@
-package com.aye10032.Utils.TimeUtil;
+package com.aye10032.utils.timeutil;
 
-import com.aye10032.Functions.funcutil.SimpleMsg;
+import com.aye10032.functions.funcutil.SimpleMsg;
 
 import java.util.Date;
 import java.util.List;

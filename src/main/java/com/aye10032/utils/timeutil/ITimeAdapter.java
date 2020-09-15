@@ -1,4 +1,4 @@
-package com.aye10032.Utils.TimeUtil;
+package com.aye10032.utils.timeutil;
 
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package com.aye10032.Utils.Video;
+package com.aye10032.utils.video;
 
 import com.aye10032.Zibenbot;
 
