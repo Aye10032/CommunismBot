@@ -1,4 +1,4 @@
-package com.aye10032.Utils.TimeUtil;
+package com.aye10032.utils.timeutil;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -91,13 +91,25 @@ public class TimeConstant {
      * @param adapter 时间适配器 得到下个时间
      * @return
      */
-    public static Date getNextTimeFromNow(Date date, ITimeAdapter adapter) {
-        return getNextTimeFromNow(date, new Date(), adapter);
+    public static Date getNextTimeFromNowInclude(Date date, ITimeAdapter adapter) {
+        return getNextTimeFromNowInclude(date, new Date(), adapter);
     }
 
-    public static Date getNextTimeFromNow(Date date, Date now, ITimeAdapter adapter) {
+    public static Date getNextTimeFromNowInclude(Date date, Date now, ITimeAdapter adapter) {
         Date ret = (Date) date.clone();
         while (now.compareTo(ret) > 0) {
+            ret.setTime(adapter.getNextTime(ret).getTime());
+        }
+        return ret;
+    }
+
+    public static Date getNextTimeFromNowExclude(Date date, ITimeAdapter adapter) {
+        return getNextTimeFromNowExclude(date, new Date(), adapter);
+    }
+
+    public static Date getNextTimeFromNowExclude(Date date, Date now, ITimeAdapter adapter) {
+        Date ret = (Date) date.clone();
+        while (now.compareTo(ret) >= 0) {
             ret.setTime(adapter.getNextTime(ret).getTime());
         }
         return ret;

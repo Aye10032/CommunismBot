@@ -1,7 +1,7 @@
-package com.aye10032.TimeTask;
+package com.aye10032.timetask;
 
-import com.aye10032.Utils.TimeUtil.ITimeAdapter;
-import com.aye10032.Utils.TimeUtil.SubscribableBase;
+import com.aye10032.utils.timeutil.ITimeAdapter;
+import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.Zibenbot;
 
 import java.util.Date;
@@ -40,5 +40,10 @@ public abstract class SimpleSubscription extends SubscribableBase {
     @Override
     public Date getNextTime(Date date) {
         return cycle.getNextTime(date);
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleSubscription{" + getName() +"}";
     }
 }

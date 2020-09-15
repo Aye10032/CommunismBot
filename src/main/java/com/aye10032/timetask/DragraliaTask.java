@@ -1,11 +1,11 @@
-package com.aye10032.TimeTask;
+package com.aye10032.timetask;
 
-import com.aye10032.Functions.ScreenshotFunc;
-import com.aye10032.Functions.funcutil.SimpleMsg;
-import com.aye10032.Utils.*;
-import com.aye10032.Utils.TimeUtil.SubscribableBase;
-import com.aye10032.Utils.TimeUtil.TimeConstant;
 import com.aye10032.Zibenbot;
+import com.aye10032.functions.ScreenshotFunc;
+import com.aye10032.functions.funcutil.SimpleMsg;
+import com.aye10032.utils.*;
+import com.aye10032.utils.timeutil.SubscribableBase;
+import com.aye10032.utils.timeutil.TimeConstant;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -53,7 +53,13 @@ public abstract class DragraliaTask extends SubscribableBase {
                 //zibenbot.replyMsg(cqMsg, "公告获取异常");
             }
             Set<Article> articles = getNewArticles(date);
-            articles.forEach(a -> this.sendArticle(a, getRecipients()));
+            articles.forEach(a -> {
+                try {
+                    this.sendArticle(a, getRecipients());
+                } catch (Exception e) {
+                    zibenbot.logWarning("发送公告出错：" + ExceptionUtils.printStack(e));
+                }
+            });
         } catch (Exception e) {
             zibenbot.log(Level.WARNING, ExceptionUtils.printStack(e));
         }
@@ -78,7 +84,8 @@ public abstract class DragraliaTask extends SubscribableBase {
         //19：00
         d = d + (TimeConstant.HOUR + TimeConstant.SEC - ((d - TimeConstant.SEC) % TimeConstant.HOUR)) + TimeConstant.SEC;
         return new Date(d);*/
-        return TimeConstant.getNextSpecialTime(date, -1, -1, -1, 0, 1);
+        Date date1 = TimeConstant.getNextSpecialTime(date, -1, -1, -1, 0, 1);
+        return date1;
     }
 
     @Override
@@ -100,9 +107,15 @@ public abstract class DragraliaTask extends SubscribableBase {
         date.new_article_list.forEach(i -> {
             if (!last.new_article_list.contains(i)) {
                 try {
-                    set.add(getArticleFromNet(i, false));
-                    last.new_article_list.add(i);
+                    Article article = getArticleFromNet(i, false);
+                    if (article != null && article.title_name != null) {
+                        set.add(article);
+                        last.new_article_list.add(i);
+                    } else {
+                        throw new RuntimeException("获取公告出错");
+                    }
                 } catch (Exception e) {
+                    zibenbot.logWarning("获取公告出错：" + ExceptionUtils.printStack(e));
                     Article a = new Article();
                     a.message =
                             "更新公告异常\n公告页面：https://dragalialost.com/chs/news/detail/" + a.article_id;
@@ -121,9 +134,14 @@ public abstract class DragraliaTask extends SubscribableBase {
             }
             if (d == null || d.update_time < i.update_time) {
                 try {
-                    set.add(getArticleFromNet(i.id, true));
-                    last.update_article_list.remove(d);
-                    last.update_article_list.add(i);
+                    Article article = getArticleFromNet(i.id, true);
+                    if (article != null && article.title_name != null) {
+                        set.add(article);
+                        last.update_article_list.remove(d);
+                        last.update_article_list.add(i);
+                    } else {
+                        throw new RuntimeException("获取公告出错");
+                    }
                 } catch (Exception e) {
                     Article a = new Article();
                     a.message =
