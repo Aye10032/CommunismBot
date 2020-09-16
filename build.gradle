@@ -13,7 +13,7 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+    id "org.jetbrains.kotlin.jvm" version "1.4.10"
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
@@ -31,8 +31,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'net.mamoe:mirai-core-qqandroid:1.1.3'//此处版本应替换为当前最新
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'net.mamoe:mirai-core-qqandroid:1.2.3'//此处版本应替换为当前最新
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.10"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
@@ -89,16 +89,27 @@ tasks.withType(JavaCompile) {
 
 // 点这个箭头进行打包
 jar {
-    // 生成包的命名规则： baseName-version-classifier.jar
+
+    destinationDir = file("$rootDir/build")
+
     manifest {
-        attributes(
-                'Main-Class': 'com.common.MainKt',//入口点
-                'Class-Path': 'lib\\animal-sniffer-annotations-1.14.jar lib\\annotations-13.0.jar lib\\artoolkitplus-2.3.1-1.5.3.jar lib\\atomicfu-0.14.2.jar lib\\atomicfu-common-0.14.2.jar lib\\bcprov-jdk15on-1.64.jar lib\\byte-buddy-1.8.15.jar lib\\checker-compat-qual-2.0.0.jar lib\\commons-codec-1.11.jar lib\\commons-exec-1.3.jar lib\\commons-io-2.7.jar lib\\commons-lang3-3.11.jar lib\\commons-logging-1.2.jar lib\\error_prone_annotations-2.1.3.jar lib\\ffmpeg-4.2.2-1.5.3.jar lib\\flandmark-1.07-1.5.3.jar lib\\flycapture-2.13.3.31-1.5.3.jar lib\\gson-2.8.6.jar lib\\guava-25.0-jre.jar lib\\httpclient-4.5.12.jar lib\\httpcore-4.4.13.jar lib\\j2objc-annotations-1.1.jar lib\\javacpp-1.5.3-android-arm.jar lib\\javacpp-1.5.3-android-arm64.jar lib\\javacpp-1.5.3-android-x86.jar lib\\javacpp-1.5.3-android-x86_64.jar lib\\javacpp-1.5.3-ios-arm64.jar lib\\javacpp-1.5.3-ios-x86_64.jar lib\\javacpp-1.5.3-linux-arm64.jar lib\\javacpp-1.5.3-linux-armhf.jar lib\\javacpp-1.5.3-linux-ppc64le.jar lib\\javacpp-1.5.3-linux-x86.jar lib\\javacpp-1.5.3-linux-x86_64.jar lib\\javacpp-1.5.3-macosx-x86_64.jar lib\\javacpp-1.5.3-windows-x86.jar lib\\javacpp-1.5.3-windows-x86_64.jar lib\\javacpp-1.5.3.jar lib\\javacpp-platform-1.5.3.jar lib\\javacv-1.5.3.jar lib\\jcekt-1.0.0.jar lib\\jcekt-common-1.0.0.jar lib\\jsr305-1.3.9.jar lib\\kotlin-reflect-1.3.72.jar lib\\kotlin-serialization-1.3.72.jar lib\\kotlin-stdlib-1.3.72.jar lib\\kotlin-stdlib-common-1.3.72.jar lib\\kotlin-stdlib-jdk7-1.3.72.jar lib\\kotlin-stdlib-jdk8-1.3.72.jar lib\\kotlinx-coroutines-core-1.3.7.jar lib\\kotlinx-coroutines-core-common-1.3.7.jar lib\\kotlinx-coroutines-io-0.1.16.jar lib\\kotlinx-coroutines-io-jvm-0.1.16.jar lib\\kotlinx-io-0.1.16.jar lib\\kotlinx-io-jvm-0.1.16.jar lib\\kotlinx-serialization-protobuf-0.20.0.jar lib\\kotlinx-serialization-protobuf-common-0.20.0.jar lib\\kotlinx-serialization-runtime-0.20.0.jar lib\\kotlinx-serialization-runtime-common-0.20.0.jar lib\\ktor-client-cio-1.3.2.jar lib\\ktor-client-core-1.3.2.jar lib\\ktor-client-core-jvm-1.3.2.jar lib\\ktor-http-1.3.2.jar lib\\ktor-http-cio-1.3.2.jar lib\\ktor-http-cio-jvm-1.3.2.jar lib\\ktor-http-jvm-1.3.2.jar lib\\ktor-io-1.3.2.jar lib\\ktor-io-jvm-1.3.2.jar lib\\ktor-network-1.3.2.jar lib\\ktor-network-tls-1.3.2.jar lib\\ktor-utils-1.3.2.jar lib\\ktor-utils-jvm-1.3.2.jar lib\\leptonica-1.79.0-1.5.3.jar lib\\libdc1394-2.2.6-1.5.3.jar lib\\libfreenect-0.5.7-1.5.3.jar lib\\libfreenect2-0.2.0-1.5.3.jar lib\\librealsense-1.12.4-1.5.3.jar lib\\librealsense2-2.29.0-1.5.3.jar lib\\mirai-core-1.1.3.jar lib\\mirai-core-qqandroid-1.1.3.jar lib\\okhttp-4.8.1.jar lib\\okio-2.7.0.jar lib\\openblas-0.3.9-1.5.3-windows-x86_64.jar lib\\openblas-0.3.9-1.5.3.jar lib\\opencv-4.3.0-1.5.3-windows-x86_64.jar lib\\opencv-4.3.0-1.5.3.jar lib\\selenium-api-3.141.59.jar lib\\selenium-chrome-driver-3.141.59.jar lib\\selenium-edge-driver-3.141.59.jar lib\\selenium-firefox-driver-3.141.59.jar lib\\selenium-ie-driver-3.141.59.jar lib\\selenium-java-3.141.59.jar lib\\selenium-opera-driver-3.141.59.jar lib\\selenium-remote-driver-3.141.59.jar lib\\selenium-safari-driver-3.141.59.jar lib\\selenium-support-3.141.59.jar lib\\slf4j-api-1.7.30.jar lib\\sqlite-jdbc-3.32.3.jar lib\\teamspeak3-api-1.2.0.jar lib\\tesseract-4.1.1-1.5.3.jar lib\\videoinput-0.200-1.5.3.jar'
-        )
+        def classpathPrefix = 'lib'
+        Set<File> files = configurations.compile.files
+        def builder = new StringBuilder()
+        for (def f : files) {
+            builder.append(classpathPrefix).append("\\").append(f.getName()).append(" ")
+        }
+        attributes('Main-Class': 'com.common.MainKt')//入口点
+        attributes('Class-Path': builder.toString())
     }
-    
+
     // 将 build.gradle 打入到 jar 中, 方便查看依赖包版本
-    from("./"){
+    from("./") {
         include 'build.gradle'
+    }
+
+    copy() {
+        from configurations.compile.collect { it }
+        into "$buildDir/libs"
     }
 }

@@ -1,13 +1,15 @@
 package com.aye10032;
 
+import com.aye10032.NLP.DataCollect;
 import com.aye10032.functions.*;
 import com.aye10032.functions.funcutil.IFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
-import com.aye10032.NLP.DataCollect;
 import com.aye10032.timetask.DragraliaTask;
 import com.aye10032.timetask.SimpleSubscription;
 import com.aye10032.utils.ExceptionUtils;
+import com.aye10032.utils.IMsgUpload;
 import com.aye10032.utils.SeleniumUtils;
+import com.aye10032.utils.StringUtil;
 import com.aye10032.utils.timeutil.ITimeAdapter;
 import com.aye10032.utils.timeutil.SubscriptManager;
 import com.aye10032.utils.timeutil.TimeTaskPool;
@@ -18,7 +20,10 @@ import kotlin.Unit;
 import kotlin.coroutines.Continuation;
 import kotlin.jvm.functions.Function2;
 import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.contact.*;
+import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.contact.Member;
+import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.Listener;
 import net.mamoe.mirai.event.events.MemberMuteEvent;
 import net.mamoe.mirai.event.events.NewFriendRequestEvent;
@@ -28,10 +33,7 @@ import net.mamoe.mirai.utils.MiraiLogger;
 import net.mamoe.mirai.utils.PlatformLogger;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -471,14 +473,36 @@ public class Zibenbot {
         }
     }
 
-    private MessageChain toMessChain(Contact send, String msg){
-        String s = toMiraiImage(send, msg);
-        if (send instanceof Friend) {
+    final Map<String, IMsgUpload> msgUploads = new HashMap<>();
+    final Pattern MSG_TYPE_PATTERN = Pattern.compile(String.format("\\[type=(%s),[ ]*source=\"([[^\"\\f\\n\\r\\t\\v]]+)\"]"
+            , StringUtil.splicing("|", msgUploads.keySet())));
+
+    {
+        msgUploads.put("IMAGE", (conect, source) -> conect.uploadImage(new File(source)).toMiraiCode());
+        msgUploads.put("VOICE", (conect, source) -> {
+            if (conect instanceof Group) {
+                return ((Group) conect).uploadVoice(new FileInputStream(source)).toString();
+            } else {
+                return "[VOICE]";
+            }
+        });
+        msgUploads.put("AT", (conect, source) -> {
+            if (conect instanceof User) {
+                return at(Long.valueOf(source));
+            } else {
+                return "@" + source;
+            }
+        });
+    }
+
+    private MessageChain toMessChain(Contact send, String msg) {
+        String s = replaceMsgType(send, msg);
+        /*if (send instanceof Friend) {
             String fromto = String.valueOf(bot.getId()) + "-" + String.valueOf(send.getId());
             s = s.replaceAll("\\[mirai:image:\\{(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})}.mirai]", "[mirai:image:/" + fromto + "-$1$2$3$4$5"+"]");
         } else {
             s = s.replaceAll("\\[mirai:image:/(\\d+)-(\\d+)-(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})]", "[mirai:image:{$3-$4-$5-$6-$7}.mirai]");
-        }
+        }*/
         return MiraiSerializationKt.parseMiraiCode(s);
     }
 
@@ -618,11 +642,10 @@ public class Zibenbot {
         registerFunc.add(new DraSummonSimulatorFunc(this));
         registerFunc.add(new PaomianFunc(this));
         registerFunc.add(new SendGroupFunc(this));
-        //registerFunc.add(new INMFunc(this));
+        registerFunc.add(new INMFunc(this));
         registerFunc.add(new DataCollect(this));
         registerFunc.add(new CheruFunc(this));
         registerFunc.add(new QueueFunc(this));
-
         //对功能进行初始化
         for (IFunc func : registerFunc) {
             try {
@@ -641,27 +664,6 @@ public class Zibenbot {
             e.printStackTrace();
         }*/
         return 0;
-    }
-
-    /**
-     * 根据文件路径返回图片字符串
-     * @param path 文件路径
-     * @return 图片字符串
-     */
-    public String getImg(String path) {
-        File file = new File(path);
-        imageMap.put(file.hashCode(), file);
-        return String.valueOf(file.hashCode());
-    }
-
-    /**
-     * 根据文件返回图片字符串
-     * @param file 文件
-     * @return 图片字符串
-     */
-    public String getImg(File file) {
-        imageMap.put(file.hashCode(), file);
-        return String.valueOf(file.hashCode());
     }
 
     /**
@@ -714,6 +716,59 @@ public class Zibenbot {
         } catch (Exception e) {
             return 0;
         }
+    }
+
+    /**
+     * 根据文件路径返回声音字符串
+     *
+     * @param path 路径
+     * @return 声音字符串
+     */
+    public String getVoice(String path) {
+        return getMsg("VOICE", path);
+    }
+
+    /**
+     * 根据文件路径返回图片字符串
+     *
+     * @param path 文件路径
+     * @return 图片字符串
+     */
+    public String getImg(String path) {
+        return getMsg("IMAGE", path);
+    }
+
+    /**
+     * 根据文件返回图片字符串
+     *
+     * @param file 文件
+     * @return 图片字符串
+     */
+    public String getImg(File file) {
+        return getMsg("IMAGE", file.getAbsolutePath());
+    }
+
+    public String getMsg(String type, String source) {
+        return String.format("[type=%s, source=\"%s\"]", type, source);
+    }
+
+    private String replaceMsgType(Contact contact, String msg) {
+        Matcher matcher = MSG_TYPE_PATTERN.matcher(msg);
+        int i = 0;
+        while (matcher.find(i)) {
+            msg = msg.replace(matcher.group(0), _upload(contact, matcher.group(1), matcher.group(2)));
+            i = matcher.start() + 1;
+        }
+        return msg;
+    }
+
+    private String _upload(Contact contact, String type, String source) {
+        try {
+            return msgUploads.get(type).upload(contact, source);
+        } catch (Exception e) {
+            logWarning(String.format("上传%s失败：%s", type, ExceptionUtils.printStack(e)));
+        }
+        return "[" + type + "]";
     }
 
     private String toMiraiImage(Contact contact, String msg){

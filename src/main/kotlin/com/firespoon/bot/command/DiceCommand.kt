@@ -4,8 +4,8 @@ import net.mamoe.mirai.message.GroupMessageEvent
 import net.mamoe.mirai.message.MessageEvent
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.Message
+import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.asMessageChain
-import net.mamoe.mirai.message.data.toMessage
 import java.util.*
 
 abstract class DiceCommand {
@@ -42,11 +42,11 @@ abstract class DiceCommand {
                             val max = temp.second
 
                             if (time == -1) {
-                                replyMessage.add("您的骰点结果已被淹没在骰子的海洋中".toMessage())
+                                replyMessage.add(PlainText("您的骰点结果已被淹没在骰子的海洋中"))
                                 sum = 0
                                 break
                             } else if (time == -2) {
-                                replyMessage.add("正在尝试从十二维空间中寻找面数足够多的骰子".toMessage())
+                                replyMessage.add(PlainText("正在尝试从十二维空间中寻找面数足够多的骰子"))
                                 sum = 0
                                 break
                             } else {
@@ -67,7 +67,7 @@ abstract class DiceCommand {
                         }
 
                         if (sum > 0) {
-                            replyMessage.add("您的骰点结果为： $sum".toMessage())
+                            replyMessage.add(PlainText("您的骰点结果为： $sum"))
                         }
                         reply(replyMessage.asMessageChain())
                     }

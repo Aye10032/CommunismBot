@@ -1,5 +1,10 @@
 package com.aye10032.utils;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.function.Function;
+
 public class StringUtil {
 
     /*public static void main(String[] args) {
@@ -9,6 +14,60 @@ public class StringUtil {
 
     public StringUtil(){
 
+    }
+
+    /**
+     * 对传进来的多对象进行拼接
+     *
+     * @param middleKey  用于拼接的中间字符串
+     * @param collection 对象的集合
+     * @return 拼接好的字符串
+     */
+    public static <T> String splicing(String middleKey, Collection<T> collection) {
+        return splicing(middleKey, collection, T::toString);
+    }
+
+    /**
+     * 对传进来的多对象进行拼接
+     *
+     * @param middleKey 用于拼接的中间字符串
+     * @param array     对象的集合
+     * @return 拼接好的字符串
+     */
+    public static <T> String splicing(String middleKey, T... array) {
+        return splicing(middleKey, Arrays.asList(array), T::toString);
+    }
+
+    /**
+     * 对传进来的多对象进行拼接
+     *
+     * @param middleKey     用于拼接的中间字符串
+     * @param array         对象的集合
+     * @param getStringFunc 对象提取字符串的方式
+     * @return 拼接好的字符串
+     */
+    public static <T> String splicing(String middleKey, T[] array, Function<T, String> getStringFunc) {
+        return splicing(middleKey, Arrays.asList(array), getStringFunc);
+    }
+
+    /**
+     * 对传进来的多对象进行拼接
+     *
+     * @param middleKey     用于拼接的中间字符串
+     * @param collection    对象的集合
+     * @param getStringFunc 对象提取字符串的方式
+     * @return 拼接好的字符串
+     */
+    public static <T> String splicing(String middleKey, Collection<T> collection, Function<T, String> getStringFunc) {
+        StringBuilder builder = new StringBuilder();
+        Iterator<T> iterator = collection.iterator();
+        for (int i = 0; i < collection.size(); i++) {
+            builder.append(getStringFunc.apply(iterator.next()));
+            if (i != collection.size() - 1) {
+                builder.append(middleKey);
+            }
+        }
+        return builder.toString();
     }
 
     public String[] split(String string){
