@@ -2,12 +2,10 @@ package com.aye10032.command
 
 import com.aye10032.util.MHWUtil
 import com.firespoon.bot.command.Command
-import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.message.GroupMessageEvent
-import net.mamoe.mirai.message.data.At
+import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.SingleMessage
 import net.mamoe.mirai.message.data.asMessageChain
-import net.mamoe.mirai.message.data.toMessage
 import java.util.*
 
 abstract class MHWCommand {
@@ -18,7 +16,7 @@ abstract class MHWCommand {
                 action = {
                     val response = LinkedList<SingleMessage>()
 
-                    response.add(MHWUtil().aim.toMessage())
+                    response.add(PlainText(MHWUtil().aim))
 
                     reply(response.asMessageChain())
                 }

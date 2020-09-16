@@ -3,7 +3,10 @@ package com.aye10032.command
 import com.firespoon.bot.command.Command
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.message.GroupMessageEvent
-import net.mamoe.mirai.message.data.*
+import net.mamoe.mirai.message.data.At
+import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.message.data.SingleMessage
+import net.mamoe.mirai.message.data.asMessageChain
 import java.util.*
 
 abstract class NMSLCommand {
@@ -14,7 +17,7 @@ abstract class NMSLCommand {
                 action = {
                     val response = LinkedList<SingleMessage>()
 
-                    response.add("NMSL".toMessage())
+                    response.add(PlainText("NMSL"))
                     response.add(At(sender as Member))
 
                     reply(response.asMessageChain())

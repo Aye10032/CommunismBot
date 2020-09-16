@@ -23,11 +23,11 @@ fun parseMiraiCode(s:String): MessageChain = s.parseMiraiCodeImpl()
 fun String.parseMiraiCodeImpl(): MessageChain = buildMessageChain {
     forEachMiraiCode { origin, name, args ->
         if (name == null) {
-            add(origin.toMessage())
+            add(PlainText(origin))
             return@forEachMiraiCode
         }
         val parser = MiraiCodeParsers[name] ?: kotlin.run {
-            add(origin.toMessage())
+            add(PlainText(origin))
             return@forEachMiraiCode
         }
         parser.argsRegex.matchEntire(args)
@@ -38,7 +38,7 @@ fun String.parseMiraiCodeImpl(): MessageChain = buildMessageChain {
                 }.getOrNull()
             }
             ?.let(::add)
-            ?: add(origin.toMessage())
+            ?: add(PlainText(origin))
     }
 }
 
@@ -90,6 +90,9 @@ internal object MiraiCodeParsers : Map<String, MiraiCodeParser> by mapOf(
     },
     "flash" to MiraiCodeParser(Regex("""(.*)""")) { (id) ->
         Image(id).flash()
+    },
+    "voice" to MiraiCodeParser(Regex("""(.*)""")) { (id) ->
+        Voice(id, ByteArray(0), 0L, "")
     }
 )
 
