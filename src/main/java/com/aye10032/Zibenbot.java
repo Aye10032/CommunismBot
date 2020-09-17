@@ -474,8 +474,7 @@ public class Zibenbot {
     }
 
     final Map<String, IMsgUpload> msgUploads = new HashMap<>();
-    final Pattern MSG_TYPE_PATTERN = Pattern.compile(String.format("\\[type=(%s),[ ]*source=\"([[^\"\\f\\n\\r\\t\\v]]+)\"]"
-            , StringUtil.splicing("|", msgUploads.keySet())));
+    final Pattern MSG_TYPE_PATTERN;
 
     {
         msgUploads.put("IMAGE", (conect, source) -> conect.uploadImage(new File(source)).toMiraiCode());
@@ -493,6 +492,8 @@ public class Zibenbot {
                 return "@" + source;
             }
         });
+        MSG_TYPE_PATTERN = Pattern.compile(String.format("\\[type=(%s),[ ]*source=\"([[^\"\\f\\n\\r\\t\\v]]+)\"]"
+                , StringUtil.splicing("|", msgUploads.keySet())));
     }
 
     private MessageChain toMessChain(Contact send, String msg) {
