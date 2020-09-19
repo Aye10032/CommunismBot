@@ -1,7 +1,7 @@
 package com.aye10032.utils.timeutil;
 
-import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.Zibenbot;
+import com.aye10032.utils.ExceptionUtils;
 
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
@@ -56,7 +56,7 @@ public class TimeFlow implements Runnable {
                     Thread.sleep(timeInterval);
                 } else {
                     pool.nextTasks.forEach(task ->
-                            task.setTiggerTime(TimeConstant.getNextTimeFromNowInclude(task.getTiggerTime(), task.getCycle())));
+                            task.setTiggerTime(TimeUtils.getNextTimeFromNowInclude(task.getTiggerTime(), task.getCycle())));
                     continue;
                 }
             } catch (InterruptedException e) {

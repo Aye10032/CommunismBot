@@ -6,7 +6,7 @@ import java.util.Date;
  *
  * 时间适配器
  * 存储一个得到下个时间的方法
- * 具体实例参考 {@link TimeConstant}
+ * 具体实例参考 {@link TimeUtils}
  *
  * @author Dazo66
  */
