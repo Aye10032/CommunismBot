@@ -32,7 +32,7 @@ public class EatFunc extends BaseFunc {
                     String[] food = foodUtil.eatGuaranteed(3);
                     zibenbot.replyMsg(simpleMsg, food[0]);
                 } else {
-                    String[] food = foodUtil.eatWhatWithSSR();
+                    String[] food = foodUtil.eatWhatWithSSR(0);
                     zibenbot.replyMsg(simpleMsg, food[0]);
                     if (food[1].equals("3")) {
                         foodClaass.resetTimes(simpleMsg.getFromClient());
@@ -54,7 +54,7 @@ public class EatFunc extends BaseFunc {
                     String[] food = foodUtil.eatGuaranteed(3);
                     zibenbot.replyMsg(simpleMsg, food[0]);
                 } else {
-                    String[] food = foodUtil.eatWhatWithSSR();
+                    String[] food = foodUtil.eatWhatWithSSR(0);
                     foodBuilder.append(food[0]).append("\n");
                     switch (food[1]) {
                         case "1":
@@ -88,7 +88,7 @@ public class EatFunc extends BaseFunc {
                     }
 
                 } else {
-                    String[] food = foodUtil.eatWhatWithSSR();
+                    String[] food = foodUtil.eatWhatWithSSR(0);
                     foodBuilder.append(food[0]);
                     switch (food[1]) {
                         case "1":
@@ -107,6 +107,9 @@ public class EatFunc extends BaseFunc {
             }
             zibenbot.replyMsg(simpleMsg, foodBuilder.toString());
             ConfigLoader.save(zibenbot.appDirectory + "/foodData.json", FoodClaass.class, foodClaass);
+        }else if (simpleMsg.getFromGroup() == 792666782L && simpleMsg.getMsg().equals("一食堂")) {
+            String[] food = foodUtil.eatWhatWithSSR(1);
+            zibenbot.replyMsg(simpleMsg, food[0]);
         }
     }
 }
