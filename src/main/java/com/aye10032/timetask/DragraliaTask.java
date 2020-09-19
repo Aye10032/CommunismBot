@@ -5,7 +5,7 @@ import com.aye10032.functions.ScreenshotFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.*;
 import com.aye10032.utils.timeutil.SubscribableBase;
-import com.aye10032.utils.timeutil.TimeConstant;
+import com.aye10032.utils.timeutil.TimeUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -82,9 +82,9 @@ public abstract class DragraliaTask extends SubscribableBase {
         /*long d = date.getTime();
         //得到下一个01分
         //19：00
-        d = d + (TimeConstant.HOUR + TimeConstant.SEC - ((d - TimeConstant.SEC) % TimeConstant.HOUR)) + TimeConstant.SEC;
+        d = d + (TimeUtils.HOUR + TimeUtils.SEC - ((d - TimeUtils.SEC) % TimeUtils.HOUR)) + TimeUtils.SEC;
         return new Date(d);*/
-        Date date1 = TimeConstant.getNextSpecialTime(date, -1, -1, -1, 0, 1);
+        Date date1 = TimeUtils.getNextSpecialTime(date, -1, -1, -1, 0, 1, 0);
         return date1;
     }
 
