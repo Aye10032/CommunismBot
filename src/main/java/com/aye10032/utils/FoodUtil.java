@@ -1,34 +1,34 @@
 package com.aye10032.utils;
 
-import com.aye10032.utils.food.FoodVariety;
+import com.aye10032.data.EatData;
 
 import java.util.Random;
 
 public class FoodUtil {
 
-    private final FoodVariety foodVariety;
+    private final EatData eatData;
 
     public FoodUtil() {
-        foodVariety = new FoodVariety();
+        eatData = new EatData();
     }
 
     public String eatWhat() {
         Random random = new Random();
-        int m = random.nextInt(foodVariety.getMainlist().length);
+        int m = random.nextInt(eatData.getMainlist().length);
 
-        return foodVariety.getMainlist()[m];
+        return eatData.getMainlist()[m];
     }
 
     public String[] eatWhatWithSSR(int tag) {
         String[] ssrList,srList,mainlist;
         if (tag == 1){
-            mainlist = foodVariety.getCanteen1();
-            srList = foodVariety.getSrList();
-            ssrList = foodVariety.getSrList();
+            mainlist = eatData.getCanteen1();
+            srList = eatData.getSrList();
+            ssrList = eatData.getSrList();
         }else{
-            mainlist = foodVariety.getMainlist();
-            srList = foodVariety.getSrList();
-            ssrList = foodVariety.getSsrList();
+            mainlist = eatData.getMainlist();
+            srList = eatData.getSrList();
+            ssrList = eatData.getSsrList();
         }
         Random random = new Random();
         int flag = random.nextInt(30);
@@ -61,17 +61,17 @@ public class FoodUtil {
         if (flag == 2) {
             int srint = random.nextInt(10);
             if (srint == 1) {
-                m = random.nextInt(foodVariety.getSsrList().length);
-                food[0] = "★★★ " + foodVariety.getSsrList()[m];
+                m = random.nextInt(eatData.getSsrList().length);
+                food[0] = "★★★ " + eatData.getSsrList()[m];
                 food[1] = "3";
             } else {
-                m = random.nextInt(foodVariety.getSrList().length);
-                food[0] = "★★ " + foodVariety.getSrList()[m];
+                m = random.nextInt(eatData.getSrList().length);
+                food[0] = "★★ " + eatData.getSrList()[m];
                 food[1] = "2";
             }
         } else if (flag == 3) {
-            m = random.nextInt(foodVariety.getSsrList().length);
-            food[0] = "★★★ " + foodVariety.getSsrList()[m];
+            m = random.nextInt(eatData.getSsrList().length);
+            food[0] = "★★★ " + eatData.getSsrList()[m];
             food[1] = "3";
         }
 

@@ -641,7 +641,6 @@ public class Zibenbot {
         registerFunc.add(new ScreenshotFunc(this));
         registerFunc.add(new DragraliaNewsFunc(this));
         registerFunc.add(new DraSummonSimulatorFunc(this));
-        registerFunc.add(new PaomianFunc(this));
         registerFunc.add(new SendGroupFunc(this));
         registerFunc.add(new INMFunc(this));
         registerFunc.add(new DataCollect(this));
