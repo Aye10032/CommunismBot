@@ -31,6 +31,8 @@ repositories {
 }
 
 dependencies {
+    /*implementation 'net.mamoe:mirai-core-qqandroid:1.2.3'//此处版本应替换为当前最新
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.10"*/
     compile group: 'net.mamoe', name: 'mirai-core-qqandroid', version: '1.2.3'//此处版本应替换为当前最新
     compile group:  'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version :'1.4.10'
     testCompile group: 'junit', name: 'junit', version: '4.12'
@@ -93,8 +95,9 @@ jar {
     destinationDir = file("$rootDir/build")
 
     manifest {
+        //mainifest下的classpath头
         def classpathPrefix = 'libs'
-        Set<File> files = configurations.compile.files
+        Set<File> files = configurations.runtimeClasspath.files
         def builder = new StringBuilder()
         for (def f : files) {
             builder.append(classpathPrefix).append("\\").append(f.getName()).append(" ")
@@ -108,6 +111,8 @@ jar {
         include 'build.gradle'
     }
 
+    //会自动把依赖复制到编译目录下的libs文件夹里面
+    //如果有添加新的依赖记得复制到运行环境下的libs
     copy() {
         from configurations.compile.collect { it }
         into "$buildDir/libs"

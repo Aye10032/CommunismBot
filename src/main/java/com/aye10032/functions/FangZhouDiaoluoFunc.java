@@ -1,13 +1,13 @@
 package com.aye10032.functions;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.HttpUtils;
-import com.aye10032.utils.timeutil.TimedTaskBase;
 import com.aye10032.utils.fangzhoudiaoluo.DiaoluoType;
 import com.aye10032.utils.fangzhoudiaoluo.MaterialsDeserializer;
 import com.aye10032.utils.fangzhoudiaoluo.Module;
-import com.aye10032.Zibenbot;
+import com.aye10032.utils.timeutil.TimedTaskBase;
 import com.google.gson.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -26,9 +26,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.aye10032.utils.timeutil.TimeConstant.NEXT_DAY;
 import static com.aye10032.utils.fangzhoudiaoluo.Module.getModules;
 import static com.aye10032.utils.fangzhoudiaoluo.Module.getVers;
+import static com.aye10032.utils.timeutil.TimeUtils.NEXT_DAY;
 
 /**
  * @author Dazo66

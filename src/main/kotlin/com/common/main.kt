@@ -6,7 +6,6 @@ import com.firespoon.bot.core._subscribeAlways
 import com.firespoon.bot.core.boot
 import com.firespoon.bot.core.registerCommandAlways
 import com.firespoon.bot.core.registerListener
-import kotlinx.serialization.builtins.serializer
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.Listener
 import net.mamoe.mirai.event.events.BotReloginEvent

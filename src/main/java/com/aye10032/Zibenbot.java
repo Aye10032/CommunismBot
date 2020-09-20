@@ -13,6 +13,7 @@ import com.aye10032.utils.StringUtil;
 import com.aye10032.utils.timeutil.ITimeAdapter;
 import com.aye10032.utils.timeutil.SubscriptManager;
 import com.aye10032.utils.timeutil.TimeTaskPool;
+import com.aye10032.utils.timeutil.TimeUtils;
 import com.dazo66.message.MiraiSerializationKt;
 import com.firespoon.bot.command.Command;
 import com.firespoon.bot.commandbody.CommandBody;
@@ -509,53 +510,23 @@ public class Zibenbot {
 
     public int startup() {
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
-        ITimeAdapter maiyaoCycle = date1 -> {
-            Calendar c = Calendar.getInstance();
-            c.setTime(date1);
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            if (0 <= hour && hour < 6) {
-                c.set(Calendar.HOUR_OF_DAY, 6);
-            } else if (6 <= hour && hour < 12) {
-                c.set(Calendar.HOUR_OF_DAY, 12);
-            } else if (12 <= hour && hour < 18) {
-                c.set(Calendar.HOUR_OF_DAY, 18);
-            } else {
-                c.set(Calendar.HOUR_OF_DAY, 0);
-                c.setTime(new Date(c.getTimeInMillis() + 86400 * 1000));
-            }
-
-            return c.getTime();
+        ITimeAdapter maiyaoCycle = date -> {
+            Date date1 = TimeUtils.getNextSpecialTime(
+                    date, -1, -1, 0, 0, 0, 0);
+            Date date2 = TimeUtils.getNextSpecialTime(
+                    date, -1, -1, 6, 0, 0, 0);
+            Date date3 = TimeUtils.getNextSpecialTime(
+                    date, -1, -1, 12, 0, 0, 0);
+            Date date4 = TimeUtils.getNextSpecialTime(
+                    date, -1, -1, 18, 0, 0, 0);
+            return TimeUtils.getMin(date1, date2, date3, date4);
         };
         ITimeAdapter jiaomieCycle = date -> {
-            Calendar c = Calendar.getInstance();
-            c.setTime(date);
-            int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            if (1 == dayOfWeek) {
-                if (hour < 22) {
-                } else {
-                    c.set(Calendar.DAY_OF_WEEK, 2);
-                }
-                c.set(Calendar.HOUR_OF_DAY, 22);
-
-            } else if (2 == dayOfWeek) {
-                if (hour < 22) {
-                } else {
-                    c.set(Calendar.WEEK_OF_YEAR, c.get(Calendar.WEEK_OF_YEAR) + 1);
-                    c.set(Calendar.DAY_OF_WEEK, 1);
-                }
-                c.set(Calendar.HOUR_OF_DAY, 22);
-            } else {
-                c.set(Calendar.WEEK_OF_YEAR, c.get(Calendar.WEEK_OF_YEAR) + 1);
-                c.set(Calendar.DAY_OF_WEEK, 1);
-                c.set(Calendar.HOUR_OF_DAY, 22);
-            }
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            c.set(Calendar.MILLISECOND, 0);
-            return c.getTime();
+            Date date1 = TimeUtils.getNextSpecialWeekTime(date,
+                    -1, 1, 22, 0, 0, 0);
+            Date date2 = TimeUtils.getNextSpecialWeekTime(date,
+                    -1, 2, 22, 0, 0, 0);
+            return TimeUtils.getMin(date1, date2);
         };
 
         ITimeAdapter dakaCycle = date2 -> {
@@ -582,7 +553,7 @@ public class Zibenbot {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         Date date = calendar.getTime();
-        /*subManager.addSubscribable(new SimpleSubscription(this, TimeConstant.NEXT_MIN, () -> new Date().toString()) {
+        /*subManager.addSubscribable(new SimpleSubscription(this, TimeUtils.NEXT_MIN, () -> new Date().toString()) {
             @Override
             public String getName() {
                 return "test";

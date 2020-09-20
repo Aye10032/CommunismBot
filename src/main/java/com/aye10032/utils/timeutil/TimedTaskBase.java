@@ -15,7 +15,7 @@ public abstract class TimedTaskBase {
 
     private long tiggerTime = System.currentTimeMillis();
 
-    private ITimeAdapter cycle = TimeConstant.NEXT_DAY;
+    private ITimeAdapter cycle = TimeUtils.NEXT_DAY;
 
     public TimedTaskBase() {
     }
@@ -52,7 +52,7 @@ public abstract class TimedTaskBase {
     }
 
     public Date getNextTiggerTime() {
-        return TimeConstant.getNextTimeFromNowInclude(getTiggerTime(), getCycle());
+        return TimeUtils.getNextTimeFromNowInclude(getTiggerTime(), getCycle());
     }
 
     public TimedTaskBase setTimes(int times) {
