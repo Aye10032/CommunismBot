@@ -1,10 +1,10 @@
 package com.aye10032.functions;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.*;
 import com.aye10032.utils.timeutil.TimedTaskBase;
-import com.aye10032.Zibenbot;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.aye10032.utils.timeutil.TimeConstant.NEXT_HOUR;
+import static com.aye10032.utils.timeutil.TimeUtils.NEXT_HOUR;
 
 /**
  * @author Dazo66

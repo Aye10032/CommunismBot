@@ -1,10 +1,10 @@
 package com.aye10032.utils.timeutil;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.IFunc;
 import com.aye10032.functions.funcutil.MsgType;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.ConfigLoader;
-import com.aye10032.Zibenbot;
 import com.google.gson.reflect.TypeToken;
 
 import java.text.DateFormat;
@@ -179,7 +179,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
         Date begin = getBegin();
         Date temp = null;
         for (ISubscribable s : allSubscription) {
-            Date date1 = TimeConstant.getNextTimeFromNowExclude(begin, from, s);
+            Date date1 = TimeUtils.getNextTimeFromNowExclude(begin, from, s);
             temp = temp == null ? date1 : temp.compareTo(date1) < 0 ? temp : date1;
 
         }
@@ -232,10 +232,25 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 //重新读取后刷新收件人
                 flushRecipients();
                 replyMsg(simpleMsg, builder.toString());
-            } else if (msgs.length == 2) {
+            } else if (msgs.length == 2 || msgs.length == 3) {
                 if ("调试".equals(msgs[1]) || "debug".equals(msgs[1])) {
                     StringBuilder builder = new StringBuilder();
-                    Map<Date, List<ISubscribable>> map = getFutureTasks(10);
+                    builder.append("当前订阅关系如下:\n");
+                    subscriptMap.forEach((type, map) -> {
+                        builder.append(type.name());
+                        builder.append("\n");
+                        map.forEach((name, list) -> {
+                            builder.append("\t");
+                            builder.append(name);
+                            builder.append(" : ");
+                            list.forEach(s1 -> builder.append(s1).append(","));
+                            builder.deleteCharAt(builder.length() - 1);
+                            builder.append("\n");
+                        });
+                    });
+                    builder.append("\n当前时间轴如下:\n");
+                    int futureLength = msgs.length == 3 ? Integer.valueOf(msgs[2]) : 20;
+                    Map<Date, List<ISubscribable>> map = getFutureTasks(futureLength);
                     String TAB_STRING = "                    ";
                     for (Date date : map.keySet()) {
                         List<ISubscribable> list = map.get(date);
@@ -269,7 +284,6 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                         replyMsg(simpleMsg, String.format("【%s】 已订阅 【%s】", simpleMsg.isGroupMsg() ?
                                 "群:" + simpleMsg.getFromGroup() : "用户:" + simpleMsg.getFromClient(), msgs[1]));
                     } else {
-
                         unSubscribe(simpleMsg, msgs[1]);
                         replyMsg(simpleMsg, String.format("【%s】 已取消订阅 【%s】", simpleMsg.isGroupMsg() ?
                                 "群:" + simpleMsg.getFromGroup() : "用户:" + simpleMsg.getFromClient(), msgs[1]));
@@ -294,7 +308,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
         List<ISubscribable> ret = Collections.synchronizedList(new ArrayList<>());
         Date date = null;
         for (ISubscribable s : allSubscription) {
-            Date temp = TimeConstant.getNextTimeFromNowInclude(getBegin(), s);
+            Date temp = TimeUtils.getNextTimeFromNowInclude(getBegin(), s);
             if (date == null || temp.before(date)) {
                 date = temp;
                 ret.clear();

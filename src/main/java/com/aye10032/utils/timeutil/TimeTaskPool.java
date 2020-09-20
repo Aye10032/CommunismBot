@@ -97,7 +97,7 @@ public class TimeTaskPool {
                     }
                 }
                 .setTimes(1)
-                .setCycle(TimeConstant.NEXT_SEC)
+                .setCycle(TimeUtils.NEXT_SEC)
                 .setTiggerTime(new Date(System.currentTimeMillis() + millisTimeout))
         );
     }

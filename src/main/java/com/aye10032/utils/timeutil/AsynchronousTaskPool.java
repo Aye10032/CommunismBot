@@ -1,8 +1,8 @@
 package com.aye10032.utils.timeutil;
 
 
-import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.Zibenbot;
+import com.aye10032.utils.ExceptionUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,7 +22,7 @@ public class AsynchronousTaskPool extends TimedTaskBase {
 
     public AsynchronousTaskPool(){
         pool = Executors.newCachedThreadPool();
-        setTimes(-1).setCycle(TimeConstant.NEXT_SEC)
+        setTimes(-1).setCycle(TimeUtils.NEXT_SEC)
                 .setTiggerTime(new Date(System.currentTimeMillis() + 1000));
     }
 
