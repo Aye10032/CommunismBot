@@ -30,13 +30,13 @@ public class LuXunFunc {
         ImgMap.put(1, "data\\image\\biaoqing\\luxun.jpg");
     }
 
-    public static void main(String[] args) {
+/*    public static void main(String[] args) {
         File os = new File("data\\cv");
 
         LuXunFunc luXunFunc = new LuXunFunc(os.getAbsolutePath());
 //        luXunFunc.addText(1, "我没说过 --鲁迅");
         luXunFunc.addBlack_White("data\\image\\biaoqing\\test.png",new String[]{" 人固有一死 "," people always die "});
-    }
+    }*/
 
     public void addText(int flag, String text) {
         Mat src = imread(ImgMap.get(flag));
