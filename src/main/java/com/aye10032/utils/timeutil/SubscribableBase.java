@@ -1,7 +1,7 @@
 package com.aye10032.utils.timeutil;
 
-import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.Zibenbot;
+import com.aye10032.functions.funcutil.SimpleMsg;
 
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +9,7 @@ import java.util.Objects;
 
 /**
  * {@inheritDoc}
+ * @author Dazo66
  */
 public abstract class SubscribableBase implements ISubscribable {
 
@@ -56,6 +57,13 @@ public abstract class SubscribableBase implements ISubscribable {
         }
         SubscribableBase that = (SubscribableBase) o;
         return Objects.equals(getName(), that.getName());
+    }
+
+    @Override
+    public String toString() {
+        return "SubscribableBase{" +
+                "name=" + getName() +
+                '}';
     }
 
     @Override
