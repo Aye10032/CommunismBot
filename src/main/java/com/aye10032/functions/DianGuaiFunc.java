@@ -51,14 +51,5 @@ public class DianGuaiFunc extends BaseFunc {
     @Override
     public void run(SimpleMsg simpleMsg) {
         commander.execute(simpleMsg);
-        if (simpleMsg.getMsg().startsWith("点怪")) {
-            if (simpleMsg.getMsg().contains("冰原")) {
-//                String aim = mhwUtil.getIceAim();
-//                zibenbot.replyMsg(simpleMsg, aim);
-            } else {
-//                String aim = mhwUtil.getAim();
-//                zibenbot.replyMsg(simpleMsg, aim);
-            }
-        }
     }
 }
