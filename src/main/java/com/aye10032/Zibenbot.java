@@ -510,6 +510,7 @@ public class Zibenbot {
 
     public int startup() {
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
+        // 每天0点 6点 12点 18点
         ITimeAdapter maiyaoCycle = date -> {
             Date date1 = TimeUtils.getNextSpecialTime(
                     date, -1, -1, 0, 0, 0, 0);
@@ -521,12 +522,15 @@ public class Zibenbot {
                     date, -1, -1, 18, 0, 0, 0);
             return TimeUtils.getMin(date1, date2, date3, date4);
         };
+        //每周一10点 22点 周日22点 用于提醒剿灭
         ITimeAdapter jiaomieCycle = date -> {
             Date date1 = TimeUtils.getNextSpecialWeekTime(date,
-                    -1, 1, 22, 0, 0, 0);
+                    -1, 1, 10, 0, 0, 0);
             Date date2 = TimeUtils.getNextSpecialWeekTime(date,
+                    -1, 1, 22, 0, 0, 0);
+            Date date3 = TimeUtils.getNextSpecialWeekTime(date,
                     -1, 2, 22, 0, 0, 0);
-            return TimeUtils.getMin(date1, date2);
+            return TimeUtils.getMin(date1, date2, date3);
         };
 
         ITimeAdapter dakaCycle = date2 -> {
@@ -553,14 +557,8 @@ public class Zibenbot {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         Date date = calendar.getTime();
-        /*subManager.addSubscribable(new SimpleSubscription(this, TimeUtils.NEXT_MIN, () -> new Date().toString()) {
-            @Override
-            public String getName() {
-                return "test";
-            }
-        });*/
 
-        //创建订阅器对象
+        // 创建订阅器对象
         SimpleSubscription maiyao = new SimpleSubscription(this, maiyaoCycle,
                 getImg(appDirectory + "/image/提醒买药小助手.jpg")) {
             private final static String NAME = "提醒买药小助手";

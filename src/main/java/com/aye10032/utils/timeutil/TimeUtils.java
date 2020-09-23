@@ -17,13 +17,37 @@ public class TimeUtils {
     public static int WEEK = 7 * DAY;
     public static int YEAR = 365 * DAY;
 
+    /**
+     * 得到下一年的时间适配器
+     */
     public static ITimeAdapter NEXT_YEAR = new NextYear();
+    /**
+     * 得到下一月的时间适配器
+     */
     public static ITimeAdapter NEXT_MONTH = new NextMonth();
+    /**
+     * 得到下一周的时间适配器
+     */
     public static ITimeAdapter NEXT_WEEK = new NextWeek();
+    /**
+     * 得到下一天的时间适配器
+     */
     public static ITimeAdapter NEXT_DAY = new NextDay();
+    /**
+     * 得到下一小时的时间适配器
+     */
     public static ITimeAdapter NEXT_HOUR = new NextHour();
+    /**
+     * 得到下一半小时的时间适配器
+     */
     public static ITimeAdapter NEXT_HALF_HOUR = new NextHalfHour();
+    /**
+     * 得到下一分钟的时间适配器
+     */
     public static ITimeAdapter NEXT_MIN = new NextMin();
+    /**
+     * 得到下一秒的时间适配器
+     */
     public static ITimeAdapter NEXT_SEC = new NextSec();
 
 
