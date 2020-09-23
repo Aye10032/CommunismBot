@@ -19,11 +19,6 @@ public class CheruUtil {
         pattern = Pattern.compile(word_text);
     }
 
-    public static void main(String[] args) {
-        CheruUtil cheruUtil = new CheruUtil();
-        System.out.println(cheruUtil.toStr("切噜～♪切切噜巴哔噼唎噼咧蹦嘭巴切噜巴噜"));
-    }
-
     public String toCheru(String msg) {
         String[] msgs = msg.split(split_text);
         StringBuilder stringBuilder = new StringBuilder();
