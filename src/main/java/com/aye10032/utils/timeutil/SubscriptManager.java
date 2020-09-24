@@ -172,6 +172,16 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
         subscriptMap = load();
     }
 
+    private static boolean isNoArgsSub(ISubscribable subscribable) {
+        try {
+            return subscribable.getClass().getAnnotation(NoArgsSub.class) != null
+                    && subscribable.getClass().getMethod("run", List.class, String[].class)
+                    .getAnnotation(NoArgsSub.class) != null;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
+
     /**
      * [sub/订阅/unsub/取消订阅] [Subscribable Name]
      * 不带参数返回所有可用的和已用的Subscribable
@@ -240,7 +250,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 }
                 ISubscribable subscribable = allSubscription.get(msgs[1]);
                 if (subscribable != null) {
-                    Reciver reciver = getReciver(simpleMsg);
+                    Reciver reciver = getReciver(isNoArgsSub(subscribable), simpleMsg);
                     if (sw) {
                         subscribe(subscribable, reciver);
                         replyMsg(simpleMsg, String.format("【%s】 已订阅 【%s】", simpleMsg.isGroupMsg() ?
@@ -258,11 +268,11 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
         }
     }
 
-    private Reciver getReciver(SimpleMsg simpleMsg) {
+    private Reciver getReciver(boolean isNoArgsSub, SimpleMsg simpleMsg) {
 
         String[] strings = simpleMsg.getCommandPieces();
         String[] args = null;
-        if (strings.length > 2) {
+        if (strings.length > 2 && !isNoArgsSub) {
             args = ArrayUtils.subarray(strings, 2, strings.length);
         }
         switch (simpleMsg.getType()) {
@@ -317,7 +327,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
 
     public List<Reciver> getUserAllSub(SimpleMsg simpleMsg, ISubscribable subscribable) {
         List<Reciver> list = new ArrayList<>();
-        Reciver reciver = getReciver(simpleMsg);
+        Reciver reciver = getReciver(isNoArgsSub(subscribable), simpleMsg);
         for (Reciver reciver1 : subscriptMap.getOrDefault(subscribable.getName(), new ArrayList<>())) {
             if (reciver.getId().equals(reciver1.getId()) &&
                     reciver.getType() == reciver1.getType()) {

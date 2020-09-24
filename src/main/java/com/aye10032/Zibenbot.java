@@ -551,6 +551,7 @@ public class Zibenbot {
                 return NAME;
             }
         };
+
         SimpleSubscription jiaomie = new SimpleSubscription(this, jiaomieCycle,
                 getImg(appDirectory + "/image/提醒剿灭小助手.jpg")) {
             @Override
