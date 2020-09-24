@@ -1,10 +1,12 @@
 package com.aye10032.timetask;
 
-import com.aye10032.utils.timeutil.ITimeAdapter;
-import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.Zibenbot;
+import com.aye10032.utils.timeutil.ITimeAdapter;
+import com.aye10032.utils.timeutil.Reciver;
+import com.aye10032.utils.timeutil.SubscribableBase;
 
 import java.util.Date;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -31,8 +33,8 @@ public abstract class SimpleSubscription extends SubscribableBase {
     }
 
     @Override
-    public void run() {
-        replyAll(supplier.get());
+    public void run(List<Reciver> recivers, String[] args) {
+        replyAll(recivers, supplier.get());
     }
 
 

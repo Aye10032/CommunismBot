@@ -1,7 +1,5 @@
 package com.aye10032.utils.timeutil;
 
-import com.aye10032.functions.funcutil.SimpleMsg;
-
 import java.util.Date;
 import java.util.List;
 
@@ -9,13 +7,7 @@ import java.util.List;
  * 可订阅的接口类
  * @author Dazo66
  */
-public interface ISubscribable extends ITimeAdapter, Runnable {
-
-    /**
-     * 设置收件人 一般由控制器调用
-     * @param simpleMsgs list
-     */
-     void setRecipients(List<SimpleMsg> simpleMsgs);
+public interface ISubscribable extends ITimeAdapter {
 
     /**
      * 返回一个全局唯一的名字
@@ -41,13 +33,7 @@ public interface ISubscribable extends ITimeAdapter, Runnable {
      * 在这里进行回复各个收件人
      * @retrun void
      */
-    @Override
-    void run();
+    void run(List<Reciver> recivers, String[] args);
 
-    /**
-     * 得到所有收件人
-     * @return list
-     */
-    List<SimpleMsg> getRecipients();
 
 }
