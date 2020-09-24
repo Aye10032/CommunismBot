@@ -21,7 +21,7 @@ public class EatFunc extends BaseFunc {
     private FoodUtil foodUtil;
     private RandomUtil randomUtil;
     private EatData eatData;
-//    FoodClaass foodClaass = ConfigLoader.load(zibenbot.appDirectory + "/foodData.json", FoodClaass.class);
+    FoodClaass foodClaass = ConfigLoader.load(zibenbot.appDirectory + "/foodData.json", FoodClaass.class);
     private Commander<SimpleMsg> commander;
 
     public EatFunc(Zibenbot zibenbot) {
@@ -59,6 +59,11 @@ public class EatFunc extends BaseFunc {
                         zibenbot.replyMsg(cqmsg,randomUtil.getRandomWithSSR(
                                 eatData.getCanteen1(),eatData.getCanteen1sr(),eatData.getCanteen1ssr(),30,100)[0]);
                     }
+                })
+                .or("晚饭"::equals)
+                .run((cqmsg)->{
+                    zibenbot.replyMsg(cqmsg,randomUtil.getRandomWithSSR(
+                            eatData.getMainlist(),eatData.getSrList(),eatData.getSsrList(),30,100)[0]);
                 })
                 .build();
     }
