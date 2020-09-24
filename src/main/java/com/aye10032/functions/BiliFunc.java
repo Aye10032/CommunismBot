@@ -3,7 +3,7 @@ package com.aye10032.functions;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.AyeCompile;
-import com.aye10032.utils.BiliInfo;
+import com.aye10032.utils.video.BiliInfo;
 import com.aye10032.Zibenbot;
 
 import java.io.File;
