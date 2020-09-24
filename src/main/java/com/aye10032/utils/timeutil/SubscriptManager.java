@@ -6,6 +6,7 @@ import com.aye10032.functions.funcutil.MsgType;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.ConfigLoader;
 import com.google.gson.reflect.TypeToken;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -23,18 +24,17 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
 
     protected Zibenbot zibenbot;
     protected String appDirectory;
-    private Date last;
     /**
      * 各个途径的订阅信息 每次从配置中读取
      */
-    private Map<MsgType, Map<String, List<Long>>> subscriptMap;
+    private Map<String, List<Reciver>> subscriptMap;
     /**
      * 所有的订阅器
      */
-    private List<ISubscribable> allSubscription = Collections.synchronizedList(new ArrayList<>());
+    private Map<String, ISubscribable> allSubscription = Collections.synchronizedMap(new HashMap<>());
     private ITimeAdapter adapter = date -> {
         Date temp = null;
-        for (ISubscribable subscribable : allSubscription) {
+        for (ISubscribable subscribable : allSubscription.values()) {
             Date temp1 = subscribable.getNextTime(date);
             temp = temp == null ? temp1 : temp.compareTo(temp1) > 0 ? temp1 : temp;
         }
@@ -52,7 +52,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
     private List<ISubscribable> getCurrentTiggerSub(Date current) {
         List<ISubscribable> ret = Collections.synchronizedList(new ArrayList<>());
         Date begin = getBegin();
-        for (ISubscribable s : allSubscription) {
+        for (ISubscribable s : allSubscription.values()) {
             Date date2 = (Date) begin.clone();
             while (true) {
                 if (date2.getTime() < current.getTime()) {
@@ -93,36 +93,14 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
     }
 
     /**
-     * 刷新所有的订阅器的收件人
-     * 只在需要调用的时候 调用
-     */
-    private void flushRecipients() {
-        for (ISubscribable s : allSubscription) {
-            s.setRecipients(getRecipients(s));
-        }
-    }
-
-    /**
      * 返回指定的订阅器的收件人列表
      *
      * @param s 指定的订阅器
      * @retrun 收件人列表
      */
 
-    public List<SimpleMsg> getRecipients(ISubscribable s) {
-        List<SimpleMsg> recipients = Collections.synchronizedList(new ArrayList<>());
-        for (MsgType type : MsgType.values()) {
-            if (subscriptMap.get(type) != null) {
-                List<Long> temp = subscriptMap.get(type).get(s.getName());
-                if (temp != null) {
-                    for (Long l : temp) {
-                        //收集所有要发送的收件人
-                        recipients.add(getCqmsg(type, l));
-                    }
-                }
-            }
-        }
-        return recipients;
+    public List<Reciver> getRecipients(ISubscribable s) {
+        return subscriptMap.getOrDefault(s.getName(), new ArrayList<>());
     }
 
     @Override
@@ -178,7 +156,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
     private Date getNextTiggerTimeFrom(Date from) {
         Date begin = getBegin();
         Date temp = null;
-        for (ISubscribable s : allSubscription) {
+        for (ISubscribable s : allSubscription.values()) {
             Date date1 = TimeUtils.getNextTimeFromNowExclude(begin, from, s);
             temp = temp == null ? date1 : temp.compareTo(date1) < 0 ? temp : date1;
 
@@ -192,7 +170,6 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
     @Override
     public void setUp() {
         subscriptMap = load();
-        flushRecipients();
     }
 
     /**
@@ -215,36 +192,26 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
             if (msgs.length == 1) {
                 StringBuilder builder = new StringBuilder();
                 builder.append("当前已订阅的有：\n");
-                for (ISubscribable subscription : allSubscription) {
-                    if (hasSub(simpleMsg, subscription)) {
-                        builder.append("\t").append(subscription.getName()).append("\n");
-                    }
+                for (ISubscribable subscription : allSubscription.values()) {
+                    getUserAllSub(simpleMsg, subscription).forEach(r -> builder.append("\t")
+                            .append(subscription.getName()).append(ArrayUtils.toString(r.getArgs())).append("\n"));
                 }
-                builder.append("当前未订阅的有：\n");
-                for (int i = 0; i < allSubscription.size(); i++) {
-                    if (!hasSub(simpleMsg, allSubscription.get(i))) {
-                        builder.append("\t").append(allSubscription.get(i).getName());
-                        if (i == allSubscription.size() - 1) {
-                            builder.append("\n");
-                        }
-                    }
+                builder.append("当前可订阅的有：\n");
+                for (ISubscribable subscription : allSubscription.values()) {
+                    builder.append("\t").append(subscription.getName()).append("\n");
+
                 }
-                //重新读取后刷新收件人
-                flushRecipients();
                 replyMsg(simpleMsg, builder.toString());
-            } else if (msgs.length == 2 || msgs.length == 3) {
+            } else {
                 if ("调试".equals(msgs[1]) || "debug".equals(msgs[1])) {
                     StringBuilder builder = new StringBuilder();
                     builder.append("当前订阅关系如下:\n");
-                    subscriptMap.forEach((type, map) -> {
-                        builder.append(type.name());
+                    subscriptMap.forEach((s, recivers) -> {
+                        builder.append(s);
                         builder.append("\n");
-                        map.forEach((name, list) -> {
+                        recivers.forEach((reciver) -> {
                             builder.append("\t");
-                            builder.append(name);
-                            builder.append(" : ");
-                            list.forEach(s1 -> builder.append(s1).append(","));
-                            builder.deleteCharAt(builder.length() - 1);
+                            builder.append(reciver);
                             builder.append("\n");
                         });
                     });
@@ -271,32 +238,44 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                     replyMsg(simpleMsg, builder.toString());
                     return;
                 }
-                boolean flag = false;
-                for (ISubscribable s : allSubscription) {
-                    if (msgs[1].equals(s.getName())) {
-                        flag = true;
-                        break;
-                    }
-                }
-                if (flag) {
+                ISubscribable subscribable = allSubscription.get(msgs[1]);
+                if (subscribable != null) {
+                    Reciver reciver = getReciver(simpleMsg);
                     if (sw) {
-                        subscribe(simpleMsg, msgs[1]);
+                        subscribe(subscribable, reciver);
                         replyMsg(simpleMsg, String.format("【%s】 已订阅 【%s】", simpleMsg.isGroupMsg() ?
-                                "群:" + simpleMsg.getFromGroup() : "用户:" + simpleMsg.getFromClient(), msgs[1]));
+                                "群:" + simpleMsg.getFromGroup() : "用户:" + simpleMsg.getFromClient(), reciver.toString()));
                     } else {
-                        unSubscribe(simpleMsg, msgs[1]);
+                        Reciver deReciver = unSubscribe(subscribable, reciver);
                         replyMsg(simpleMsg, String.format("【%s】 已取消订阅 【%s】", simpleMsg.isGroupMsg() ?
-                                "群:" + simpleMsg.getFromGroup() : "用户:" + simpleMsg.getFromClient(), msgs[1]));
+                                "群:" + simpleMsg.getFromGroup() : "用户:" + simpleMsg.getFromClient(), deReciver.toString()));
                     }
-                    //订阅后刷新收件人
-                    flushRecipients();
+                    save(subscriptMap);
                 } else {
                     replyMsg(simpleMsg, "找不到这个订阅器：" + msgs[1]);
                 }
-            } else {
-                replyMsg(simpleMsg, "参数有误");
             }
         }
+    }
+
+    private Reciver getReciver(SimpleMsg simpleMsg) {
+
+        String[] strings = simpleMsg.getCommandPieces();
+        String[] args = null;
+        if (strings.length > 2) {
+            args = ArrayUtils.subarray(strings, 2, strings.length);
+        }
+        switch (simpleMsg.getType()) {
+            case GROUP_MSG:
+                return new Reciver(MsgType.GROUP_MSG, simpleMsg.getFromGroup(), args);
+            case PRIVATE_MSG:
+                return new Reciver(MsgType.PRIVATE_MSG, simpleMsg.getFromClient(), args);
+            case TEAMSPEAK_MSG:
+                return new Reciver(MsgType.TEAMSPEAK_MSG, simpleMsg.getFromClient(), args);
+            default:
+                return null;
+        }
+
     }
 
     /**
@@ -307,7 +286,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
     public List<ISubscribable> getNextTiggerSub() {
         List<ISubscribable> ret = Collections.synchronizedList(new ArrayList<>());
         Date date = null;
-        for (ISubscribable s : allSubscription) {
+        for (ISubscribable s : allSubscription.values()) {
             Date temp = TimeUtils.getNextTimeFromNowInclude(getBegin(), s);
             if (date == null || temp.before(date)) {
                 date = temp;
@@ -323,7 +302,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
     private List<ISubscribable> getNextTiggerSubFrom(Date from) {
         List<ISubscribable> ret = Collections.synchronizedList(new ArrayList<>());
         Date date = null;
-        for (ISubscribable s : allSubscription) {
+        for (ISubscribable s : allSubscription.values()) {
             Date temp = s.getNextTime((Date) from.clone());
             if (date == null || temp.before(date)) {
                 date = temp;
@@ -336,121 +315,64 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
         return ret;
     }
 
-    /**
-     * 查询用户是否已经订阅了
-     *
-     * @param id      包含用户类型和用户id
-     * @param subName Subscribable名字
-     * @return boolean
-     */
-    public boolean hasSub(MsgType type, Long id, String subName) {
-        switch (type) {
-            case GROUP_MSG:
-                return subscriptMap.computeIfAbsent(type, k -> new HashMap<>()).computeIfAbsent(subName, k -> new ArrayList<>()).contains(id);
-            case TEAMSPEAK_MSG:
-                return subscriptMap.computeIfAbsent(type, k -> new HashMap<>()).computeIfAbsent(subName, k -> new ArrayList<>()).contains(id);
-            case PRIVATE_MSG:
-                return subscriptMap.computeIfAbsent(type, k -> new HashMap<>()).computeIfAbsent(subName, k -> new ArrayList<>()).contains(id);
-            default:
-                return false;
+    public List<Reciver> getUserAllSub(SimpleMsg simpleMsg, ISubscribable subscribable) {
+        List<Reciver> list = new ArrayList<>();
+        Reciver reciver = getReciver(simpleMsg);
+        for (Reciver reciver1 : subscriptMap.getOrDefault(subscribable.getName(), new ArrayList<>())) {
+            if (reciver.getId().equals(reciver1.getId()) &&
+                    reciver.getType() == reciver1.getType()) {
+                list.add(reciver1);
+            }
         }
+        return list;
     }
 
     /**
      * 查询用户是否已经订阅了
      *
-     * @param msg     包含用户类型和用户id
-     * @param subName Subscribable对象
+     * @param sub 订阅器
+     * @param reciver 接收者
      * @return boolean
      */
-    public boolean hasSub(SimpleMsg msg, ISubscribable subName) {
-        return hasSub(msg, subName.getName());
-    }
-
-    /**
-     * 查询用户是否已经订阅了
-     *
-     * @param msg     包含用户类型和用户id
-     * @param subName Subscribable对象
-     * @return boolean
-     */
-    public boolean hasSub(SimpleMsg msg, String subName) {
-        switch (msg.getType()) {
-            case GROUP_MSG:
-                return hasSub(msg.getType(), msg.getFromGroup(), subName);
-            case TEAMSPEAK_MSG:
-                return hasSub(msg.getType(), msg.getFromClient(), subName);
-            case PRIVATE_MSG:
-                return hasSub(msg.getType(), msg.getFromClient(), subName);
-            default:
-                return false;
-        }
+    public boolean hasSub(ISubscribable sub, Reciver reciver) {
+        return subscriptMap.computeIfAbsent(sub.getName(), s -> new ArrayList<>()).contains(reciver);
     }
 
     /**
      * 对传进来的消息来源添加订阅
      *
-     * @param sub   包含用户类型和用户id
-     * @param simpleMsg Subscribable对象
+     * @param sub 订阅器
+     * @param reciver 接收者
      */
-    public void subscribe(SimpleMsg simpleMsg, String sub) {
-        switch (simpleMsg.getType()) {
-            case GROUP_MSG:
-                subscribe(simpleMsg.getType(), simpleMsg.getFromGroup(), sub);
-                return;
-            case TEAMSPEAK_MSG:
-                subscribe(simpleMsg.getType(), simpleMsg.getFromClient(), sub);
-                return;
-            case PRIVATE_MSG:
-                subscribe(simpleMsg.getType(), simpleMsg.getFromClient(), sub);
-                return;
-            default:
-        }
-    }
-
-    /**
-     * 对传进来的消息来源添加订阅
-     *
-     * @param type 消息类型
-     * @param id   用户id
-     * @param sub  Subscribable名字
-     */
-    public void subscribe(MsgType type, Long id, String sub) {
-        if (!hasSub(type, id, sub)) {
-            subscriptMap.computeIfAbsent(type, k -> new HashMap<>()).computeIfAbsent(sub,
-                    v -> new ArrayList<>()).add(id);
-            save(subscriptMap);
-        }
-    }
-
-    public void unSubscribe(SimpleMsg simpleMsg, String sub) {
-        switch (simpleMsg.getType()) {
-            case GROUP_MSG:
-                unSubscribe(simpleMsg.getType(), simpleMsg.getFromGroup(), sub);
-                return;
-            case TEAMSPEAK_MSG:
-                unSubscribe(simpleMsg.getType(), simpleMsg.getFromClient(), sub);
-                return;
-            case PRIVATE_MSG:
-                unSubscribe(simpleMsg.getType(), simpleMsg.getFromClient(), sub);
-                return;
-            default:
+    public void subscribe(ISubscribable sub, Reciver reciver) {
+        List<Reciver> list = subscriptMap.computeIfAbsent(sub.getName(), s -> new ArrayList<>());
+        if (!list.contains(reciver)) {
+            list.add(reciver);
         }
     }
 
     /**
      * 对传进来的消息来源取消订阅
      *
-     * @param type 消息类型
-     * @param id   用户id
+     * @param sub 订阅器
+     * @param reciver 接收者
      * @param sub  Subscribable名字
      */
-    public void unSubscribe(MsgType type, Long id, String sub) {
-        if (hasSub(type, id, sub)) {
-            subscriptMap.computeIfAbsent(type, k -> new HashMap<>()).computeIfAbsent(sub,
-                    v -> new ArrayList<>()).remove(id);
-            save(subscriptMap);
+    public Reciver unSubscribe(ISubscribable sub, Reciver reciver) {
+        List<Reciver> list = subscriptMap.computeIfAbsent(sub.getName(), s -> new ArrayList<>());
+        if (hasSub(sub, reciver)) {
+            list.remove(reciver);
+            return reciver;
+        } else {
+            for (Reciver reciver1 : list) {
+                if (reciver.getId().equals(reciver1.getId())
+                        && reciver.getType() == reciver1.getType()) {
+                    list.remove(reciver1);
+                    return reciver1;
+                }
+            }
         }
+        return null;
     }
 
     /**
@@ -459,8 +381,8 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
      * @param subscription 可订阅的对象
      */
     public void addSubscribable(ISubscribable subscription) {
-        if (!allSubscription.contains(subscription)) {
-            allSubscription.add(subscription);
+        if (!allSubscription.values().contains(subscription)) {
+            allSubscription.put(subscription.getName(), subscription);
             setTiggerTime(getBegin());
             setTiggerTime(getNextTiggerTime());
             if (zibenbot.pool.isContain(this)) {
@@ -476,9 +398,9 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
      *
      * @return map
      */
-    public Map<MsgType, Map<String, List<Long>>> load() {
+    public Map<String, List<Reciver>> load() {
         return Collections.synchronizedMap(ConfigLoader.load(zibenbot.appDirectory + CINFIG_PATH,
-                new TypeToken<Map<MsgType, Map<String, List<Long>>>>() {
+                new TypeToken<Map<String, List<Reciver>>>() {
         }.getType()));
     }
 
@@ -487,9 +409,8 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
      *
      * @param saved 订阅状态
      */
-    public void save(Map<MsgType, Map<String, List<Long>>> saved) {
-        ConfigLoader.save(zibenbot.appDirectory + CINFIG_PATH, new TypeToken<Map<MsgType,
-                Map<String, List<Long>>>>() {
+    public void save(Map<String, List<Reciver>> saved) {
+        ConfigLoader.save(zibenbot.appDirectory + CINFIG_PATH, new TypeToken<Map<String, List<Reciver>>>() {
         }.getType(), saved);
     }
 
@@ -508,30 +429,28 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
         List<ISubscribable> list = getCurrentTiggerSub(current);
         //对下次要运行的订阅进行循环
         for (ISubscribable s : list) {
-            if (s.getRecipients() != null && !s.getRecipients().isEmpty()) {
+            List<Reciver> recivers = getRecipients(s);
+            if (recivers != null && !recivers.isEmpty()) {
                 //运行各个订阅器
                 zibenbot.log(Level.INFO, "SubscriptManager run start:" + s.toString() + current);
-                s.run();
+                for (Map.Entry<String[], List<Reciver>> entry
+                        : sortToMapWithArgs(recivers).entrySet()) {
+                    s.run(entry.getValue(), entry.getKey());
+                }
             }
         }
         //清除暂存的下次要运行的订阅器
         next.clear();
     }
 
-    private final static String EMPTY = "";
+    private Map<String[], List<Reciver>> sortToMapWithArgs(Collection<Reciver> list) {
+        Map<String[], List<Reciver>> map = new HashMap<>();
+        for (Reciver reciver : list) {
+            map.computeIfAbsent(reciver.getArgs(), (l) -> new ArrayList<>()).add(reciver);
+        }
+        return map;
+    }
+
     private final static String CINFIG_PATH = "/Subscript.json";
 
-    private static SimpleMsg getCqmsg(MsgType type, Long id) {
-        switch (type) {
-            case TEAMSPEAK_MSG:
-                //return new SimpleMsg(id, -1, EMPTY, type);
-                //todo
-            case PRIVATE_MSG:
-                return new SimpleMsg(-1, id, EMPTY, type);
-            case GROUP_MSG:
-                return new SimpleMsg(id, -1, EMPTY, type);
-            default:
-                return null;
-        }
-    }
 }

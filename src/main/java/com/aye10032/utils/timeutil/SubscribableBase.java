@@ -1,9 +1,7 @@
 package com.aye10032.utils.timeutil;
 
 import com.aye10032.Zibenbot;
-import com.aye10032.functions.funcutil.SimpleMsg;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +12,6 @@ import java.util.Objects;
 public abstract class SubscribableBase implements ISubscribable {
 
     private Zibenbot bot;
-    private List<SimpleMsg> recipients;
 
     public SubscribableBase(Zibenbot zibenbot) {
         this.bot = zibenbot;
@@ -29,22 +26,12 @@ public abstract class SubscribableBase implements ISubscribable {
      *
      * @param s 消息
      */
-    public void replyAll(String s) {
+    public void replyAll(List<Reciver> recipients, String s) {
         if (recipients != null) {
-            for (SimpleMsg simpleMsg : recipients) {
-                bot.replyMsg(simpleMsg, s);
+            for (Reciver reciver : recipients) {
+                bot.replyMsg(reciver.getSender(), s);
             }
         }
-    }
-
-    @Override
-    public List<SimpleMsg> getRecipients() {
-        return recipients == null ? Collections.emptyList() : recipients;
-    }
-
-    @Override
-    public void setRecipients(List<SimpleMsg> simpleMsgs) {
-        recipients = simpleMsgs;
     }
 
     @Override

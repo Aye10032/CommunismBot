@@ -4,6 +4,7 @@ import com.aye10032.Zibenbot;
 import com.aye10032.functions.ScreenshotFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.*;
+import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.utils.timeutil.TimeUtils;
 import com.google.gson.Gson;
@@ -42,28 +43,6 @@ public abstract class DragraliaTask extends SubscribableBase {
     OkHttpClient client =
             new OkHttpClient.Builder().callTimeout(30, TimeUnit.SECONDS).proxy(Zibenbot.proxy).build();
     private JsonParser jsonParser = new JsonParser();
-    public Runnable runnable = () -> {
-        client = client.newBuilder().proxy(Zibenbot.getProxy()).build();
-        try {
-            ArticleUpateDate date = null;
-            try {
-                date = getUpdateDate();
-            } catch (Exception e) {
-                e.printStackTrace();
-                //zibenbot.replyMsg(cqMsg, "公告获取异常");
-            }
-            Set<Article> articles = getNewArticles(date);
-            articles.forEach(a -> {
-                try {
-                    this.sendArticle(a, getRecipients());
-                } catch (Exception e) {
-                    zibenbot.logWarning("发送公告出错：" + ExceptionUtils.printStack(e));
-                }
-            });
-        } catch (Exception e) {
-            zibenbot.log(Level.WARNING, ExceptionUtils.printStack(e));
-        }
-    };
 
     public DragraliaTask(Zibenbot zibenbot) {
         super(zibenbot);
@@ -89,8 +68,29 @@ public abstract class DragraliaTask extends SubscribableBase {
     }
 
     @Override
-    public void run() {
-        runnable.run();
+    public void run(List<Reciver> recivers, String[] args) {
+        client = client.newBuilder().proxy(Zibenbot.getProxy()).build();
+        try {
+            ArticleUpateDate date = null;
+            try {
+                date = getUpdateDate();
+            } catch (Exception e) {
+                e.printStackTrace();
+                //zibenbot.replyMsg(cqMsg, "公告获取异常");
+            }
+            Set<Article> articles = getNewArticles(date);
+            articles.forEach(a -> {
+                try {
+                    List<SimpleMsg> list = new ArrayList<>();
+                    recivers.forEach(r -> list.add(r.getSender()));
+                    this.sendArticle(a, list);
+                } catch (Exception e) {
+                    zibenbot.logWarning("发送公告出错：" + ExceptionUtils.printStack(e));
+                }
+            });
+        } catch (Exception e) {
+            zibenbot.log(Level.WARNING, ExceptionUtils.printStack(e));
+        }
     }
 
     private synchronized Set<Article> getNewArticles(ArticleUpateDate date) {
@@ -192,42 +192,46 @@ public abstract class DragraliaTask extends SubscribableBase {
         if (!"".equals(a.image_path)) {
             runs.add(() -> downloadImg(a.image_path));
         }
-        zibenbot.pool.getAsynchronousPool().execute(() -> {
-            StringBuilder builder = new StringBuilder();
-            if (a.article_id != -1) {
-                builder.append("【").append(a.category_name).append("】 ").append(a.title_name).append("\n");
-                if (!"".equals(a.image_path)) {
-                    try {
-                        builder.append(zibenbot.getImg(new File(getFileName(a.image_path))));
-                        builder.append("\n");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (a.isUpdate) {
-                    //builder.append("（Update）\n");
-                }
-                String ret = clearMsg(msg);
-                if (len > 300) {
-                    if (screenshotFile.get() != null && screenshotFile.get().exists()) {
+        try {
+            zibenbot.pool.getAsynchronousPool().execute(() -> {
+                StringBuilder builder = new StringBuilder();
+                if (a.article_id != -1) {
+                    builder.append("【").append(a.category_name).append("】 ").append(a.title_name).append("\n");
+                    if (!"".equals(a.image_path)) {
                         try {
-                            builder.append("公告详情：").append("\n").append(zibenbot.getImg(screenshotFile.get()));
+                            builder.append(zibenbot.getImg(new File(getFileName(a.image_path))));
+                            builder.append("\n");
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                    }
+                    if (a.isUpdate) {
+                        //builder.append("（Update）\n");
+                    }
+                    String ret = clearMsg(msg);
+                    if (len > 300) {
+                        if (screenshotFile.get() != null && screenshotFile.get().exists()) {
+                            try {
+                                builder.append("公告详情：").append("\n").append(zibenbot.getImg(screenshotFile.get()));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            builder.append("公告加载失败，请前往官网查看：\n");
+                            builder.append("https://dragalialost.com/chs/news/detail/").append(a.article_id);
+                        }
                     } else {
-                        builder.append("公告加载失败，请前往官网查看：\n");
-                        builder.append("https://dragalialost.com/chs/news/detail/").append(a.article_id);
+                        builder.append(ret);
                     }
                 } else {
-                    builder.append(ret);
+                    builder.append(a.message);
                 }
-            } else {
-                builder.append(a.message);
-            }
-            //todo 测试完毕修改这里
-            send(simpleMsg, builder.toString());
-        }, runs.toArray(new Runnable[]{}));
+                //todo 测试完毕修改这里
+                send(simpleMsg, builder.toString());
+            }, runs.toArray(new Runnable[]{})).wait1();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void send(List<SimpleMsg> list, String s){

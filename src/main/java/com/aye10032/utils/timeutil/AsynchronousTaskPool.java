@@ -19,6 +19,7 @@ public class AsynchronousTaskPool extends TimedTaskBase {
 
     ExecutorService pool;
     Map<Runnable, List<Future<?>>> runnableMap = new ConcurrentHashMap<>();
+    Map<Runnable, AsynTaskStatus> statusMap = new ConcurrentHashMap<>();
 
     public AsynchronousTaskPool(){
         pool = Executors.newCachedThreadPool();
@@ -34,12 +35,15 @@ public class AsynchronousTaskPool extends TimedTaskBase {
      * @param callback 回调方法 所有方法执行完成之后调用
      * @param runnables 可运行的列表
      */
-    public void execute(Runnable callback, Runnable... runnables){
+    public AsynTaskStatus execute(Runnable callback, Runnable... runnables) {
         List<Future<?>> list = Collections.synchronizedList(new ArrayList<>());
+        AsynTaskStatus status = new AsynTaskStatus();
+        statusMap.put(callback, status);
         for (Runnable run : runnables) {
             StackTraceElement[] traceElements = Thread.currentThread().getStackTrace();
             list.add(pool.submit(() -> {
                 try {
+                    statusMap.get(callback).setStatus(AsynTaskStatus.TASKS_RUNNING);
                     run.run();
                 } catch (Exception e) {
                     Zibenbot.logger.warning("异步线程执行出错！:" + e + "\n" + ExceptionUtils.printStack(traceElements));
@@ -47,6 +51,7 @@ public class AsynchronousTaskPool extends TimedTaskBase {
             }));
         }
         runnableMap.put(callback, list);
+        return status;
     }
 
 
@@ -69,9 +74,13 @@ public class AsynchronousTaskPool extends TimedTaskBase {
             list.forEach(r -> runnableMap.remove(r));
             list.forEach(r -> {
                 try {
+                    statusMap.get(r).setStatus(AsynTaskStatus.CALL_BACK_RUNNING);
                     r.run();
                 } catch (Exception e) {
                     Zibenbot.logger.warning("异步线程回调执行异常", e);
+                } finally {
+                    statusMap.get(r).setStatus(AsynTaskStatus.CALL_BACK_RUNNED);
+                    statusMap.remove(r);
                 }
             });
         }
