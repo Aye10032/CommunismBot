@@ -173,13 +173,8 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
     }
 
     private static boolean isNoArgsSub(ISubscribable subscribable) {
-        try {
-            return subscribable.getClass().getAnnotation(NoArgsSub.class) != null
-                    && subscribable.getClass().getMethod("run", List.class, String[].class)
-                    .getAnnotation(NoArgsSub.class) != null;
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
+        SubConfig a = subscribable.getClass().getAnnotation(SubConfig.class);
+        return a != null && a.noArgs();
     }
 
     /**
