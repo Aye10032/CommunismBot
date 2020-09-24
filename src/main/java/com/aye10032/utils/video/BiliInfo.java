@@ -1,5 +1,6 @@
-package com.aye10032.utils;
+package com.aye10032.utils.video;
 
+import com.aye10032.utils.ImgUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -144,94 +145,14 @@ public class BiliInfo {
                     hasPvdeo = false;
                 }
             }
-            downloadImg(headurl, "head", 200, 200);
-            downloadImg(imgurl, "img");
+            ImgUtils.downloadImg(headurl, "head", appDirectory, 200, 200);
+            ImgUtils.downloadImg(imgurl, "img", appDirectory);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void downloadImg(String imgurl, String filename) {
-        try {
-            URL img = new URL(imgurl);
-            HttpURLConnection conn = (HttpURLConnection) img.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(5 * 1000);
-            InputStream inStream = conn.getInputStream();
-            byte[] data = readInputStream(inStream);
-            File imageFile;
-            if (appDirectory == null || appDirectory.isEmpty()) {
-                imageFile = new File("image\\" + filename + ".jpg");
-            } else {
-                imageFile = new File(appDirectory + "\\image\\" + filename + ".jpg");
-            }
-            if (!imageFile.exists()) {
-                imageFile.getParentFile().mkdirs();
-                imageFile.createNewFile();
-            }
-            FileOutputStream outStream = new FileOutputStream(imageFile);
-            outStream.write(data);
-            outStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void downloadImg(String imgurl, String filename, int height, int width) {
-        try {
-            URL img = new URL(imgurl);
-            HttpURLConnection conn = (HttpURLConnection) img.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(5 * 1000);
-            InputStream inStream = conn.getInputStream();
-            BufferedInputStream in = new BufferedInputStream(inStream);
-            File imageFile;
-            if (appDirectory == null || appDirectory.isEmpty()) {
-                imageFile = new File("image\\" + filename + ".jpg");
-            } else {
-                imageFile = new File(appDirectory + "\\image\\" + filename + ".jpg");
-            }
-            if (!imageFile.exists()) {
-                imageFile.getParentFile().mkdirs();
-                imageFile.createNewFile();
-            }
-            Image bi = ImageIO.read(in);
-            BufferedImage tag = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            tag.getGraphics().drawImage(bi, 0, 0, width, height, null);
-            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(imageFile));
-            ImageIO.write(tag, "jpg", out);
-            in.close();
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private byte[] readInputStream(InputStream inStream) throws IOException {
-
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int len = 0;
-        while ((len = inStream.read(buffer)) != -1) {
-            outStream.write(buffer, 0, len);
-        }
-        inStream.close();
-        return outStream.toByteArray();
-
-    }
 
     private void creatPvideo_6min() {
         for (String url : p_video.data.image) {
