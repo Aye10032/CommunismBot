@@ -37,7 +37,7 @@ public abstract class SimpleSubscription extends SubscribableBase {
     }
 
     @Override
-    public void run(List<Reciver> recivers, @Nullable String[] args) {
+    public void run(List<Reciver> recivers, @Nullable String[] _) {
         replyAll(recivers, supplier.get());
     }
 
