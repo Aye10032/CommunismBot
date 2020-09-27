@@ -6,6 +6,7 @@ import com.aye10032.functions.funcutil.MsgType;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.ConfigLoader;
 import com.google.gson.reflect.TypeToken;
+import javafx.util.Pair;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.text.DateFormat;
@@ -247,9 +248,20 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 if (subscribable != null) {
                     Reciver reciver = getReciver(isNoArgsSub(subscribable), simpleMsg);
                     if (sw) {
-                        subscribe(subscribable, reciver);
-                        replyMsg(simpleMsg, String.format("【%s】 已订阅 【%s】", simpleMsg.isGroupMsg() ?
-                                "群:" + simpleMsg.getFromGroup() : "用户:" + simpleMsg.getFromClient(), reciver.toString()));
+                        Pair<Boolean, String> booleanStringPair;
+                        //参数合理检查
+                        if (reciver.getArgs() == null) {
+                            booleanStringPair = new Pair<>(true, null);
+                        } else {
+                            booleanStringPair = subscribable.argsCheck(reciver.getArgs());
+                        }
+                        if (booleanStringPair.getKey()) {
+                            subscribe(subscribable, reciver);
+                            replyMsg(simpleMsg, String.format("【%s】 已订阅 【%s】", simpleMsg.isGroupMsg() ?
+                                    "群:" + simpleMsg.getFromGroup() : "用户:" + simpleMsg.getFromClient(), reciver.toString()));
+                        } else {
+                            replyMsg(simpleMsg, "订阅参数出错!" + subscribable.toString() + " : " + booleanStringPair.getValue());
+                        }
                     } else {
                         Reciver deReciver = unSubscribe(subscribable, reciver);
                         replyMsg(simpleMsg, String.format("【%s】 已取消订阅 【%s】", simpleMsg.isGroupMsg() ?
