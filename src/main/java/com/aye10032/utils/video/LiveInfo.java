@@ -28,16 +28,17 @@ public class LiveInfo {
 
     private boolean hasLive = true;
 
-/*    public static void main(String[] args) {
-        LiveInfo liveInfo = new LiveInfo("27216");
-        System.out.println(liveInfo.getLive_time());
+    public static void main(String[] args) {
+        LiveInfo liveInfo = new LiveInfo("1478953");
+//        System.out.println(liveInfo.getLive_time());
         if (liveInfo.Is_living()) {
             Date now = new Date();
             long l = now.getTime() - liveInfo.getLive_date().getTime();
             long min = ((l / (60 * 1000)));
+            System.out.println(min);
         }
         System.out.println(liveInfo.getNickName(liveInfo.getUid()));
-    }*/
+    }
 
     public LiveInfo(String live_id) {
         String url = liveapi + live_id;

@@ -42,7 +42,7 @@ public abstract class LiveTask extends SubscribableBase {
                 List<String> live_list = liveClass.getList(reciver.getSender().getFromGroup());
                 for (String live : live_list) {
                     LiveInfo liveInfo = new LiveInfo(live);
-                    if (!liveInfo.HasLive()) {
+                    if (liveInfo.HasLive()&&liveInfo.Is_living()) {
                         long l = now.getTime() - liveInfo.getLive_date().getTime();
                         long min = ((l / (60 * 1000)));
                         if (min<5) {
