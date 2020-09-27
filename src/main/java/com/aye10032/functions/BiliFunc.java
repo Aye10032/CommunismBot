@@ -88,7 +88,8 @@ public class BiliFunc extends BaseFunc {
             }
             replyMsg(simpleMsg, send);
 
-        } else if (simpleMsg.getMsg().startsWith("添加直播间") && simpleMsg.getCommandPieces().length >= 2) {
+        }
+        if (simpleMsg.getMsg().startsWith("添加直播间") && simpleMsg.getCommandPieces().length >= 2) {
             String live = simpleMsg.getCommandPieces()[1];
             liveClass.addLive(simpleMsg.getFromGroup(), live);
             ConfigLoader.save(zibenbot.appDirectory + "/liveData.json", LiveClass.class, liveClass);
