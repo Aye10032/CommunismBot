@@ -5,6 +5,7 @@ import com.aye10032.functions.*;
 import com.aye10032.functions.funcutil.IFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.timetask.DragraliaTask;
+import com.aye10032.timetask.LiveTask;
 import com.aye10032.timetask.SimpleSubscription;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.IMsgUpload;
@@ -564,6 +565,14 @@ public class Zibenbot {
         subManager.addSubscribable(jiaomie);
         subManager.addSubscribable(new DragraliaTask(this) {
             private final static String NAME = "龙约公告转发小助手";
+
+            @Override
+            public String getName() {
+                return NAME;
+            }
+        });
+        subManager.addSubscribable(new LiveTask(this) {
+            private final static String NAME = "直播公告小助手";
 
             @Override
             public String getName() {
