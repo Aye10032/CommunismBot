@@ -1,6 +1,7 @@
 package com.aye10032.utils.timeutil;
 
 import com.aye10032.Zibenbot;
+import javafx.util.Pair;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,17 @@ public abstract class SubscribableBase implements ISubscribable {
 
     public Zibenbot getBot() {
         return bot;
+    }
+
+    /**
+     * 如果需要使用用户参数检查功能 请重写这个方法
+     *
+     * @param args 用户将要订阅的参数
+     * @return Pair<Boolean   ,       String> 检查是否通过， 没有通过的提示
+     */
+    @Override
+    public Pair<Boolean, String> argsCheck(String[] args) {
+        return new Pair<>(true, "");
     }
 
     /**
