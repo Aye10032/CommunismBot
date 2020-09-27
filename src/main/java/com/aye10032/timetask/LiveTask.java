@@ -56,11 +56,15 @@ public abstract class LiveTask extends SubscribableBase {
 
     @Override
     public Pair<Boolean, String> argsCheck(String[] args) {
-        LiveInfo liveInfo = new LiveInfo(args[0]);
-        if (liveInfo.HasLive()){
-            return new Pair<>(true,"");
+        if (args.length == 0){
+            return new Pair<>(false,"缺少参数");
         }else {
-            return new Pair<>(false,"直播间添加失败");
+            LiveInfo liveInfo = new LiveInfo(args[0]);
+            if (liveInfo.HasLive()) {
+                return new Pair<>(true, "");
+            } else {
+                return new Pair<>(false, "直播间添加失败");
+            }
         }
     }
 }
