@@ -6,6 +6,7 @@ import com.aye10032.utils.ImgUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.utils.video.LiveInfo;
+import javafx.util.Pair;
 
 import java.io.File;
 import java.util.Date;
@@ -50,6 +51,16 @@ public abstract class LiveTask extends SubscribableBase {
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public Pair<Boolean, String> argsCheck(String[] args) {
+        LiveInfo liveInfo = new LiveInfo(args[0]);
+        if (liveInfo.HasLive()){
+            return new Pair<>(true,"");
+        }else {
+            return new Pair<>(false,"直播间添加失败");
         }
     }
 }
