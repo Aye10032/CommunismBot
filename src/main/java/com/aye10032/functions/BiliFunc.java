@@ -93,15 +93,15 @@ public class BiliFunc extends BaseFunc {
             String live = simpleMsg.getCommandPieces()[1];
             liveClass.addLive(simpleMsg.getFromGroup(), live);
             ConfigLoader.save(zibenbot.appDirectory + "/liveData.json", LiveClass.class, liveClass);
-        }else if (simpleMsg.getMsg().startsWith("取关直播间") && simpleMsg.getCommandPieces().length >= 2) {
+        } else if (simpleMsg.getMsg().startsWith("取关直播间") && simpleMsg.getCommandPieces().length >= 2) {
             String live = simpleMsg.getCommandPieces()[1];
             liveClass.deleteLive(simpleMsg.getFromGroup(), live);
             ConfigLoader.save(zibenbot.appDirectory + "/liveData.json", LiveClass.class, liveClass);
-        } else if (simpleMsg.getMsg().equals("直播列表")){
+        } else if (simpleMsg.getMsg().equals("直播列表")) {
             List<String> live_list = liveClass.getList(simpleMsg.getFromGroup());
             StringBuilder builder = new StringBuilder();
             builder.append("本群当前共订阅了:\n");
-            for (String live:live_list){
+            for (String live : live_list) {
                 builder.append(live).append("\n");
             }
             builder.append("共计").append(live_list.size()).append("个直播间");
