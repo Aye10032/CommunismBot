@@ -105,6 +105,7 @@ public class BiliFunc extends BaseFunc {
                 builder.append(live).append("\n");
             }
             builder.append("共计").append(live_list.size()).append("个直播间");
+            zibenbot.replyMsg(simpleMsg, builder.toString());
         }
     }
 
