@@ -19,11 +19,23 @@ public class Reciver {
     private Long id = -1L;
     private String[] args;
 
+    /**
+     * 构建一个没有参数的收件人
+     *
+     * @param type 收件人类型 可用的类型{@link com.aye10032.functions.funcutil.MsgType}
+     * @param id   收件人群号
+     */
     public Reciver(@NotNull MsgType type, @NotNull Long id) {
         this.type = type;
         this.id = id;
     }
 
+    /**
+     * 构建一个有参数的收件人
+     * @param type 收件人类型 可用的类型{@link com.aye10032.functions.funcutil.MsgType}
+     * @param id 收件人群号
+     * @param args 用户参数
+     */
     public Reciver(@NotNull MsgType type, @NotNull Long id, String[] args) {
         this.type = type;
         this.id = id;
@@ -86,6 +98,10 @@ public class Reciver {
         this.args = args;
     }
 
+    /**
+     * 把收件人转换为SimpleMsg用于返回消息
+     * @return 返回SimpleMsg类
+     */
     public SimpleMsg getSender() {
         switch (type) {
             case TEAMSPEAK_MSG:
