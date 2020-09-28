@@ -88,14 +88,6 @@ public class Zibenbot {
     private Map<Integer, File> imageMap = new ConcurrentHashMap<>();
 
     {
-
-        //fromGroup == 995497677L
-        // || fromGroup == 792666782L
-        // || fromGroup == 517709950L
-        // || fromGroup == 295904863
-        // || fromGroup == 947657871
-        // || fromGroup == 456919710L
-        // || fromGroup == 792797914L
         enableGroup.add(995497677L); //提醒人
         enableGroup.add(792666782L); //实验室
         enableGroup.add(517709950L); //植物群
@@ -106,6 +98,7 @@ public class Zibenbot {
         enableGroup.add(814843368L); //dazo群
         enableGroup.add(1107287775L); //Test
         enableGroup.add(980042772L); //公会
+        enableGroup.add(583991760L); //粉丝群
         appDirectory = "data";
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
     }
