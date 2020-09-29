@@ -1,8 +1,8 @@
-package com.aye10032.NLP;
+package com.aye10032.functions;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
-import com.aye10032.Zibenbot;
 
 import java.io.File;
 import java.sql.*;
