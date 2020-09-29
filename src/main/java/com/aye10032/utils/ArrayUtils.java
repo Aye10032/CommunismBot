@@ -1,6 +1,8 @@
 package com.aye10032.utils;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.function.Predicate;
 
 public class ArrayUtils {
 
@@ -16,6 +18,15 @@ public class ArrayUtils {
             offset += array.length;
         }
         return result;
+    }
+
+    public static <T> T findOne(Collection<T> collection, Predicate<T> predicate) {
+        for (T t : collection) {
+            if (predicate.test(t)) {
+                return t;
+            }
+        }
+        return null;
     }
 
 }

@@ -24,7 +24,7 @@ public class AsynTaskStatus {
         this.status.set(status);
     }
 
-    public void wait1() throws InterruptedException {
+    public synchronized void wait1() throws InterruptedException {
         while (true) {
             if (getStatus() != CALL_BACK_RUNNED) {
                 wait(500);
