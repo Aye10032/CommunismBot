@@ -5,6 +5,7 @@ import com.aye10032.functions.funcutil.IFunc;
 import com.aye10032.functions.funcutil.MsgType;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.ConfigLoader;
+import com.aye10032.utils.ExceptionUtils;
 import com.google.gson.reflect.TypeToken;
 import javafx.util.Pair;
 import org.apache.commons.lang3.ArrayUtils;
@@ -211,12 +212,13 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
             } else {
                 if ("调试".equals(msgs[1]) || "debug".equals(msgs[1])) {
                     StringBuilder builder = new StringBuilder();
+                    String TAB_STRING = "                    ";
                     builder.append("当前订阅关系如下:\n");
                     subscriptMap.forEach((s, recivers) -> {
                         builder.append(s);
                         builder.append("\n");
                         recivers.forEach((reciver) -> {
-                            builder.append("\t");
+                            builder.append(TAB_STRING);
                             builder.append(reciver);
                             builder.append("\n");
                         });
@@ -224,7 +226,6 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                     builder.append("\n当前时间轴如下:\n");
                     int futureLength = msgs.length == 3 ? Integer.valueOf(msgs[2]) : 20;
                     Map<Date, List<ISubscribable>> map = getFutureTasks(futureLength);
-                    String TAB_STRING = "                    ";
                     for (Date date : map.keySet()) {
                         List<ISubscribable> list = map.get(date);
                         DateFormat format = new SimpleDateFormat("MM/dd HH:mm");
@@ -246,14 +247,22 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 }
                 ISubscribable subscribable = allSubscription.get(msgs[1]);
                 if (subscribable != null) {
-                    Reciver reciver = getReciver(isNoArgsSub(subscribable), simpleMsg);
+                    boolean noArgsSub = isNoArgsSub(subscribable);
+                    Reciver reciver = getReciver(noArgsSub, simpleMsg);
                     if (sw) {
                         Pair<Boolean, String> booleanStringPair;
                         //参数合理检查
-                        if (reciver.getArgs() == null) {
+                        if (noArgsSub) {
                             booleanStringPair = new Pair<>(true, null);
                         } else {
-                            booleanStringPair = subscribable.argsCheck(reciver.getArgs());
+                            try {
+                                booleanStringPair = subscribable.argsCheck(reciver.getArgs());
+                            } catch (Exception e) {
+                                booleanStringPair = new Pair<>(false, e.getMessage());
+                                zibenbot.logWarning(String.format("检查订阅器[%s]参数%s出错：%s", subscribable.getName()
+                                        , Arrays.toString(reciver.getArgs())
+                                        , ExceptionUtils.printStack(e)));
+                            }
                         }
                         if (booleanStringPair.getKey()) {
                             subscribe(subscribable, reciver);
@@ -452,7 +461,11 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 zibenbot.log(Level.INFO, "SubscriptManager run start:" + s.toString() + current);
                 for (Map.Entry<String[], List<Reciver>> entry
                         : sortToMapWithArgs(recivers).entrySet()) {
-                    s.run(entry.getValue(), entry.getKey());
+                    try {
+                        s.run(entry.getValue(), entry.getKey());
+                    } catch (Exception e) {
+                        zibenbot.logWarning(String.format("运行订阅器(%s)出错：%s", s.getName(), ExceptionUtils.printStack(e)));
+                    }
                 }
             }
         }
