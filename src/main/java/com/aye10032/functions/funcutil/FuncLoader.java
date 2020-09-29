@@ -86,12 +86,14 @@ public class FuncLoader {
         Field[] fields = zibenbot.getClass().getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true);
-            IFunc func = ArrayUtils.findOne(funcs, iFunc -> field.getType() == iFunc.getClass());
-            if (func != null) {
-                try {
-                    field.set(zibenbot, func);
-                } catch (IllegalAccessException e) {
-                    zibenbot.logWarning("注入模块失败，错误原因：参数异常");
+            if (field.getAnnotation(FuncField.class) != null) {
+                IFunc func = ArrayUtils.findOne(funcs, iFunc -> field.getType() == iFunc.getClass());
+                if (func != null) {
+                    try {
+                        field.set(zibenbot, func);
+                    } catch (IllegalAccessException e) {
+                        zibenbot.logWarning("注入模块失败，错误原因：参数异常");
+                    }
                 }
             }
         }
