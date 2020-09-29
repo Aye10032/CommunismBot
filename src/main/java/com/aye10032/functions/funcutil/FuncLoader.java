@@ -33,16 +33,16 @@ public class FuncLoader {
     }
 
     /**
-     * 添加模块扫描的地址
+     * 添加模块扫描的包名
      *
      * @param path 需要扫描的地方
      */
-    public void addScanPath(String path) {
+    public void addScanPackage(String path) {
         scanPaths.add(path);
     }
 
     /**
-     * 添加IFunc的工厂对象 用于创建对象
+     * 添加IFunc的工厂对象 用于创建对象{@link IFuncFactory}
      *
      * @param funcFactory 工厂对象
      */
@@ -50,31 +50,37 @@ public class FuncLoader {
         factories.add(funcFactory);
     }
 
+    /**
+     * 加载所有的模块
+     * 在这个方法中会进行对象注入
+     *
+     * @return 模块的list
+     */
     public List<IFunc> load() {
         List<IFunc> res = new ArrayList<>();
         Set<Class<? extends IFunc>> scanResult = scan();
         for (Class<? extends IFunc> c : scanResult) {
-            Class<? extends IFuncFactory> factoryClass = getFactoryClass(c);
-            if (factoryClass != null) {
-                IFuncFactory factory = getFactory(factoryClass);
-                if (factory != null) {
-                    res.add(factory.build());
-                } else {
-                    zibenbot.logWarning("加载模块失败，错误原因：需要工厂类，找不到工厂类");
-                }
-            } else {
-                try {
-                    if (c != BaseFunc.class) {
-                        res.add(c.getConstructor(Zibenbot.class).newInstance(zibenbot));
+            if (c.getAnnotation(UnloadFunc.class) == null) {
+                Class<? extends IFuncFactory> factoryClass = getFactoryClass(c);
+                if (factoryClass != null) {
+                    IFuncFactory factory = getFactory(factoryClass);
+                    if (factory != null) {
+                        res.add(factory.build());
+                    } else {
+                        zibenbot.logWarning("加载模块失败，错误原因：需要工厂类，找不到工厂类");
                     }
-                } catch (NoSuchMethodException e) {
-                    zibenbot.logWarning("加载模块失败，错误原因：找不到(Zibenbot zibenbot)这样的默认构造函数");
-                } catch (IllegalAccessException e) {
-                    zibenbot.logWarning("加载模块失败，错误原因：参数不合法");
-                } catch (InstantiationException e) {
-                    zibenbot.logWarning("加载模块失败，错误原因：类创建异常\n" + ExceptionUtils.printStack(e));
-                } catch (InvocationTargetException e) {
-                    zibenbot.logWarning("加载模块失败，错误原因：调用目标异常");
+                } else {
+                    try {
+                        res.add(c.getConstructor(Zibenbot.class).newInstance(zibenbot));
+                    } catch (NoSuchMethodException e) {
+                        zibenbot.logWarning("加载模块失败，错误原因：找不到(Zibenbot zibenbot)这样的默认构造函数");
+                    } catch (IllegalAccessException e) {
+                        zibenbot.logWarning("加载模块失败，错误原因：参数不合法");
+                    } catch (InstantiationException e) {
+                        zibenbot.logWarning("加载模块失败，错误原因：类创建异常\n" + ExceptionUtils.printStack(e));
+                    } catch (InvocationTargetException e) {
+                        zibenbot.logWarning("加载模块失败，错误原因：调用目标异常");
+                    }
                 }
             }
         }
