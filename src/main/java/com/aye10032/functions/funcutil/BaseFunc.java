@@ -6,6 +6,7 @@ import com.aye10032.Zibenbot;
  * 基础的func的类 包装了一些可用的方法
  * @author Dazo66
  */
+@UnloadFunc
 public abstract class BaseFunc implements IFunc {
 
     public Zibenbot zibenbot;

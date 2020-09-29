@@ -507,7 +507,7 @@ public class Zibenbot {
         //改成了手动注册
         log(Level.INFO, "registe func start");
         FuncLoader loader = new FuncLoader(this);
-        loader.addScanPath("com.aye10032.utils.timeutil");
+        loader.addScanPackage("com.aye10032.utils.timeutil");
         registerFunc = loader.load();
         //对功能进行初始化
         for (IFunc func : registerFunc) {
