@@ -1,7 +1,9 @@
 package com.aye10032;
 
-import com.aye10032.NLP.DataCollect;
-import com.aye10032.functions.*;
+import com.aye10032.functions.BotConfigFunc;
+import com.aye10032.functions.FuncEnableFunc;
+import com.aye10032.functions.funcutil.FuncField;
+import com.aye10032.functions.funcutil.FuncLoader;
 import com.aye10032.functions.funcutil.IFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.timetask.DragraliaTask;
@@ -63,13 +65,16 @@ public class Zibenbot {
     private static Function2<? super CommandBody<MessageEvent>, ? super Continuation<? super Unit>, ?> msgAction = (o, o2) -> Unit.INSTANCE;
     //时间任务池
     public TimeTaskPool pool;
-    public SubscriptManager subManager = new SubscriptManager(this);
+    @FuncField
+    public SubscriptManager subManager;
     //public TeamspeakBot teamspeakBot;
+    @FuncField
     public BotConfigFunc config;
+    @FuncField
     public FuncEnableFunc enableCollFunc;
     public List<Long> enableGroup = new ArrayList<>();
     public String appDirectory;
-    List<IFunc> registerFunc = new ArrayList<>();
+    List<IFunc> registerFunc;
     private Bot bot;
     private Function2<Object, Object, ?>
             msgBuilder = (o, o2) -> {
@@ -88,14 +93,6 @@ public class Zibenbot {
     private Map<Integer, File> imageMap = new ConcurrentHashMap<>();
 
     {
-
-        //fromGroup == 995497677L
-        // || fromGroup == 792666782L
-        // || fromGroup == 517709950L
-        // || fromGroup == 295904863
-        // || fromGroup == 947657871
-        // || fromGroup == 456919710L
-        // || fromGroup == 792797914L
         enableGroup.add(995497677L); //提醒人
         enableGroup.add(792666782L); //实验室
         enableGroup.add(517709950L); //植物群
@@ -500,17 +497,29 @@ public class Zibenbot {
 
     private MessageChain toMessChain(Contact send, String msg) {
         String s = replaceMsgType(send, msg);
-        /*if (send instanceof Friend) {
-            String fromto = String.valueOf(bot.getId()) + "-" + String.valueOf(send.getId());
-            s = s.replaceAll("\\[mirai:image:\\{(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})}.mirai]", "[mirai:image:/" + fromto + "-$1$2$3$4$5"+"]");
-        } else {
-            s = s.replaceAll("\\[mirai:image:/(\\d+)-(\\d+)-(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})]", "[mirai:image:{$3-$4-$5-$6-$7}.mirai]");
-        }*/
         return MiraiSerializationKt.parseMiraiCode(s);
     }
 
     public int startup() {
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
+
+        logInfo("registe time task end");
+        //改成了手动注册
+        log(Level.INFO, "registe func start");
+        FuncLoader loader = new FuncLoader(this);
+        loader.addScanPath("com.aye10032.utils.timeutil");
+        registerFunc = loader.load();
+        //对功能进行初始化
+        for (IFunc func : registerFunc) {
+            try {
+                func.setUp();
+            } catch (Exception e) {
+                logWarning("初始化：" + func.getClass().getName() + "出现异常");
+            }
+        }
+        log(Level.INFO, "registe func end");
+
+
         // 每天0点 6点 12点 18点
         ITimeAdapter maiyaoCycle = date -> {
             Date date1 = TimeUtils.getNextSpecialTime(
@@ -582,41 +591,9 @@ public class Zibenbot {
         //把订阅管理器注册进线程池
         pool.add(subManager);
         //把订阅管理器注册进可用的模块里
-        registerFunc.add(subManager);
+        //registerFunc.add(subManager);
 
-        logInfo("registe time task end");
-        //改成了手动注册
-        log(Level.INFO, "registe func start");
 
-        registerFunc.add(config = new BotConfigFunc(this));
-        registerFunc.add(enableCollFunc = new FuncEnableFunc(this));
-        registerFunc.add(new CubeFunc(this));
-        registerFunc.add(new BanFunc(this));
-        registerFunc.add(new DianGuaiFunc(this));
-        registerFunc.add(new EatFunc(this));
-        registerFunc.add(new FangZhouDiaoluoFunc(this));
-        registerFunc.add(new liantongFunc(this));
-        registerFunc.add(new nmslFunc(this));
-        registerFunc.add(new PixivFunc(this));
-        registerFunc.add(new BiliFunc(this));
-        registerFunc.add(new RedStoneFunc(this));
-        registerFunc.add(new ScreenshotFunc(this));
-        registerFunc.add(new DragraliaNewsFunc(this));
-        registerFunc.add(new DraSummonSimulatorFunc(this));
-        registerFunc.add(new SendGroupFunc(this));
-        registerFunc.add(new INMFunc(this));
-        registerFunc.add(new DataCollect(this));
-        registerFunc.add(new CheruFunc(this));
-        registerFunc.add(new QueueFunc(this));
-        //对功能进行初始化
-        for (IFunc func : registerFunc) {
-            try {
-                func.setUp();
-            } catch (Exception e) {
-                logWarning("初始化：" + func.getClass().getName() + "出现异常");
-            }
-        }
-        log(Level.INFO, "registe func end");
 
 /*        //创建teamspeakbot对象
         teamspeakBot = new TeamspeakBot(this);
