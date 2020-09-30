@@ -11,12 +11,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
+
 public class DataCollect extends BaseFunc {
 
     private Connection c = null;
 
-    public static void main(String[] args) {
-        /*Connection c = null;
+/*    public static void main(String[] args) {
+        Connection c = null;
         Statement stmt;
         try {
             Class.forName("org.sqlite.JDBC");
@@ -31,8 +32,8 @@ public class DataCollect extends BaseFunc {
             c.close();
         } catch (Exception e) {
             System.out.println(e);
-        }*/
-    }
+        }
+    }*/
 
     public Connection getConnection(){
         try {
