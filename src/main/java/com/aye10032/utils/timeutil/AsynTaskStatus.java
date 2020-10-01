@@ -28,6 +28,8 @@ public class AsynTaskStatus {
         while (true) {
             if (getStatus() != CALL_BACK_RUNNED) {
                 wait(500);
+            } else {
+                return;
             }
         }
     }
