@@ -134,7 +134,8 @@ public class Zibenbot {
         enableGroup.add(792797914L); //TIS Lab
         enableGroup.add(814843368L); //dazo群
         enableGroup.add(1107287775L); //Test
-        enableGroup.add(980042772L); //公会
+        enableGroup.add(980042772L);//公会
+        enableGroup.add(583991760L); //粉丝群
         appDirectory = "data";
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
     }
