@@ -24,10 +24,7 @@ import kotlin.Unit;
 import kotlin.coroutines.Continuation;
 import kotlin.jvm.functions.Function2;
 import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.contact.Member;
-import net.mamoe.mirai.contact.User;
+import net.mamoe.mirai.contact.*;
 import net.mamoe.mirai.event.Listener;
 import net.mamoe.mirai.event.events.MemberMuteEvent;
 import net.mamoe.mirai.event.events.NewFriendRequestEvent;
@@ -52,9 +49,12 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//msg = msg.replace("&#91;", "[").replace("&#93;", "]");
-
 /**
+ *
+ * 机器人的主类 连接了mirai 进行实现
+ *
+ *
+ *
  * @author Dazo66
  */
 public class Zibenbot {
@@ -92,21 +92,6 @@ public class Zibenbot {
     //private Map<String, Image> miraiImageMap = new ConcurrentHashMap<>();
     private Map<Integer, File> imageMap = new ConcurrentHashMap<>();
 
-    {
-        enableGroup.add(995497677L); //提醒人
-        enableGroup.add(792666782L); //实验室
-        enableGroup.add(517709950L); //植物群
-        enableGroup.add(295904863L); //魔方社
-        enableGroup.add(947657871L); //TIS内群
-        enableGroup.add(456919710L); //红石科技搬运组
-        enableGroup.add(792797914L); //TIS Lab
-        enableGroup.add(814843368L); //dazo群
-        enableGroup.add(1107287775L); //Test
-        enableGroup.add(980042772L); //公会
-        appDirectory = "data";
-        SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
-    }
-
     private PrintStream LOGGER_FILE = null;
 
     private synchronized PrintStream getLoggerStream() {
@@ -140,7 +125,18 @@ public class Zibenbot {
         }, true);
         bot.getLogger().plus(logger);
         pool = new TimeTaskPool();
-
+        enableGroup.add(995497677L); //提醒人
+        enableGroup.add(792666782L); //实验室
+        enableGroup.add(517709950L); //植物群
+        enableGroup.add(295904863L); //魔方社
+        enableGroup.add(947657871L); //TIS内群
+        enableGroup.add(456919710L); //红石科技搬运组
+        enableGroup.add(792797914L); //TIS Lab
+        enableGroup.add(814843368L); //dazo群
+        enableGroup.add(1107287775L); //Test
+        enableGroup.add(980042772L); //公会
+        appDirectory = "data";
+        SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
     }
 
     public static Proxy getProxy() {
@@ -164,6 +160,13 @@ public class Zibenbot {
         return command;
     }
 
+    /**
+     * 得到第一个被AT的对象的id
+     * 没找到则返回 -1
+     *
+     * @param s 消息语句
+     * @return
+     */
     public long getAtMember(String s) {
         List<Long> list = getAtMembers(s);
         if (list.size() != 0) {
@@ -173,6 +176,13 @@ public class Zibenbot {
         }
     }
 
+    /**
+     * 得到被at的对象的id列表
+     * 没有则会返回空id
+     *
+     * @param s 消息语句
+     * @return
+     */
     public List<Long> getAtMembers(String s) {
         List<Long> rets = new ArrayList<>();
         try {
@@ -206,6 +216,11 @@ public class Zibenbot {
         muteMember(member, second);
     }
 
+    /**
+     * 设置全体禁言
+     * @param groupId 群id
+     * @param muteAll 启用或者禁用
+     */
     public void setMuteAll(long groupId, boolean muteAll) {
         Group g = _getGroup(groupId);
         if (g == null) {
@@ -245,14 +260,17 @@ public class Zibenbot {
     }
 
     /**
-     * 推荐使用这个方法进行at
-     * 不是每个CqMsg都有Event
+     * 获得AT的字符串 如果不存在这个id则返回 "null"
+     * 如果艾特的不是群成员 将会变成 "@昵称"
      *
      * @param clientId id
      * @return at MiraiCode
      */
     public String at(long clientId) {
-        User user = findUser(clientId);
+        User user = findMember(clientId);
+        if (user == null) {
+            user = findFriend(clientId);
+        }
         if (user == null) {
             return String.valueOf(clientId);
         } else {
@@ -285,6 +303,10 @@ public class Zibenbot {
         }
     }
 
+    /**
+     * 得到已经注册的方法模块
+     * @return
+     */
     public List<IFunc> getRegisterFunc() {
         return registerFunc;
     }
@@ -335,14 +357,26 @@ public class Zibenbot {
         try {
             return bot.getFriend(clientId);
         } catch (NoSuchElementException e) {
-            for (Group group : bot.getGroups()) {
-                try {
-                    return group.get(clientId);
-                } catch (NoSuchElementException ignored) {
-                }
+            return findMember(clientId);
+        }
+    }
+
+    private Member findMember(long clientId) {
+        for (Group group : bot.getGroups()) {
+            try {
+                return group.get(clientId);
+            } catch (NoSuchElementException ignored) {
             }
         }
         return null;
+    }
+
+    private Friend findFriend(long clientId) {
+        try {
+            return bot.getFriend(clientId);
+        } catch (NoSuchElementException e) {
+            return null;
+        }
     }
 
     public void toGroupMsg(long groupId, String msg) {
@@ -508,7 +542,7 @@ public class Zibenbot {
         log(Level.INFO, "registe func start");
         FuncLoader loader = new FuncLoader(this);
         loader.addScanPackage("com.aye10032.utils.timeutil");
-        registerFunc = loader.load();
+        registerFunc = Collections.unmodifiableList(loader.load());
         //对功能进行初始化
         for (IFunc func : registerFunc) {
             try {

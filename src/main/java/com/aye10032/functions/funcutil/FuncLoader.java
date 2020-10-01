@@ -8,6 +8,7 @@ import com.aye10032.utils.classutil.ClassUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +16,14 @@ import java.util.Set;
  * 方法加载器
  * 默认加载{@link com.aye10032.functions}下的所有模块
  *
+ * @see FuncFactory  工厂注解类 用于声明这个方法所需要的工厂
+ * @see FuncField    字段注解类 用于声明这个字段需要自动注入对象
+ *                   应用范围仅限于Zibenbot
+ * @see UnloadFunc   方法类注解类 声明了之后告诉加载器不要加载这个类
+ * @see IFuncFactory 工厂接口类 如果需要工厂进行对象创建 可以继承这个类
+ * @see IFunc        方法接口类
+ * @see BaseFunc     抽限方法类 推荐继承这个来创建新的方法
+ * @see FuncLoader   方法加载类 用于加载IFunc
  * @author Dazo66
  */
 public class FuncLoader {
@@ -25,6 +34,8 @@ public class FuncLoader {
 
     public FuncLoader(Zibenbot zibenbot) {
         this.zibenbot = zibenbot;
+        //默认搜索路径
+        addScanPackage("com.aye10032.functions");
     }
 
     private static Class<? extends IFuncFactory> getFactoryClass(Class<? extends IFunc> c) {
@@ -100,6 +111,8 @@ public class FuncLoader {
                     } catch (IllegalAccessException e) {
                         zibenbot.logWarning("注入模块失败，错误原因：参数异常");
                     }
+                } else {
+                    zibenbot.logWarning("注入模块失败，错误原因：找不到可以注入的对象");
                 }
             }
         }
@@ -115,12 +128,11 @@ public class FuncLoader {
     }
 
     private Set<Class<? extends IFunc>> scan() {
-        Set<Class<? extends IFunc>> set = ClassUtil.getAllAssignedClass(IFunc.class, ClassUtil.getSuperPackagePath(IFunc.class.getPackage()));
+        Set<Class<? extends IFunc>> set = new HashSet<>();
         for (String path : scanPaths) {
             set.addAll(ClassUtil.getAllAssignedClass(IFunc.class, path));
         }
         return set;
-
     }
 
 }
