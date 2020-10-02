@@ -1,7 +1,9 @@
 package com.aye10032.utils.fangzhoudiaoluo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Dazo66
@@ -35,6 +37,31 @@ public class DiaoluoType {
 
         public Material(){}
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Material material = (Material) o;
+            return tier == material.tier &&
+                    Objects.equals(id, material.id) &&
+                    Objects.equals(name, material.name) &&
+                    Objects.equals(credit_store_value, material.credit_store_value) &&
+                    Objects.equals(green_ticket_value, material.green_ticket_value) &&
+                    Objects.equals(golden_ticket_value, material.golden_ticket_value) &&
+                    Objects.equals(type, material.type) &&
+                    Arrays.equals(lowest_ap_stages, material.lowest_ap_stages) &&
+                    Arrays.equals(balanced_stages, material.balanced_stages) &&
+                    Arrays.equals(drop_rate_first_stages, material.drop_rate_first_stages);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Objects.hash(id, tier, name, credit_store_value, green_ticket_value, golden_ticket_value, type);
+            result = 31 * result + Arrays.hashCode(lowest_ap_stages);
+            result = 31 * result + Arrays.hashCode(balanced_stages);
+            result = 31 * result + Arrays.hashCode(drop_rate_first_stages);
+            return result;
+        }
     }
 
     public class Stage {
@@ -43,6 +70,11 @@ public class DiaoluoType {
         public float drop_rate;
         public float efficiency;
         public float ap_per_item;
+
+        @Override
+        public String toString() {
+            return code + "(" + ap_per_item + ')';
+        }
     }
 
     public class Drop {

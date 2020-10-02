@@ -103,9 +103,10 @@ jar {
     if (oldJarFile.exists()) {
         oldJarFile.renameTo(newJarFile)
     }
-    ant.move file: newJarFile,
-             todir: "${buildDir}/toArchive"
-    
+    if (newJarFile.exists()) {
+        ant.move file: newJarFile,
+                todir: "${buildDir}/toArchive"
+    }
     
     manifest {
         //mainifest下的classpath头

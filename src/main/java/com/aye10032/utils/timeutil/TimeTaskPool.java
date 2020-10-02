@@ -47,10 +47,10 @@ public class TimeTaskPool {
             task.setTiggerTime(task.getNextTiggerTime());
             tasks.add(task);
             flow.flush();
-            Zibenbot.logger.info(String.format("添加时间任务 触发时间：%s 当前时间%s",
+            Zibenbot.logInfoStatic(String.format("添加时间任务 触发时间：%s 当前时间%s",
                     task.getTiggerTime().toString(), new Date().toString()));
         } else {
-            Zibenbot.logger.warning("重复的时间任务：" + task.getClass().getName());
+            Zibenbot.logWarningStatic("重复的时间任务：" + task.getClass().getName());
         }
     }
 

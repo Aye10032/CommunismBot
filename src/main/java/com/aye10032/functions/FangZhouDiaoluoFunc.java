@@ -140,13 +140,34 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                     }
                 }
             } else {
-                if (zibenbot != null && !simpleMsg.isTeamspealMsg()) {
-                    zibenbot.replyMsg(simpleMsg, zibenbot.getImg(new File(arkonegraphFile)));
-                } else if (simpleMsg.isTeamspealMsg()) {
-                    zibenbot.replyMsg(simpleMsg, "ts频道无法发图片，请从群聊或者私聊查询");
-                }
+                zibenbot.replyMsg(simpleMsg, getAllBestMap());
+
             }
         }
+    }
+
+    /**
+     * 得到所有掉率最好的副本
+     * 优先拿 效率最高 其次平衡 还没有拿掉率最高
+     *
+     * @return
+     */
+    private String getAllBestMap() {
+        StringBuilder builder = new StringBuilder();
+        Set<DiaoluoType.Material> set = new HashSet<>();
+        name_idList.forEach(t -> {
+            if (type.getMaterialFromID(t.id).tier == 3) {
+                getCalls(name_idList, t).forEach(s -> set.add(this.type.getMaterialFromID(s)));
+            }
+        });
+        set.forEach(material -> {
+            String map = material.lowest_ap_stages.length == 0 ? null : material.lowest_ap_stages[0].toString();
+            map = map == null ? material.balanced_stages.length == 0 ? null : material.balanced_stages[0].toString() : map;
+            map = map == null ? material.drop_rate_first_stages.length == 0 ? null : material.drop_rate_first_stages[0].toString() : map;
+            builder.append(material.name.trim()).append(": ").append(map).append("\n");
+        });
+        builder.append("上次更新：").append(Module.lastUpdate);
+        return builder.toString();
     }
 
     private void retMsg(boolean enforce, DiaoluoType.HeChenType type, SimpleMsg msg){
@@ -178,7 +199,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
 
     public void update() {
         //System.out.println(arkonegraphFile);
-        Zibenbot.logger.info("fangzhoudiaoluo load start");
+        zibenbot.logInfo("fangzhoudiaoluo load start");
         File file = new File(cacheFile);
         Gson gson = new GsonBuilder().registerTypeAdapter(DiaoluoType.Material[].class, new MaterialsDeserializer()).setLenient().create();
         JsonParser parser = new JsonParser();
@@ -229,9 +250,9 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
 
             client.close();
         } catch (Exception e) {
-            Zibenbot.logger.warning("方舟掉落更新出错：" + ExceptionUtils.getStackTrace(e));
+            zibenbot.logInfo("方舟掉落更新出错：" + ExceptionUtils.getStackTrace(e));
         }
-        Zibenbot.logger.info("fangzhoudiaoluo load end");
+        zibenbot.logInfo("fangzhoudiaoluo load end");
     }
 
     private void update_img(String img_url) throws IOException {
