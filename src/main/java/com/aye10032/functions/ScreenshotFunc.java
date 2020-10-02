@@ -1,11 +1,11 @@
 package com.aye10032.functions;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.IOUtil;
 import com.aye10032.utils.ImgUtils;
 import com.aye10032.utils.SeleniumUtils;
-import com.aye10032.Zibenbot;
 import org.openqa.selenium.*;
 
 import java.io.File;
@@ -26,22 +26,30 @@ public class ScreenshotFunc extends BaseFunc {
 
     }
 
-    @Override
-    public void setUp() {
-        File dir = new File(zibenbot.appDirectory + "/screenshot");
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        //清理缓存
-        long current = System.currentTimeMillis();
-        int i = 0;
-        for (File f: dir.listFiles()) {
-            if (f.isFile() && current - f.lastModified() > 86400 * 3 * 1000) {
-                f.delete();
-                i++;
+    public synchronized static File getScreenshot(WebDriver driver, String url, String outFileName, int timeOut, String... js) throws IOException, InterruptedException {
+        try {
+            driver.get(url = addhttp(url));
+            Zibenbot.logInfoStatic("Chrome Dirver switch to" + url);
+            Thread.sleep(timeOut);
+            JavascriptExecutor driver_js = SeleniumUtils.getDriverJs(driver);
+            //Double width = Double.valueOf(driver_js.executeScript(
+            //        "return document.getElementsByTagName('html')[0].getBoundingClientRect().width;").toString());
+            Double height = Double.valueOf(driver_js.executeScript("return document.getElementsByTagName('html')[0].getBoundingClientRect().height;").toString());
+            for (String s : js) {
+                driver_js.executeScript(s);
             }
+            driver.manage().window().setSize(new Dimension(1366, height.intValue()));
+            byte[] bytes = driver.findElement(By.tagName("html")).getScreenshotAs(OutputType.BYTES);
+            Zibenbot.logInfoStatic("Chrome Dirver switch to about:blank");
+            bytes = ImgUtils.compress(bytes, "png");
+            IOUtil.saveFileWithBytes(outFileName, bytes);
+        } catch (IOException | InterruptedException e) {
+            throw e;
+        } finally {
+            //释放资源
+            SeleniumUtils.closeDriver(driver);
         }
-        Zibenbot.logger.info("清理了三天前的缓存 " + i + " 张。");
+        return new File(outFileName);
     }
 
     @Override
@@ -83,30 +91,22 @@ public class ScreenshotFunc extends BaseFunc {
         return getScreenshot(driver, url, outFileName, timeOut, new String[]{});
     }
 
-    public synchronized static File getScreenshot(WebDriver driver, String url, String outFileName, int timeOut, String... js) throws IOException, InterruptedException {
-        try {
-            driver.get(url = addhttp(url));
-            Zibenbot.logger.info("Chrome Dirver switch to" + url);
-            Thread.sleep(timeOut);
-            JavascriptExecutor driver_js= SeleniumUtils.getDriverJs(driver);
-            //Double width = Double.valueOf(driver_js.executeScript(
-            //        "return document.getElementsByTagName('html')[0].getBoundingClientRect().width;").toString());
-            Double height = Double.valueOf(driver_js.executeScript("return document.getElementsByTagName('html')[0].getBoundingClientRect().height;").toString());
-            for (String s : js) {
-                driver_js.executeScript(s);
-            }
-            driver.manage().window().setSize(new Dimension(1366, height.intValue()));
-            byte[] bytes = driver.findElement(By.tagName("html")).getScreenshotAs(OutputType.BYTES);
-            Zibenbot.logger.info("Chrome Dirver switch to about:blank");
-            bytes = ImgUtils.compress(bytes, "png");
-            IOUtil.saveFileWithBytes(outFileName, bytes);
-        } catch (IOException | InterruptedException e) {
-            throw e;
-        } finally {
-            //释放资源
-            SeleniumUtils.closeDriver(driver);
+    @Override
+    public void setUp() {
+        File dir = new File(zibenbot.appDirectory + "/screenshot");
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
-        return new File(outFileName);
+        //清理缓存
+        long current = System.currentTimeMillis();
+        int i = 0;
+        for (File f : dir.listFiles()) {
+            if (f.isFile() && current - f.lastModified() > 86400 * 3 * 1000) {
+                f.delete();
+                i++;
+            }
+        }
+        Zibenbot.logInfoStatic("清理了三天前的缓存 " + i + " 张。");
     }
 
     private static String addhttp(String url) {

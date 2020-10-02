@@ -60,10 +60,11 @@ import java.util.regex.Pattern;
 public class Zibenbot {
 
     public static Proxy proxy = null;
-    public static MiraiLogger logger;
+    private static MiraiLogger logger;
     private static Pattern AT_REGEX = Pattern.compile("\\[mirai:at:(\\d+),[\\S|\\s]+]");
-    private static Function2<? super CommandBody<MessageEvent>, ? super Continuation<? super Unit>, ?> msgAction = (o, o2) -> Unit.INSTANCE;
-    //时间任务池
+    /**
+     * 时间任务池
+     */
     public TimeTaskPool pool;
     @FuncField
     public SubscriptManager subManager;
@@ -76,20 +77,6 @@ public class Zibenbot {
     public String appDirectory;
     List<IFunc> registerFunc;
     private Bot bot;
-    private Function2<Object, Object, ?>
-            msgBuilder = (o, o2) -> {
-        if (o instanceof MessageEvent) {
-            SimpleMsg simpleMsg = new SimpleMsg((MessageEvent) o);
-            if (simpleMsg.isGroupMsg() && !enableGroup.contains(simpleMsg.getFromGroup())) {
-                return null;
-            } else {
-                runFuncs(simpleMsg);
-            }
-        }
-        return null;
-    };
-    private Command<MessageEvent> command = new ZibenbotController("Zibenbot", msgBuilder, msgAction);
-    //private Map<String, Image> miraiImageMap = new ConcurrentHashMap<>();
     private Map<Integer, File> imageMap = new ConcurrentHashMap<>();
 
     private PrintStream LOGGER_FILE = null;
@@ -117,14 +104,21 @@ public class Zibenbot {
     }
 
     public Zibenbot(Bot bot) {
+
         this.bot = bot;
+        // 设置基本参数
+        appDirectory = "data";
+        SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
+        // 配置logger
         logger = new PlatformLogger("zibenbot", (String s) -> {
             System.out.println(s);
             getLoggerStream().println(s);
             return Unit.INSTANCE;
         }, true);
         bot.getLogger().plus(logger);
+
         pool = new TimeTaskPool();
+        // bot启用的群
         enableGroup.add(995497677L); //提醒人
         enableGroup.add(792666782L); //实验室
         enableGroup.add(517709950L); //植物群
@@ -136,8 +130,6 @@ public class Zibenbot {
         enableGroup.add(1107287775L); //Test
         enableGroup.add(980042772L);//公会
         enableGroup.add(583991760L); //粉丝群
-        appDirectory = "data";
-        SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
     }
 
     public static Proxy getProxy() {
@@ -157,8 +149,8 @@ public class Zibenbot {
         return proxy;
     }
 
-    public Command<MessageEvent> getCommand() {
-        return command;
+    public static void logInfoStatic(String info) {
+        logger.info(info);
     }
 
     /**
@@ -304,12 +296,8 @@ public class Zibenbot {
         }
     }
 
-    /**
-     * 得到已经注册的方法模块
-     * @return
-     */
-    public List<IFunc> getRegisterFunc() {
-        return registerFunc;
+    public static void logDebugStatic(String debugMsg) {
+        logger.debug(debugMsg);
     }
 
     public void toPrivateMsg(long clientId, String msg) {
@@ -345,8 +333,8 @@ public class Zibenbot {
         }
     }
 
-    public void toPrivateMsg(long clientId, MessageChain chain) {
-        toPrivateMsg(clientId, chain, true);
+    public static void logErrorStatic(String errorMsg) {
+        logger.error(errorMsg);
     }
 
 /*    public int toTeamspeakMsg(String msg) {
@@ -418,6 +406,42 @@ public class Zibenbot {
 
     public void logVerbose(String verboseMsg){
         logger.verbose(verboseMsg);
+    }
+
+    public static void logWarningStatic(String warnMsg) {
+        logger.warning(warnMsg);
+    }
+
+    public static void logVerboseStatic(String verboseMsg) {
+        logger.verbose(verboseMsg);
+    }
+
+    public Command<MessageEvent> getCommand() {
+        return new ZibenbotController("Zibenbot", (o, o2) -> {
+            if (o instanceof MessageEvent) {
+                SimpleMsg simpleMsg = new SimpleMsg(o);
+                if (simpleMsg.isGroupMsg()
+                        && !enableGroup.contains(simpleMsg.getFromGroup())) {
+                    return null;
+                } else {
+                    runFuncs(simpleMsg);
+                }
+            }
+            return null;
+        }, (o, o2) -> Unit.INSTANCE);
+    }
+
+    /**
+     * 得到已经注册的方法模块
+     *
+     * @return 已经注册的方法列表 不可修改
+     */
+    public List<IFunc> getRegisterFunc() {
+        return registerFunc;
+    }
+
+    private void toPrivateMsg(long clientId, MessageChain chain) {
+        toPrivateMsg(clientId, chain, true);
     }
 
     public void replyMsg(SimpleMsg fromMsg, String msg) {

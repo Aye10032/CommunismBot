@@ -46,7 +46,7 @@ public class AsynchronousTaskPool extends TimedTaskBase {
                     statusMap.get(callback).setStatus(AsynTaskStatus.TASKS_RUNNING);
                     run.run();
                 } catch (Exception e) {
-                    Zibenbot.logger.warning("异步线程执行出错！:" + e + "\n" + ExceptionUtils.printStack(traceElements));
+                    Zibenbot.logWarningStatic("异步线程执行出错！:" + e + "\n" + ExceptionUtils.printStack(traceElements));
                 }
             }));
         }
@@ -77,7 +77,7 @@ public class AsynchronousTaskPool extends TimedTaskBase {
                     statusMap.get(r).setStatus(AsynTaskStatus.CALL_BACK_RUNNING);
                     r.run();
                 } catch (Exception e) {
-                    Zibenbot.logger.warning("异步线程回调执行异常", e);
+                    Zibenbot.logWarningStatic("异步线程回调执行异常\n" + ExceptionUtils.printStack(e));
                 } finally {
                     statusMap.get(r).setStatus(AsynTaskStatus.CALL_BACK_RUNNED);
                     statusMap.remove(r);
