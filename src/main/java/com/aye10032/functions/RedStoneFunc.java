@@ -61,8 +61,6 @@ public class RedStoneFunc extends BaseFunc {
 
     @Override
     public void run(SimpleMsg simpleMsg) {
-//        VideoClass videoClass = ConfigLoader.load(zibenbot.appDirectory + "/videoData.json", VideoClass.class);
-
         StringBuilder returnMSG = new StringBuilder();
         String[] strlist = new StringUtil().split(simpleMsg.getMsg());
         if (simpleMsg.getMsg().equals("搬运")) {
@@ -76,69 +74,36 @@ public class RedStoneFunc extends BaseFunc {
                     "接坑-----查看当前翻译需求队列");
         } else if ((simpleMsg.getMsg().startsWith("搬运") || simpleMsg.getMsg().startsWith("反向")) && simpleMsg.getMsg().contains(" ")) {
             if (strlist.length == 3) {
-//                videoClass.addVideoSum();
-//                videoClass.addVideo(new VideoData(videoClass.getVideoSum(), strlist[1], strlist[2], simpleMsg.getFromClient()));
                 addInfo(strlist[1], 0, 0, 0, simpleMsg.getFromClient(), strlist[2]);
             } else if (strlist.length == 2) {
-//                videoClass.addVideoSum();
-//                videoClass.addVideo(new VideoData(videoClass.getVideoSum(), strlist[1], "", simpleMsg.getFromClient()));
                 addInfo(strlist[1], 0, 0, 0, simpleMsg.getFromClient(), "无描述");
             }
-//            videoClass.updateList();
             zibenbot.replyMsg(simpleMsg, "已添加" + strlist[1] + " " + strlist[2]);
             if (simpleMsg.getFromGroup() != 456919710L) {
                 zibenbot.toGroupMsg(456919710L, "已添加" + strlist[1] + " " + strlist[2]);
             }
-//            ConfigLoader.save(zibenbot.appDirectory + "/videoData.json", VideoClass.class, videoClass);
         } else if (simpleMsg.getMsg().startsWith("烤 ")) {
             if (strlist.length == 3) {
-//                videoClass.addVideoSum();
-//                videoClass.addVideo(new VideoData(videoClass.getVideoSum(), strlist[1], strlist[2], true, simpleMsg.getFromClient()));
                 addInfo(strlist[1], 0, 1, 0, simpleMsg.getFromClient(), strlist[2]);
             } else if (strlist.length == 2) {
-//                videoClass.addVideoSum();
-//                videoClass.addVideo(new VideoData(videoClass.getVideoSum(), strlist[1], "", true, simpleMsg.getFromClient()));
                 addInfo(strlist[1], 0, 1, 0, simpleMsg.getFromClient(), "无描述");
             }
-//            videoClass.updateList();
             zibenbot.replyMsg(simpleMsg, "已添加" + strlist[1] + " " + strlist[2]);
-//            ConfigLoader.save(zibenbot.appDirectory + "/videoData.json", VideoClass.class, videoClass);
         } else if (simpleMsg.getMsg().equals("搬运列表")) {
-//            videoClass.updateList();
             zibenbot.replyMsg(simpleMsg, getFullList());
         }
         if (simpleMsg.getFromGroup() == 456919710L || simpleMsg.getFromClient() == 2375985957L) {
             if (simpleMsg.getMsg().equals("接坑")) {
-//                videoClass.updateList();
                 zibenbot.replyMsg(simpleMsg, getNeedTransList());
-//                ConfigLoader.save(zibenbot.appDirectory + "/videoData.json", VideoClass.class, videoClass);
             } else if (simpleMsg.getMsg().startsWith("已搬 ")) {
-//                videoClass.VideoDone(strlist[1]);
-//                videoClass.updateList();
-//                zibenbot.replyMsg(simpleMsg, videoClass.getFullList());
-//                ConfigLoader.save(zibenbot.appDirectory + "/videoData.json", VideoClass.class, videoClass);
                 done(Integer.parseInt(strlist[1]));
             } else if (simpleMsg.getMsg().startsWith("接 ")) {
-                /*if (videoClass.getVideoNum() == 0) {
-                    zibenbot.replyMsg(simpleMsg, "当前列表中无视频");
-                } else {
-                    for (VideoData data : videoClass.getDataList()) {
-                        if (data.getVideoLink().equals(strlist[1]) || (data.getNO() + "").equals(strlist[1])) {
-                            if (strlist.length == 3) {
-                                data.addTrans(simpleMsg.getFromClient(), strlist[2]);
-                            } else if (strlist.length == 2) {
-                                data.addTrans(simpleMsg.getFromClient(), "");
-                            }
-                        }
-                    }
-                }*/
                 if (strlist.length != 3) {
                     zibenbot.replyMsg(simpleMsg, "格式不正确，回复\"搬运\"查看详细信息");
                 } else {
                     addtrans(Integer.parseInt(strlist[1]), strlist[2], simpleMsg.getFromClient());
                 }
                 zibenbot.replyMsg(simpleMsg, getNeedTransList());
-//                ConfigLoader.save(zibenbot.appDirectory + "/videoData.json", VideoClass.class, videoClass);
             }
         }
     }
