@@ -627,7 +627,7 @@ public class Zibenbot {
             }
         };
 
-        SimpleSubscription sleep = new SimpleSubscription(this, maiyaoCycle,
+        SimpleSubscription sleep = new SimpleSubscription(this, sleepCycle,
                 getImg(appDirectory + "/image/sleep.jpg")) {
             private final static String NAME = "卞老师小助手";
 
