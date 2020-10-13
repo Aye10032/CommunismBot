@@ -9,6 +9,7 @@ import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.timetask.DragraliaTask;
 import com.aye10032.timetask.LiveTask;
 import com.aye10032.timetask.SimpleSubscription;
+import com.aye10032.timetask.SleepTask;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.IMsgUpload;
 import com.aye10032.utils.SeleniumUtils;
@@ -591,12 +592,6 @@ public class Zibenbot {
                     date, -1, -1, 18, 0, 0, 0);
             return TimeUtils.getMin(date1, date2, date3, date4);
         };
-        // 每天0点 6点 12点 18点
-        ITimeAdapter sleepCycle = date -> {
-            Date date1 = TimeUtils.getNextSpecialTime(
-                    date, -1, -1, 23, 0, 0, 0);
-            return TimeUtils.getMin(date1);
-        };
         //每周一10点 22点 周日22点 用于提醒剿灭
         ITimeAdapter jiaomieCycle = date -> {
             Date date1 = TimeUtils.getNextSpecialWeekTime(date,
@@ -627,16 +622,6 @@ public class Zibenbot {
             }
         };
 
-        SimpleSubscription sleep = new SimpleSubscription(this, sleepCycle,
-                getImg(appDirectory + "/image/sleep.jpg")) {
-            private final static String NAME = "卞老师小助手";
-
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        };
-
         SimpleSubscription jiaomie = new SimpleSubscription(this, jiaomieCycle,
                 getImg(appDirectory + "/image/提醒剿灭小助手.jpg")) {
             @Override
@@ -646,7 +631,6 @@ public class Zibenbot {
         };
         subManager.setTiggerTime(date);
         subManager.addSubscribable(maiyao);
-        subManager.addSubscribable(sleep);
         subManager.addSubscribable(jiaomie);
         subManager.addSubscribable(new DragraliaTask(this) {
             private final static String NAME = "龙约公告转发小助手";
@@ -659,6 +643,14 @@ public class Zibenbot {
         subManager.addSubscribable(new LiveTask(this) {
             private final static String NAME = "直播公告小助手";
 
+            @Override
+            public String getName() {
+                return NAME;
+            }
+        });
+
+        subManager.addSubscribable(new SleepTask(this) {
+            private final static String NAME = "卞老师小助手";
             @Override
             public String getName() {
                 return NAME;
