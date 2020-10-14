@@ -1,11 +1,9 @@
 package com.aye10032.timetask;
 
 import com.aye10032.Zibenbot;
-import com.aye10032.utils.ImgUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.utils.timeutil.TimeUtils;
-import com.aye10032.utils.video.LiveInfo;
 
 import java.io.File;
 import java.util.Calendar;
@@ -28,7 +26,7 @@ public abstract class SleepTask extends SubscribableBase {
     @Override
     public Date getNextTime(Date date) {
         Date date1 = TimeUtils.getNextSpecialTime(date, -1, -1, 7, 0, 0, 0);
-        Date date2 = TimeUtils.getNextSpecialTime(date, -1, -1, 11, 0, 0, 0);
+        Date date2 = TimeUtils.getNextSpecialTime(date, -1, -1, 23, 0, 0, 0);
         return TimeUtils.getMin(date1, date2);
     }
 

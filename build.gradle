@@ -97,9 +97,9 @@ tasks.withType(JavaCompile) {
 jar {
     //把以前的重命名归档起来
     destinationDir = file("$rootDir/build")
-    File oldJarFile = file(destinationDir.toString() + "/fsbot-" + version + ".jar")
+    File oldJarFile = file(destinationDir.toString() + "/" + rootProject.name + "-" + version + ".jar")
     SimpleDateFormat ft = new SimpleDateFormat("MM-dd-hh-mm-ss")
-    File newJarFile = file(destinationDir.toString() + "/fsbot-" + version + "-" + ft.format(new Date()) + ".jar")
+    File newJarFile = file(destinationDir.toString() + "/" + rootProject.name + "-" + version + "-" + ft.format(new Date()) + ".jar")
     if (oldJarFile.exists()) {
         oldJarFile.renameTo(newJarFile)
     }

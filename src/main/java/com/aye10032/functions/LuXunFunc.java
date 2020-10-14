@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.opencv.core.Core.vconcat;
-import static org.opencv.highgui.HighGui.waitKey;
 import static org.opencv.imgcodecs.Imgcodecs.*;
 import static org.opencv.imgproc.Imgproc.*;
 
+//todo 需要增强
 public class LuXunFunc {
     Map<Integer, String> ImgMap = new HashMap<>();
 

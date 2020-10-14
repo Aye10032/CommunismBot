@@ -161,14 +161,26 @@ public abstract class DragraliaTask extends SubscribableBase {
 
     }
 
+    private static Pattern plotsynopsis_pattern = Pattern.compile("“纳姆的波澜冒险记！”第\\d+话更新");
+
+    public void send(List<SimpleMsg> list, String s) {
+        for (SimpleMsg simpleMsg : list) {
+            zibenbot.replyMsg(simpleMsg, s);
+        }
+    }
+
     public void sendArticle(Article a, List<SimpleMsg> simpleMsg) {
         List<String> img_list = new ArrayList<>();
         List<String> img_tag_list = new ArrayList<>();
         List<Runnable> runs = new ArrayList<>();
+        //轻松龙约替换
         if (dragralia_life_pattern.matcher(a.title_name).find()) {
             setDragraliaLifeArticle(a);
         }
-
+        //纳姆波澜历险记替换
+        if (plotsynopsis_pattern.matcher(a.title_name).find()) {
+            setPlotsynopsisArticle(a);
+        }
         String msg = StringEscapeUtils.unescapeHtml4(a.message);
         Matcher matcher = img_tag_pattern.matcher(msg);
         List<String> matchStrs = new ArrayList<>();
@@ -226,7 +238,6 @@ public abstract class DragraliaTask extends SubscribableBase {
                 } else {
                     builder.append(a.message);
                 }
-                //todo 测试完毕修改这里
                 send(simpleMsg, builder.toString());
             }, runs.toArray(new Runnable[]{})).wait1();
         } catch (InterruptedException e) {
@@ -234,15 +245,8 @@ public abstract class DragraliaTask extends SubscribableBase {
         }
     }
 
-    public void send(List<SimpleMsg> list, String s){
-        for (SimpleMsg simpleMsg : list) {
-            zibenbot.replyMsg(simpleMsg, s);
-        }
-    }
-
     private void setDragraliaLifeArticle(Article a) {
         try {
-            System.out.println(a.title_name);
             Matcher matcher = Pattern.compile(NUMBER_PATTERN).matcher(a.title_name);
             matcher.find();
             Integer ep_num = Integer.valueOf(matcher.group());
@@ -423,6 +427,29 @@ public abstract class DragraliaTask extends SubscribableBase {
     private static Pattern img_tag_pattern = Pattern.compile("<img[^<>]*\">");
     private static Pattern img_url_pattern = Pattern.compile("http[^<>]*.(png|jpg)");
     private static Pattern dragralia_life_pattern = Pattern.compile("“轻松龙约”第\\d+话更新");
+
+    private void setPlotsynopsisArticle(Article a) {
+        try {
+            Matcher matcher = Pattern.compile(NUMBER_PATTERN).matcher(a.title_name);
+            matcher.find();
+            Integer ep_num = Integer.valueOf(matcher.group());
+            RequestBody formBody = new FormBody.Builder().add("lang", "chs").add("type",
+                    "plotsynopsis").build();
+            String s = IOUtils.toString(HttpUtils.postInputStreamFromNet("https://comic" +
+                    ".dragalialost.com/api/index", client, formBody));
+            JsonObject latest_item =
+                    jsonParser.parse(s).getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject();
+            if (latest_item.get("episode_num").getAsInt() == ep_num) {
+                String s1 = dragralia_life.replace("{title_name}",
+                        latest_item.get("title").getAsString());
+                s1 = s1.replace("{img_path}", latest_item.get("main").getAsString());
+                a.message = s1;
+                a.image_path = latest_item.get("thumbnail_l").getAsString();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private static String dragralia_life = "<div>{title_name}</div><div><br></div><div><img " +
             "src=\"{img_path}\"></div>" + "<div><br></div><div><br></div><div><br></div>" + "<div"
             + ">今后也请继续支持《Dragalia Lost ～失落的龙约～》。</div>";
