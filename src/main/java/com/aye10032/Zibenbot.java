@@ -45,7 +45,6 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,9 +75,30 @@ public class Zibenbot {
     public FuncEnableFunc enableCollFunc;
     public List<Long> enableGroup = new ArrayList<>();
     public String appDirectory;
-    List<IFunc> registerFunc;
+    final Map<String, IMsgUpload> msgUploads = new HashMap<>();
     private Bot bot;
-    private Map<Integer, File> imageMap = new ConcurrentHashMap<>();
+    final Pattern MSG_TYPE_PATTERN;
+    private List<IFunc> registerFunc;
+
+    {
+        msgUploads.put("IMAGE", (conect, source) -> conect.uploadImage(new File(source)).toMiraiCode());
+        msgUploads.put("VOICE", (conect, source) -> {
+            if (conect instanceof Group) {
+                return ((Group) conect).uploadVoice(new FileInputStream(source)).toString();
+            } else {
+                return "[VOICE]";
+            }
+        });
+        msgUploads.put("AT", (conect, source) -> {
+            if (conect instanceof User) {
+                return at(Long.valueOf(source));
+            } else {
+                return "@" + source;
+            }
+        });
+        MSG_TYPE_PATTERN = Pattern.compile(String.format("\\[type=(%s),[ ]*source=\"([[^\"\\f\\n\\r\\t\\v]]+)\"]"
+                , StringUtil.splicing("|", msgUploads.keySet())));
+    }
 
     private PrintStream LOGGER_FILE = null;
 
@@ -132,6 +152,122 @@ public class Zibenbot {
         enableGroup.add(980042772L);//公会
         enableGroup.add(583991760L); //粉丝群
     }
+
+    public int startup() {
+        SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
+
+        logInfo("registe time task end");
+        //改成了手动注册
+        log(Level.INFO, "registe func start");
+        FuncLoader loader = new FuncLoader(this);
+        loader.addScanPackage("com.aye10032.utils.timeutil");
+        registerFunc = Collections.unmodifiableList(loader.load());
+        //对功能进行初始化
+        for (IFunc func : registerFunc) {
+            try {
+                func.setUp();
+            } catch (Exception e) {
+                logWarning("初始化：" + func.getClass().getName() + "出现异常");
+            }
+        }
+        log(Level.INFO, "registe func end");
+
+
+        // 每天0点 6点 12点 18点
+        ITimeAdapter maiyaoCycle = date -> {
+            Date date1 = TimeUtils.getNextSpecialTime(
+                    date, -1, -1, 0, 0, 0, 0);
+            Date date2 = TimeUtils.getNextSpecialTime(
+                    date, -1, -1, 6, 0, 0, 0);
+            Date date3 = TimeUtils.getNextSpecialTime(
+                    date, -1, -1, 12, 0, 0, 0);
+            Date date4 = TimeUtils.getNextSpecialTime(
+                    date, -1, -1, 18, 0, 0, 0);
+            return TimeUtils.getMin(date1, date2, date3, date4);
+        };
+        //每周一10点 22点 周日10点 22点 用于提醒剿灭
+        ITimeAdapter jiaomieCycle = date -> {
+            Date date1 = TimeUtils.getNextSpecialWeekTime(date,
+                    -1, 1, 10, 0, 0, 0);
+            Date date2 = TimeUtils.getNextSpecialWeekTime(date,
+                    -1, 1, 22, 0, 0, 0);
+            Date date3 = TimeUtils.getNextSpecialWeekTime(date,
+                    -1, 2, 10, 0, 0, 0);
+            Date date4 = TimeUtils.getNextSpecialWeekTime(date,
+                    -1, 2, 22, 0, 0, 0);
+            return TimeUtils.getMin(date1, date2, date3, date4);
+        };
+
+
+        logInfo("registe time task start");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date date = calendar.getTime();
+
+        // 创建订阅器对象
+        SimpleSubscription maiyao = new SimpleSubscription(this, maiyaoCycle,
+                getImg(appDirectory + "/image/提醒买药小助手.jpg")) {
+            private final static String NAME = "提醒买药小助手";
+
+            @Override
+            public String getName() {
+                return NAME;
+            }
+        };
+
+        SimpleSubscription jiaomie = new SimpleSubscription(this, jiaomieCycle,
+                getImg(appDirectory + "/image/提醒剿灭小助手.jpg")) {
+            @Override
+            public String getName() {
+                return "提醒剿灭小助手";
+            }
+        };
+        subManager.setTiggerTime(date);
+        subManager.addSubscribable(maiyao);
+        subManager.addSubscribable(jiaomie);
+        subManager.addSubscribable(new DragraliaTask(this) {
+            private final static String NAME = "龙约公告转发小助手";
+
+            @Override
+            public String getName() {
+                return NAME;
+            }
+        });
+        subManager.addSubscribable(new LiveTask(this) {
+            private final static String NAME = "直播公告小助手";
+
+            @Override
+            public String getName() {
+                return NAME;
+            }
+        });
+        subManager.addSubscribable(new SleepTask(this) {
+            private final static String NAME = "卞老师小助手";
+
+            @Override
+            public String getName() {
+                return NAME;
+            }
+        });
+        //把订阅管理器注册进线程池
+        pool.add(subManager);
+        //把订阅管理器注册进可用的模块里
+        //registerFunc.add(subManager);
+
+
+
+/*        //创建teamspeakbot对象
+        teamspeakBot = new TeamspeakBot(this);
+        try {
+            teamspeakBot.setup();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+        return 0;
+    }
+
 
     public static Proxy getProxy() {
         Socket s = new Socket();
@@ -198,16 +334,12 @@ public class Zibenbot {
     }
 
     public void muteMember(long groupId, long memberId, int second) {
-
-        Member member = null;
         try {
-            member = _getGroup(groupId).get(memberId);
+            Member member = _getGroup(groupId).get(memberId);
+            muteMember(member, second);
         } catch (Exception e) {
             logWarning("禁言失败：" + memberId + e);
-            return;
         }
-
-        muteMember(member, second);
     }
 
     /**
@@ -389,6 +521,12 @@ public class Zibenbot {
 
     }
 
+
+    /**
+     * log方法
+     *
+     * @param info 输出信息
+     */
     public void logInfo(String info) {
         logger.info(info);
     }
@@ -532,146 +670,11 @@ public class Zibenbot {
         }
     }
 
-    final Map<String, IMsgUpload> msgUploads = new HashMap<>();
-    final Pattern MSG_TYPE_PATTERN;
-
-    {
-        msgUploads.put("IMAGE", (conect, source) -> conect.uploadImage(new File(source)).toMiraiCode());
-        msgUploads.put("VOICE", (conect, source) -> {
-            if (conect instanceof Group) {
-                return ((Group) conect).uploadVoice(new FileInputStream(source)).toString();
-            } else {
-                return "[VOICE]";
-            }
-        });
-        msgUploads.put("AT", (conect, source) -> {
-            if (conect instanceof User) {
-                return at(Long.valueOf(source));
-            } else {
-                return "@" + source;
-            }
-        });
-        MSG_TYPE_PATTERN = Pattern.compile(String.format("\\[type=(%s),[ ]*source=\"([[^\"\\f\\n\\r\\t\\v]]+)\"]"
-                , StringUtil.splicing("|", msgUploads.keySet())));
-    }
-
     private MessageChain toMessChain(Contact send, String msg) {
         String s = replaceMsgType(send, msg);
         return MiraiSerializationKt.parseMiraiCode(s);
     }
 
-    public int startup() {
-        SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
-
-        logInfo("registe time task end");
-        //改成了手动注册
-        log(Level.INFO, "registe func start");
-        FuncLoader loader = new FuncLoader(this);
-        loader.addScanPackage("com.aye10032.utils.timeutil");
-        registerFunc = Collections.unmodifiableList(loader.load());
-        //对功能进行初始化
-        for (IFunc func : registerFunc) {
-            try {
-                func.setUp();
-            } catch (Exception e) {
-                logWarning("初始化：" + func.getClass().getName() + "出现异常");
-            }
-        }
-        log(Level.INFO, "registe func end");
-
-
-        // 每天0点 6点 12点 18点
-        ITimeAdapter maiyaoCycle = date -> {
-            Date date1 = TimeUtils.getNextSpecialTime(
-                    date, -1, -1, 0, 0, 0, 0);
-            Date date2 = TimeUtils.getNextSpecialTime(
-                    date, -1, -1, 6, 0, 0, 0);
-            Date date3 = TimeUtils.getNextSpecialTime(
-                    date, -1, -1, 12, 0, 0, 0);
-            Date date4 = TimeUtils.getNextSpecialTime(
-                    date, -1, -1, 18, 0, 0, 0);
-            return TimeUtils.getMin(date1, date2, date3, date4);
-        };
-        //每周一10点 22点 周日22点 用于提醒剿灭
-        ITimeAdapter jiaomieCycle = date -> {
-            Date date1 = TimeUtils.getNextSpecialWeekTime(date,
-                    -1, 1, 10, 0, 0, 0);
-            Date date2 = TimeUtils.getNextSpecialWeekTime(date,
-                    -1, 1, 22, 0, 0, 0);
-            Date date3 = TimeUtils.getNextSpecialWeekTime(date,
-                    -1, 2, 22, 0, 0, 0);
-            return TimeUtils.getMin(date1, date2, date3);
-        };
-
-
-        logInfo("registe time task start");
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        Date date = calendar.getTime();
-
-        // 创建订阅器对象
-        SimpleSubscription maiyao = new SimpleSubscription(this, maiyaoCycle,
-                getImg(appDirectory + "/image/提醒买药小助手.jpg")) {
-            private final static String NAME = "提醒买药小助手";
-
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        };
-
-        SimpleSubscription jiaomie = new SimpleSubscription(this, jiaomieCycle,
-                getImg(appDirectory + "/image/提醒剿灭小助手.jpg")) {
-            @Override
-            public String getName() {
-                return "提醒剿灭小助手";
-            }
-        };
-        subManager.setTiggerTime(date);
-        subManager.addSubscribable(maiyao);
-        subManager.addSubscribable(jiaomie);
-        subManager.addSubscribable(new DragraliaTask(this) {
-            private final static String NAME = "龙约公告转发小助手";
-
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        });
-        subManager.addSubscribable(new LiveTask(this) {
-            private final static String NAME = "直播公告小助手";
-
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        });
-
-        subManager.addSubscribable(new SleepTask(this) {
-            private final static String NAME = "卞老师小助手";
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        });
-        //把订阅管理器注册进线程池
-        pool.add(subManager);
-        //把订阅管理器注册进可用的模块里
-        //registerFunc.add(subManager);
-
-
-
-/*        //创建teamspeakbot对象
-        teamspeakBot = new TeamspeakBot(this);
-        try {
-            teamspeakBot.setup();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-        return 0;
-    }
 
     /**
      * 根据groupid返回group对象
@@ -776,25 +779,6 @@ public class Zibenbot {
             logWarning(String.format("上传%s失败：%s", type, ExceptionUtils.printStack(e)));
         }
         return "[" + type + "]";
-    }
-
-    private String toMiraiImage(Contact contact, String msg){
-        //[mirai:image:{FE417B3B-F6F2-7BA0-3F2D-1FEF5DB15E4E}.mirai]
-        //[mirai:image:/895981998-3405930276-FE417B3BF6F27BA03F2D1FEF5DB15E4E]
-        for (Map.Entry<Integer, File> entry : imageMap.entrySet()) {
-            String key = String.valueOf(entry.getKey());
-            if (msg.contains(key)) {
-                String img = "[图片]";
-                if (contact != null) {
-                    Image image;
-                    image = contact.uploadImage(entry.getValue());
-                    //miraiImageMap.put(image.getImageId(), image);
-                    img = image.toMiraiCode();
-                }
-                msg = msg.replace(key, img);
-            }
-        }
-        return msg;
     }
 
     public void runFuncs(SimpleMsg simpleMsg) {
