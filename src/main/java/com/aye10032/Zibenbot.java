@@ -765,6 +765,12 @@ public class Zibenbot {
     private String replaceMsgType(Contact contact, String msg) {
         Matcher matcher = MSG_TYPE_PATTERN.matcher(msg);
         int i = 0;
+        if (contact instanceof Friend) {
+            String fromto = String.valueOf(bot.getId()) + "-" + String.valueOf(contact.getId());
+            msg = msg.replaceAll("\\[mirai:image:\\{(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})}.mirai]", "[mirai:image:/" + fromto + "-$1$2$3$4$5" + "]");
+        } else {
+            msg = msg.replaceAll("\\[mirai:image:/(\\d+)-(\\d+)-(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})]", "[mirai:image:{$3-$4-$5-$6-$7}.mirai]");
+        }
         while (matcher.find(i)) {
             msg = msg.replace(matcher.group(0), _upload(contact, matcher.group(1), matcher.group(2)));
             i = matcher.start() + 1;
