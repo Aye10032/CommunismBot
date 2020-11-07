@@ -24,8 +24,8 @@ public class AyeCompile {
     private Matcher bv_matcher;
 
     static {
-        short_site_pattern_list.add(Pattern.compile("https://b23.tv/[(0-9)|(A-Z)|(a-z)]{6}$"));
-        short_site_pattern_list.add(Pattern.compile("https://b.acg.tv/[(0-9)|(A-Z)|(a-z)]{6}$"));
+        short_site_pattern_list.add(Pattern.compile("https://b23.tv/[(0-9)|(A-Z)|(a-z)]{6}\\b"));
+        short_site_pattern_list.add(Pattern.compile("https://b.acg.tv/[(0-9)|(A-Z)|(a-z)]{6}\\b"));
     }
 
     public AyeCompile(String msg) {
@@ -68,14 +68,14 @@ public class AyeCompile {
     }
 
     public String getAVString() {
-        String avn = "";
-        av_matcher.find();
-        avn = av_matcher.group();
-        av_matcher.reset();
-        return avn;
+        return getMatchString(av_matcher);
     }
 
     public String getBVString() {
+        return getMatchString(bv_matcher);
+    }
+
+    private String getMatchString(Matcher bv_matcher) {
         String avn = "";
         bv_matcher.find();
         avn = bv_matcher.group();
