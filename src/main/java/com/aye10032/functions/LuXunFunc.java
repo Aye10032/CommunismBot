@@ -73,8 +73,8 @@ public class LuXunFunc {
 //        waitKey(0);
     }
 
-    public void addBlack_White(String img,String[] texts){
-        Mat src = imread(img,IMREAD_GRAYSCALE);
+    public void addBlack_White(String img, String[] texts) {
+        Mat src = imread(img, IMREAD_GRAYSCALE);
 
         float width = src.cols();
 
@@ -84,7 +84,7 @@ public class LuXunFunc {
         imgs.add(dst);
 
         Font font = new Font("微软雅黑", Font.PLAIN, 130);
-        for (String text:texts){
+        for (String text : texts) {
             try {
                 createImage(text, font, new File("data\\image\\biaoqing\\text.png"));
 
@@ -96,7 +96,7 @@ public class LuXunFunc {
                 System.out.println(text_width + " " + text_height);
                 resize(text_src, text_src, new Size(width, text_height), 0, 0, Imgproc.INTER_AREA);
 
-                cvtColor(text_src,text_src,COLOR_BGR2GRAY);
+                cvtColor(text_src, text_src, COLOR_BGR2GRAY);
                 imgs.add(text_src);
 
             } catch (Exception e) {
