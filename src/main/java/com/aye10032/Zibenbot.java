@@ -14,10 +14,7 @@ import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.IMsgUpload;
 import com.aye10032.utils.SeleniumUtils;
 import com.aye10032.utils.StringUtil;
-import com.aye10032.utils.timeutil.ITimeAdapter;
-import com.aye10032.utils.timeutil.SubscriptManager;
-import com.aye10032.utils.timeutil.TimeTaskPool;
-import com.aye10032.utils.timeutil.TimeUtils;
+import com.aye10032.utils.timeutil.*;
 import com.dazo66.message.MiraiSerializationKt;
 import com.firespoon.bot.command.Command;
 import com.firespoon.bot.commandbody.CommandBody;
@@ -198,6 +195,15 @@ public class Zibenbot {
             return TimeUtils.getMin(date1, date2, date3, date4);
         };
 
+        ITimeAdapter zhouYouPiaoCycle = date -> {
+            if (System.currentTimeMillis() < 1605383940000L) {
+                return TimeUtils.getNextSpecialWeekTime(date,
+                        -1, -1, 10, 0, 0, 0);
+            } else {
+                return new Date(System.currentTimeMillis() + 1000000000000L);
+            }
+        };
+
 
         logInfo("registe time task start");
         Calendar calendar = Calendar.getInstance();
@@ -217,6 +223,19 @@ public class Zibenbot {
             }
         };
 
+        ISubscribable zhouYouPiao = new SimpleSubscription(this, zhouYouPiaoCycle, () -> {
+            Calendar calendar1 = Calendar.getInstance();
+            return String.format("明日方舟今天有白嫖，记得抽卡，白嫖还剩下%d天。", 15 - calendar1.get(Calendar.DAY_OF_MONTH));
+        }) {
+
+            private final static String NAME = "提醒白嫖小助手";
+
+            @Override
+            public String getName() {
+                return NAME;
+            }
+        };
+
         SimpleSubscription jiaomie = new SimpleSubscription(this, jiaomieCycle,
                 getImg(appDirectory + "/image/提醒剿灭小助手.jpg")) {
             @Override
@@ -227,6 +246,8 @@ public class Zibenbot {
         subManager.setTiggerTime(date);
         subManager.addSubscribable(maiyao);
         subManager.addSubscribable(jiaomie);
+
+        subManager.addSubscribable(zhouYouPiao);
         subManager.addSubscribable(new DragraliaTask(this) {
             private final static String NAME = "龙约公告转发小助手";
 
@@ -765,6 +786,12 @@ public class Zibenbot {
     private String replaceMsgType(Contact contact, String msg) {
         Matcher matcher = MSG_TYPE_PATTERN.matcher(msg);
         int i = 0;
+        if (contact instanceof Friend) {
+            String fromto = String.valueOf(bot.getId()) + "-" + String.valueOf(contact.getId());
+            msg = msg.replaceAll("\\[mirai:image:\\{(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})}.mirai]", "[mirai:image:/" + fromto + "-$1$2$3$4$5" + "]");
+        } else {
+            msg = msg.replaceAll("\\[mirai:image:/(\\d+)-(\\d+)-(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})]", "[mirai:image:{$3-$4-$5-$6-$7}.mirai]");
+        }
         while (matcher.find(i)) {
             msg = msg.replace(matcher.group(0), _upload(contact, matcher.group(1), matcher.group(2)));
             i = matcher.start() + 1;
