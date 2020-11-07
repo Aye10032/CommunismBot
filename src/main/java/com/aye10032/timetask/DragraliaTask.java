@@ -196,10 +196,11 @@ public abstract class DragraliaTask extends SubscribableBase {
                 img_list.add(matcher1.group());
             }
         }
-        if (len <= 300) {
-            img_list.forEach(img -> runs.add(() -> downloadImg(img)));
-        } else {
+        boolean shouldScreenshot = len > 300 || matchStrs.size() > 10;
+        if (shouldScreenshot) {
             screenshotFile.set(getScreenshot(a));
+        } else {
+            img_list.forEach(img -> runs.add(() -> downloadImg(img)));
         }
         if (!"".equals(a.image_path)) {
             runs.add(() -> downloadImg(a.image_path));
@@ -221,7 +222,7 @@ public abstract class DragraliaTask extends SubscribableBase {
                         //builder.append("（Update）\n");
                     }
                     String ret = clearMsg(msg);
-                    if (len > 300) {
+                    if (shouldScreenshot) {
                         if (screenshotFile.get() != null && screenshotFile.get().exists()) {
                             try {
                                 builder.append("公告详情：").append("\n").append(zibenbot.getImg(screenshotFile.get()));

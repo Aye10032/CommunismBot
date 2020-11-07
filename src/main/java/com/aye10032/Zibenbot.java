@@ -128,6 +128,9 @@ public class Zibenbot {
         appDirectory = "data";
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
         // 配置logger
+        File logDir = new File(appDirectory + "\\log\\");
+        File[] files = logDir.listFiles(pathname -> System.currentTimeMillis() - pathname.lastModified() > TimeUtils.DAY * 10);
+        Arrays.asList(files != null ? files : new File[0]).forEach(File::delete);
         logger = new PlatformLogger("zibenbot", (String s) -> {
             System.out.println(s);
             getLoggerStream().println(s);
