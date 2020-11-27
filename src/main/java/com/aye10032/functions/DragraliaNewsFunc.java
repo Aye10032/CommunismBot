@@ -1,13 +1,13 @@
 package com.aye10032.functions;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.timetask.DragraliaTask;
-import com.aye10032.utils.ArticleUpateDate;
+import com.aye10032.utils.ArticleUpdateDate;
 import com.aye10032.utils.Config;
 import com.aye10032.utils.ConfigLoader;
 import com.aye10032.utils.ExceptionUtils;
-import com.aye10032.Zibenbot;
 
 import java.io.IOException;
 import java.util.*;
@@ -18,7 +18,7 @@ import java.util.*;
 public class DragraliaNewsFunc extends BaseFunc {
 
     private DragraliaTask task;
-    private ArticleUpateDate date = null;
+    private ArticleUpdateDate date = null;
 
     public DragraliaNewsFunc(Zibenbot zibenbot) {
         super(zibenbot);
