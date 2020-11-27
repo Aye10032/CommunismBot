@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -18,9 +19,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.openqa.selenium.WebDriver;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.Proxy;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -71,7 +70,7 @@ public abstract class DragraliaTask extends SubscribableBase {
     public void run(List<Reciver> recivers, String[] args) {
         client = client.newBuilder().proxy(Zibenbot.getProxy()).build();
         try {
-            ArticleUpateDate date = null;
+            ArticleUpdateDate date = null;
             try {
                 date = getUpdateDate();
             } catch (Exception e) {
@@ -93,10 +92,10 @@ public abstract class DragraliaTask extends SubscribableBase {
         }
     }
 
-    private synchronized Set<Article> getNewArticles(ArticleUpateDate date) {
+    private synchronized Set<Article> getNewArticles(ArticleUpdateDate date) {
         Set<Article> set = new HashSet<>();
-        ArticleUpateDate last = gson.fromJson(config.getWithDafault("last_update_date", "{}"),
-                ArticleUpateDate.class);
+        ArticleUpdateDate last = gson.fromJson(config.getWithDafault("last_update_date", "{}"),
+                ArticleUpdateDate.class);
         long last_data = Long.parseLong(config.getWithDafault("last_data",
                 Long.toString(System.currentTimeMillis() / 1000 - 86400)));
         long current = System.currentTimeMillis() / 1000;
@@ -125,8 +124,8 @@ public abstract class DragraliaTask extends SubscribableBase {
             }
         });
         date.update_article_list.forEach(i -> {
-            ArticleUpateDate.UpdateDate d = null;
-            for (ArticleUpateDate.UpdateDate date1 : last.update_article_list) {
+            ArticleUpdateDate.UpdateDate d = null;
+            for (ArticleUpdateDate.UpdateDate date1 : last.update_article_list) {
                 if (date1.id == i.id) {
                     d = date1;
                     break;
@@ -155,10 +154,45 @@ public abstract class DragraliaTask extends SubscribableBase {
         config.set("last_update_date", gson.toJson(last));
         if (set.size() > 0) {
             config.set("last_data", gson.toJson(current));
+            try {
+                saveHistory(set);
+            } catch (IOException e) {
+                zibenbot.logWarning("存储公告历史失败！");
+            }
         }
         loader.save(config);
         return set;
 
+    }
+
+    private void saveHistory(Set<Article> articles) throws IOException {
+        Calendar calendar = Calendar.getInstance();
+        String day;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        if (calendar.get(Calendar.HOUR) >= 14) {
+            day = dateFormat.format(calendar.getTimeInMillis());
+        } else {
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            day = dateFormat.format(calendar.getTimeInMillis());
+        }
+        File file = new File(zibenbot.appDirectory + "\\" + day + ".json");
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+        }
+        FileReader input = new FileReader(file);
+        String hisRow = IOUtils.toString(input);
+        input.close();
+        if (hisRow.isEmpty()) {
+            hisRow = "{}";
+        }
+        Set<Article> history = gson.fromJson(hisRow, new TypeToken<Set<Article>>() {
+        }.getType());
+        history.addAll(articles);
+        FileWriter output = new FileWriter(file);
+        IOUtils.write(gson.toJson(history), output);
+        output.flush();
+        output.close();
     }
 
     private static Pattern plotsynopsis_pattern = Pattern.compile("“纳姆的波澜冒险记！”第\\d+话更新");
@@ -390,8 +424,8 @@ public abstract class DragraliaTask extends SubscribableBase {
         return a;
     }
 
-    public ArticleUpateDate getUpdateDate() throws IOException {
-        ArticleUpateDate date = new ArticleUpateDate();
+    public ArticleUpdateDate getUpdateDate() throws IOException {
+        ArticleUpdateDate date = new ArticleUpdateDate();
         InputStream stream =
                 HttpUtils.getInputStreamFromNet("https://dragalialost.com/api/index" + ".php" +
                         "?format=json&type=information&category_id=0&priority_lower_than=&action" + "=information_list&article_id=&lang=zh_cn&td=%2B08%3A00", client);
@@ -401,7 +435,7 @@ public abstract class DragraliaTask extends SubscribableBase {
         object.get("data").getAsJsonObject().get("update_article_list").getAsJsonArray().forEach(e -> {
             int id = e.getAsJsonObject().get("id").getAsInt();
             long update_time = e.getAsJsonObject().get("update_time").getAsLong();
-            date.update_article_list.add(new ArticleUpateDate.UpdateDate(id, update_time));
+            date.update_article_list.add(new ArticleUpdateDate.UpdateDate(id, update_time));
         });
         return date;
     }
