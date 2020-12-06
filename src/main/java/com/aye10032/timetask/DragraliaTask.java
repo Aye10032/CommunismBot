@@ -156,7 +156,7 @@ public abstract class DragraliaTask extends SubscribableBase {
             config.set("last_data", gson.toJson(current));
             try {
                 saveHistory(set);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 zibenbot.logWarning("存储公告历史失败！");
             }
         }
@@ -175,15 +175,17 @@ public abstract class DragraliaTask extends SubscribableBase {
             calendar.add(Calendar.DAY_OF_MONTH, -1);
             day = dateFormat.format(calendar.getTimeInMillis());
         }
-        File file = new File(zibenbot.appDirectory + "\\" + day + ".json");
+        File file = new File(zibenbot.appDirectory + "\\" + "dragralia" + "\\" + day + ".json");
+        String hisRow = "{}";
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             file.createNewFile();
+        } else {
+            FileReader input = new FileReader(file);
+            hisRow = IOUtils.toString(input);
+            input.close();
         }
-        FileReader input = new FileReader(file);
-        String hisRow = IOUtils.toString(input);
-        input.close();
-        if (hisRow.isEmpty()) {
+        if (hisRow.length() < 2) {
             hisRow = "{}";
         }
         Set<Article> history = gson.fromJson(hisRow, new TypeToken<Set<Article>>() {
