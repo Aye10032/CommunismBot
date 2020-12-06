@@ -33,7 +33,7 @@ public abstract class SleepTask extends SubscribableBase {
     @Override
     public void run(List<Reciver> recivers, String[] args) {
         if (recivers != null) {
-            if (compareTo(6)) {
+            if (compareTo(7)) {
                 for (Reciver reciver : recivers) {
                     zibenbot.replyMsg(reciver.getSender(),
                             zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\getup.jpg")));
