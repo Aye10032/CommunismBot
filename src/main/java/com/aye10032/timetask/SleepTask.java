@@ -53,6 +53,8 @@ public abstract class SleepTask extends SubscribableBase {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
 
+        zibenbot.logDebug("now time -> " + hour + ":" + min);
+
         if (hour == aim_hour) {
             return true;
         } else if (hour + 1 == aim_hour) {
