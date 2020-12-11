@@ -2,6 +2,7 @@ package com.aye10032.utils.timeutil;
 
 import org.intellij.lang.annotations.MagicConstant;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -15,23 +16,22 @@ public class AsynTaskStatus {
     public final static int CALL_BACK_RUNNED = 3;
 
     private AtomicInteger status = new AtomicInteger(0);
+    private CountDownLatch latch;
+
+    public AsynTaskStatus(CountDownLatch latch) {
+        this.latch = latch;
+    }
 
     public int getStatus() {
         return status.get();
     }
 
-    public synchronized void setStatus(@MagicConstant(intValues = {INIT, TASKS_RUNNING, CALL_BACK_RUNNED, CALL_BACK_RUNNING}) int status) {
+    public void setStatus(@MagicConstant(intValues = {INIT, TASKS_RUNNING, CALL_BACK_RUNNED, CALL_BACK_RUNNING}) int status) {
         this.status.set(status);
     }
 
-    public synchronized void wait1() throws InterruptedException {
-        while (true) {
-            if (getStatus() != CALL_BACK_RUNNED) {
-                wait(500);
-            } else {
-                return;
-            }
-        }
+    public synchronized void await() throws InterruptedException {
+        latch.await();
     }
 
 }

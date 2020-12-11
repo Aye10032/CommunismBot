@@ -276,7 +276,7 @@ public abstract class DragraliaTask extends SubscribableBase {
                     builder.append(a.message);
                 }
                 send(simpleMsg, builder.toString());
-            }, runs.toArray(new Runnable[]{})).wait1();
+            }, runs.toArray(new Runnable[]{})).await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
