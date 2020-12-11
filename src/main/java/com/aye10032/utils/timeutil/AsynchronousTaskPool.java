@@ -5,10 +5,7 @@ import com.aye10032.Zibenbot;
 import com.aye10032.utils.ExceptionUtils;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * 异步线程池，同时执行多个Runnable 结束后执行回调方法
@@ -37,7 +34,8 @@ public class AsynchronousTaskPool extends TimedTaskBase {
      */
     public AsynTaskStatus execute(Runnable callback, Runnable... runnables) {
         List<Future<?>> list = Collections.synchronizedList(new ArrayList<>());
-        AsynTaskStatus status = new AsynTaskStatus();
+        CountDownLatch latch = new CountDownLatch(runnables.length);
+        AsynTaskStatus status = new AsynTaskStatus(latch);
         statusMap.put(callback, status);
         for (Runnable run : runnables) {
             StackTraceElement[] traceElements = Thread.currentThread().getStackTrace();
@@ -47,6 +45,8 @@ public class AsynchronousTaskPool extends TimedTaskBase {
                     run.run();
                 } catch (Exception e) {
                     Zibenbot.logWarningStatic("异步线程执行出错！:" + e + "\n" + ExceptionUtils.printStack(traceElements));
+                } finally {
+                    latch.countDown();
                 }
             }));
         }
