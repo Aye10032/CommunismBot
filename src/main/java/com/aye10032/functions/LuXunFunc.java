@@ -1,6 +1,12 @@
 package com.aye10032.functions;
 
 
+import com.aye10032.Zibenbot;
+import com.aye10032.functions.funcutil.BaseFunc;
+import com.aye10032.functions.funcutil.FuncExceptionHandler;
+import com.aye10032.functions.funcutil.SimpleMsg;
+import com.dazo66.command.Commander;
+import com.dazo66.command.CommanderBuilder;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -22,12 +28,33 @@ import static org.opencv.imgcodecs.Imgcodecs.*;
 import static org.opencv.imgproc.Imgproc.*;
 
 //todo 需要增强
-public class LuXunFunc {
+public class LuXunFunc extends BaseFunc {
+    private Commander<SimpleMsg> commander;
     Map<Integer, String> ImgMap = new HashMap<>();
 
-    public LuXunFunc(String AppPath) {
-        System.load(AppPath + "\\opencv_java430.dll");
+
+    @Override
+    public void setUp() {
         ImgMap.put(1, "data\\image\\biaoqing\\luxun.jpg");
+    }
+
+    @Override
+    public void run(SimpleMsg simpleMsg) {
+
+    }
+
+    public LuXunFunc(Zibenbot zibenbot) {
+        super(zibenbot);
+        System.load(zibenbot.appDirectory + "\\cv\\opencv_java430.dll");
+
+        commander = new CommanderBuilder<SimpleMsg>()
+                .seteHandler(FuncExceptionHandler.INSTENCE)
+                .start()
+                .or(".黑白"::contains)
+                .run((cqmsg) -> {
+                    zibenbot.replyMsg(cqmsg, zibenbot.getImg(zibenbot.appDirectory + ""));
+                })
+                .build();
     }
 
 /*    public static void main(String[] args) {
@@ -49,9 +76,9 @@ public class LuXunFunc {
 
         Font font = new Font("微软雅黑", Font.PLAIN, 130);
         try {
-            createImage(text, font, new File("data\\image\\biaoqing\\text.png"));
+            createImage(text, font, new File(zibenbot.appDirectory + "\\image\\biaoqing\\text.png"));
 
-            Mat text_src = imread("data\\image\\biaoqing\\text.png");
+            Mat text_src = imread(zibenbot.appDirectory + "\\image\\biaoqing\\text.png");
             float text_height = text_src.rows();
             float text_width = text_src.cols();
             System.out.println(text_width + " " + text_height);
@@ -63,7 +90,7 @@ public class LuXunFunc {
             imgs.add(dst);
             imgs.add(text_src);
             vconcat(imgs, dst);
-            imwrite("data\\image\\biaoqing\\text.jpg", dst);
+            imwrite(zibenbot.appDirectory + "\\image\\biaoqing\\text.jpg", dst);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -86,9 +113,9 @@ public class LuXunFunc {
         Font font = new Font("微软雅黑", Font.PLAIN, 130);
         for (String text : texts) {
             try {
-                createImage(text, font, new File("data\\image\\biaoqing\\text.png"));
+                createImage(text, font, new File(zibenbot.appDirectory + "\\image\\biaoqing\\text.png"));
 
-                Mat text_src = imread("data\\image\\biaoqing\\text.png");
+                Mat text_src = imread(zibenbot.appDirectory + "\\image\\biaoqing\\text.png");
                 float text_height = text_src.rows();
                 float text_width = text_src.cols();
                 System.out.println(text_width + " " + text_height);
@@ -104,7 +131,7 @@ public class LuXunFunc {
             }
         }
         vconcat(imgs, dst);
-        imwrite("data\\image\\biaoqing\\text.jpg", dst);
+        imwrite(zibenbot.appDirectory + "\\image\\biaoqing\\text.jpg", dst);
 //        imshow("test",dst);
 //
 //        waitKey(0);
