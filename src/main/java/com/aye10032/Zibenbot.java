@@ -32,16 +32,16 @@ import net.mamoe.mirai.utils.MiraiLogger;
 import net.mamoe.mirai.utils.PlatformLogger;
 import org.jetbrains.annotations.NotNull;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.Socket;
-import java.net.SocketAddress;
+import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -417,9 +417,9 @@ public class Zibenbot {
      * @return at MiraiCode
      */
     public String at(long clientId) {
-        User user = findMember(clientId);
+        User user = getMember(clientId);
         if (user == null) {
-            user = findFriend(clientId);
+            user = getFriend(clientId);
         }
         if (user == null) {
             return String.valueOf(clientId);
@@ -458,11 +458,11 @@ public class Zibenbot {
     }
 
     public void toPrivateMsg(long clientId, String msg) {
-        toPrivateMsg(clientId, toMessChain(findUser(clientId), msg));
+        toPrivateMsg(clientId, toMessChain(getUser(clientId), msg));
     }
 
     private void toPrivateMsg(long clientId, MessageChain chain, boolean flag) {
-        Contact contact = findUser(clientId);
+        Contact contact = getUser(clientId);
         if (contact == null) {
             logWarning("找不到Contact：" + clientId);
             return;
@@ -499,15 +499,15 @@ public class Zibenbot {
         return 1;
     }*/
 
-    private User findUser(long clientId) {
+    private User getUser(long clientId) {
         try {
             return bot.getFriend(clientId);
         } catch (NoSuchElementException e) {
-            return findMember(clientId);
+            return getMember(clientId);
         }
     }
 
-    private Member findMember(long clientId) {
+    private Member getMember(long clientId) {
         for (Group group : bot.getGroups()) {
             try {
                 return group.get(clientId);
@@ -517,7 +517,7 @@ public class Zibenbot {
         return null;
     }
 
-    private Friend findFriend(long clientId) {
+    private Friend getFriend(long clientId) {
         try {
             return bot.getFriend(clientId);
         } catch (NoSuchElementException e) {
@@ -616,7 +616,7 @@ public class Zibenbot {
                     contact.sendMessage(chain);
                 }
             } else if (fromMsg.isPrivateMsg()) {
-                    MessageChain chain = toMessChain(findUser(fromMsg.getFromClient()), msg);
+                MessageChain chain = toMessChain(getUser(fromMsg.getFromClient()), msg);
                     toPrivateMsg(fromMsg.getFromClient(), chain);
             } else if (fromMsg.isTeamspealMsg()) {
 /*            Zibenbot.logger.log(Level.INFO,
@@ -689,7 +689,7 @@ public class Zibenbot {
     }
 
     public void onFriendEvent(NewFriendRequestEvent event){
-        if (findUser(event.getFromId()) != null) {
+        if (getUser(event.getFromId()) != null) {
             event.accept();
         }
     }
@@ -735,7 +735,7 @@ public class Zibenbot {
     }
 
     public String getUserName(long userId){
-        User user = findUser(userId);
+        User user = getUser(userId);
         if (user != null) {
             return user.getNick();
         }
@@ -780,6 +780,30 @@ public class Zibenbot {
      */
     public String getImg(File file) {
         return getMsg("IMAGE", file.getAbsolutePath());
+    }
+
+    /**
+     * 获得消息中的所有图片
+     *
+     * @param msg 玩家发的消息
+     * @return 返回List of BufferImage
+     */
+    public List<java.awt.Image> getImgFromMsg(SimpleMsg msg) {
+        MessageChain chain = MiraiSerializationKt.parseMiraiCode(msg.getMsg());
+        List<java.awt.Image> list = new CopyOnWriteArrayList<>();
+        chain.stream()
+                .filter(m -> m instanceof Image)
+                .forEach(m -> {
+                    try {
+                        BufferedImage bufferedImage = ImageIO.read(new URL(bot.queryImageUrl((Image) m)));
+                        if (bufferedImage != null) {
+                            list.add(bufferedImage);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+        return list;
     }
 
     public String getMsg(String type, String source) {
