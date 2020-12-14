@@ -12,6 +12,8 @@ package com.dazo66.message
 
 import net.mamoe.mirai.message.data.*
 
+@net.mamoe.mirai.LowLevelAPI
+suspend fun getImgUrl(img: Image): String = img.queryUrl()
 
 @Suppress("RegExpRedundantEscape") // required on android
 internal val codeRegex = Regex("""(?:\[mirai:([^\]]*)?:(.*?)?\])|(?:\[mirai:([^:]+)\])""")
@@ -130,3 +132,4 @@ internal class MiraiCodeParser(
     val argsRegex: Regex,
     val mapper: MiraiCodeParser.(MatchResult.Destructured) -> Message?
 )
+
