@@ -20,6 +20,7 @@ class main {
 }
 
 suspend fun main(args: Array<String>) {
+    System.load(System.getProperty("user.dir") + "\\data\\cv\\opencv_java430.dll")
     val qqID = args[0].toLong()
     val password = args[1]
 
