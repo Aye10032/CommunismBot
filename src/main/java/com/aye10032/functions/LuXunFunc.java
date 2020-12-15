@@ -63,12 +63,12 @@ public class LuXunFunc extends BaseFunc {
                 File file = new File(download_img_path);
                 try {
                     ImageIO.write((RenderedImage) images.get(0), "png", file);
-//                    addBlack_White(download_img_path, Arrays.copyOfRange(msgs, 1, msgs.length));
-                    StringBuilder builder = new StringBuilder();
-                    for (String str : msgs) {
-                        builder.append(str).append("\n");
-                    }
-                    zibenbot.replyMsg(simpleMsg, builder.toString());
+                    addBlack_White(download_img_path, Arrays.copyOfRange(msgs, 2, msgs.length));
+//                    StringBuilder builder = new StringBuilder();
+//                    for (String str : msgs) {
+//                        builder.append(str).append("\n");
+//                    }
+                    zibenbot.replyMsg(simpleMsg, zibenbot.getImg(output_path));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
