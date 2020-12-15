@@ -52,8 +52,9 @@ public class LuXunFunc extends BaseFunc {
         if (msgs[0].equals(".鲁迅") && msgs.length == 2) {
             addText(1, msgs[1]);
             zibenbot.replyMsg(simpleMsg, zibenbot.getImg(output_path));
-        } else if (msgs[0].contains("竟在") && msgs[0].contains(".jpg") && msgs.length == 1) {
-            //todo 待写
+        } else if ((msgs[0].contains("竟在") || msgs[0].contains("竟是")) && msgs[0].contains(".jpg") && msgs.length == 1) {
+            addText(2, simpleMsg.getMsg().substring(0, simpleMsg.getMsg().lastIndexOf('.')));
+            replyMsg(simpleMsg, zibenbot.getImg(output_path));
         } else if (msgs[0].equals(".黑白") && msgs.length >= 2) {
             List<Image> images = zibenbot.getImgFromMsg(simpleMsg);
             if (images.size() == 0) {
@@ -64,7 +65,7 @@ public class LuXunFunc extends BaseFunc {
                     ImageIO.write((RenderedImage) images.get(0), "png", file);
 //                    addBlack_White(download_img_path, Arrays.copyOfRange(msgs, 1, msgs.length));
                     StringBuilder builder = new StringBuilder();
-                    for (String str:msgs){
+                    for (String str : msgs) {
                         builder.append(str).append("\n");
                     }
                     zibenbot.replyMsg(simpleMsg, builder.toString());
@@ -75,13 +76,14 @@ public class LuXunFunc extends BaseFunc {
         }
     }
 
-/*    public static void main(String[] args) {
-        File os = new File("data\\cv");
-
-        LuXunFunc luXunFunc = new LuXunFunc(os.getAbsolutePath());
-//        luXunFunc.addText(1, "我没说过 --鲁迅");
-        luXunFunc.addBlack_White("data\\image\\biaoqing\\test.png",new String[]{" 人固有一死 "," people always die "});
-    }*/
+//    public static void main(String[] args) {
+//        System.load(System.getProperty("user.dir") + "\\data\\cv\\opencv_java430.dll");
+////        File os = new File("data\\cv");
+//
+//        LuXunFunc luXunFunc = new LuXunFunc(os.getAbsolutePath());
+////        luXunFunc.addText(1, "我没说过 --鲁迅");
+//        luXunFunc.addBlack_White("data\\image\\biaoqing\\test.png",new String[]{" 人固有一死 "," people always die "});
+//    }
 
     public void addText(int flag, String text) {
         Mat src = imread(ImgMap.get(flag));
@@ -93,22 +95,52 @@ public class LuXunFunc extends BaseFunc {
         Mat dst = src.clone();
 
         Font font = new Font("微软雅黑", Font.PLAIN, 130);
+        List<String> text_list = new ArrayList<>();
+
+        int last = text.length() % 10;
+        int times = text.length() / 10;
+        if (times>=1) {
+            for (int i = 0; i < times; i++) {
+                text_list.add(text.substring(i * 10, i * 10 + 10));
+            }
+        }
+        if (last != 0) {
+            StringBuilder builder = new StringBuilder();
+            String substring = text.substring(text.length() - last, text.length());
+            if (times == 0){
+                for (int i = 0; i < (10 - last) / 2; i++) {
+                    builder.append("    ");
+                }
+                builder.append(substring);
+                for (int i = 0; i < (10-last)/2; i++) {
+                    builder.append("    ");
+                }
+            }else {
+                builder.append(substring);
+                for (int i = 0; i < 10 - last; i++) {
+                    builder.append("    ");
+                }
+            }
+            text_list.add(builder.toString());
+        }
         try {
-            createImage(text, font, new File(text_path));
-            Mat text_src = imread(text_path);
+            for (String str : text_list) {
+                createImage(str, font, new File(text_path));
+                Mat text_src = imread(text_path);
 
-            float text_height = text_src.rows();
-            float text_width = text_src.cols();
+                float text_height = text_src.rows();
+                float text_width = text_src.cols();
 
-            System.out.println(text_width + " " + text_height);
-            text_height = (width / text_width) * text_height;
-            System.out.println(text_width + " " + text_height);
-            resize(text_src, text_src, new Size(width, text_height), 0, 0, Imgproc.INTER_AREA);
+//                System.out.println(text_width + " " + text_height);
+                text_height = (width / text_width) * text_height;
+//                System.out.println(text_width + " " + text_height);
+                resize(text_src, text_src, new Size(width, text_height), 0, 0, Imgproc.INTER_AREA);
 
-            List<Mat> imgs = new ArrayList<>();
-            imgs.add(dst);
-            imgs.add(text_src);
-            vconcat(imgs, dst);
+                List<Mat> imgs = new ArrayList<>();
+                imgs.add(dst);
+                imgs.add(text_src);
+                vconcat(imgs, dst);
+            }
             imwrite(output_path, dst);
         } catch (Exception e) {
             e.printStackTrace();
