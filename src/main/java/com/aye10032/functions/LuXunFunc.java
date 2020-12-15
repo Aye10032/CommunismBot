@@ -17,11 +17,11 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import static org.opencv.core.Core.vconcat;
 import static org.opencv.imgcodecs.Imgcodecs.*;
@@ -29,32 +29,50 @@ import static org.opencv.imgproc.Imgproc.*;
 
 //todo 需要增强
 public class LuXunFunc extends BaseFunc {
+    private final String output_path = appDirectory + "\\image\\biaoqing\\output.jpg";
+    private final String text_path = appDirectory + "\\image\\biaoqing\\text.png";
+    private final String download_img_path = appDirectory + "\\image\\biaoqing\\src.jpg";
+
     private Commander<SimpleMsg> commander;
     Map<Integer, String> ImgMap = new HashMap<>();
 
+    public LuXunFunc(Zibenbot zibenbot) {
+        super(zibenbot);
+    }
 
     @Override
     public void setUp() {
-        ImgMap.put(1, "data\\image\\biaoqing\\luxun.jpg");
+        ImgMap.put(1, appDirectory + "\\image\\biaoqing\\luxun.jpg");
+        ImgMap.put(2, appDirectory + "\\image\\biaoqing\\unexpectedly.jpg");
     }
 
     @Override
     public void run(SimpleMsg simpleMsg) {
-
-    }
-
-    public LuXunFunc(Zibenbot zibenbot) {
-        super(zibenbot);
-        System.load(zibenbot.appDirectory + "\\cv\\opencv_java430.dll");
-
-        commander = new CommanderBuilder<SimpleMsg>()
-                .seteHandler(FuncExceptionHandler.INSTENCE)
-                .start()
-                .or(".黑白"::contains)
-                .run((cqmsg) -> {
-                    zibenbot.replyMsg(cqmsg, zibenbot.getImg(zibenbot.appDirectory + ""));
-                })
-                .build();
+        String[] msgs = simpleMsg.getMsg().split(" ");
+        if (msgs[0].equals(".鲁迅") && msgs.length == 2) {
+            addText(1, msgs[1]);
+            zibenbot.replyMsg(simpleMsg, zibenbot.getImg(output_path));
+        } else if (msgs[0].contains("竟在") && msgs[0].contains(".jpg") && msgs.length == 1) {
+            //todo 待写
+        } else if (msgs[0].equals(".黑白") && msgs.length >= 2) {
+            List<Image> images = zibenbot.getImgFromMsg(simpleMsg);
+            if (images.size() == 0) {
+                zibenbot.replyMsg(simpleMsg, "未检测到图片");
+            } else {
+                File file = new File(download_img_path);
+                try {
+                    ImageIO.write((RenderedImage) images.get(0), "png", file);
+//                    addBlack_White(download_img_path, Arrays.copyOfRange(msgs, 1, msgs.length));
+                    StringBuilder builder = new StringBuilder();
+                    for (String str:msgs){
+                        builder.append(str).append("\n");
+                    }
+                    zibenbot.replyMsg(simpleMsg, builder.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 /*    public static void main(String[] args) {
@@ -76,11 +94,12 @@ public class LuXunFunc extends BaseFunc {
 
         Font font = new Font("微软雅黑", Font.PLAIN, 130);
         try {
-            createImage(text, font, new File(zibenbot.appDirectory + "\\image\\biaoqing\\text.png"));
+            createImage(text, font, new File(text_path));
+            Mat text_src = imread(text_path);
 
-            Mat text_src = imread(zibenbot.appDirectory + "\\image\\biaoqing\\text.png");
             float text_height = text_src.rows();
             float text_width = text_src.cols();
+
             System.out.println(text_width + " " + text_height);
             text_height = (width / text_width) * text_height;
             System.out.println(text_width + " " + text_height);
@@ -90,7 +109,7 @@ public class LuXunFunc extends BaseFunc {
             imgs.add(dst);
             imgs.add(text_src);
             vconcat(imgs, dst);
-            imwrite(zibenbot.appDirectory + "\\image\\biaoqing\\text.jpg", dst);
+            imwrite(output_path, dst);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -131,7 +150,7 @@ public class LuXunFunc extends BaseFunc {
             }
         }
         vconcat(imgs, dst);
-        imwrite(zibenbot.appDirectory + "\\image\\biaoqing\\text.jpg", dst);
+        imwrite(output_path, dst);
 //        imshow("test",dst);
 //
 //        waitKey(0);
