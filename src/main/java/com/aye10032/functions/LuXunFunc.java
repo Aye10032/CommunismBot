@@ -3,10 +3,8 @@ package com.aye10032.functions;
 
 import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
-import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.dazo66.command.Commander;
-import com.dazo66.command.CommanderBuilder;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -29,7 +27,6 @@ import static org.opencv.imgproc.Imgproc.*;
 
 //todo 需要增强
 public class LuXunFunc extends BaseFunc {
-    private final String output_path = appDirectory + "\\image\\biaoqing\\output.jpg";
     private final String text_path = appDirectory + "\\image\\biaoqing\\text.png";
     private final String download_img_path = appDirectory + "\\image\\biaoqing\\src.jpg";
 
@@ -38,6 +35,7 @@ public class LuXunFunc extends BaseFunc {
 
     public LuXunFunc(Zibenbot zibenbot) {
         super(zibenbot);
+        new File(appDirectory + "\\image\\biaoqing\\output").mkdirs();
     }
 
     @Override
@@ -50,12 +48,15 @@ public class LuXunFunc extends BaseFunc {
     public void run(SimpleMsg simpleMsg) {
         String[] msgs = simpleMsg.getMsg().split(" ");
         if (msgs[0].equals(".鲁迅") && msgs.length == 2) {
-            addText(1, msgs[1]);
-            zibenbot.replyMsg(simpleMsg, zibenbot.getImg(output_path));
+            File output = new File(appDirectory + "\\image\\biaoqing\\output\\" + simpleMsg.getMsg().hashCode() + ".jpg");
+            addText(1, msgs[1], output);
+            zibenbot.replyMsg(simpleMsg, zibenbot.getImg(output));
         } else if ((msgs[0].contains("竟在") || msgs[0].contains("竟是")) && msgs[0].contains(".jpg") && msgs.length == 1) {
-            addText(2, simpleMsg.getMsg().substring(0, simpleMsg.getMsg().lastIndexOf('.')));
-            replyMsg(simpleMsg, zibenbot.getImg(output_path));
+            File output = new File(appDirectory + "\\image\\biaoqing\\output\\" + simpleMsg.getMsg().hashCode() + ".jpg");
+            addText(2, simpleMsg.getMsg().substring(0, simpleMsg.getMsg().lastIndexOf('.')), output);
+            replyMsg(simpleMsg, zibenbot.getImg(output));
         } else if (msgs[0].equals(".黑白") && msgs.length >= 2) {
+            File output = new File(appDirectory + "\\image\\biaoqing\\output\\" + simpleMsg.getMsg().hashCode() + ".jpg");
             List<Image> images = zibenbot.getImgFromMsg(simpleMsg);
             if (images.size() == 0) {
                 zibenbot.replyMsg(simpleMsg, "未检测到图片");
@@ -63,12 +64,12 @@ public class LuXunFunc extends BaseFunc {
                 File file = new File(download_img_path);
                 try {
                     ImageIO.write((RenderedImage) images.get(0), "png", file);
-                    addBlack_White(download_img_path, Arrays.copyOfRange(msgs, 2, msgs.length));
+                    addBlack_White(download_img_path, Arrays.copyOfRange(msgs, 2, msgs.length), output);
 //                    StringBuilder builder = new StringBuilder();
 //                    for (String str : msgs) {
 //                        builder.append(str).append("\n");
 //                    }
-                    zibenbot.replyMsg(simpleMsg, zibenbot.getImg(output_path));
+                    zibenbot.replyMsg(simpleMsg, zibenbot.getImg(output));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -85,7 +86,7 @@ public class LuXunFunc extends BaseFunc {
 //        luXunFunc.addBlack_White("data\\image\\biaoqing\\test.png",new String[]{" 人固有一死 "," people always die "});
 //    }
 
-    public void addText(int flag, String text) {
+    public void addText(int flag, String text, File output) {
         Mat src = imread(ImgMap.get(flag));
 
         float height = src.rows();
@@ -141,7 +142,7 @@ public class LuXunFunc extends BaseFunc {
                 imgs.add(text_src);
                 vconcat(imgs, dst);
             }
-            imwrite(output_path, dst);
+            imwrite(output.getAbsolutePath(), dst);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -151,7 +152,7 @@ public class LuXunFunc extends BaseFunc {
 //        waitKey(0);
     }
 
-    public void addBlack_White(String img, String[] texts) {
+    public void addBlack_White(String img, String[] texts, File output) {
         Mat src = imread(img, IMREAD_GRAYSCALE);
 
         float width = src.cols();
@@ -182,7 +183,8 @@ public class LuXunFunc extends BaseFunc {
             }
         }
         vconcat(imgs, dst);
-        imwrite(output_path, dst);
+        imwrite(output.getAbsolutePath(), dst);
+
 //        imshow("test",dst);
 //
 //        waitKey(0);

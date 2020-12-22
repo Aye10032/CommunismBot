@@ -78,7 +78,8 @@ public class Zibenbot {
     private List<IFunc> registerFunc;
 
     {
-        msgUploads.put("IMAGE", (conect, source) -> conect.uploadImage(new File(source)).toMiraiCode());
+        //todo 临时的解决问题方式
+        msgUploads.put("IMAGE", (conect, source) -> _getGroup(995497677L).uploadImage(new File(source)).toMiraiCode());
         msgUploads.put("VOICE", (conect, source) -> {
             if (conect instanceof Group) {
                 return ((Group) conect).uploadVoice(new FileInputStream(source)).toString();
@@ -617,7 +618,7 @@ public class Zibenbot {
                 }
             } else if (fromMsg.isPrivateMsg()) {
                 MessageChain chain = toMessChain(getUser(fromMsg.getFromClient()), msg);
-                    toPrivateMsg(fromMsg.getFromClient(), chain);
+                toPrivateMsg(fromMsg.getFromClient(), chain);
             } else if (fromMsg.isTeamspealMsg()) {
 /*            Zibenbot.logger.log(Level.INFO,
                     String.format("回复ts频道[%s]消息:%s",
@@ -813,15 +814,15 @@ public class Zibenbot {
     private String replaceMsgType(Contact contact, String msg) {
         Matcher matcher = MSG_TYPE_PATTERN.matcher(msg);
         int i = 0;
+        while (matcher.find(i)) {
+            msg = msg.replace(matcher.group(0), _upload(contact, matcher.group(1), matcher.group(2)));
+            i = matcher.start() + 1;
+        }
         if (contact instanceof Friend) {
             String fromto = String.valueOf(bot.getId()) + "-" + String.valueOf(contact.getId());
             msg = msg.replaceAll("\\[mirai:image:\\{(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})}.mirai]", "[mirai:image:/" + fromto + "-$1$2$3$4$5" + "]");
         } else {
             msg = msg.replaceAll("\\[mirai:image:/(\\d+)-(\\d+)-(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})]", "[mirai:image:{$3-$4-$5-$6-$7}.mirai]");
-        }
-        while (matcher.find(i)) {
-            msg = msg.replace(matcher.group(0), _upload(contact, matcher.group(1), matcher.group(2)));
-            i = matcher.start() + 1;
         }
         return msg;
     }
