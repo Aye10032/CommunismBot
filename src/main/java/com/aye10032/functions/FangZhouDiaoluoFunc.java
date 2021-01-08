@@ -41,7 +41,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
     private String arkonegraphFile;
     private String cacheFile;
     private Pair<Long, DiaoluoType.HeChenType> last = null;
-
+    private boolean lastEnforce = false;
 
     public FangZhouDiaoluoFunc(Zibenbot zibenbot) {
         super(zibenbot);
@@ -58,6 +58,24 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         this(null);
     }
 
+    public static Header[] getHeaders() {
+        return new Header[]{
+                buildHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"), buildHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36"),
+                buildHeader("Accept-Encoding", "gzip, deflate, sdch"),
+                buildHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6"),
+                buildHeader("pragma", "no-cache"),
+                buildHeader("origin", "https://aog.wiki"),
+                buildHeader("referer", "https://aog.wiki/"),
+                buildHeader("Connection", "keep-alive"),
+                buildHeader("sec-fetch-site", "same-site"),
+                buildHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36")
+        };
+    }
+
+    public static Header buildHeader(String name, String value) {
+        return new BasicHeader(name, value);
+    }
+
     @Override
     public void setUp() {
         update();
@@ -66,7 +84,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         Date date = calendar.getTime();
-        TimedTaskBase task = new TimedTaskBase(){
+        TimedTaskBase task = new TimedTaskBase() {
             @Override
             public void run(Date current) {
                 update();
@@ -75,12 +93,10 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         zibenbot.pool.add(task);
     }
 
-    private boolean lastEnforce = false;
-
     @Override
     public void run(SimpleMsg simpleMsg) {
         String msg = simpleMsg.getMsg().trim();
-        if (last !=null) {
+        if (last != null) {
             if (simpleMsg.getFromClient() == last.getKey()) {
                 if (("是".equals(msg) || "yes".equals(msg) || "Yes".equals(msg) || "Y".equals(msg) || "y".equals(msg) || "确实".equals(msg) || "对".equals(msg))) {
                     retMsg(false, last.getValue(), simpleMsg);
@@ -94,7 +110,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
             int len = strings.length;
             if (len == 2 && "更新".equals(strings[1])) {
                 update();
-                replyMsg(simpleMsg, "数据更新完成，数据时间："+Module.lastUpdate);
+                replyMsg(simpleMsg, "数据更新完成，数据时间：" + Module.lastUpdate);
                 return;
             }
             if (len >= 2) {
@@ -170,7 +186,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         return builder.toString();
     }
 
-    private void retMsg(boolean enforce, DiaoluoType.HeChenType type, SimpleMsg msg){
+    private void retMsg(boolean enforce, DiaoluoType.HeChenType type, SimpleMsg msg) {
         String ret;
         if (type.calls.length == 0 || enforce) {
             ret = module.getString(this.type.getMaterialFromID(type.id));
@@ -201,7 +217,10 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         //System.out.println(arkonegraphFile);
         zibenbot.logInfo("fangzhoudiaoluo load start");
         File file = new File(cacheFile);
-        Gson gson = new GsonBuilder().registerTypeAdapter(DiaoluoType.Material[].class, new MaterialsDeserializer()).setLenient().create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(DiaoluoType.Material[].class, new MaterialsDeserializer())
+                .setLenient()
+                .create();
         JsonParser parser = new JsonParser();
         CloseableHttpClient client = HttpClientBuilder.create().setDefaultHeaders(Arrays.asList(getHeaders())).build();
         //更新掉落数据
@@ -211,13 +230,13 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
             JsonObject jsonObject = parser.parse(IOUtils.toString(stream)).getAsJsonObject();
             stream.close();
             for (int i = 1; i <= 5; i++) {
-                    JsonArray array = jsonObject.get("tier").getAsJsonObject().get(String.format("t%d", i)).getAsJsonArray();
-                    DiaoluoType.Material[] materials = gson.fromJson(array, DiaoluoType.Material[].class);
-                    if (diaoluoType.material != null) {
-                        diaoluoType.material = ArrayUtils.addAll(diaoluoType.material, materials);
-                    } else {
-                        diaoluoType.material = materials;
-                    }
+                JsonArray array = jsonObject.get("tier").getAsJsonObject().get(String.format("t%d", i)).getAsJsonArray();
+                DiaoluoType.Material[] materials = gson.fromJson(array, DiaoluoType.Material[].class);
+                if (diaoluoType.material != null) {
+                    diaoluoType.material = ArrayUtils.addAll(diaoluoType.material, materials);
+                } else {
+                    diaoluoType.material = materials;
+                }
             }
 
 
@@ -289,24 +308,6 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
             }
         }
         return strings;
-    }
-
-    public static Header[] getHeaders() {
-        return new Header[]{
-                buildHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"), buildHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36"),
-                buildHeader("Accept-Encoding", "gzip, deflate, sdch"),
-                buildHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6"),
-                buildHeader("pragma", "no-cache"),
-                buildHeader("origin", "https://aog.wiki"),
-                buildHeader("referer", "https://aog.wiki/"),
-                buildHeader("Connection", "keep-alive"),
-                buildHeader("sec-fetch-site", "same-site"),
-                buildHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36")
-        };
-    }
-
-    public static Header buildHeader(String name, String value) {
-        return new BasicHeader(name, value);
     }
 
 }
