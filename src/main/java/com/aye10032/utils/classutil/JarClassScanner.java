@@ -21,8 +21,10 @@ public class JarClassScanner implements IClassScanner {
             //通过当前线程得到类加载器从而得到URL的枚举
             Enumeration<URL> urlEnumeration = Thread.currentThread().getContextClassLoader().getResources(packageName.replace(".", "/"));
             while (urlEnumeration.hasMoreElements()) {
-                URL url = urlEnumeration.nextElement();//得到的结果大概是：jar:file:/C:/Users/ibm/.m2/repository/junit/junit/4.12/junit-4.12.jar!/org/junit
-                String protocol = url.getProtocol();//大概是jar
+                //得到的结果大概是：jar:file:/C:/Users/ibm/.m2/repository/junit/junit/4.12/junit-4.12.jar!/org/junit
+                URL url = urlEnumeration.nextElement();
+                //大概是jar
+                String protocol = url.getProtocol();
                 if ("jar".equalsIgnoreCase(protocol)) {
                     //转换为JarURLConnection
                     JarURLConnection connection = (JarURLConnection) url.openConnection();
