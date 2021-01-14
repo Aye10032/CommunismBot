@@ -2,10 +2,10 @@ package com.aye10032.command
 
 import com.aye10032.util.MHWUtil
 import com.firespoon.bot.command.Command
-import net.mamoe.mirai.message.GroupMessageEvent
+import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.SingleMessage
-import net.mamoe.mirai.message.data.asMessageChain
+import net.mamoe.mirai.message.data.toMessageChain
 import java.util.*
 
 abstract class MHWCommand {
@@ -18,7 +18,7 @@ abstract class MHWCommand {
 
                     response.add(PlainText(MHWUtil().aim))
 
-                    reply(response.asMessageChain())
+                    reply(response.toMessageChain())
                 }
         )
     }

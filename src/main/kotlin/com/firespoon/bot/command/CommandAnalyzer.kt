@@ -1,7 +1,7 @@
 package com.firespoon.bot.command
 
 import com.firespoon.bot.commandbody.CommandBody
-import net.mamoe.mirai.message.MessageEvent
+import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.data.content
 
 abstract class CommandAnalyzer {

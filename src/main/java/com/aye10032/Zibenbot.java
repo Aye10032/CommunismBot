@@ -15,29 +15,30 @@ import com.aye10032.utils.IMsgUpload;
 import com.aye10032.utils.SeleniumUtils;
 import com.aye10032.utils.StringUtil;
 import com.aye10032.utils.timeutil.*;
-import com.dazo66.message.MiraiSerializationKt;
 import com.firespoon.bot.command.Command;
 import com.firespoon.bot.commandbody.CommandBody;
 import kotlin.Unit;
 import kotlin.coroutines.Continuation;
 import kotlin.jvm.functions.Function2;
 import net.mamoe.mirai.Bot;
+import net.mamoe.mirai.Mirai;
 import net.mamoe.mirai.contact.*;
-import net.mamoe.mirai.event.Listener;
-import net.mamoe.mirai.event.events.MemberMuteEvent;
+import net.mamoe.mirai.event.EventPriority;
+import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.event.events.NewFriendRequestEvent;
-import net.mamoe.mirai.message.MessageEvent;
+import net.mamoe.mirai.message.code.MiraiCode;
 import net.mamoe.mirai.message.data.*;
+import net.mamoe.mirai.utils.ExternalResource;
 import net.mamoe.mirai.utils.MiraiLogger;
 import net.mamoe.mirai.utils.PlatformLogger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -47,10 +48,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * 机器人的主类 连接了mirai 进行实现
- *
- *
  *
  * @author Dazo66
  */
@@ -79,17 +77,19 @@ public class Zibenbot {
 
     {
         //todo 临时的解决问题方式
-        msgUploads.put("IMAGE", (conect, source) -> _getGroup(995497677L).uploadImage(new File(source)).toMiraiCode());
+        msgUploads.put("IMAGE", (conect, source) ->
+                MiraiCode.serializeToMiraiCode(conect.uploadImage(ExternalResource.create(new File(source)))));
         msgUploads.put("VOICE", (conect, source) -> {
             if (conect instanceof Group) {
-                return ((Group) conect).uploadVoice(new FileInputStream(source)).toString();
+                return MiraiCode.serializeToMiraiCode(
+                        new Voice[]{((Group) conect).uploadVoice(ExternalResource.create(new File(source)))});
             } else {
                 return "[VOICE]";
             }
         });
         msgUploads.put("AT", (conect, source) -> {
             if (conect instanceof User) {
-                return at(Long.valueOf(source));
+                return at(Long.parseLong(source));
             } else {
                 return "@" + source;
             }
@@ -354,13 +354,26 @@ public class Zibenbot {
         }
     }
 
-    private void muteMember(Member member, int second) {
+    private static List<String> split(String s, int length) {
+        List<String> ret = new ArrayList<>();
+        int size = s.length() / length + 1;
+        for (int i = 0; i < size; i++) {
+            int i1 = (i + 1) * length;
+            if (i1 > s.length()) {
+                i1 = s.length();
+            }
+            ret.add(s.substring(i * length, i1));
+        }
+        return ret;
+    }
+
+    private void muteMember(NormalMember member, int second) {
         member.mute(second);
     }
 
     public void muteMember(long groupId, long memberId, int second) {
         try {
-            Member member = _getGroup(groupId).get(memberId);
+            NormalMember member = _getGroup(groupId).get(memberId);
             muteMember(member, second);
         } catch (Exception e) {
             logWarning("禁言失败：" + memberId + e);
@@ -369,6 +382,7 @@ public class Zibenbot {
 
     /**
      * 设置全体禁言
+     *
      * @param groupId 群id
      * @param muteAll 启用或者禁用
      */
@@ -381,26 +395,15 @@ public class Zibenbot {
         g.getSettings().setMuteAll(muteAll);
     }
 
-    private void unMute(Member member) {
+    private void unMute(NormalMember member) {
         member.unmute();
     }
 
-    public void unMute(long groupId, long memberId) {
-        Member member = null;
-        try {
-            member = _getGroup(groupId).get(memberId);
-        } catch (Exception e) {
-            logWarning("禁言失败：" + memberId + e);
-            return;
-        }
-        unMute(member);
-    }
+/*    public void onMute(MemberMuteEvent event) {
+        //setMuteTimeLocal(event.getMember(), event.getDurationSeconds());
+    }*/
 
-    public void onMute(MemberMuteEvent event){
-        setMuteTimeLocal(event.getMember(), event.getDurationSeconds());
-    }
-
-    private void setMuteTimeLocal(Member member, int time){
+/*    private void setMuteTimeLocal(Member member, int time) {
         try {
             Field field = member.getClass().getDeclaredField("_muteTimestamp");
             field.setAccessible(true);
@@ -408,7 +411,7 @@ public class Zibenbot {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     /**
      * 获得AT的字符串 如果不存在这个id则返回 "null"
@@ -429,29 +432,15 @@ public class Zibenbot {
         }
     }
 
-    private String at(User user) {
-        if (user == null) {
-            return "null";
+    public void unMute(long groupId, long memberId) {
+        NormalMember member = null;
+        try {
+            member = _getGroup(groupId).get(memberId);
+        } catch (Exception e) {
+            logWarning("禁言失败：" + memberId + e);
+            return;
         }
-        String displayName = user.getNick();
-        long id = user.getId();
-        At at = null;
-        if (user instanceof net.mamoe.mirai.contact.Member) {
-            at = new At((net.mamoe.mirai.contact.Member) user);
-        } else {
-            try {
-                Constructor c1 = At.class.getDeclaredConstructor(long.class, String.class);
-                c1.setAccessible(true);
-                at = (At) c1.newInstance(id, displayName);
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                e.printStackTrace();
-            }
-        }
-        if (at == null) {
-            return "@" + displayName;
-        } else {
-            return at.toMiraiCode();
-        }
+        unMute(member);
     }
 
     public static void logDebugStatic(String debugMsg) {
@@ -535,15 +524,8 @@ public class Zibenbot {
         group.sendMessage(toMessChain(group, msg));
     }
 
-    public void log(Level level, String msg) {
-        if (level == Level.WARNING) {
-            logWarning(msg);
-        } else if (level == Level.ALL) {
-                logVerbose(msg);
-        } else {
-            logInfo(msg);
-        }
-
+    private String at(User user) {
+        return String.format("[mirai:at:%s]", user.getId());
     }
 
 
@@ -564,12 +546,19 @@ public class Zibenbot {
         logger.error(errorMsg);
     }
 
-    public void logWarning(String warnMsg){
-        logger.warning(warnMsg);
+    public void log(Level level, String msg) {
+        if (level == Level.WARNING) {
+            logWarning(msg);
+        } else if (level == Level.ALL) {
+            logVerbose(msg);
+        } else {
+            logInfo(msg);
+        }
+
     }
 
-    public void logVerbose(String verboseMsg){
-        logger.verbose(verboseMsg);
+    public void logWarning(String warnMsg) {
+        logger.warning(warnMsg);
     }
 
     public static void logWarningStatic(String warnMsg) {
@@ -631,17 +620,8 @@ public class Zibenbot {
         }
     }
 
-    private static List<String> split(String s, int length){
-        List<String> ret = new ArrayList<>();
-        int size = s.length() / length + 1;
-        for (int i = 0; i < size ;i++) {
-            int i1 = (i + 1) * length;
-            if (i1 > s.length()) {
-                i1 = s.length();
-            }
-            ret.add(s.substring(i * length, i1));
-        }
-        return ret;
+    public void logVerbose(String verboseMsg) {
+        logger.verbose(verboseMsg);
     }
 
     private static List<MessageChain> longMsgSplit(MessageChain chain, final int MAX_LENGTH) {
@@ -689,7 +669,7 @@ public class Zibenbot {
         return ret;
     }
 
-    public void onFriendEvent(NewFriendRequestEvent event){
+    public void onFriendEvent(NewFriendRequestEvent event) {
         if (getUser(event.getFromId()) != null) {
             event.accept();
         }
@@ -697,12 +677,13 @@ public class Zibenbot {
 
     private MessageChain toMessChain(Contact send, String msg) {
         String s = replaceMsgType(send, msg);
-        return MiraiSerializationKt.parseMiraiCode(s);
+        return MiraiCode.deserializeMiraiCode(s);
     }
 
 
     /**
      * 根据groupid返回group对象
+     *
      * @param id groupid
      * @return 返回group对象 找不到时返回null
      */
@@ -735,7 +716,7 @@ public class Zibenbot {
         return list;
     }
 
-    public String getUserName(long userId){
+    public String getUserName(long userId) {
         User user = getUser(userId);
         if (user != null) {
             return user.getNick();
@@ -746,7 +727,7 @@ public class Zibenbot {
     public int getMuteTimeRemaining(long groupId, long memberId) {
         Group group = _getGroup(groupId);
         try {
-            Member member = group.get(memberId);
+            NormalMember member = group.get(memberId);
             return member.getMuteTimeRemaining();
         } catch (Exception e) {
             return 0;
@@ -790,13 +771,13 @@ public class Zibenbot {
      * @return 返回List of BufferImage
      */
     public List<java.awt.Image> getImgFromMsg(SimpleMsg msg) {
-        MessageChain chain = MiraiSerializationKt.parseMiraiCode(msg.getMsg());
+        MessageChain chain = MiraiCode.deserializeMiraiCode(msg.getMsg());
         List<java.awt.Image> list = new CopyOnWriteArrayList<>();
         chain.stream()
                 .filter(m -> m instanceof Image)
                 .forEach(m -> {
                     try {
-                        BufferedImage bufferedImage = ImageIO.read(new URL(bot.queryImageUrl((Image) m)));
+                        BufferedImage bufferedImage = ImageIO.read(new URL(Mirai.getInstance().queryImageUrl(bot, (Image) m)));
                         if (bufferedImage != null) {
                             list.add(bufferedImage);
                         }
@@ -865,7 +846,7 @@ public class Zibenbot {
 
     static class ZibenbotController extends Command<MessageEvent> {
         public ZibenbotController(@NotNull String name, @NotNull Function2<? super MessageEvent, ? super Continuation<? super CommandBody<MessageEvent>>, ?> builder, @NotNull Function2<? super CommandBody<MessageEvent>, ? super Continuation<? super Unit>, ?> action) {
-            super(Listener.EventPriority.NORMAL, name, builder, action);
+            super(EventPriority.NORMAL, name, builder, action);
         }
     }
 

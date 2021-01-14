@@ -3,14 +3,14 @@ package com.firespoon.bot.core
 import com.firespoon.bot.command.Command
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.*
-import net.mamoe.mirai.message.MessageEvent
+import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.data.time
 import java.util.*
 import kotlin.collections.HashMap
 
 typealias ListenerRegisterer<E> = Bot.(
-        EventPriority,
-        suspend E.(E) -> Unit
+    EventPriority,
+    suspend E.(E) -> Unit
 ) -> Listener<E>
 
 private val metaInfoOfAllBots = HashMap<Bot, FSBotMetaInfo>()
@@ -53,10 +53,10 @@ suspend fun Bot.boot() {
  */
 inline fun <reified E : Event>
         Bot.registerListener(
-        priority: EventPriority = EventPriority.NORMAL,
-        name: String,
-        noinline callback: suspend Bot.(E) -> Unit,
-        registerer: ListenerRegisterer<E>
+    priority: EventPriority = EventPriority.NORMAL,
+    name: String,
+    noinline callback: suspend Bot.(E) -> Unit,
+    registerer: ListenerRegisterer<E>
 ) {
     val listeners = metaInfo.listeners
     if (listeners.containsKey(name)) {
@@ -94,9 +94,9 @@ fun Bot.closeListener(name: String) {
  */
 inline fun <reified E : Event>
         Bot.registerListenerAlways(
-        priority: EventPriority = EventPriority.NORMAL,
-        name: String,
-        noinline callback: suspend Bot.(E) -> Unit
+    priority: EventPriority = EventPriority.NORMAL,
+    name: String,
+    noinline callback: suspend Bot.(E) -> Unit
 ) {
     registerListener(priority, name, callback, Bot::_subscribeAlways)
 }
@@ -118,9 +118,9 @@ inline fun <reified E : Event>
  */
 inline fun <reified E : Event>
         Bot.registerListenerOnce(
-        priority: EventPriority = EventPriority.NORMAL,
-        name: String,
-        noinline callback: suspend Bot.(E) -> Unit
+    priority: EventPriority = EventPriority.NORMAL,
+    name: String,
+    noinline callback: suspend Bot.(E) -> Unit
 ) {
     registerListener(priority, name, callback, Bot::_subscribeAlways)
 }
@@ -134,20 +134,20 @@ inline fun <reified E : Event>
  */
 inline fun <reified E : MessageEvent>
         Bot.registerCommand(
-        command: Command<E>,
-        registerer: ListenerRegisterer<E>
+    command: Command<E>,
+    registerer: ListenerRegisterer<E>
 ) {
     registerListener(
-            priority = command.priority,
-            name = command.name,
-            callback = { event ->
-                val messageTime = event.message.time
-                if (messageTime >= metaInfo.bootTime) {
-                    val commandBody = command.builder(event)
-                    commandBody?.(command.action)()
-                }
-            },
-            registerer = registerer
+        priority = command.priority,
+        name = command.name,
+        callback = { event ->
+            val messageTime = event.message.time
+            if (messageTime >= metaInfo.bootTime) {
+                val commandBody = command.builder(event)
+                commandBody?.(command.action)()
+            }
+        },
+        registerer = registerer
     )
 }
 
@@ -158,7 +158,7 @@ inline fun <reified E : MessageEvent>
  */
 inline fun <reified E : MessageEvent>
         Bot.registerCommandAlways(
-        command: Command<E>
+    command: Command<E>
 ) {
     registerCommand(command, Bot::_subscribeAlways)
 }
@@ -167,28 +167,29 @@ inline fun <reified E : MessageEvent>
  * 通过Bot.registerListenerOnce将一个Command注册为一个Listener
  *
  * command： Command的一个实例
- */
+ * */
 inline fun <reified E : MessageEvent>
         Bot.registerCommandOnce(
-        command: Command<E>
+    command: Command<E>
 ) {
     registerCommand(command, Bot::_subscribeOnce)
 }
 
 inline fun <reified E : Event>
         Bot._subscribeAlways(
-        priority: EventPriority,
-        noinline handler: suspend E.(E) -> Unit)
-        : Listener<E> = subscribeAlways(priority = priority)
+    priority: EventPriority,
+    noinline handler: suspend E.(E) -> Unit
+): Listener<E> = eventChannel.subscribeAlways(priority = priority)
 { event ->
     handler(event)
 }
 
 inline fun <reified E : Event>
         Bot._subscribeOnce(
-        priority: EventPriority,
-        noinline handler: suspend E.(E) -> Unit)
-        : Listener<E> = subscribeOnce(priority = priority)
+    priority: EventPriority,
+    noinline handler: suspend E.(E) -> Unit
+)
+        : Listener<E> = eventChannel.subscribeOnce(priority = priority)
 { event ->
     handler(event)
 }

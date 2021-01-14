@@ -1,15 +1,12 @@
 package com.aye10032.functions.funcutil;
 
 import com.dazo66.command.interfaces.ICommand;
-import kotlin.Unit;
-import net.mamoe.mirai.message.FriendMessageEvent;
-import net.mamoe.mirai.message.GroupMessageEvent;
-import net.mamoe.mirai.message.MessageEvent;
-import net.mamoe.mirai.message.TempMessageEvent;
+import net.mamoe.mirai.event.events.FriendMessageEvent;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.GroupTempMessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.*;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * CQMsg的包装对象 每个传入的消息都进行包装后交由模块执行
@@ -35,7 +32,7 @@ public class SimpleMsg implements ICommand {
             fromGroup = ((GroupMessageEvent) event).getGroup().getId();
         } else if (event instanceof FriendMessageEvent) {
             type = MsgType.PRIVATE_MSG;
-        } else if (event instanceof TempMessageEvent) {
+        } else if (event instanceof GroupTempMessageEvent) {
             type = MsgType.PRIVATE_MSG;
         }
         fromClient = event.getSender().getId();
@@ -45,23 +42,14 @@ public class SimpleMsg implements ICommand {
     private String getMsgFromEvent(MessageEvent event){
         MessageChain chain = event.getMessage();
         MessageChainBuilder builder = new MessageChainBuilder();
-        chain.forEachContent((Message m) -> {
+        chain.forEach((Message m) -> {
             if (m instanceof At) {
-                At at = (At) m;
-                try {
-                    Constructor c1 = At.class.getDeclaredConstructor(long.class, String.class);
-                    c1.setAccessible(true);
-                    at = (At) c1.newInstance(((At) m).getTarget(), ((At) m).getDisplay().replace(" ", ""));
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                    e.printStackTrace();
-                }
-                builder.add(at);
-            }else if (m instanceof MessageSource) {
+                builder.add(m);
+            } else if (m instanceof MessageSource) {
                 //ignore
             } else {
                 builder.add(m);
             }
-            return Unit.INSTANCE;
         });
         return builder.build().toString();
     }
