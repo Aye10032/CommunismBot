@@ -7,11 +7,13 @@ import com.firespoon.bot.core.boot
 import com.firespoon.bot.core.registerCommandAlways
 import com.firespoon.bot.core.registerListener
 import net.mamoe.mirai.Bot
-import net.mamoe.mirai.event.Listener
+import net.mamoe.mirai.BotFactory
+import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.events.BotReloginEvent
-import net.mamoe.mirai.event.events.MemberMuteEvent
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
-import net.mamoe.mirai.join
+import net.mamoe.mirai.utils.BotConfiguration
+import org.apache.commons.io.IOUtils
+import java.io.FileReader
 
 class main {
     companion object {
@@ -23,24 +25,22 @@ suspend fun main(args: Array<String>) {
     System.load(System.getProperty("user.dir") + "\\data\\cv\\opencv_java430.dll")
     val qqID = args[0].toLong()
     val password = args[1]
-
-    val bot = Bot(qqID, password) { fileBasedDeviceInfo("device.json") }
+    val conf = BotConfiguration.Default.copy()
+    val fileReader = FileReader("device.json")
+    conf.loadDeviceInfoJson(IOUtils.toString(fileReader))
+    fileReader.close()
+    val bot = BotFactory.newBot(qqID, password, conf)
     val zibenbot = Zibenbot(bot)
     bot.boot()
-    bot.registerListener(Listener.EventPriority.HIGHEST, "ZibenbotStartup", { event: BotReloginEvent ->
+    bot.registerListener(EventPriority.HIGHEST, "ZibenbotStartup", { event: BotReloginEvent ->
         run {
             if (zibenbot.registerFunc.size == 0) {
                 zibenbot.startup()
             }
         }
     }, Bot::_subscribeAlways)
-    bot.registerListener(Listener.EventPriority.HIGHEST, "ZibenbotOnMute", { event: MemberMuteEvent ->
-        run {
-            zibenbot.onMute(event)
-        }
-    }, Bot::_subscribeAlways)
     bot.registerListener(
-        Listener.EventPriority.HIGHEST,
+        EventPriority.HIGHEST,
         "ZibenbotNewFriendRequest",
         { event: NewFriendRequestEvent ->
             run {

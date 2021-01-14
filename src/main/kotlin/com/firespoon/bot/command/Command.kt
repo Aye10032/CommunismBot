@@ -2,7 +2,7 @@ package com.firespoon.bot.command
 
 import com.firespoon.bot.commandbody.CommandBody
 import net.mamoe.mirai.event.EventPriority
-import net.mamoe.mirai.message.MessageEvent
+import net.mamoe.mirai.event.events.MessageEvent
 
 /**
  * E：监听的事件(只能监听MessageEvent)

@@ -1,11 +1,11 @@
 package com.firespoon.bot.command
 
-import net.mamoe.mirai.message.GroupMessageEvent
-import net.mamoe.mirai.message.MessageEvent
+import net.mamoe.mirai.event.events.GroupMessageEvent
+import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.Message
 import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.asMessageChain
+import net.mamoe.mirai.message.data.toMessageChain
 import java.util.*
 
 abstract class DiceCommand {
@@ -69,7 +69,7 @@ abstract class DiceCommand {
                         if (sum > 0) {
                             replyMessage.add(PlainText("您的骰点结果为： $sum"))
                         }
-                        reply(replyMessage.asMessageChain())
+                        reply(replyMessage.toMessageChain())
                     }
                 }
         )
