@@ -38,11 +38,24 @@ public abstract class BaseFunc implements IFunc {
      * @param msg 要回复的内容
      */
     public void replyMsg(SimpleMsg fromMsg, String msg) {
-        if (zibenbot!= null) {
+        if (zibenbot != null) {
             zibenbot.replyMsg(fromMsg, msg);
         } else {
             System.out.println(msg);
         }
+    }
 
+    /**
+     * 根据传入的消息，引用回复消息
+     *
+     * @param fromMsg 从哪来的什么消息
+     * @param msg     要回复的内容
+     */
+    public void replyMsgWithQuote(SimpleMsg fromMsg, String msg) {
+        if (zibenbot != null) {
+            zibenbot.replyMsgWithQuote(fromMsg, msg);
+        } else {
+            System.out.println(msg);
+        }
     }
 }

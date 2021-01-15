@@ -6,9 +6,6 @@ buildscript {
         maven {
             url "https://plugins.gradle.org/m2/"
             }
-        /*maven { 
-            url "https://maven.pkg.github.com/aye10032/biliinfo" 
-        }*/
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
@@ -20,6 +17,7 @@ plugins {
     id 'java'
     id "org.jetbrains.kotlin.jvm" version "1.4.21"
     id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id("net.mamoe.kotlin-jvm-blocking-bridge") version "1.6.0"
 }
 
 ext {
@@ -101,10 +99,6 @@ compileTestKotlin {
 
 test {
     useJUnitPlatform()
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
 }
 
 // 点这个箭头进行打包

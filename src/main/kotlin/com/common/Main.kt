@@ -15,7 +15,7 @@ import net.mamoe.mirai.utils.BotConfiguration
 import org.apache.commons.io.IOUtils
 import java.io.FileReader
 
-class main {
+class Main {
     companion object {
         lateinit var zibenbot: Zibenbot
     }
@@ -64,7 +64,7 @@ suspend fun main(args: Array<String>) {
             replyAll(recivers, "test:" + Arrays.toString(args))
         }
     })*/
-    main.zibenbot = zibenbot
+    Main.zibenbot = zibenbot
     bot.registerCommandAlways(DiceCommand.command)
     bot.registerCommandAlways(zibenbot.command)
     //bot.registerCommandAlways(NMSLCommand.command)
