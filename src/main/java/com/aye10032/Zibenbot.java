@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -46,6 +47,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.aye10032.utils.StringUtil.longMsgSplit;
 
 /**
  * 机器人的主类 连接了mirai 进行实现
@@ -56,7 +59,7 @@ public class Zibenbot {
 
     public static Proxy proxy = null;
     private static MiraiLogger logger;
-    private static Pattern AT_REGEX = Pattern.compile("\\[mirai:at:(\\d+),[\\S|\\s]+]");
+    private static Pattern AT_REGEX = Pattern.compile("\\[mirai:at:(\\d+)]");
     /**
      * 时间任务池
      */
@@ -76,13 +79,20 @@ public class Zibenbot {
     private List<IFunc> registerFunc;
 
     {
-        //todo 临时的解决问题方式
-        msgUploads.put("IMAGE", (conect, source) ->
-                MiraiCode.serializeToMiraiCode(conect.uploadImage(ExternalResource.create(new File(source)))));
+        msgUploads.put("IMAGE", (conect, source) -> {
+            ExternalResource externalResource = ExternalResource.create(new File(source));
+            String s = MiraiCode.serializeToMiraiCode(conect.uploadImage(externalResource));
+            externalResource.close();
+            return s;
+
+        });
         msgUploads.put("VOICE", (conect, source) -> {
             if (conect instanceof Group) {
-                return MiraiCode.serializeToMiraiCode(
-                        new Voice[]{((Group) conect).uploadVoice(ExternalResource.create(new File(source)))});
+                ExternalResource externalResource = ExternalResource.create(new File(source));
+                String s = MiraiCode.serializeToMiraiCode(
+                        Collections.singleton(((Group) conect).uploadVoice(externalResource)));
+                externalResource.close();
+                return s;
             } else {
                 return "[VOICE]";
             }
@@ -119,7 +129,6 @@ public class Zibenbot {
             }
         }
         return LOGGER_FILE;
-
     }
 
     public Zibenbot(Bot bot) {
@@ -354,19 +363,6 @@ public class Zibenbot {
         }
     }
 
-    private static List<String> split(String s, int length) {
-        List<String> ret = new ArrayList<>();
-        int size = s.length() / length + 1;
-        for (int i = 0; i < size; i++) {
-            int i1 = (i + 1) * length;
-            if (i1 > s.length()) {
-                i1 = s.length();
-            }
-            ret.add(s.substring(i * length, i1));
-        }
-        return ret;
-    }
-
     private void muteMember(NormalMember member, int second) {
         member.mute(second);
     }
@@ -399,20 +395,6 @@ public class Zibenbot {
         member.unmute();
     }
 
-/*    public void onMute(MemberMuteEvent event) {
-        //setMuteTimeLocal(event.getMember(), event.getDurationSeconds());
-    }*/
-
-/*    private void setMuteTimeLocal(Member member, int time) {
-        try {
-            Field field = member.getClass().getDeclaredField("_muteTimestamp");
-            field.setAccessible(true);
-            field.set(member, new Long(System.currentTimeMillis() / 1000).intValue() + time);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }*/
-
     /**
      * 获得AT的字符串 如果不存在这个id则返回 "null"
      * 如果艾特的不是群成员 将会变成 "@昵称"
@@ -436,11 +418,11 @@ public class Zibenbot {
         NormalMember member = null;
         try {
             member = _getGroup(groupId).get(memberId);
+            unMute(member);
         } catch (Exception e) {
-            logWarning("禁言失败：" + memberId + e);
+            logWarning("取消禁言失败：" + memberId + e);
             return;
         }
-        unMute(member);
     }
 
     public static void logDebugStatic(String debugMsg) {
@@ -477,6 +459,9 @@ public class Zibenbot {
             } else {
                 logWarning(ExceptionUtils.printStack(e));
             }
+        } catch (Exception e) {
+            logWarning("发送消息失败：");
+            logWarning(ExceptionUtils.printStack(e));
         }
     }
 
@@ -597,6 +582,65 @@ public class Zibenbot {
         toPrivateMsg(clientId, chain, true);
     }
 
+    private static QuoteReply getQuote(SimpleMsg msg) {
+        Class<SimpleMsg> clazz = SimpleMsg.class;
+        try {
+            Field field = clazz.getDeclaredField("source");
+            field.setAccessible(true);
+            return new QuoteReply((MessageSource) field.get(msg));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 回复消息伴随着引用
+     *
+     * @param fromMsg 消息来源
+     * @param msg     要回复的消息
+     */
+    public void replyMsgWithQuote(SimpleMsg fromMsg, String msg) {
+        try {
+            if (fromMsg.isGroupMsg()) {
+                Contact contact = _getGroup(fromMsg.getFromGroup());
+                if (contact != null) {
+                    MessageChain chain = toMessChain(contact, msg);
+                    MessageChainBuilder ret = new MessageChainBuilder();
+                    QuoteReply quote = getQuote(fromMsg);
+                    if (quote != null) {
+                        ret.add(getQuote(fromMsg));
+                    }
+                    ret.addAll(chain);
+                    contact.sendMessage(ret.asMessageChain());
+                }
+            } else if (fromMsg.isPrivateMsg()) {
+                MessageChain chain = toMessChain(getUser(fromMsg.getFromClient()), msg);
+                MessageChainBuilder ret = new MessageChainBuilder();
+                QuoteReply quote = getQuote(fromMsg);
+                if (quote != null) {
+                    ret.add(quote);
+                }
+                ret.addAll(chain);
+                toPrivateMsg(fromMsg.getFromClient(), chain);
+            } else if (fromMsg.isTeamspealMsg()) {
+/*            Zibenbot.logger.log(Level.INFO,
+                    String.format("回复ts频道[%s]消息:%s",
+                            fromMsg.fromGroup,
+                            msg));*/
+                //todo
+            }
+        } catch (Exception e) {
+            logWarning(ExceptionUtils.printStack(e));
+        }
+    }
+
+    /**
+     * 回复消息
+     *
+     * @param fromMsg 消息来源
+     * @param msg     要回复的消息
+     */
     public void replyMsg(SimpleMsg fromMsg, String msg) {
         try {
             if (fromMsg.isGroupMsg()) {
@@ -622,51 +666,6 @@ public class Zibenbot {
 
     public void logVerbose(String verboseMsg) {
         logger.verbose(verboseMsg);
-    }
-
-    private static List<MessageChain> longMsgSplit(MessageChain chain, final int MAX_LENGTH) {
-        List<Message> list = new ArrayList<>();
-
-        for (Message message : chain) {
-            if (message.toString().length() >= MAX_LENGTH) {
-                if (message instanceof PlainText) {
-                    String s = message.toString();
-                    String[] strings = s.split("\n");
-                    for (String s2 : strings) {
-                        if (s2.length() > MAX_LENGTH) {
-                            split(s2, MAX_LENGTH).forEach(s1 -> list.add(new PlainText(s1)));
-                            list.add(new PlainText("\n"));
-                        } else {
-                            list.add(new PlainText(s2));
-                            list.add(new PlainText("\n"));
-                        }
-                    }
-                    list.remove(list.size() - 1);
-                }
-            } else {
-                list.add(message);
-            }
-        }
-        List<MessageChain> ret = new ArrayList<>();
-        int i = 0;
-        MessageChainBuilder builder = new MessageChainBuilder();
-        for (Message message : list) {
-            String s = message.toString();
-            if (i + s.length() >= MAX_LENGTH) {
-                ret.add(builder.build());
-                builder = new MessageChainBuilder();
-                builder.add(message);
-                i = s.length();
-            } else {
-                builder.add(message);
-                i += s.length();
-            }
-        }
-        //把剩余的加进去
-        if (builder.size() != 0) {
-            ret.add(builder.build());
-        }
-        return ret;
     }
 
     public void onFriendEvent(NewFriendRequestEvent event) {
@@ -845,7 +844,10 @@ public class Zibenbot {
     }*/
 
     static class ZibenbotController extends Command<MessageEvent> {
-        public ZibenbotController(@NotNull String name, @NotNull Function2<? super MessageEvent, ? super Continuation<? super CommandBody<MessageEvent>>, ?> builder, @NotNull Function2<? super CommandBody<MessageEvent>, ? super Continuation<? super Unit>, ?> action) {
+        public ZibenbotController(
+                @NotNull String name,
+                @NotNull Function2<? super MessageEvent, ? super Continuation<? super CommandBody<MessageEvent>>, ?> builder,
+                @NotNull Function2<? super CommandBody<MessageEvent>, ? super Continuation<? super Unit>, ?> action) {
             super(EventPriority.NORMAL, name, builder, action);
         }
     }

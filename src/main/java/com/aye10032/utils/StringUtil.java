@@ -1,8 +1,11 @@
 package com.aye10032.utils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
+import net.mamoe.mirai.message.data.Message;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
+import net.mamoe.mirai.message.data.PlainText;
+
+import java.util.*;
 import java.util.function.Function;
 
 public class StringUtil {
@@ -12,8 +15,69 @@ public class StringUtil {
         System.out.println(new StringUtil().split(msg)[2]);
     }*/
 
-    public StringUtil(){
+    /**
+     * 分割MessageChain根据MAX_LENGTH
+     *
+     * @param chain      需要分割的
+     * @param MAX_LENGTH 单条消息最长长度
+     * @return 一个MessageChain列表
+     */
+    public static List<MessageChain> longMsgSplit(MessageChain chain, final int MAX_LENGTH) {
+        List<Message> list = new ArrayList<>();
 
+        for (Message message : chain) {
+            if (message.toString().length() >= MAX_LENGTH) {
+                if (message instanceof PlainText) {
+                    String s = message.toString();
+                    String[] strings = s.split("\n");
+                    for (String s2 : strings) {
+                        if (s2.length() > MAX_LENGTH) {
+                            split(s2, MAX_LENGTH).forEach(s1 -> list.add(new PlainText(s1)));
+                            list.add(new PlainText("\n"));
+                        } else {
+                            list.add(new PlainText(s2));
+                            list.add(new PlainText("\n"));
+                        }
+                    }
+                    list.remove(list.size() - 1);
+                }
+            } else {
+                list.add(message);
+            }
+        }
+        List<MessageChain> ret = new ArrayList<>();
+        int i = 0;
+        MessageChainBuilder builder = new MessageChainBuilder();
+        for (Message message : list) {
+            String s = message.toString();
+            if (i + s.length() >= MAX_LENGTH) {
+                ret.add(builder.build());
+                builder = new MessageChainBuilder();
+                builder.add(message);
+                i = s.length();
+            } else {
+                builder.add(message);
+                i += s.length();
+            }
+        }
+        //把剩余的加进去
+        if (builder.size() != 0) {
+            ret.add(builder.build());
+        }
+        return ret;
+    }
+
+    private static List<String> split(String s, int length) {
+        List<String> ret = new ArrayList<>();
+        int size = s.length() / length + 1;
+        for (int i = 0; i < size; i++) {
+            int i1 = (i + 1) * length;
+            if (i1 > s.length()) {
+                i1 = s.length();
+            }
+            ret.add(s.substring(i * length, i1));
+        }
+        return ret;
     }
 
     /**

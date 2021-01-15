@@ -10,6 +10,7 @@ import net.mamoe.mirai.message.data.*;
 
 /**
  * CQMsg的包装对象 每个传入的消息都进行包装后交由模块执行
+ *
  * @author Dazo66
  */
 public class SimpleMsg implements ICommand {
@@ -18,6 +19,8 @@ public class SimpleMsg implements ICommand {
     private long fromClient = -1;
     private String msg;
     private MsgType type;
+    private MessageEvent event;
+    private MessageSource source;
 
     public SimpleMsg(long fromGroup, long fromClient, String msg, MsgType type) {
         this.fromGroup = fromGroup;
@@ -37,16 +40,17 @@ public class SimpleMsg implements ICommand {
         }
         fromClient = event.getSender().getId();
         msg = getMsgFromEvent(event);
+        this.event = event;
     }
 
-    private String getMsgFromEvent(MessageEvent event){
+    private String getMsgFromEvent(MessageEvent event) {
         MessageChain chain = event.getMessage();
         MessageChainBuilder builder = new MessageChainBuilder();
         chain.forEach((Message m) -> {
             if (m instanceof At) {
                 builder.add(m);
             } else if (m instanceof MessageSource) {
-                //ignore
+                source = (MessageSource) m;
             } else {
                 builder.add(m);
             }

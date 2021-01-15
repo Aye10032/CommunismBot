@@ -104,7 +104,8 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                 last = null;
             }
         }
-        if (msg.startsWith(".方舟素材") || msg.startsWith(".方舟掉落") || msg.startsWith(".fz")) {
+        if (msg.startsWith(".方舟素材") || msg.startsWith(".方舟掉落") || msg.startsWith(".fz")
+                || msg.startsWith("方舟素材") || msg.startsWith("方舟掉落") || msg.startsWith("fz")) {
             last = null;
             String[] strings = msg.split(" ");
             int len = strings.length;
@@ -120,7 +121,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                         if (zibenbot == null) {
                             System.out.println("方舟掉落：初始化异常");
                         } else {
-                            zibenbot.replyMsg(simpleMsg, "方舟掉落：初始化异常");
+                            zibenbot.replyMsgWithQuote(simpleMsg, "方舟掉落：初始化异常");
                         }
                         return;
                     }
@@ -141,22 +142,22 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                         }
                         if (max.getValue() < 0.5f) {
                             if (zibenbot != null) {
-                                zibenbot.replyMsg(simpleMsg, "找不到素材：【" + raw + "】");
-                            } else if (zibenbot == null) {
+                                zibenbot.replyMsgWithQuote(simpleMsg, "找不到素材：【" + raw + "】");
+                            } else {
                                 System.out.println("找不到素材：【" + raw + "】");
                             }
                         } else {
                             last = Pair.of(simpleMsg.getFromClient(), max.getKey());
                             if (zibenbot != null) {
-                                zibenbot.replyMsg(simpleMsg, "你要找的是不是：【" + max.getKey().names[0] + "】");
-                            } else if (zibenbot == null) {
+                                zibenbot.replyMsgWithQuote(simpleMsg, "你要找的是不是：【" + max.getKey().names[0] + "】");
+                            } else {
                                 System.out.println("你要找的是不是：【" + max.getKey().names[0] + "】");
                             }
                         }
                     }
                 }
             } else {
-                zibenbot.replyMsg(simpleMsg, getAllBestMap());
+                zibenbot.replyMsgWithQuote(simpleMsg, getAllBestMap());
 
             }
         }
@@ -183,6 +184,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
             builder.append(material.name.trim()).append(": ").append(map).append("\n");
         });
         builder.append("上次更新：").append(Module.lastUpdate);
+        builder.append("\n").append("数据来源：https://arkonegraph.herokuapp.com");
         return builder.toString();
     }
 
@@ -207,7 +209,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         }
         ret += "上次更新：" + Module.lastUpdate;
         if (zibenbot != null) {
-            zibenbot.replyMsg(msg, ret);
+            zibenbot.replyMsgWithQuote(msg, ret);
         } else {
             System.out.println(ret);
         }

@@ -1,7 +1,6 @@
 package com.aye10032.timetask;
 
 import com.aye10032.Zibenbot;
-import com.aye10032.utils.ConfigLoader;
 import com.aye10032.utils.ImgUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
