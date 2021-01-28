@@ -106,6 +106,9 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         }
         if (msg.startsWith(".方舟素材") || msg.startsWith(".方舟掉落") || msg.startsWith(".fz")
                 || msg.startsWith("方舟素材") || msg.startsWith("方舟掉落") || msg.startsWith("fz")) {
+            if (msg.startsWith("fzgg") || msg.startsWith(".fzgg")) {
+                return;
+            }
             last = null;
             String[] strings = msg.split(" ");
             int len = strings.length;
@@ -173,8 +176,12 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         StringBuilder builder = new StringBuilder();
         Set<DiaoluoType.Material> set = new HashSet<>();
         name_idList.forEach(t -> {
-            if (type.getMaterialFromID(t.id).tier == 3) {
-                getCalls(name_idList, t).forEach(s -> set.add(this.type.getMaterialFromID(s)));
+            try {
+                if (type.getMaterialFromID(t.id).tier == 3) {
+                    getCalls(name_idList, t).forEach(s -> set.add(this.type.getMaterialFromID(s)));
+                }
+            } catch (Exception e) {
+                zibenbot.logWarning("获得最佳列表出错：" + t + e.getMessage());
             }
         });
         set.forEach(material -> {

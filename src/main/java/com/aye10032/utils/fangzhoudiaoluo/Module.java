@@ -1,14 +1,14 @@
 package com.aye10032.utils.fangzhoudiaoluo;
 
-import com.aye10032.functions.FangZhouDiaoluoFunc;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -31,7 +31,7 @@ public class Module {
     }
 
     public static void update(String dir) throws IOException {
-        HttpClient client1 = HttpClientBuilder.create().setDefaultHeaders(Arrays.asList(FangZhouDiaoluoFunc.getHeaders())).build();
+        //HttpClient client1 = HttpClientBuilder.create().setDefaultHeaders(Arrays.asList(FangZhouDiaoluoFunc.getHeaders())).build();
 
         FileReader reader = new FileReader(dir + "/fangzhoudiaoluo/module.txt");
         module = new Module(IOUtils.toString(reader));

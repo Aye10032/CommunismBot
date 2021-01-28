@@ -157,6 +157,7 @@ public abstract class DragraliaTask extends SubscribableBase {
             try {
                 saveHistory(set);
             } catch (Exception e) {
+                e.printStackTrace();
                 zibenbot.logWarning("存储公告历史失败！");
             }
         }
@@ -185,11 +186,13 @@ public abstract class DragraliaTask extends SubscribableBase {
             hisRow = IOUtils.toString(input);
             input.close();
         }
-        if (hisRow.length() < 2) {
-            hisRow = "{}";
+        Set<Article> history;
+        if (hisRow.length() > 2) {
+            history = gson.fromJson(hisRow, new TypeToken<Set<Article>>() {
+            }.getType());
+        } else {
+            history = new HashSet<>();
         }
-        Set<Article> history = gson.fromJson(hisRow, new TypeToken<Set<Article>>() {
-        }.getType());
         history.addAll(articles);
         FileWriter output = new FileWriter(file);
         IOUtils.write(gson.toJson(history), output);

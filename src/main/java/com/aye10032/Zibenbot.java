@@ -6,10 +6,7 @@ import com.aye10032.functions.funcutil.FuncField;
 import com.aye10032.functions.funcutil.FuncLoader;
 import com.aye10032.functions.funcutil.IFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
-import com.aye10032.timetask.DragraliaTask;
-import com.aye10032.timetask.LiveTask;
-import com.aye10032.timetask.SimpleSubscription;
-import com.aye10032.timetask.SleepTask;
+import com.aye10032.timetask.*;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.IMsgUpload;
 import com.aye10032.utils.SeleniumUtils;
@@ -80,11 +77,13 @@ public class Zibenbot {
 
     {
         msgUploads.put("IMAGE", (conect, source) -> {
+            if (source.equals("null")) {
+                return "[IMAGE]";
+            }
             ExternalResource externalResource = ExternalResource.create(new File(source));
             String s = MiraiCode.serializeToMiraiCode(conect.uploadImage(externalResource));
             externalResource.close();
             return s;
-
         });
         msgUploads.put("VOICE", (conect, source) -> {
             if (conect instanceof Group) {
@@ -217,7 +216,6 @@ public class Zibenbot {
             }
         };
 
-
         logInfo("registe time task start");
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -283,6 +281,12 @@ public class Zibenbot {
             @Override
             public String getName() {
                 return NAME;
+            }
+        });
+        subManager.addSubscribable(new ArknightWeiboTask(this) {
+            @Override
+            public String getName() {
+                return "舟游发饼小助手";
             }
         });
         //把订阅管理器注册进线程池
@@ -788,6 +792,9 @@ public class Zibenbot {
     }
 
     public String getMsg(String type, String source) {
+        if (source == null) {
+            source = "null";
+        }
         return String.format("[type=%s, source=\"%s\"]", type, source);
     }
 
@@ -823,7 +830,8 @@ public class Zibenbot {
                 try {
                     func.run(simpleMsg);
                 } catch (Exception e) {
-                    replyMsg(simpleMsg, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
+                    replyMsg(simpleMsg, "运行出错：" + e);
+                    logWarning(ExceptionUtils.printStack(e));
                 }
             }
         }
