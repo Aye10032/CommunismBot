@@ -44,7 +44,8 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
     public void run(List<Reciver> recivers, String[] args) {
         client = client.newBuilder().callTimeout(10, TimeUnit.SECONDS)
                 .proxy(Zibenbot.getProxy()).build();
-        Set<WeiboPost> posts = WeiboUtils.getRecent10Post(client, "https://rssfeed.today/weibo/rss/6279793937");
+        Set<WeiboPost> posts = WeiboUtils.getRecent10Post(client,
+                "https://rssfeed.today/weibo/rss/6279793937");
         if (postHash.isEmpty()) {
             posts.forEach(post -> postHash.add(post.hashCode()));
         } else {
@@ -61,8 +62,6 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
                 }
             }
         }
-
-
     }
 
     public String postToUser(WeiboPost post) {

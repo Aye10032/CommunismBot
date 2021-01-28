@@ -208,7 +208,13 @@ public class Zibenbot {
         };
 
         ITimeAdapter zhouYouPiaoCycle = date -> {
-            if (System.currentTimeMillis() < 1605383940000L) {
+            long start = 1612512000000L;
+            long end = 1613678340000L;
+            if (System.currentTimeMillis() < end) {
+                //第一天要在16点提醒
+                if (System.currentTimeMillis() < start) {
+                    return new Date(start);
+                }
                 return TimeUtils.getNextSpecialWeekTime(date,
                         -1, -1, 10, 0, 0, 0);
             } else {
@@ -235,8 +241,12 @@ public class Zibenbot {
         };
 
         ISubscribable zhouYouPiao = new SimpleSubscription(this, zhouYouPiaoCycle, () -> {
+            //白嫖结束的日期
             Calendar calendar1 = Calendar.getInstance();
-            return String.format("明日方舟今天有白嫖，记得抽卡，白嫖还剩下%d天。", 15 - calendar1.get(Calendar.DAY_OF_MONTH));
+            calendar1.setTime(new Date(1613678340000L));
+            Calendar calendar2 = Calendar.getInstance();
+            return String.format("明日方舟今天有白嫖，记得抽卡，白嫖还剩下%d天。",
+                    calendar1.get(Calendar.DAY_OF_MONTH) - calendar2.get(Calendar.DAY_OF_MONTH));
         }) {
 
             private final static String NAME = "提醒白嫖小助手";
@@ -480,7 +490,12 @@ public class Zibenbot {
 
     private User getUser(long clientId) {
         try {
-            return bot.getFriend(clientId);
+            User user = bot.getStranger(clientId);
+            if (user == null) {
+                return bot.getFriend(clientId);
+            } else {
+                return user;
+            }
         } catch (NoSuchElementException e) {
             return getMember(clientId);
         }
@@ -673,9 +688,7 @@ public class Zibenbot {
     }
 
     public void onFriendEvent(NewFriendRequestEvent event) {
-        if (getUser(event.getFromId()) != null) {
-            event.accept();
-        }
+        event.accept();
     }
 
     private MessageChain toMessChain(Contact send, String msg) {
