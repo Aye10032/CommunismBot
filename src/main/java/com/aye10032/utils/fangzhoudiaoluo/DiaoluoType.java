@@ -162,6 +162,15 @@ public class DiaoluoType {
             }
             return min;
         }
+
+        @Override
+        public String toString() {
+            return "HeChenType{" +
+                    "id='" + id + '\'' +
+                    ", names=" + Arrays.toString(names) +
+                    ", calls=" + Arrays.toString(calls) +
+                    '}';
+        }
     }
 
 }
