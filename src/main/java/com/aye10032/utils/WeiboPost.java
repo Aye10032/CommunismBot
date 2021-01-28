@@ -68,6 +68,6 @@ public class WeiboPost {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, link, description, permaLink, pubDate);
+        return Objects.hash(link);
     }
 }
