@@ -207,9 +207,9 @@ public class Zibenbot {
             return TimeUtils.getMin(date1, date2, date3, date4);
         };
 
+        long start = 1612512000000L;
+        long end = 1613678340000L;
         ITimeAdapter zhouYouPiaoCycle = date -> {
-            long start = 1612512000000L;
-            long end = 1613678340000L;
             if (System.currentTimeMillis() < end) {
                 //第一天要在16点提醒
                 if (System.currentTimeMillis() < start) {
@@ -240,14 +240,9 @@ public class Zibenbot {
             }
         };
 
-        ISubscribable zhouYouPiao = new SimpleSubscription(this, zhouYouPiaoCycle, () -> {
-            //白嫖结束的日期
-            Calendar calendar1 = Calendar.getInstance();
-            calendar1.setTime(new Date(1613678340000L));
-            Calendar calendar2 = Calendar.getInstance();
-            return String.format("明日方舟今天有白嫖，记得抽卡，白嫖还剩下%d天。",
-                    calendar1.get(Calendar.DAY_OF_MONTH) - calendar2.get(Calendar.DAY_OF_MONTH));
-        }) {
+        ISubscribable zhouYouPiao = new SimpleSubscription(this, zhouYouPiaoCycle,
+                () -> String.format("明日方舟今天有白嫖，记得抽卡，白嫖还剩下%d天。",
+                        (end - 21600000) / TimeUtils.DAY - (System.currentTimeMillis() - 21600000) / TimeUtils.DAY)) {
 
             private final static String NAME = "提醒白嫖小助手";
 

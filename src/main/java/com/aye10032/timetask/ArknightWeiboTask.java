@@ -37,6 +37,14 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
     public Date getNextTime(Date date) {
         Date ret = new Date();
         ret.setTime(date.getTime() + TimeUtils.MIN * 5L);
+        Calendar c = Calendar.getInstance();
+        c.setTime(ret);
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        if (hour < 8 || hour > 22) {
+            c.set(Calendar.HOUR_OF_DAY, 8);
+            c.set(Calendar.MINUTE, 5);
+            return c.getTime();
+        }
         return ret;
     }
 
