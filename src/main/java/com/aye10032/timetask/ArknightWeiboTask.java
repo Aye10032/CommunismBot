@@ -2,11 +2,13 @@ package com.aye10032.timetask;
 
 import com.aye10032.Zibenbot;
 import com.aye10032.utils.HttpUtils;
-import com.aye10032.utils.WeiboPost;
-import com.aye10032.utils.WeiboUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.utils.timeutil.TimeUtils;
+import com.aye10032.utils.weibo.WeiboListItem;
+import com.aye10032.utils.weibo.WeiboPost;
+import com.aye10032.utils.weibo.WeiboSet;
+import com.aye10032.utils.weibo.WeiboUtils;
 import okhttp3.OkHttpClient;
 
 import java.io.File;
@@ -52,19 +54,23 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
     public void run(List<Reciver> recivers, String[] args) {
         client = client.newBuilder().callTimeout(10, TimeUnit.SECONDS)
                 .proxy(Zibenbot.getProxy()).build();
-        Set<WeiboPost> posts = WeiboUtils.getRecentPostDirect(client, 6279793937L);
+        WeiboSet posts = WeiboUtils.getWeiboSet(client, 6279793937L);
         if (postHash.isEmpty()) {
             posts.forEach(post -> postHash.add(post.hashCode()));
         } else {
-            Iterator<WeiboPost> postIterator = posts.iterator();
+            Iterator<WeiboListItem> postIterator = posts.iterator();
             while (postIterator.hasNext()) {
-                WeiboPost post = postIterator.next();
+                WeiboListItem post = postIterator.next();
                 if (postHash.contains(post.hashCode())) {
                     postIterator.remove();
                 } else {
                     postHash.add(post.hashCode());
-                    if (!post.isPermaLink()) {
-                        replyAll(recivers, postToUser(post));
+                    if (!post.isPerma()) {
+                        try {
+                            replyAll(recivers, postToUser(WeiboUtils.getWeiboWithPostId(client, post.getId())));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -80,6 +86,9 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
         StringBuilder builder = new StringBuilder(des);
         builder.append("\n");
         imgFiles.forEach(file -> builder.append(getBot().getImg(file)));
+        if (post.isPermaLink()) {
+            builder.append("\n").append(postToUser(post.getRetweet()));
+        }
         return builder.toString();
     }
 
