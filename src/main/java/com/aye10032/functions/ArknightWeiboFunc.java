@@ -4,14 +4,14 @@ import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.timetask.ArknightWeiboTask;
-import com.aye10032.utils.WeiboPost;
-import com.aye10032.utils.WeiboUtils;
+import com.aye10032.utils.weibo.WeiboListItem;
+import com.aye10032.utils.weibo.WeiboSet;
+import com.aye10032.utils.weibo.WeiboUtils;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,7 +21,7 @@ public class ArknightWeiboFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
     private long last = 0;
-    private LinkedHashSet<WeiboPost> posts = null;
+    private WeiboSet posts = null;
     private final ArknightWeiboTask weiboTask = new ArknightWeiboTask(zibenbot) {
         @Override
         public String getName() {
@@ -55,9 +55,13 @@ public class ArknightWeiboFunc extends BaseFunc {
                         builder.append("数据读取出错， 可能是网络问题");
                     } else {
                         builder.append("最近的饼如下：").append("\n");
-                        WeiboPost[] arrayPosts = posts.toArray(new WeiboPost[0]);
+                        WeiboListItem[] arrayPosts = posts.toArray(new WeiboListItem[0]);
                         for (int i = 0; i < arrayPosts.length; i++) {
-                            builder.append("\t").append("[").append(i + 1).append("]：").append(arrayPosts[i].getTitle()).append("\n");
+                            builder.append("\t").append("[").append(i + 1).append("]：");
+                            if (arrayPosts[i].getIsTop()) {
+                                builder.append("[置顶] ");
+                            }
+                            builder.append(arrayPosts[i].getTitle()).append("\n");
                         }
                         builder.append("输入[方舟公告]/[fzgg] + 序号进一步查看。");
                         replyMsg(s, builder.toString());
@@ -80,8 +84,12 @@ public class ArknightWeiboFunc extends BaseFunc {
                 })
                 .run(s -> {
                     int i = Integer.parseInt(s.getCommandPieces()[1]) - 1;
-                    WeiboPost[] arrayPosts = posts.toArray(new WeiboPost[0]);
-                    replyMsg(s, weiboTask.postToUser(arrayPosts[i]));
+                    WeiboListItem[] arrayPosts = posts.toArray(new WeiboListItem[0]);
+                    try {
+                        replyMsg(s, weiboTask.postToUser(WeiboUtils.getWeiboWithPostId(weiboTask.client, arrayPosts[i].getId())));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 })
                 .build();
     }
@@ -89,7 +97,7 @@ public class ArknightWeiboFunc extends BaseFunc {
     private void setPosts() {
         weiboTask.client = weiboTask.client.newBuilder().callTimeout(10, TimeUnit.SECONDS)
                 .proxy(Zibenbot.getProxy()).build();
-        posts = WeiboUtils.getRecentPostDirect(weiboTask.client, 6279793937L);
+        posts = WeiboUtils.getWeiboSet(weiboTask.client, 6279793937L);
         last = System.currentTimeMillis();
     }
 

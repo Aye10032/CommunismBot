@@ -1,4 +1,4 @@
-package com.aye10032.utils;
+package com.aye10032.utils.weibo;
 
 import java.util.Date;
 import java.util.Objects;

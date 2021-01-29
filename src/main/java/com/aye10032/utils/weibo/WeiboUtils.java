@@ -1,5 +1,6 @@
-package com.aye10032.utils;
+package com.aye10032.utils.weibo;
 
+import com.aye10032.utils.HttpUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -16,7 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * @author Dazo66
@@ -44,7 +48,7 @@ public class WeiboUtils {
         if (containerid == null) {
             return retSet;
         }
-        Set<String> postIds = null;
+        WeiboSet postIds = null;
         try {
             postIds = getWeiboIdList(client, userId, containerid);
         } catch (Exception e) {
@@ -53,9 +57,15 @@ public class WeiboUtils {
         if (postIds == null) {
             return retSet;
         }
-        postIds.forEach(id -> {
+        postIds.forEach(listItem -> {
             try {
-                retSet.add(getWeiboWithPostId(client, id));
+                WeiboPost post = getWeiboWithPostId(client, listItem.getId());
+                if (listItem.getIsTop()) {
+                    post.setTop(true);
+                } else {
+                    post.setTop(false);
+                }
+                retSet.add(post);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -64,7 +74,26 @@ public class WeiboUtils {
 
     }
 
-    private static WeiboPost getWeiboWithPostId(OkHttpClient client, String postId) throws IOException, ParseException {
+    public static WeiboSet getWeiboSet(OkHttpClient client, Long userId) {
+        WeiboSet retSet = new WeiboSet();
+        String containerid = null;
+        try {
+            containerid = getContainerid(client, userId, "weibo");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (containerid == null) {
+            return retSet;
+        }
+        try {
+            retSet = getWeiboIdList(client, userId, containerid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return retSet;
+    }
+
+    public static WeiboPost getWeiboWithPostId(OkHttpClient client, String postId) throws IOException, ParseException {
         String weiboListUrl = String.format("https://m.weibo.cn/statuses/show?id=%s", postId);
         Request weiboListRequest = new Request.Builder()
                 .url(weiboListUrl)
@@ -84,8 +113,6 @@ public class WeiboUtils {
         //created_at
         post.setPubDate(format2.parse(object.get("created_at").getAsString()));
         post.setId(object.get("id").getAsString());
-        JsonElement element = object.get("isTop");
-        post.setTop(element != null && element.getAsInt() == 1);
         StringBuilder builder = new StringBuilder(object.get("text").getAsString());
         if (object.get("pic_num").getAsInt() > 0) {
             JsonArray pics = object.getAsJsonArray("pics");
@@ -110,6 +137,8 @@ public class WeiboUtils {
     }
 
     private static String cleanString1(String s) {
+        //<a href='/n/霍里奇肉性恋'>@霍里奇肉性恋</a>
+        s = s.replaceAll("<a href='/n/([^\\s/ @]+)'>@\\1</a>", "@$1");
         s = s.replaceAll("<a +href=\"(\\S+)\" data-hide=\"\"><span class=\"surl-text\">#(\\S+)#</span></a>", "#$2#");
         s = s.replaceAll("<br />", "\n");
         s = s.replaceAll("<br><br>", "\n");
@@ -124,8 +153,8 @@ public class WeiboUtils {
 
     }
 
-    private static Set<String> getWeiboIdList(OkHttpClient client, Long userId, String containerid) throws IOException {
-        LinkedHashSet<String> retSet = new LinkedHashSet<>();
+    private static WeiboSet getWeiboIdList(OkHttpClient client, Long userId, String containerid) throws IOException {
+        WeiboSet retSet = new WeiboSet();
         String weiboListUrl = String.format("https://m.weibo.cn/api/container/getIndex?type=uid&value=%d&containerid=%s",
                 userId,
                 containerid);
@@ -139,8 +168,35 @@ public class WeiboUtils {
                 .build();
         JsonObject object = parser.parse(client.newCall(weiboListRequest).execute().body().string()).getAsJsonObject();
         JsonArray array = object.getAsJsonObject("data").getAsJsonArray("cards");
-        array.forEach(ele -> retSet.add(ele.getAsJsonObject().getAsJsonObject("mblog").get("id").getAsString()));
+        array.forEach(ele -> {
+            JsonObject o = ele.getAsJsonObject().getAsJsonObject("mblog");
+            String id = o.get("id").getAsString();
+            boolean isTop = false;
+            if (o.get("isTop") != null && 1 == o.get("isTop").getAsInt()) {
+                isTop = true;
+            }
+            String title;
+            boolean isPerma;
+            if (o.get("retweeted_status") != null) {
+                title = "转发微博：" + getTitle(o.getAsJsonObject("retweeted_status").get("text").getAsString());
+                isPerma = true;
+            } else {
+                title = getTitle(o.get("text").getAsString());
+                isPerma = false;
+            }
+            retSet.add(new WeiboListItem(id, title, isTop, isPerma));
+        });
         return retSet;
+    }
+
+    private static String getTitle(String text) {
+        text = cleanString1(text);
+        text = text.replaceAll("\n", "");
+        if (text.length() > 20) {
+            return text.substring(0, 20) + "...";
+        } else {
+            return text;
+        }
     }
 
     private static String getContainerid(OkHttpClient client,
