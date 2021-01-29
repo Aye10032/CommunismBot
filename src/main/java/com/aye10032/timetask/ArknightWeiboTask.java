@@ -36,7 +36,7 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
     @Override
     public Date getNextTime(Date date) {
         Date ret = new Date();
-        ret.setTime(date.getTime() + TimeUtils.MIN * 5L);
+        ret.setTime(date.getTime() + TimeUtils.MIN * 3L);
         Calendar c = Calendar.getInstance();
         c.setTime(ret);
         int hour = c.get(Calendar.HOUR_OF_DAY);
@@ -52,8 +52,7 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
     public void run(List<Reciver> recivers, String[] args) {
         client = client.newBuilder().callTimeout(10, TimeUnit.SECONDS)
                 .proxy(Zibenbot.getProxy()).build();
-        Set<WeiboPost> posts = WeiboUtils.getRecent10Post(client,
-                "https://rssfeed.today/weibo/rss/6279793937");
+        Set<WeiboPost> posts = WeiboUtils.getRecentPostDirect(client, 6279793937L);
         if (postHash.isEmpty()) {
             posts.forEach(post -> postHash.add(post.hashCode()));
         } else {

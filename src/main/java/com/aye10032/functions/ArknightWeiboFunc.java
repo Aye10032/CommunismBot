@@ -14,6 +14,9 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Dazo66
+ */
 public class ArknightWeiboFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
@@ -86,8 +89,7 @@ public class ArknightWeiboFunc extends BaseFunc {
     private void setPosts() {
         weiboTask.client = weiboTask.client.newBuilder().callTimeout(10, TimeUnit.SECONDS)
                 .proxy(Zibenbot.getProxy()).build();
-        posts = WeiboUtils.getRecent10Post(weiboTask.client,
-                "https://rssfeed.today/weibo/rss/6279793937");
+        posts = WeiboUtils.getRecentPostDirect(weiboTask.client, 6279793937L);
         last = System.currentTimeMillis();
     }
 
