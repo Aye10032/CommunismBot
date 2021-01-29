@@ -8,11 +8,38 @@ import java.util.Objects;
  */
 public class WeiboPost {
 
+    private String id;
+    private boolean isTop;
     private String title;
     private String link;
     private String description;
     private String permaLink;
     private Date pubDate;
+    private WeiboPost retweet;
+
+    public WeiboPost getRetweet() {
+        return retweet;
+    }
+
+    public void setRetweet(WeiboPost retweet) {
+        this.retweet = retweet;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public boolean isTop() {
+        return isTop;
+    }
+
+    public void setTop(boolean top) {
+        isTop = top;
+    }
 
     public String getTitle() {
         return title;
