@@ -34,7 +34,7 @@ public class AsynchronousTaskPool extends TimedTaskBase {
      */
     public AsynTaskStatus execute(Runnable callback, Runnable... runnables) {
         List<Future<?>> list = Collections.synchronizedList(new ArrayList<>());
-        CountDownLatch latch = new CountDownLatch(runnables.length);
+        CountDownLatch latch = new CountDownLatch(runnables.length + 1);
         AsynTaskStatus status = new AsynTaskStatus(latch);
         statusMap.put(callback, status);
         for (Runnable run : runnables) {
@@ -80,6 +80,8 @@ public class AsynchronousTaskPool extends TimedTaskBase {
                     Zibenbot.logWarningStatic("异步线程回调执行异常\n" + ExceptionUtils.printStack(e));
                 } finally {
                     statusMap.get(r).setStatus(AsynTaskStatus.CALL_BACK_RUNNED);
+                    //回调完成 实现呼叫
+                    statusMap.get(r).countDown();
                     statusMap.remove(r);
                 }
             });

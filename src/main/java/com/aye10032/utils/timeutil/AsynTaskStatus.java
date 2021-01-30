@@ -34,4 +34,12 @@ public class AsynTaskStatus {
         latch.await();
     }
 
+    protected long getCount() {
+        return latch.getCount();
+    }
+
+    protected void countDown() {
+        latch.countDown();
+    }
+
 }

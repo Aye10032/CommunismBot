@@ -9,6 +9,7 @@ import com.aye10032.utils.weibo.WeiboSetItem;
 import com.aye10032.utils.weibo.WeiboUtils;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
+import okhttp3.OkHttpClient;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +21,6 @@ public class ArknightWeiboFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
     private WeiboSet posts = null;
-    private final ArknightWeiboTask weiboTask = zibenbot.arknightWeiboTask;
 
     public ArknightWeiboFunc(Zibenbot zibenbot) {
         super(zibenbot);
@@ -72,7 +72,7 @@ public class ArknightWeiboFunc extends BaseFunc {
                     int i = Integer.parseInt(s.getCommandPieces()[1]) - 1;
                     WeiboSetItem[] arrayPosts = posts.toArray(new WeiboSetItem[0]);
                     try {
-                        replyMsg(s, weiboTask.postToUser(WeiboUtils.getWeiboWithPostItem(weiboTask.client, arrayPosts[i])));
+                        replyMsg(s, getTask().postToUser(WeiboUtils.getWeiboWithPostItem(getClient(), arrayPosts[i]), s.isGroupMsg()));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -80,10 +80,17 @@ public class ArknightWeiboFunc extends BaseFunc {
                 .build();
     }
 
-    private void setPosts() {
-        weiboTask.client = weiboTask.client.newBuilder().callTimeout(10, TimeUnit.SECONDS)
+    private ArknightWeiboTask getTask() {
+        return zibenbot.arknightWeiboTask;
+    }
+
+    private OkHttpClient getClient() {
+        return zibenbot.arknightWeiboTask.client.newBuilder().callTimeout(10, TimeUnit.SECONDS)
                 .proxy(Zibenbot.getProxy()).build();
-        posts = WeiboUtils.getWeiboSet(weiboTask.client, 6279793937L);
+    }
+
+    private void setPosts() {
+        posts = WeiboUtils.getWeiboSet(getClient(), 6279793937L);
     }
 
     @Override
