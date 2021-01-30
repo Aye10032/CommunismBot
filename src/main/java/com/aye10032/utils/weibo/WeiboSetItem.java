@@ -6,14 +6,14 @@ import java.util.Objects;
  * @author Dazo66
  */
 
-public class WeiboListItem {
+public class WeiboSetItem {
 
     private String id;
     private String title;
-    private boolean isTop;
+    private boolean isTop = false;
     private boolean isPerma;
 
-    public WeiboListItem() {
+    public WeiboSetItem() {
     }
 
     public boolean isPerma() {
@@ -24,7 +24,7 @@ public class WeiboListItem {
         isPerma = perma;
     }
 
-    public WeiboListItem(String id, String title, boolean isTop, boolean isPerma) {
+    public WeiboSetItem(String id, String title, boolean isTop, boolean isPerma) {
         this.id = id;
         this.title = title;
         this.isTop = isTop;
@@ -59,7 +59,7 @@ public class WeiboListItem {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        WeiboListItem that = (WeiboListItem) o;
+        WeiboSetItem that = (WeiboSetItem) o;
         return Objects.equals(id, that.id);
     }
 

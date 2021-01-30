@@ -5,5 +5,5 @@ import java.util.LinkedHashSet;
 /**
  * @author Dazo66
  */
-public class WeiboSet extends LinkedHashSet<WeiboListItem> {
+public class WeiboSet extends LinkedHashSet<WeiboSetItem> {
 }

@@ -59,12 +59,7 @@ public class WeiboUtils {
         }
         postIds.forEach(listItem -> {
             try {
-                WeiboPost post = getWeiboWithPostId(client, listItem.getId());
-                if (listItem.getIsTop()) {
-                    post.setTop(true);
-                } else {
-                    post.setTop(false);
-                }
+                WeiboPost post = getWeiboWithPostItem(client, listItem);
                 retSet.add(post);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -93,18 +88,20 @@ public class WeiboUtils {
         return retSet;
     }
 
-    public static WeiboPost getWeiboWithPostId(OkHttpClient client, String postId) throws IOException, ParseException {
-        String weiboListUrl = String.format("https://m.weibo.cn/statuses/show?id=%s", postId);
+    public static WeiboPost getWeiboWithPostItem(OkHttpClient client, WeiboSetItem item) throws IOException, ParseException {
+        String weiboListUrl = String.format("https://m.weibo.cn/statuses/show?id=%s", item.getId());
         Request weiboListRequest = new Request.Builder()
                 .url(weiboListUrl)
                 .method("GET", null)
                 .header("MWeibo-Pwa", "1")
-                .header("Referer", String.format("https://m.weibo.cn/detail/%s", postId))
+                .header("Referer", String.format("https://m.weibo.cn/detail/%s", item.getId()))
                 .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
                 .header("X-Requested-With", "XMLHttpRequest")
                 .build();
         JsonObject object = parser.parse(client.newCall(weiboListRequest).execute().body().string()).getAsJsonObject().getAsJsonObject("data");
-        return buildPostFromJsonObject(object);
+        WeiboPost post = buildPostFromJsonObject(object);
+        post.setTop(item.getIsTop());
+        return post;
     }
 
     private static WeiboPost buildPostFromJsonObject(JsonObject object) throws ParseException {
@@ -184,7 +181,7 @@ public class WeiboUtils {
                 title = getTitle(o.get("text").getAsString());
                 isPerma = false;
             }
-            retSet.add(new WeiboListItem(id, title, isTop, isPerma));
+            retSet.add(new WeiboSetItem(id, title, isTop, isPerma));
         });
         return retSet;
     }
