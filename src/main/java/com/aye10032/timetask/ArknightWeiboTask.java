@@ -45,6 +45,9 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
         if (hour < 8 || hour > 22) {
             c.set(Calendar.HOUR_OF_DAY, 8);
             c.set(Calendar.MINUTE, 5);
+            if (hour >= 8) {
+                c.add(Calendar.DAY_OF_YEAR, 1);
+            }
             return c.getTime();
         }
         return ret;
