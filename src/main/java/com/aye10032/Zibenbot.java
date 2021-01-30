@@ -68,6 +68,7 @@ public class Zibenbot {
     public BotConfigFunc config;
     @FuncField
     public FuncEnableFunc enableCollFunc;
+    public ArknightWeiboTask arknightWeiboTask;
     public List<Long> enableGroup = new ArrayList<>();
     public String appDirectory;
     final Map<String, IMsgUpload> msgUploads = new HashMap<>();
@@ -288,7 +289,7 @@ public class Zibenbot {
                 return NAME;
             }
         });
-        subManager.addSubscribable(new ArknightWeiboTask(this) {
+        subManager.addSubscribable(arknightWeiboTask = new ArknightWeiboTask(this) {
             @Override
             public String getName() {
                 return "舟游发饼小助手";

@@ -5,9 +5,9 @@ import com.aye10032.utils.HttpUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.utils.timeutil.TimeUtils;
-import com.aye10032.utils.weibo.WeiboListItem;
 import com.aye10032.utils.weibo.WeiboPost;
 import com.aye10032.utils.weibo.WeiboSet;
+import com.aye10032.utils.weibo.WeiboSetItem;
 import com.aye10032.utils.weibo.WeiboUtils;
 import okhttp3.OkHttpClient;
 
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public abstract class ArknightWeiboTask extends SubscribableBase {
 
     public OkHttpClient client = new OkHttpClient();
-    private Set<Integer> postHash = new HashSet<>();
+    private Set<String> postIds = new HashSet<>();
     private static final Pattern pattern = Pattern.compile("\\[img:(([\\w.:/]+))]");
     private static Pattern img_name_pattern = Pattern.compile("\\w+.(png|jpg|gif)");
 
@@ -58,19 +58,19 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
         client = client.newBuilder().callTimeout(10, TimeUnit.SECONDS)
                 .proxy(Zibenbot.getProxy()).build();
         WeiboSet posts = WeiboUtils.getWeiboSet(client, 6279793937L);
-        if (postHash.isEmpty()) {
-            posts.forEach(post -> postHash.add(post.hashCode()));
+        if (postIds.isEmpty()) {
+            posts.forEach(post -> postIds.add(post.getId()));
         } else {
-            Iterator<WeiboListItem> postIterator = posts.iterator();
+            Iterator<WeiboSetItem> postIterator = posts.iterator();
             while (postIterator.hasNext()) {
-                WeiboListItem post = postIterator.next();
-                if (postHash.contains(post.hashCode())) {
+                WeiboSetItem post = postIterator.next();
+                if (postIds.contains(post.getId())) {
                     postIterator.remove();
                 } else {
-                    postHash.add(post.hashCode());
+                    postIds.add(post.getId());
                     if (!post.isPerma()) {
                         try {
-                            replyAll(recivers, postToUser(WeiboUtils.getWeiboWithPostId(client, post.getId())));
+                            replyAll(recivers, postToUser(WeiboUtils.getWeiboWithPostItem(client, post)));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
