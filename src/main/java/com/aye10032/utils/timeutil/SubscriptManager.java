@@ -6,6 +6,7 @@ import com.aye10032.functions.funcutil.MsgType;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.ConfigLoader;
 import com.aye10032.utils.ExceptionUtils;
+import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.gson.reflect.TypeToken;
 import javafx.util.Pair;
 import org.apache.commons.lang3.ArrayUtils;
@@ -13,6 +14,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 
 /**
@@ -47,24 +52,38 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
      */
     private List<ISubscribable> next = Collections.synchronizedList(new ArrayList<>());
 
-    private List<ISubscribable> getCurrentTiggerSub(){
+    private List<ISubscribable> getCurrentTiggerSub() {
         return getCurrentTiggerSub(getTiggerTime());
     }
 
+    //限时运行
+    SimpleTimeLimiter timeLimiter = SimpleTimeLimiter.create(Executors.newSingleThreadExecutor());
+
     private List<ISubscribable> getCurrentTiggerSub(Date current) {
+
         List<ISubscribable> ret = Collections.synchronizedList(new ArrayList<>());
         Date begin = getBegin();
         for (ISubscribable s : allSubscription.values()) {
-            Date date2 = (Date) begin.clone();
-            while (true) {
-                if (date2.getTime() < current.getTime()) {
-                    date2 = s.getNextTime(date2);
-                } else if (date2.getTime() == current.getTime() && date2.getTime() != begin.getTime()) {
-                    ret.add(s);
-                    break;
-                } else {
-                    break;
-                }
+            final Date[] date2 = {(Date) begin.clone()};
+            try {
+                timeLimiter.callWithTimeout(() -> {
+                    while (true) {
+                        if (date2[0].getTime() < current.getTime()) {
+                            date2[0] = s.getNextTime(date2[0]);
+                        } else if (date2[0].getTime() == current.getTime() && date2[0].getTime() != begin.getTime()) {
+                            ret.add(s);
+                            break;
+                        } else {
+                            break;
+                        }
+                    }
+                    return true;
+                }, 10, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                zibenbot.logWarning("存在死循环的订阅器：" + s.toString());
+                e.printStackTrace();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
         }
         return ret;
