@@ -1,5 +1,6 @@
 package com.aye10032.utils.video;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.utils.ImgUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -13,10 +14,7 @@ import okhttp3.Response;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,8 +75,7 @@ public class BiliInfo {
         String body = null;
         try {
 
-            OkHttpClient client = new OkHttpClient().newBuilder()
-                    .build();
+            OkHttpClient client = Zibenbot.getOkHttpClient();
             Request request = new Request.Builder()
                     .url(apiURL)
                     .method("GET", null)

@@ -1,5 +1,6 @@
 package com.aye10032.utils.video;
 
+import com.aye10032.Zibenbot;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -45,8 +46,7 @@ public class LiveInfo {
 
         String body = null;
         try {
-            OkHttpClient client = new OkHttpClient().newBuilder()
-                    .build();
+            OkHttpClient client = Zibenbot.getOkHttpClient();
             Request request = new Request.Builder()
                     .url(url)
                     .method("GET", null)
@@ -130,8 +130,7 @@ public class LiveInfo {
         String body = "";
         String name = "";
         try {
-            OkHttpClient client = new OkHttpClient().newBuilder()
-                    .build();
+            OkHttpClient client = Zibenbot.getOkHttpClient();
             Request request = new Request.Builder()
                     .url(url)
                     .method("GET", null)

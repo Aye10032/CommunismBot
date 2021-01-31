@@ -20,11 +20,9 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.openqa.selenium.WebDriver;
 
 import java.io.*;
-import java.net.Proxy;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -39,17 +37,11 @@ public abstract class DragraliaTask extends SubscribableBase {
     public ConfigLoader<Config> loader;
     Zibenbot zibenbot;
     Gson gson = new Gson();
-    OkHttpClient client =
-            new OkHttpClient.Builder().callTimeout(30, TimeUnit.SECONDS).proxy(Zibenbot.proxy).build();
+    OkHttpClient client = Zibenbot.getOkHttpClient();
     private JsonParser jsonParser = new JsonParser();
 
     public DragraliaTask(Zibenbot zibenbot) {
         super(zibenbot);
-        Proxy proxy;
-        if ((proxy = Zibenbot.getProxy()) != null) {
-            client =
-                    new OkHttpClient.Builder().callTimeout(30, TimeUnit.SECONDS).proxy(proxy).build();
-        }
         this.zibenbot = zibenbot;
         loader = new ConfigLoader<>(zibenbot.appDirectory + "/dragralia_4.json", Config.class);
         config = loader.load();

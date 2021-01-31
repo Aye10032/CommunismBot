@@ -107,7 +107,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
         Date temp;
         for (int i = 1; i < count; i++) {
             map.put(temp = getNextTiggerTimeFrom((Date) date.clone())
-                    , getNextTiggerSubFrom((Date) date.clone()));
+                    , getCurrentTiggerSub((Date) temp.clone()));
             date = (Date) temp.clone();
         }
         return map;
@@ -333,22 +333,6 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
         Date date = null;
         for (ISubscribable s : allSubscription.values()) {
             Date temp = TimeUtils.getNextTimeFromNowInclude(getBegin(), s);
-            if (date == null || temp.before(date)) {
-                date = temp;
-                ret.clear();
-                ret.add(s);
-            } else if (date.equals(temp)) {
-                ret.add(s);
-            }
-        }
-        return ret;
-    }
-
-    private List<ISubscribable> getNextTiggerSubFrom(Date from) {
-        List<ISubscribable> ret = Collections.synchronizedList(new ArrayList<>());
-        Date date = null;
-        for (ISubscribable s : allSubscription.values()) {
-            Date temp = s.getNextTime((Date) from.clone());
             if (date == null || temp.before(date)) {
                 date = temp;
                 ret.clear();

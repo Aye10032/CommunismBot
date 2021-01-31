@@ -20,6 +20,10 @@ plugins {
     id("net.mamoe.kotlin-jvm-blocking-bridge") version "1.6.0"
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
 ext {
     miraiVersion = '2.1.0'
     ktVersion = '1.4.21'
