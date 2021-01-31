@@ -15,7 +15,6 @@ import okhttp3.OkHttpClient;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +23,6 @@ import java.util.regex.Pattern;
  */
 public abstract class ArknightWeiboTask extends SubscribableBase {
 
-    public OkHttpClient client = new OkHttpClient();
     private Set<String> postIds = new HashSet<>();
     private static final Pattern pattern = Pattern.compile("\\[img:(([\\w.:/]+))]");
     private static Pattern img_name_pattern = Pattern.compile("\\w+.(png|jpg|gif)");
@@ -57,8 +55,7 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
 
     @Override
     public void run(List<Reciver> recivers, String[] args) {
-        client = client.newBuilder().callTimeout(10, TimeUnit.SECONDS)
-                .proxy(Zibenbot.getProxy()).build();
+        OkHttpClient client = Zibenbot.getOkHttpClient();
         WeiboSet posts = WeiboUtils.getWeiboSet(client, 6279793937L);
         if (postIds.isEmpty()) {
             posts.forEach(post -> postIds.add(post.getId()));
@@ -138,7 +135,7 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
             if (!tmpFile.exists()) {
                 tmpFile.getParentFile().mkdirs();
                 tmpFile.createNewFile();
-                HttpUtils.download(url, tmpFile.getAbsolutePath(), client);
+                HttpUtils.download(url, tmpFile.getAbsolutePath(), Zibenbot.getOkHttpClient());
                 tmpFile.renameTo(new File(fileName));
             }
         } catch (Exception e) {

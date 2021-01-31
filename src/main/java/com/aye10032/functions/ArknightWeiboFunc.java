@@ -9,10 +9,8 @@ import com.aye10032.utils.weibo.WeiboSetItem;
 import com.aye10032.utils.weibo.WeiboUtils;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
-import okhttp3.OkHttpClient;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Dazo66
@@ -72,11 +70,12 @@ public class ArknightWeiboFunc extends BaseFunc {
                     int i = Integer.parseInt(s.getCommandPieces()[1]) - 1;
                     WeiboSetItem[] arrayPosts = posts.toArray(new WeiboSetItem[0]);
                     try {
-                        replyMsg(s, getTask().postToUser(WeiboUtils.getWeiboWithPostItem(getClient(), arrayPosts[i]), s.isGroupMsg()));
+                        replyMsg(s, getTask().postToUser(WeiboUtils.getWeiboWithPostItem(Zibenbot.getOkHttpClient(), arrayPosts[i]), s.isGroupMsg()));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 })
+                .ifNot(s -> replyMsg(s, "输入的数字有误，或者是不在[1-9]的范围内。"))
                 .build();
     }
 
@@ -84,13 +83,8 @@ public class ArknightWeiboFunc extends BaseFunc {
         return zibenbot.arknightWeiboTask;
     }
 
-    private OkHttpClient getClient() {
-        return zibenbot.arknightWeiboTask.client.newBuilder().callTimeout(10, TimeUnit.SECONDS)
-                .proxy(Zibenbot.getProxy()).build();
-    }
-
     private void setPosts() {
-        posts = WeiboUtils.getWeiboSet(getClient(), 6279793937L);
+        posts = WeiboUtils.getWeiboSet(Zibenbot.getOkHttpClient(), 6279793937L);
     }
 
     @Override

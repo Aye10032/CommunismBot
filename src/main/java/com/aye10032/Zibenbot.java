@@ -28,6 +28,7 @@ import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.ExternalResource;
 import net.mamoe.mirai.utils.MiraiLogger;
 import net.mamoe.mirai.utils.PlatformLogger;
+import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
@@ -41,6 +42,7 @@ import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,6 +56,7 @@ import static com.aye10032.utils.StringUtil.longMsgSplit;
  */
 public class Zibenbot {
 
+    private static OkHttpClient client = new OkHttpClient();
     public static Proxy proxy = null;
     private static MiraiLogger logger;
     private static Pattern AT_REGEX = Pattern.compile("\\[mirai:at:(\\d+)]");
@@ -75,6 +78,11 @@ public class Zibenbot {
     private Bot bot;
     final Pattern MSG_TYPE_PATTERN;
     private List<IFunc> registerFunc;
+
+    public static OkHttpClient getOkHttpClient() {
+        return client.newBuilder().callTimeout(30, TimeUnit.SECONDS)
+                .proxy(Zibenbot.getProxy()).build();
+    }
 
     {
         msgUploads.put("IMAGE", (conect, source) -> {

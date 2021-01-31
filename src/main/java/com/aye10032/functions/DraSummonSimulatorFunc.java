@@ -12,7 +12,6 @@ import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,15 +34,12 @@ public class DraSummonSimulatorFunc extends BaseFunc {
     Config user_config = user_loader.load();
     Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
     JsonParser parser = new JsonParser();
-    OkHttpClient client = new OkHttpClient.Builder().callTimeout(30, TimeUnit.SECONDS).build();
+    OkHttpClient client = Zibenbot.getOkHttpClient();
     Set<SummonEle> all_ele = new HashSet<>();
     Map<Long, UserDate> userDates = new HashMap<>();
 
     public DraSummonSimulatorFunc(Zibenbot zibenbot) {
         super(zibenbot);
-        if (Zibenbot.proxy != null) {
-            client = new OkHttpClient.Builder().callTimeout(30, TimeUnit.SECONDS).proxy(Zibenbot.proxy).build();
-        }
     }
 
     @Override
