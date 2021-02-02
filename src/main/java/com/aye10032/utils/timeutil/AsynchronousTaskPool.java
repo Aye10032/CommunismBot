@@ -38,13 +38,12 @@ public class AsynchronousTaskPool extends TimedTaskBase {
         AsynTaskStatus status = new AsynTaskStatus(latch);
         statusMap.put(callback, status);
         for (Runnable run : runnables) {
-            StackTraceElement[] traceElements = Thread.currentThread().getStackTrace();
             list.add(pool.submit(() -> {
                 try {
                     statusMap.get(callback).setStatus(AsynTaskStatus.TASKS_RUNNING);
                     run.run();
                 } catch (Exception e) {
-                    Zibenbot.logWarningStatic("异步线程执行出错！:" + e + "\n" + ExceptionUtils.printStack(traceElements));
+                    Zibenbot.logWarningStatic("异步线程执行出错！:" + e + "\n" + ExceptionUtils.printStack(e));
                 } finally {
                     latch.countDown();
                 }

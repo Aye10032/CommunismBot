@@ -1,7 +1,6 @@
 package com.aye10032.timetask;
 
 import com.aye10032.Zibenbot;
-import com.aye10032.functions.ScreenshotFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.*;
 import com.aye10032.utils.timeutil.Reciver;
@@ -54,8 +53,7 @@ public abstract class DragraliaTask extends SubscribableBase {
         //19：00
         d = d + (TimeUtils.HOUR + TimeUtils.SEC - ((d - TimeUtils.SEC) % TimeUtils.HOUR)) + TimeUtils.SEC;
         return new Date(d);*/
-        Date date1 = TimeUtils.getNextSpecialTime(date, -1, -1, -1, 0, 1, 0);
-        return date1;
+        return TimeUtils.getNextSpecialTime(date, -1, -1, -1, 0, 3, 0);
     }
 
     @Override
@@ -314,7 +312,7 @@ public abstract class DragraliaTask extends SubscribableBase {
         String outputfile = dir + "/dragraliatemp/" + a.article_id + ".png";
         try {
             WebDriver driver = SeleniumUtils.getDriver();
-            return ScreenshotFunc.getScreenshot(driver, url, outputfile, 4000, "for(item of " +
+            return SeleniumUtils.getScreenshot(driver, url, outputfile, 4000, "for(item of " +
                     "document.getElementsByTagName('details')) {\n" + "    item.open = true;\n" + "}");
         } catch (Exception e) {
             e.printStackTrace();

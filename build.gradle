@@ -5,7 +5,7 @@ buildscript {
         jcenter()
         maven {
             url "https://plugins.gradle.org/m2/"
-            }
+        }
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
@@ -17,7 +17,7 @@ plugins {
     id 'java'
     id "org.jetbrains.kotlin.jvm" version "1.4.21"
     id 'com.github.johnrengelman.shadow' version '5.2.0'
-    id("net.mamoe.kotlin-jvm-blocking-bridge") version "1.6.0"
+    //id("net.mamoe.kotlin-jvm-blocking-bridge") version "1.8.0"
 }
 
 tasks.withType(JavaCompile) {
@@ -49,7 +49,7 @@ dependencies {
     compile group: 'net.mamoe', name: 'mirai-core-jvm', version: rootProject.ext.miraiVersion
     compile group: 'net.mamoe', name: 'mirai-core-api-jvm', version: rootProject.ext.miraiVersion
     compile group: 'net.mamoe', name: 'mirai-core-api', version: rootProject.ext.miraiVersion
-    compile group:  'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version :rootProject.ext.ktVersion
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
 
     // https://mvnrepository.com/artifact/org.jdom/jdom
     compile group: 'org.jdom', name: 'jdom', version: '2.0.2'
@@ -123,7 +123,7 @@ jar {
         ant.move file: newJarFile,
                 todir: "${buildDir}/toArchive"
     }
-    
+
     manifest {
         //mainifest下的classpath头
         def classpathPrefix = 'libs'
