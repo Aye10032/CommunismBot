@@ -86,7 +86,11 @@ public class Zibenbot {
 
     {
         msgUploads.put("IMAGE", (conect, source) -> {
-            if (source.equals("null")) {
+            if ("null".equals(source)) {
+                return "[IMAGE]";
+            }
+            File file = new File(source);
+            if (!file.exists()) {
                 return "[IMAGE]";
             }
             ExternalResource externalResource = ExternalResource.create(new File(source));

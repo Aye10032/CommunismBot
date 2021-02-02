@@ -12,6 +12,7 @@ import com.aye10032.utils.weibo.WeiboSet;
 import com.aye10032.utils.weibo.WeiboSetItem;
 import com.aye10032.utils.weibo.WeiboUtils;
 import okhttp3.OkHttpClient;
+import org.apache.commons.lang3.RandomUtils;
 
 import java.io.File;
 import java.util.*;
@@ -41,7 +42,7 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
         ret.setTime(date.getTime() + TimeUtils.MIN * 3L);
         Calendar c = Calendar.getInstance();
         c.setTime(ret);
-        c.set(Calendar.SECOND, 2);
+        c.set(Calendar.SECOND, 1);
         int hour = c.get(Calendar.HOUR_OF_DAY);
         if (hour < 8 || hour > 22) {
             c.set(Calendar.HOUR_OF_DAY, 8);
@@ -130,19 +131,21 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
 
     private File downloadImg(String url) {
         String fileName = getFileName(url);
-        File tmpFile = new File(fileName + "_temp");
+        File outFile = new File(fileName);
+        File tempFile = new File(fileName + "_temp" + RandomUtils.nextInt(10000, 99999));
         try {
-            if (!tmpFile.exists()) {
-                tmpFile.getParentFile().mkdirs();
-                tmpFile.createNewFile();
-                HttpUtils.download(url, tmpFile.getAbsolutePath(), Zibenbot.getOkHttpClient());
-                tmpFile.renameTo(new File(fileName));
+            if (!outFile.exists()) {
+                tempFile.getParentFile().mkdirs();
+                tempFile.createNewFile();
+                HttpUtils.download(url, tempFile.getAbsolutePath(), Zibenbot.getOkHttpClient());
+                tempFile.renameTo(outFile);
             }
         } catch (Exception e) {
-            tmpFile.delete();
+            tempFile.delete();
+            outFile.delete();
             return null;
         }
-        return tmpFile;
+        return outFile;
     }
 
     private String getFileName(String url) {

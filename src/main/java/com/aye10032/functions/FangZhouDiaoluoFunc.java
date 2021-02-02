@@ -4,6 +4,7 @@ import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.HttpUtils;
+import com.aye10032.utils.SeleniumUtils;
 import com.aye10032.utils.fangzhoudiaoluo.DiaoluoType;
 import com.aye10032.utils.fangzhoudiaoluo.MaterialsDeserializer;
 import com.aye10032.utils.fangzhoudiaoluo.Module;
@@ -291,7 +292,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
             file.createNewFile();
         }
         try {
-            ScreenshotFunc.getScreenshot(img_url, arkonegraphFile, 4000);
+            SeleniumUtils.getScreenshot(img_url, arkonegraphFile, 4000);
         } catch (Exception e) {
             e.printStackTrace();
         }

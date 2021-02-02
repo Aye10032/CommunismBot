@@ -3,10 +3,7 @@ package com.aye10032.functions;
 import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
-import com.aye10032.utils.IOUtil;
-import com.aye10032.utils.ImgUtils;
 import com.aye10032.utils.SeleniumUtils;
-import org.openqa.selenium.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,32 +21,6 @@ public class ScreenshotFunc extends BaseFunc {
 
     static {
 
-    }
-
-    public synchronized static File getScreenshot(WebDriver driver, String url, String outFileName, int timeOut, String... js) throws IOException, InterruptedException {
-        try {
-            driver.get(url = addhttp(url));
-            Zibenbot.logInfoStatic("Chrome Dirver switch to" + url);
-            Thread.sleep(timeOut);
-            JavascriptExecutor driver_js = SeleniumUtils.getDriverJs(driver);
-            //Double width = Double.valueOf(driver_js.executeScript(
-            //        "return document.getElementsByTagName('html')[0].getBoundingClientRect().width;").toString());
-            Double height = Double.valueOf(driver_js.executeScript("return document.getElementsByTagName('html')[0].getBoundingClientRect().height;").toString());
-            for (String s : js) {
-                driver_js.executeScript(s);
-            }
-            driver.manage().window().setSize(new Dimension(1366, height.intValue()));
-            byte[] bytes = driver.findElement(By.tagName("html")).getScreenshotAs(OutputType.BYTES);
-            Zibenbot.logInfoStatic("Chrome Dirver switch to about:blank");
-            bytes = ImgUtils.compress(bytes, "png");
-            IOUtil.saveFileWithBytes(outFileName, bytes);
-        } catch (IOException | InterruptedException e) {
-            throw e;
-        } finally {
-            //释放资源
-            SeleniumUtils.closeDriver(driver);
-        }
-        return new File(outFileName);
     }
 
     @Override
@@ -79,16 +50,7 @@ public class ScreenshotFunc extends BaseFunc {
 
     public File getScreenshot(String url, int timeOut) throws IOException, InterruptedException {
         String outFileName = getOutFileName(url);
-        return getScreenshot(url, outFileName, timeOut);
-    }
-
-    public static File getScreenshot(String url, String outFileName,int timeOut) throws IOException, InterruptedException {
-        WebDriver driver = SeleniumUtils.getDriver();
-        return getScreenshot(driver, url, outFileName, timeOut);
-    }
-
-    public static File getScreenshot(WebDriver driver, String url, String outFileName,int timeOut) throws IOException, InterruptedException {
-        return getScreenshot(driver, url, outFileName, timeOut, new String[]{});
+        return SeleniumUtils.getScreenshot(url, outFileName, timeOut);
     }
 
     @Override
@@ -109,13 +71,6 @@ public class ScreenshotFunc extends BaseFunc {
         Zibenbot.logInfoStatic("清理了三天前的缓存 " + i + " 张。");
     }
 
-    private static String addhttp(String url) {
-        if (url.startsWith("http")) {
-            return url;
-        } else {
-            return "https://" + url;
-        }
-    }
 
     public String getOutFileName(String url){
         return zibenbot.appDirectory + "\\screenshot\\" + url.hashCode() + ".jpg";
