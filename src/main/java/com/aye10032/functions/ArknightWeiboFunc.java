@@ -1,9 +1,8 @@
 package com.aye10032.functions;
 
 import com.aye10032.Zibenbot;
-import com.aye10032.functions.funcutil.BaseFunc;
-import com.aye10032.functions.funcutil.SimpleMsg;
-import com.aye10032.timetask.ArknightWeiboTask;
+import com.aye10032.functions.funcutil.*;
+import com.aye10032.utils.weibo.WeiboReader;
 import com.aye10032.utils.weibo.WeiboSet;
 import com.aye10032.utils.weibo.WeiboSetItem;
 import com.aye10032.utils.weibo.WeiboUtils;
@@ -15,13 +14,16 @@ import java.util.ArrayList;
 /**
  * @author Dazo66
  */
+@FuncFactory(ArknightWeiboFunc.ArkFuncFactory.class)
 public class ArknightWeiboFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
     private WeiboSet posts = null;
+    private WeiboReader reader;
 
-    public ArknightWeiboFunc(Zibenbot zibenbot) {
+    public ArknightWeiboFunc(Zibenbot zibenbot, WeiboReader reader) {
         super(zibenbot);
+        this.reader = reader;
     }
 
     @Override
@@ -70,17 +72,13 @@ public class ArknightWeiboFunc extends BaseFunc {
                     int i = Integer.parseInt(s.getCommandPieces()[1]) - 1;
                     WeiboSetItem[] arrayPosts = posts.toArray(new WeiboSetItem[0]);
                     try {
-                        replyMsg(s, getTask().postToUser(WeiboUtils.getWeiboWithPostItem(Zibenbot.getOkHttpClient(), arrayPosts[i]), s.isGroupMsg()));
+                        replyMsg(s, reader.postToUser(WeiboUtils.getWeiboWithPostItem(Zibenbot.getOkHttpClient(), arrayPosts[i])));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 })
                 .ifNot(s -> replyMsg(s, "输入的数字有误，或者是不在[1-9]的范围内。"))
                 .build();
-    }
-
-    private ArknightWeiboTask getTask() {
-        return zibenbot.arknightWeiboTask;
     }
 
     private void setPosts() {
@@ -91,4 +89,23 @@ public class ArknightWeiboFunc extends BaseFunc {
     public void run(SimpleMsg simpleMsg) {
         commander.execute(simpleMsg);
     }
+
+    public static class ArkFuncFactory implements IFuncFactory {
+
+        private Zibenbot zibenbot;
+        private WeiboReader reader;
+
+        public ArkFuncFactory(Zibenbot zibenbot, WeiboReader reader) {
+            this.zibenbot = zibenbot;
+            this.reader = reader;
+        }
+
+        @Override
+        public IFunc build() {
+            return new ArknightWeiboFunc(zibenbot, reader);
+        }
+    }
+
 }
+
+

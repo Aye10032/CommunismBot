@@ -1,7 +1,9 @@
 package com.aye10032;
 
+import com.aye10032.functions.ArknightWeiboFunc;
 import com.aye10032.functions.BotConfigFunc;
 import com.aye10032.functions.FuncEnableFunc;
+import com.aye10032.functions.WeiboFunc;
 import com.aye10032.functions.funcutil.FuncField;
 import com.aye10032.functions.funcutil.FuncLoader;
 import com.aye10032.functions.funcutil.IFunc;
@@ -12,6 +14,7 @@ import com.aye10032.utils.IMsgUpload;
 import com.aye10032.utils.SeleniumUtils;
 import com.aye10032.utils.StringUtil;
 import com.aye10032.utils.timeutil.*;
+import com.aye10032.utils.weibo.WeiboReader;
 import com.firespoon.bot.command.Command;
 import com.firespoon.bot.commandbody.CommandBody;
 import kotlin.Unit;
@@ -71,7 +74,7 @@ public class Zibenbot {
     public BotConfigFunc config;
     @FuncField
     public FuncEnableFunc enableCollFunc;
-    public ArknightWeiboTask arknightWeiboTask;
+    public WeiboReader weiboReader;
     public List<Long> enableGroup = new ArrayList<>();
     public String appDirectory;
     final Map<String, IMsgUpload> msgUploads = new HashMap<>();
@@ -151,7 +154,7 @@ public class Zibenbot {
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
         // 配置logger
         File logDir = new File(appDirectory + "\\log\\");
-        File[] files = logDir.listFiles(pathname -> System.currentTimeMillis() - pathname.lastModified() > TimeUtils.DAY * 10);
+        File[] files = logDir.listFiles(pathname -> System.currentTimeMillis() - pathname.lastModified() > TimeUtils.DAY * 10L);
         Arrays.asList(files != null ? files : new File[0]).forEach(File::delete);
         logger = new PlatformLogger("zibenbot", (String s) -> {
             System.out.println(s);
@@ -178,10 +181,12 @@ public class Zibenbot {
     public int startup() {
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
 
-        logInfo("registe time task end");
         //改成了手动注册
         log(Level.INFO, "registe func start");
+        this.weiboReader = new WeiboReader(this, appDirectory + "\\weiboCache\\");
         FuncLoader loader = new FuncLoader(this);
+        loader.addFactory(new ArknightWeiboFunc.ArkFuncFactory(this, weiboReader));
+        loader.addFactory(new WeiboFunc.WeiboFuncFactory(this, weiboReader));
         loader.addScanPackage("com.aye10032.utils.timeutil");
         registerFunc = Collections.unmodifiableList(loader.load());
         //对功能进行初始化
@@ -225,7 +230,7 @@ public class Zibenbot {
         ITimeAdapter zhouYouPiaoCycle = date -> {
             if (System.currentTimeMillis() < end) {
                 //第一天要在16点提醒
-                if (System.currentTimeMillis() < start) {
+                if (System.currentTimeMillis() <= start) {
                     return new Date(start);
                 }
                 return TimeUtils.getNextSpecialWeekTime(date,
@@ -301,7 +306,8 @@ public class Zibenbot {
                 return NAME;
             }
         });
-        subManager.addSubscribable(arknightWeiboTask = new ArknightWeiboTask(this) {
+        subManager.addSubscribable(new ArknightWeiboTask(this,
+                weiboReader) {
             @Override
             public String getName() {
                 return "舟游发饼小助手";
@@ -309,6 +315,7 @@ public class Zibenbot {
         });
         //把订阅管理器注册进线程池
         pool.add(subManager);
+        logInfo("registe time task end");
         //把订阅管理器注册进可用的模块里
         //registerFunc.add(subManager);
 
