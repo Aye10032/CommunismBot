@@ -89,18 +89,23 @@ public class WeiboUtils {
     }
 
     public static WeiboPost getWeiboWithPostItem(OkHttpClient client, WeiboSetItem item) throws IOException, ParseException {
-        String weiboListUrl = String.format("https://m.weibo.cn/statuses/show?id=%s", item.getId());
+        WeiboPost post = getWeiboWithId(client, item.getId());
+        post.setTop(item.getIsTop());
+        return post;
+    }
+
+    public static WeiboPost getWeiboWithId(OkHttpClient client, String id) throws IOException, ParseException {
+        String weiboListUrl = String.format("https://m.weibo.cn/statuses/show?id=%s", id);
         Request weiboListRequest = new Request.Builder()
                 .url(weiboListUrl)
                 .method("GET", null)
                 .header("MWeibo-Pwa", "1")
-                .header("Referer", String.format("https://m.weibo.cn/detail/%s", item.getId()))
+                .header("Referer", String.format("https://m.weibo.cn/detail/%s", id))
                 .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
                 .header("X-Requested-With", "XMLHttpRequest")
                 .build();
         JsonObject object = parser.parse(client.newCall(weiboListRequest).execute().body().string()).getAsJsonObject().getAsJsonObject("data");
         WeiboPost post = buildPostFromJsonObject(object);
-        post.setTop(item.getIsTop());
         return post;
     }
 
@@ -130,6 +135,8 @@ public class WeiboUtils {
             post.setRetweet(buildPostFromJsonObject(object.getAsJsonObject("retweeted_status")));
         }
         post.setTitle(object.get("status_title").getAsString());
+        post.setUserName(object.getAsJsonObject("user").get("screen_name").getAsString());
+        post.setUserId(object.getAsJsonObject("user").get("id").getAsString());
         return post;
     }
 
@@ -141,6 +148,8 @@ public class WeiboUtils {
         s = s.replaceAll("<br><br>", "\n");
         s = s.replaceAll("<a data-url=\"(\\S+)\" href=\"\\S+\" data-hide=\"\"><span class='url-icon'><img style='([1-9a-zA-Z ;:]+)' src='(\\S+)'></span><span class=\"surl-text\">([^\\s<>]+)</span></a>", "$4: $1\n[img:$3]");
         s = s.replaceAll("<a data-url=\"(\\S+)\" href=\"\\S+\" data-hide=\"\"><span class='url-icon'></span><span class=\"surl-text\">([^\\s<>]+)</span></a>", "$2: $1");
+        s = s.replaceAll("<span class=\"url-icon\"><img alt=(\\S+) src=\"\\S+\" style=\"[1-9a-zA-Z ;:]+\" */></span>", "$1");
+        s = s.replaceAll("(<[^>\n]*>)?", "");
         //<a data-url="http://t.cn/A65fnJRL" href="https://video.weibo.com/show?fid=1034:4598289648255023" data-hide="">
         //<span class='url-icon'>
         //<img style='width: 1rem;height: 1rem' src='https://h5.sinaimg.cn/upload/2015/09/25/3/timeline_card_small_video_default.png'>
@@ -175,12 +184,15 @@ public class WeiboUtils {
             String title;
             boolean isPerma;
             if (o.get("retweeted_status") != null) {
-                title = "转发微博：" + getTitle(o.getAsJsonObject("retweeted_status").get("text").getAsString());
+                /*title = getTitle(o.getAsJsonObject("retweeted_status").get("text").getAsString());
+                if (!title.startsWith("转发微博") && !title.startsWith("Repost")) {
+                    title = "转发微博：" + title;
+                }*/
                 isPerma = true;
             } else {
-                title = getTitle(o.get("text").getAsString());
                 isPerma = false;
             }
+            title = getTitle(o.get("text").getAsString());
             retSet.add(new WeiboSetItem(id, title, isTop, isPerma));
         });
         return retSet;
