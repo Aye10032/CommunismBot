@@ -2,6 +2,7 @@ package com.aye10032.timetask;
 
 import com.aye10032.Zibenbot;
 import com.aye10032.utils.ExceptionUtils;
+import com.aye10032.utils.SeleniumUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.utils.timeutil.TimeUtils;
@@ -9,9 +10,14 @@ import com.aye10032.utils.weibo.WeiboReader;
 import com.aye10032.utils.weibo.WeiboSet;
 import com.aye10032.utils.weibo.WeiboSetItem;
 import com.aye10032.utils.weibo.WeiboUtils;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -22,6 +28,8 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
 
     private Set<String> postIds = new HashSet<>();
     private WeiboReader weiboReader;
+    private static JsonParser parser = new JsonParser();
+    private WeiboSetItem offAnnounce = null;
 
     public ArknightWeiboTask(Zibenbot zibenbot, WeiboReader reader) {
         super(zibenbot);
@@ -75,6 +83,44 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
                 }
             }
         }
+        try {
+            WeiboSetItem item = getPostFromOff();
+            if (offAnnounce != item) {
+                offAnnounce = item;
+                if (offAnnounce != null) {
+                    StringBuilder ret = new StringBuilder();
+                    ret.append(item.getTitle()).append("\n");
+                    ret.append(SeleniumUtils.getScreenshot(offAnnounce.getId(), getBot().appDirectory + "\\arknight\\" + System.currentTimeMillis() + ".jpg", 20000).getAbsolutePath());
+                    replyAll(recivers, ret.toString());
+                    getBot().logInfo(String.format("检测到方舟新的制作组通讯（来自官网）：%s", item.getTitle()));
+                }
+            }
+        } catch (Exception e) {
+            getBot().logWarning("读取方舟制作组通讯出错：" + ExceptionUtils.printStack(e));
+        }
+    }
+
+    public static WeiboSetItem getPostFromOff() throws IOException {
+        OkHttpClient client = Zibenbot.getOkHttpClient();
+        Request officialWebsiteRequest = new Request.Builder()
+                .url("https://ak-fs.hypergryph.com/announce/Android/announcement.meta.json")
+                .method("GET", null)
+                .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
+                .build();
+        String offWeb = client.newCall(officialWebsiteRequest).execute().body().string();
+        JsonObject offWebJson = parser.parse(offWeb).getAsJsonObject();
+        for (JsonElement jsonElement : offWebJson.getAsJsonArray("announceList")) {
+            JsonObject object1 = jsonElement.getAsJsonObject();
+            if (object1.get("title").getAsString().contains("制作组通讯")) {
+                WeiboSetItem item = new WeiboSetItem();
+                item.setOffAnnounce(true);
+                item.setPerma(false);
+                item.setId(object1.get("webUrl").toString());
+                item.setTitle(object1.get("title").toString());
+                return item;
+            }
+        }
+        return null;
     }
 
 }
