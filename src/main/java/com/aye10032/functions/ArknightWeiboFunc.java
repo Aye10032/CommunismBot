@@ -4,7 +4,6 @@ import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.*;
 import com.aye10032.timetask.ArknightWeiboTask;
 import com.aye10032.utils.ExceptionUtils;
-import com.aye10032.utils.SeleniumUtils;
 import com.aye10032.utils.weibo.WeiboReader;
 import com.aye10032.utils.weibo.WeiboSet;
 import com.aye10032.utils.weibo.WeiboSetItem;
@@ -76,11 +75,8 @@ public class ArknightWeiboFunc extends BaseFunc {
                     WeiboSetItem[] arrayPosts = posts.toArray(new WeiboSetItem[0]);
                     try {
                         if (arrayPosts[i].isOffAnnounce()) {
-                            StringBuilder ret = new StringBuilder();
-                            ret.append(arrayPosts[i].getTitle()).append("\n");
-                            ret.append(SeleniumUtils.getScreenshot(arrayPosts[i].getId(), zibenbot.appDirectory + "\\arknight\\" + System.currentTimeMillis() + ".jpg", 20000).getAbsolutePath());
-                            replyMsg(s, ret.toString());
                             zibenbot.logInfo(String.format("检测到方舟新的制作组通讯（来自官网）：%s", arrayPosts[i].getTitle()));
+                            replyMsg(s, reader.postToUser(ArknightWeiboTask.getPostFromOff(arrayPosts[i])));
                         } else {
                             replyMsg(s, reader.postToUser(WeiboUtils.getWeiboWithPostItem(Zibenbot.getOkHttpClient(), arrayPosts[i])));
                         }
@@ -95,7 +91,7 @@ public class ArknightWeiboFunc extends BaseFunc {
     private void setPosts() {
         posts = WeiboUtils.getWeiboSet(Zibenbot.getOkHttpClient(), 6279793937L);
         try {
-            WeiboSetItem item = ArknightWeiboTask.getPostFromOff();
+            WeiboSetItem item = ArknightWeiboTask.getPostUrlFromOff();
             if (item != null) {
                 posts.add(item);
             }

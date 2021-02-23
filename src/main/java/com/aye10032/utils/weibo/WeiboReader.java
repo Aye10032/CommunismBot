@@ -22,7 +22,7 @@ public class WeiboReader {
 
     private File cacheDir;
     private Zibenbot zibenbot;
-    private static final Pattern pattern = Pattern.compile("\\[img:([\\w.:/]+/([\\w.]+))]");
+    private static final Pattern pattern = Pattern.compile("\\[img:([\\w.:/\\-]+/([\\w.]+))]");
     private static Pattern img_name_pattern = Pattern.compile("\\w+.(png|jpg|gif)");
 
     public WeiboReader(Zibenbot zibenbot, String cacheDir) {
