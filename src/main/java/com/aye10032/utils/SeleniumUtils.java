@@ -73,16 +73,17 @@ public class SeleniumUtils {
             JavascriptExecutor driver_js = SeleniumUtils.getDriverJs(driver);
             //Double width = Double.valueOf(driver_js.executeScript(
             //        "return document.getElementsByTagName('html')[0].getBoundingClientRect().width;").toString());
-            Double height = Double.valueOf(driver_js.executeScript("return document.getElementsByTagName('html')[0].getBoundingClientRect().height;").toString());
+            Double height = Double.parseDouble(driver_js.executeScript("return document.getElementsByTagName('body')[0].getBoundingClientRect().height;").toString()) + 200.0d;
+            Zibenbot.logInfoStatic(String.format("截图网页自适应获得高度%d", height.intValue()));
             for (String s : js) {
                 driver_js.executeScript(s);
             }
             driver.manage().window().setSize(new Dimension(1366, height.intValue()));
             byte[] bytes = driver.findElement(By.tagName("html")).getScreenshotAs(OutputType.BYTES);
             Zibenbot.logInfoStatic("Chrome Dirver switch to about:blank");
-            bytes = ImgUtils.compress(bytes, "png");
+            //bytes = ImgUtils.compress(bytes, "png");
             IOUtil.saveFileWithBytes(outFileName, bytes);
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
             throw e;
         } finally {
             //释放资源
