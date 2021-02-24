@@ -124,7 +124,7 @@ public class DataCollect extends BaseFunc {
                             "INSERT INTO question (msg,fromQQ,fromGroup,time) " + "VALUES ('" + simpleMsg.getMsg() + "', '" + simpleMsg.getFromClient() + "', '" + simpleMsg.getFromGroup() + "', '" + ft.format(dNow) + "' );";
                     stmt.executeUpdate(sql);
                     zibenbot.toPrivateMsg(2375985957L, "已添加数据集：" + simpleMsg.getMsg());
-                    replyMsg(simpleMsg, "[" + ft.format(dNow) + "][INFO] 本条对话已添加NLP待处理数据集");
+//                    replyMsg(simpleMsg, "[" + ft.format(dNow) + "][INFO] 本条对话已添加NLP待处理数据集");
                 }
                 /*else {
                     replyMsg(CQmsg, "[" + ft.format(dNow) + "][INFO] 已存在此数据");
