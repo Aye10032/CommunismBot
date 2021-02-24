@@ -12,6 +12,23 @@ public class WeiboSetItem {
     private String title;
     private boolean isTop = false;
     private boolean isPerma;
+    private boolean isOffAnnounce = false;
+
+    public boolean isTop() {
+        return isTop;
+    }
+
+    public void setTop(boolean top) {
+        isTop = top;
+    }
+
+    public boolean isOffAnnounce() {
+        return isOffAnnounce;
+    }
+
+    public void setOffAnnounce(boolean offAnnounce) {
+        isOffAnnounce = offAnnounce;
+    }
 
     public WeiboSetItem() {
     }

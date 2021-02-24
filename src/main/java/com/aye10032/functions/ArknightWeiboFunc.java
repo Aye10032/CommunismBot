@@ -2,6 +2,8 @@ package com.aye10032.functions;
 
 import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.*;
+import com.aye10032.timetask.ArknightWeiboTask;
+import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.weibo.WeiboReader;
 import com.aye10032.utils.weibo.WeiboSet;
 import com.aye10032.utils.weibo.WeiboSetItem;
@@ -72,7 +74,12 @@ public class ArknightWeiboFunc extends BaseFunc {
                     int i = Integer.parseInt(s.getCommandPieces()[1]) - 1;
                     WeiboSetItem[] arrayPosts = posts.toArray(new WeiboSetItem[0]);
                     try {
-                        replyMsg(s, reader.postToUser(WeiboUtils.getWeiboWithPostItem(Zibenbot.getOkHttpClient(), arrayPosts[i])));
+                        if (arrayPosts[i].isOffAnnounce()) {
+                            zibenbot.logInfo(String.format("检测到方舟新的制作组通讯（来自官网）：%s", arrayPosts[i].getTitle()));
+                            replyMsg(s, reader.postToUser(ArknightWeiboTask.getPostFromOff(arrayPosts[i])));
+                        } else {
+                            replyMsg(s, reader.postToUser(WeiboUtils.getWeiboWithPostItem(Zibenbot.getOkHttpClient(), arrayPosts[i])));
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -83,6 +90,14 @@ public class ArknightWeiboFunc extends BaseFunc {
 
     private void setPosts() {
         posts = WeiboUtils.getWeiboSet(Zibenbot.getOkHttpClient(), 6279793937L);
+        try {
+            WeiboSetItem item = ArknightWeiboTask.getPostUrlFromOff();
+            if (item != null) {
+                posts.add(item);
+            }
+        } catch (Exception e) {
+            zibenbot.logWarning("读取方舟制作组通讯出错：" + ExceptionUtils.printStack(e));
+        }
     }
 
     @Override
