@@ -1,11 +1,11 @@
 package com.aye10032.utils.weibo;
 
+import java.util.Date;
 import java.util.Objects;
 
 /**
  * @author Dazo66
  */
-
 public class WeiboSetItem {
 
     private String id;
@@ -13,6 +13,60 @@ public class WeiboSetItem {
     private boolean isTop = false;
     private boolean isPerma;
     private boolean isOffAnnounce = false;
+    private String text;
+    private boolean isLongText;
+    private String userName;
+    private Date pubDate;
+    private WeiboSetItem retweet;
+    private String userID;
+
+    public boolean isLongText() {
+        return isLongText;
+    }
+
+    public void setLongText(boolean longText) {
+        isLongText = longText;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public Date getPubDate() {
+        return pubDate;
+    }
+
+    public void setPubDate(Date pubDate) {
+        this.pubDate = pubDate;
+    }
+
+    public WeiboSetItem getRetweet() {
+        return retweet;
+    }
+
+    public void setRetweet(WeiboSetItem retweet) {
+        this.retweet = retweet;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 
     public boolean isTop() {
         return isTop;

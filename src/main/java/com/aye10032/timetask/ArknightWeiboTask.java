@@ -153,7 +153,7 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
                 item.setPerma(false);
                 String temp = object1.get("webUrl").toString();
                 item.setId(clean(object1.get("webUrl").toString()));
-                item.setTitle(clean(object1.get("title").toString()));
+                item.setTitle(clean(object1.get("title").toString()).replaceAll("\n", ""));
                 return item;
             }
         }
