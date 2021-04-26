@@ -225,18 +225,18 @@ public class Zibenbot {
             return TimeUtils.getMin(date1, date2, date3, date4);
         };
 
-        long start = 1612512000000L;
-        long end = 1613678340000L;
+        long start = 1619856000000L;
+        long end = 1621022340000L;
         ITimeAdapter zhouYouPiaoCycle = date -> {
-            if (System.currentTimeMillis() < end) {
+            if (date.getTime() < end) {
                 //第一天要在16点提醒
-                if (System.currentTimeMillis() <= start) {
+                if (date.getTime() <= start) {
                     return new Date(start);
                 }
                 return TimeUtils.getNextSpecialWeekTime(date,
                         -1, -1, 10, 0, 0, 0);
             } else {
-                return new Date(System.currentTimeMillis() + 1000000000000L);
+                return new Date(date.getTime() + 1000000000000L);
             }
         };
 
@@ -280,6 +280,8 @@ public class Zibenbot {
         subManager.setTiggerTime(date);
         subManager.addSubscribable(maiyao);
         subManager.addSubscribable(jiaomie);
+
+        subManager.addSubscribable(new ArkWebTask(this));
 
         subManager.addSubscribable(zhouYouPiao);
         subManager.addSubscribable(new DragraliaTask(this) {
