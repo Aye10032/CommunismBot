@@ -1,10 +1,9 @@
 {
-  "995497677": [
-    "DraSummonSimulatorFunc",
-    "DragraliaNewsFunc"
-  ],
+  "995497677": [],
   "947657871": [],
-  "517709950": [],
+  "517709950": [
+    "INMFunc"
+  ],
   "814843368": [
     "RedStoneFunc",
     "BanFunc",
