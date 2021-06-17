@@ -176,6 +176,7 @@ public class Zibenbot {
         enableGroup.add(1107287775L); //Test
         enableGroup.add(980042772L);//公会
         enableGroup.add(583991760L); //粉丝群
+        enableGroup.add(949214456L);//TIS方舟
     }
 
     public int startup() {
