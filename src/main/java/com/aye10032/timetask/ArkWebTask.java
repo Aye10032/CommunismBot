@@ -32,7 +32,8 @@ public class ArkWebTask extends SubscribableBase {
         if (date.getTime() > 1621281540000L) {
             return new Date(date.getTime() + 10000000000000L);
         }
-        return TimeUtils.getNextSpecialTime(date, -1, -1, 10, 0, 0, 0);
+        return TimeUtils.getNextSpecialWeekTime(date, -1, -1, 7, 30, 0, 100);
+
     }
 
     @Override
@@ -56,7 +57,7 @@ public class ArkWebTask extends SubscribableBase {
                 } catch (Exception e) {
                     Zibenbot.logWarningStatic(ExceptionUtils.printStack(e));
                 }
-                if (s1.contains("\"message\":\"\"")) {
+                if (s1.contains("coin")) {
                     i++;
                 }
                 Thread.sleep(1000L);
@@ -66,11 +67,13 @@ public class ArkWebTask extends SubscribableBase {
                 } catch (Exception e) {
                     Zibenbot.logWarningStatic(ExceptionUtils.printStack(e));
                 }
-                if (s2.contains("\"message\":\"\"")) {
+                if (s2.contains("coin")) {
                     i++;
                 }
                 Thread.sleep(1000L);
-                replyAll(recivers, String.format("舟游网页活动触发成功 x %d", i));
+                if (i > 0) {
+                    replyAll(recivers, String.format("舟游网页活动触发成功 x %d", i));
+                }
                 try {
                     share(args[0]);
                 } catch (Exception e) {
