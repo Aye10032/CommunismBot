@@ -230,8 +230,23 @@ public class Zibenbot {
         ITimeAdapter zhouYouPiaoCycle = date -> {
             if (date.getTime() < end) {
                 //第一天要在16点提醒
-                if (date.getTime() <= start) {
+                if (date.getTime() < start) {
                     return new Date(start);
+                }
+                return TimeUtils.getNextSpecialWeekTime(date,
+                        -1, -1, 10, 0, 0, 0);
+            } else {
+                return new Date(date.getTime() + 1000000000000L);
+            }
+        };
+        // 舟游日替
+        long startRiti = 1621065600000L;
+        long endRiti = 1622231940000L;
+        ITimeAdapter ritiCycle = date -> {
+            if (date.getTime() < endRiti) {
+                //第一天要在16点提醒
+                if (date.getTime() < startRiti) {
+                    return new Date(startRiti);
                 }
                 return TimeUtils.getNextSpecialWeekTime(date,
                         -1, -1, 10, 0, 0, 0);
@@ -246,6 +261,19 @@ public class Zibenbot {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         Date date = calendar.getTime();
+
+        ISubscribable zhouyouRiti = new SimpleSubscription(this, ritiCycle,
+                () -> String.format("明日方舟今天有危机合约日替，记得打，日替还剩下%d天。",
+                        (endRiti - 21600000) / TimeUtils.DAY - (System.currentTimeMillis() - 21600000) / TimeUtils.DAY)) {
+
+            private final static String NAME = "提醒白嫖小助手";
+
+            @Override
+            public String getName() {
+                return NAME;
+            }
+        };
+
 
         // 创建订阅器对象
         SimpleSubscription maiyao = new SimpleSubscription(this, maiyaoCycle,
@@ -280,7 +308,7 @@ public class Zibenbot {
         subManager.setTiggerTime(date);
         subManager.addSubscribable(maiyao);
         subManager.addSubscribable(jiaomie);
-
+        subManager.addSubscribable(zhouyouRiti);
         subManager.addSubscribable(new ArkWebTask(this));
 
         subManager.addSubscribable(zhouYouPiao);
