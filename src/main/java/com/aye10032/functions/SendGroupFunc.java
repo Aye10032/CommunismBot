@@ -30,7 +30,8 @@ public class SendGroupFunc extends BaseFunc {
         groupMap.put(1, 995497677L);
         groupMap.put(2, 947657871L);
         groupMap.put(3, 792666782L);
-        groupMap.put(4, 1098042439L);
+        groupMap.put(4, 456919710L);
+        groupMap.put(5, 792797914L);
     }
 
     @Override
@@ -40,16 +41,18 @@ public class SendGroupFunc extends BaseFunc {
             if (msg.startsWith("send ")) {
                 sendGroupMSG(simpleMsg);
             } else if ("send".equals(msg)) {
-                String desc = "send1 XP交流群\nsend2 TIS\nsend3 实验室\nsend4 公会";
+                String desc = "send1 XP交流群\nsend2 TIS\nsend3 实验室\nsend4 搬运组\nsend5 LAB";
                 zibenbot.replyMsg(simpleMsg, desc);
             } else if (msg.startsWith("send1")) {
-                sendGroupMSG(simpleMsg,groupMap.get(1));
-            }else if (msg.startsWith("send2")) {
-                sendGroupMSG(simpleMsg,groupMap.get(2));
-            }else if (msg.startsWith("send3")) {
-                sendGroupMSG(simpleMsg,groupMap.get(3));
-            }else if (msg.startsWith("send4")) {
-                sendGroupMSG(simpleMsg,groupMap.get(4));
+                sendGroupMSG(simpleMsg, groupMap.get(1));
+            } else if (msg.startsWith("send2")) {
+                sendGroupMSG(simpleMsg, groupMap.get(2));
+            } else if (msg.startsWith("send3")) {
+                sendGroupMSG(simpleMsg, groupMap.get(3));
+            } else if (msg.startsWith("send4")) {
+                sendGroupMSG(simpleMsg, groupMap.get(4));
+            } else if (msg.startsWith("send5")) {
+                sendGroupMSG(simpleMsg, groupMap.get(5));
             }
         }
     }
