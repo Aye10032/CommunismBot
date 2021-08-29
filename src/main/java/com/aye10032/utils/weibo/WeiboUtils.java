@@ -251,7 +251,7 @@ public class WeiboUtils {
         text = cleanString1(text);
         text = text.replaceAll("\n", "");
         if (text.length() > 20) {
-            return text.substring(0, 20) + "...";
+            return text.substring(0, 30) + "...";
         } else {
             return text;
         }
