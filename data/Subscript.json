@@ -1,10 +1,6 @@
 {
   "龙约公告转发小助手": [
     {
-      "type": "PRIVATE_MSG",
-      "id": 895981998
-    },
-    {
       "type": "GROUP_MSG",
       "id": 814843368
     },
@@ -37,6 +33,10 @@
     {
       "type": "PRIVATE_MSG",
       "id": 495049457
+    },
+    {
+      "type": "PRIVATE_MSG",
+      "id": 2437901460
     }
   ],
   "提醒买药小助手": [],
@@ -94,14 +94,14 @@
       "type": "GROUP_MSG",
       "id": 995497677,
       "args": [
-        "6655"
+        "328096"
       ]
     },
     {
       "type": "GROUP_MSG",
       "id": 995497677,
       "args": [
-        "328096"
+        "21415744"
       ]
     }
   ],
@@ -122,6 +122,10 @@
     {
       "type": "PRIVATE_MSG",
       "id": 495049457
+    },
+    {
+      "type": "PRIVATE_MSG",
+      "id": 2437901460
     }
   ],
   "舟游发饼小助手": [
@@ -144,6 +148,37 @@
     {
       "type": "PRIVATE_MSG",
       "id": 675987134
+    },
+    {
+      "type": "PRIVATE_MSG",
+      "id": 183493704
+    },
+    {
+      "type": "PRIVATE_MSG",
+      "id": 2437901460
+    }
+  ],
+  "舟游网页订阅": [
+    {
+      "type": "PRIVATE_MSG",
+      "id": 895981998,
+      "args": [
+        "xXZ%2Bu2DinnFrlieOFLpHS4%2BIN1WTRP%2B7sHzhYA87sWLC2aG%2Bn%2BvM1eZyAhtz1VehAKkIMYaGQSf%2BXOVV3dihWegfoWvV5JuAiwc3dqB8B0%2FGnCdx2L9lPWlv6kaQwMWlP1KjojY2yH55GiNWEWuEe8%2Bm3wWTHy5gvnloyP9SH9T5Xla5Lmye7Jn6IscMdeuhU42SglYKNWOvY%2FmUkpsaqvJ6yXgnFV4vheN0FF%2BgprbOEza3FLFQ6uaH%2Fn0H9543"
+      ]
+    },
+    {
+      "type": "PRIVATE_MSG",
+      "id": 939290931,
+      "args": [
+        "xXZ%2Bu2DinnFrlieOFLpHSzafGELp9CLktGkMSLq7dmOJY1Ze7z3qAip8h%2Bvc9cGwXRZl1eJCJ6Go3XUFlHs3RU0vVOp5bJtehTaRWK7DVALnZrN3NTH0AJ0h7SAxmHnEP9NgHBtdjDDq3h3BibUXdSNJfOyLYj5P7iNSuFbzveGqupElXfGBY6zcp9tRjNo2lW8a9LjK%2BMgQIony2GrMNFcwtk95qxuhZesu21gqEOPnC7kcJ%2BkSyviMhdsTCcVA"
+      ]
+    },
+    {
+      "type": "PRIVATE_MSG",
+      "id": 450472982,
+      "args": [
+        "xXZ%2Bu2DinnFrlieOFLpHS5%2BPUkya3i%2Bzmt5dPpt4y47jwhEd%2B6lI%2BXPtTgz5JN72WrMTRm%2BUGcmij10RO3tmQ6qR5ehWGvcZNTe7Pe9x9LXq0IcBdniWj2GNo%2B%2BsPu%2Fb1AB1Ict5KdnOw99bP4RbqhVrUXuBuIqWlH4XCsj%2F3tkMT4oICn0PcdG35QsNKur9DN3qMJQxtEf5cKPJXWoSYDIPaIpVUSKPDo5ePJGKRWqTdBNyTtwNZPBhEMrY9w7I"
+      ]
     }
   ]
 }

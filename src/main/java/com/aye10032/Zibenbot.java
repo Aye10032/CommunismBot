@@ -1,9 +1,6 @@
 package com.aye10032;
 
-import com.aye10032.functions.ArknightWeiboFunc;
-import com.aye10032.functions.BotConfigFunc;
-import com.aye10032.functions.FuncEnableFunc;
-import com.aye10032.functions.WeiboFunc;
+import com.aye10032.functions.*;
 import com.aye10032.functions.funcutil.FuncField;
 import com.aye10032.functions.funcutil.FuncLoader;
 import com.aye10032.functions.funcutil.IFunc;
@@ -188,6 +185,7 @@ public class Zibenbot {
         FuncLoader loader = new FuncLoader(this);
         loader.addFactory(new ArknightWeiboFunc.ArkFuncFactory(this, weiboReader));
         loader.addFactory(new WeiboFunc.WeiboFuncFactory(this, weiboReader));
+        loader.addFactory(new GenshinWeiboFunc.GenshinFuncFactory(this, weiboReader));
         loader.addScanPackage("com.aye10032.utils.timeutil");
         registerFunc = Collections.unmodifiableList(loader.load());
         //对功能进行初始化
@@ -342,6 +340,13 @@ public class Zibenbot {
             @Override
             public String getName() {
                 return "舟游发饼小助手";
+            }
+        });
+        subManager.addSubscribable(new GenshinWeiboTask(this,
+                weiboReader) {
+            @Override
+            public String getName() {
+                return "原神微博小助手";
             }
         });
         //把订阅管理器注册进线程池
