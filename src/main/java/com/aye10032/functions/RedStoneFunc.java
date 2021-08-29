@@ -180,7 +180,7 @@ public class RedStoneFunc extends BaseFunc {
 
         try {
             stmt = getConnection().createStatement();
-            String sql = "SELECT * FROM videoinfo WHERE HASDONE=" + 0 + ";";
+            String sql = "SELECT * FROM videoinfo WHERE HASDONE=0;";
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 builder.append("NO.").append(rs.getInt("ID")).append("\n")
@@ -212,7 +212,7 @@ public class RedStoneFunc extends BaseFunc {
 
         try {
             stmt = getConnection().createStatement();
-            String sql = "SELECT * FROM videoinfo WHERE HASDONE=" + 0 + " AND NEEDTRANS=" + 1 + ";";
+            String sql = "SELECT * FROM videoinfo WHERE HASDONE=0 AND NEEDTRANS=1;";
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 builder.append("NO.").append(rs.getInt("ID")).append("\n")
