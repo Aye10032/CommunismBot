@@ -250,7 +250,7 @@ public class WeiboUtils {
     private static String getTitle(String text) {
         text = cleanString1(text);
         text = text.replaceAll("\n", "");
-        if (text.length() > 20) {
+        if (text.length() > 30) {
             return text.substring(0, 30) + "...";
         } else {
             return text;
