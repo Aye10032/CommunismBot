@@ -25,8 +25,8 @@ tasks.withType(JavaCompile) {
 }
 
 ext {
-    miraiVersion = '2.6.6'
-    ktVersion = '1.4.30'
+    miraiVersion = '2.7.1-dev-1'
+    ktVersion = '1.5.10'
 }
 
 apply plugin: "ua.eshepelyuk.ManifestClasspath"
@@ -43,6 +43,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'junit:junit:4.12'
+
     /*implementation 'net.mamoe:mirai-core-qqandroid:1.2.3'//此处版本应替换为当前最新
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.10"*/
     compile group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion
