@@ -136,7 +136,9 @@ public class WeiboUtils {
                 .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
                 .header("X-Requested-With", "XMLHttpRequest")
                 .build();
-        JsonObject object = parser.parse(client.newCall(weiboListRequest).execute().body().string()).getAsJsonObject().getAsJsonObject("data");
+        String string = client.newCall(weiboListRequest).execute().body().string();
+        Zibenbot.logWarningStatic(string);
+        JsonObject object = parser.parse(string).getAsJsonObject().getAsJsonObject("data");
         WeiboPost post = buildPostFromJsonObject(object);
         return post;
     }
@@ -145,7 +147,12 @@ public class WeiboUtils {
         WeiboPost post = new WeiboPost();
         //Sat Jan 23 17:00:21 +0800 2021
         //created_at
-        post.setPubDate(format2.parse(object.get("created_at").getAsString()));
+        try {
+            post.setPubDate(format2.parse(object.get("created_at").getAsString()));
+        } catch (NullPointerException e) {
+            // ignore
+        }
+
         post.setId(object.get("id").getAsString());
         StringBuilder builder = new StringBuilder(object.get("text").getAsString());
         if (object.get("pic_num").getAsInt() > 0) {
