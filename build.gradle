@@ -40,6 +40,7 @@ repositories {
     maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     mavenCentral()
     jcenter()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -94,6 +95,7 @@ dependencies {
     compile group: 'org.bytedeco', name: 'opencv', version: '4.3.0-1.5.3', classifier: 'windows-x86_64'
     compile group: 'org.bytedeco', name: 'openblas', version: '0.3.9-1.5.3', classifier: 'windows-x86_64'
 
+    compile group: 'com.github.Aye10032', name: 'rtroapiutil', version: 'v1.2'
 }
 
 tasks.withType(JavaCompile) {
