@@ -349,6 +349,16 @@ public class Zibenbot {
                 return "原神微博小助手";
             }
         });
+        subManager.addSubscribable(
+                new SimpleSubscription(
+                        this,
+                        date1 -> TimeUtils.getNextSpecialTime(date1, -1, -1, 19, 0, 0, 0),
+                        this.getImg(appDirectory + "/tigang.jpg")) {
+                    @Override
+                    public String getName() {
+                        return "提肛小助手";
+                    }
+                });
         //把订阅管理器注册进线程池
         pool.add(subManager);
         logInfo("registe time task end");
