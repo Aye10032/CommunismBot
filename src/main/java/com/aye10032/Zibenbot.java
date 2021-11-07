@@ -354,7 +354,7 @@ public class Zibenbot {
                 new SimpleSubscription(
                         this,
                         date1 -> TimeUtils.getNextSpecialTime(date1, -1, -1, 19, 0, 0, 0),
-                        this.getImg(appDirectory + "/tigang.jpg")) {
+                        this.getImg(appDirectory + "\\tigang.jpg")) {
                     @Override
                     public String getName() {
                         return "提肛小助手";
@@ -905,7 +905,7 @@ public class Zibenbot {
                 try {
                     func.run(simpleMsg);
                 } catch (Exception e) {
-                    replyMsg(simpleMsg, "运行出错：" + e);
+                    replyMsg(simpleMsg, String.format("运行出错（%s）：%s", func.toString(), e));
                     logWarning(ExceptionUtils.printStack(e));
                 }
             }

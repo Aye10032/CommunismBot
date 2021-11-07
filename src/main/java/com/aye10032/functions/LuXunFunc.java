@@ -18,8 +18,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static org.opencv.core.Core.vconcat;
 import static org.opencv.imgcodecs.Imgcodecs.*;
@@ -46,8 +46,11 @@ public class LuXunFunc extends BaseFunc {
 
     @Override
     public void run(SimpleMsg simpleMsg) {
-        String[] msgs = simpleMsg.getMsg().split(" ");
-        if (msgs[0].equals(".鲁迅") && msgs.length == 2) {
+        String[] msgs = simpleMsg.getMsg().trim().split(" ");
+        if (msgs.length == 0) {
+            return;
+        }
+        if (msgs.length == 2 && msgs[0].equals(".鲁迅")) {
             File output = new File(appDirectory + "\\image\\biaoqing\\output\\" + simpleMsg.getMsg().hashCode() + ".jpg");
             addText(1, msgs[1], output);
             zibenbot.replyMsg(simpleMsg, zibenbot.getImg(output));
