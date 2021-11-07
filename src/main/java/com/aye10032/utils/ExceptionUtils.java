@@ -8,6 +8,11 @@ public class ExceptionUtils {
         StringBuilder builder = new StringBuilder();
         builder.append(e).append("\n");
         Arrays.stream(e.getStackTrace()).forEach(element -> builder.append("\n").append(element));
+        if (e.getCause() == null) {
+            return builder.toString();
+        } else {
+            builder.append("\n").append(printStack(e.getCause()));
+        }
         return builder.toString();
     }
 
