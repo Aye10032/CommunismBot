@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 public class AyeCompile {
 
+    private static RequestConfig config = RequestConfig.custom().setConnectTimeout(50000).setConnectionRequestTimeout(10000).setSocketTimeout(50000).setRedirectsEnabled(false).build();
+    private static CloseableHttpClient httpClient = HttpClients.custom().setMaxConnTotal(2).setDefaultRequestConfig(config).build();
     private String msg = "";
     private boolean hasCode = false;
 
@@ -24,8 +26,8 @@ public class AyeCompile {
     private Matcher bv_matcher;
 
     static {
-        short_site_pattern_list.add(Pattern.compile("https://b23.tv/[(0-9)|(A-Z)|(a-z)]{6}\\b"));
-        short_site_pattern_list.add(Pattern.compile("https://b.acg.tv/[(0-9)|(A-Z)|(a-z)]{6}\\b"));
+        short_site_pattern_list.add(Pattern.compile("https://b23.tv/[(0-9)|(A-Z)|(a-z)]{6,7}\\b"));
+        short_site_pattern_list.add(Pattern.compile("https://b.acg.tv/[(0-9)|(A-Z)|(a-z)]{6,7}\\b"));
     }
 
     public AyeCompile(String msg) {
@@ -40,11 +42,7 @@ public class AyeCompile {
             }
         }
         if (flag) {
-            RequestConfig config = RequestConfig.custom().setConnectTimeout(50000).setConnectionRequestTimeout(10000).setSocketTimeout(50000).setRedirectsEnabled(false).build();
-            CloseableHttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(config).build();
-            CloseableHttpResponse conn = null;
-            try {
-                conn = httpClient.execute(new HttpGet(msg));
+            try (CloseableHttpResponse conn = httpClient.execute(new HttpGet(msg))) {
                 this.msg = conn.getHeaders("Location")[0].getValue();
             } catch (Exception e) {
                 //ignore
