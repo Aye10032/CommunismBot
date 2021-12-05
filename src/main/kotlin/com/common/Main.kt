@@ -26,6 +26,7 @@ suspend fun main(args: Array<String>) {
     val qqID = args[0].toLong()
     val password = args[1]
     val conf = BotConfiguration.Default.copy()
+    conf.enableContactCache()
     val fileReader = FileReader("device.json")
     conf.loadDeviceInfoJson(IOUtils.toString(fileReader))
     fileReader.close()

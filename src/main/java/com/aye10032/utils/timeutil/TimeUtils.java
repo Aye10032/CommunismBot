@@ -1,5 +1,6 @@
 package com.aye10032.utils.timeutil;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -314,6 +315,11 @@ public class TimeUtils {
             return ret;
         }
 
+    }
+
+    public static String getDateString(long l) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(new Date(l));
     }
 
 

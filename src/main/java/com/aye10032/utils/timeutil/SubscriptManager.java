@@ -230,6 +230,16 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 replyMsg(simpleMsg, builder.toString());
             } else {
                 if ("调试".equals(msgs[1]) || "debug".equals(msgs[1])) {
+                    if (msgs.length > 2) {
+                        ISubscribable iSubscribable = allSubscription.get(msgs[2]);
+                        if (iSubscribable == null) {
+                            replyMsg(simpleMsg, "找不到这个订阅器" + msgs[2]);
+                        } else {
+                            Reciver reciver = getReciver(isNoArgsSub(iSubscribable), simpleMsg, true);
+                            iSubscribable.run(Arrays.asList(reciver), reciver.getArgs());
+                        }
+                        return;
+                    }
                     StringBuilder builder = new StringBuilder();
                     String TAB_STRING = "                    ";
                     builder.append("当前订阅关系如下:\n");
@@ -267,7 +277,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
                 ISubscribable subscribable = allSubscription.get(msgs[1]);
                 if (subscribable != null) {
                     boolean noArgsSub = isNoArgsSub(subscribable);
-                    Reciver reciver = getReciver(noArgsSub, simpleMsg);
+                    Reciver reciver = getReciver(noArgsSub, simpleMsg, false);
                     if (sw) {
                         Pair<Boolean, String> booleanStringPair;
                         //参数合理检查
@@ -303,9 +313,11 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
         }
     }
 
-    private Reciver getReciver(boolean isNoArgsSub, SimpleMsg simpleMsg) {
-
+    private Reciver getReciver(boolean isNoArgsSub, SimpleMsg simpleMsg, boolean isDebug) {
         String[] strings = simpleMsg.getCommandPieces();
+        if (isDebug) {
+            strings = ArrayUtils.subarray(strings, 1, strings.length);
+        }
         String[] args = null;
         if (strings.length > 2 && !isNoArgsSub) {
             args = ArrayUtils.subarray(strings, 2, strings.length);
@@ -320,7 +332,6 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
             default:
                 return null;
         }
-
     }
 
     /**
@@ -346,7 +357,7 @@ public class SubscriptManager extends TimedTaskBase implements IFunc {
 
     public List<Reciver> getUserAllSub(SimpleMsg simpleMsg, ISubscribable subscribable) {
         List<Reciver> list = new ArrayList<>();
-        Reciver reciver = getReciver(isNoArgsSub(subscribable), simpleMsg);
+        Reciver reciver = getReciver(isNoArgsSub(subscribable), simpleMsg, false);
         for (Reciver reciver1 : subscriptMap.getOrDefault(subscribable.getName(), new ArrayList<>())) {
             if (reciver.getId().equals(reciver1.getId()) &&
                     reciver.getType() == reciver1.getType()) {
