@@ -25,7 +25,7 @@ tasks.withType(JavaCompile) {
 }
 
 ext {
-    miraiVersion = '2.9.0-M1'
+    miraiVersion = '2.9.0-RC'
     ktVersion = '1.5.10'
 }
 
@@ -37,7 +37,7 @@ group 'com.firespoon'
 version '1.0.0'
 
 repositories {
-    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+
     mavenCentral()
     jcenter()
     maven { url 'https://jitpack.io' }
