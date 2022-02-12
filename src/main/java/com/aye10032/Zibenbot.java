@@ -892,11 +892,16 @@ public class Zibenbot {
     }
 
     private String _upload(Contact contact, String type, String source) {
-        try {
-            return msgUploads.get(type).upload(contact, source);
-        } catch (Exception e) {
-            logWarning(String.format("上传%s失败：%s", type, ExceptionUtils.printStack(e)));
+        Exception e = null;
+        for (int i = 0; i < 3; i++) {
+            try {
+                return msgUploads.get(type).upload(contact, source);
+            } catch (Exception e1) {
+                e = e1;
+                // ignore
+            }
         }
+        logErrorStatic(String.format("上传%s失败：%s", type, ExceptionUtils.printStack(e)));
         return "[" + type + "]";
     }
 
