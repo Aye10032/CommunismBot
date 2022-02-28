@@ -1,5 +1,6 @@
 import java.text.SimpleDateFormat
 
+
 buildscript {
     repositories {
         jcenter()
@@ -15,7 +16,7 @@ buildscript {
 
 plugins {
     id 'java'
-    id "org.jetbrains.kotlin.jvm" version "1.4.21"
+    id "org.jetbrains.kotlin.jvm" version "1.6.20-M1"
     id 'com.github.johnrengelman.shadow' version '5.2.0'
     //id("net.mamoe.kotlin-jvm-blocking-bridge") version "1.8.0"
 }
@@ -25,8 +26,8 @@ tasks.withType(JavaCompile) {
 }
 
 ext {
-    miraiVersion = '2.9.0-RC'
-    ktVersion = '1.5.10'
+    miraiVersion = '2.10.0'
+    ktVersion = '1.6.20-M1'
 }
 
 apply plugin: "ua.eshepelyuk.ManifestClasspath"
@@ -44,6 +45,7 @@ repositories {
 }
 
 dependencies {
+
     implementation 'junit:junit:4.12'
 
     /*implementation 'net.mamoe:mirai-core-qqandroid:1.2.3'//此处版本应替换为当前最新
@@ -115,6 +117,9 @@ test {
 
 // 点这个箭头进行打包
 jar {
+    configurations.compile.canBeResolved = true
+    configurations.implementation.canBeResolved = true
+    configurations.api.canBeResolved = true
     //把以前的重命名归档起来
     destinationDir = file("$rootDir/build")
     File oldJarFile = file(destinationDir.toString() + "/" + rootProject.name + "-" + version + ".jar")
@@ -145,9 +150,10 @@ jar {
         include 'build.gradle'
     }
 
-    //会自动把依赖复制到编译目录下的libs文件夹里面
-    //如果有添加新的依赖记得复制到运行环境下的libs
+    // 会自动把依赖复制到编译目录下的libs文件夹里面
+    // 如果有添加新的依赖记得复制到运行环境下的libs
     copy() {
+        def classpathPrefix = configurations
         from configurations.compile.collect { it }
         into "$buildDir/libs"
     }

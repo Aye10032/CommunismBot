@@ -3,9 +3,6 @@ package com.common
 import com.aye10032.Zibenbot
 import com.firespoon.bot.command.DiceCommand
 import com.firespoon.bot.core._subscribeAlways
-import com.firespoon.bot.core.boot
-import com.firespoon.bot.core.registerCommandAlways
-import com.firespoon.bot.core.registerListener
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.BotFactory
 import net.mamoe.mirai.event.EventPriority
@@ -26,7 +23,7 @@ suspend fun main(args: Array<String>) {
     val qqID = args[0].toLong()
     val password = args[1]
     val conf = BotConfiguration.Default.copy()
-    conf.enableContactCache()
+    //conf.enableContactCache()
     val fileReader = FileReader("device.json")
     conf.loadDeviceInfoJson(IOUtils.toString(fileReader))
     fileReader.close()

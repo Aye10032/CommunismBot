@@ -135,6 +135,14 @@ public class WeiboSetItem {
     }
 
     @Override
+    public String toString() {
+        return "WeiboSetItem{" +
+            "text='" + text + '\'' +
+            ", userName='" + userName + '\'' +
+            '}';
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(id);
     }

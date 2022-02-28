@@ -46,6 +46,11 @@ public class TimeUtils {
      * 得到下一分钟的时间适配器
      */
     public static ITimeAdapter NEXT_MIN = new NextMin();
+
+    /**
+     * 得到下5分钟的时间适配器
+     */
+    public static ITimeAdapter NEXT_5_MIN = new Next5Min();
     /**
      * 得到下一秒的时间适配器
      */
@@ -290,6 +295,17 @@ public class TimeUtils {
         public Date getNextTime(Date date) {
             Date ret = new Date();
             ret.setTime(date.getTime() + HOUR);
+            return ret;
+        }
+
+    }
+
+    private static class Next5Min implements ITimeAdapter {
+
+        @Override
+        public Date getNextTime(Date date) {
+            Date ret = new Date();
+            ret.setTime(date.getTime() + MIN * 5L);
             return ret;
         }
 

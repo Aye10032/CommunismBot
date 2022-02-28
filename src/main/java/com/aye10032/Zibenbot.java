@@ -351,6 +351,12 @@ public class Zibenbot {
                 return "原神微博小助手";
             }
         });
+        subManager.addSubscribable(new WeiboTask(this, weiboReader) {
+            @Override
+            public String getName() {
+                return "微博订阅小助手";
+            }
+        });
         subManager.addSubscribable(new FundTask(this));
         subManager.addSubscribable(
             new SimpleSubscription(
