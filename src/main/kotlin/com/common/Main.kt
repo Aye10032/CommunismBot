@@ -3,6 +3,9 @@ package com.common
 import com.aye10032.Zibenbot
 import com.firespoon.bot.command.DiceCommand
 import com.firespoon.bot.core._subscribeAlways
+import com.firespoon.bot.core.boot
+import com.firespoon.bot.core.registerCommandAlways
+import com.firespoon.bot.core.registerListener
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.BotFactory
 import net.mamoe.mirai.event.EventPriority
