@@ -68,8 +68,6 @@ suspend fun main(args: Array<String>) {
     Main.zibenbot = zibenbot
     bot.registerCommandAlways(DiceCommand.command)
     bot.registerCommandAlways(zibenbot.command)
-    //bot.registerCommandAlways(NMSLCommand.command)
-    //bot.registerCommandAlways(MHWCommand.command)
 
 
     bot.join()
