@@ -12,6 +12,7 @@ import com.aye10032.utils.SeleniumUtils;
 import com.aye10032.utils.StringUtil;
 import com.aye10032.utils.timeutil.*;
 import com.aye10032.utils.weibo.WeiboReader;
+import com.dazo66.config.BotConfig;
 import com.firespoon.bot.command.Command;
 import com.firespoon.bot.commandbody.CommandBody;
 import kotlin.Unit;
@@ -21,6 +22,7 @@ import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.Mirai;
 import net.mamoe.mirai.contact.*;
 import net.mamoe.mirai.event.EventPriority;
+import net.mamoe.mirai.event.events.BotReloginEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.event.events.NewFriendRequestEvent;
 import net.mamoe.mirai.message.code.MiraiCode;
@@ -30,7 +32,11 @@ import net.mamoe.mirai.utils.MiraiLogger;
 import net.mamoe.mirai.utils.PlatformLogger;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -54,6 +60,8 @@ import static com.aye10032.utils.StringUtil.longMsgSplit;
  *
  * @author Dazo66
  */
+@Component
+@AutoConfigureAfter(BotConfig.class)
 public class Zibenbot {
 
     private static OkHttpClient client = new OkHttpClient();
@@ -143,13 +151,10 @@ public class Zibenbot {
         return LOGGER_FILE;
     }
 
-    public Zibenbot(Bot bot) {
-
+    public Zibenbot(@Autowired Bot bot) {
         this.bot = bot;
-        // 设置基本参数
-        appDirectory = "data";
-        SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
         // 配置logger
+        appDirectory = "data";
         File logDir = new File(appDirectory + "\\log\\");
         File[] files = logDir.listFiles(pathname -> System.currentTimeMillis() - pathname.lastModified() > TimeUtils.DAY * 10L);
         Arrays.asList(files != null ? files : new File[0]).forEach(File::delete);
@@ -159,7 +164,6 @@ public class Zibenbot {
             return Unit.INSTANCE;
         }, true);
         bot.getLogger().plus(logger);
-
         pool = new TimeTaskPool();
         // bot启用的群
         enableGroup.add(995497677L); //提醒人
@@ -178,9 +182,11 @@ public class Zibenbot {
         enableGroup.add(866613076L);
     }
 
-    public int startup() {
-        SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
 
+    @PostConstruct
+    public int startup() {
+        // 设置基本参数
+        SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
         //改成了手动注册
         log(Level.INFO, "registe func start");
         this.weiboReader = new WeiboReader(this, appDirectory + "\\weiboCache\\");
@@ -204,25 +210,25 @@ public class Zibenbot {
         // 每天0点 6点 12点 18点
         ITimeAdapter maiyaoCycle = date -> {
             Date date1 = TimeUtils.getNextSpecialTime(
-                    date, -1, -1, 0, 0, 0, 0);
+                date, -1, -1, 0, 0, 0, 0);
             Date date2 = TimeUtils.getNextSpecialTime(
-                    date, -1, -1, 6, 0, 0, 0);
+                date, -1, -1, 6, 0, 0, 0);
             Date date3 = TimeUtils.getNextSpecialTime(
-                    date, -1, -1, 12, 0, 0, 0);
+                date, -1, -1, 12, 0, 0, 0);
             Date date4 = TimeUtils.getNextSpecialTime(
-                    date, -1, -1, 18, 0, 0, 0);
+                date, -1, -1, 18, 0, 0, 0);
             return TimeUtils.getMin(date1, date2, date3, date4);
         };
         //每周一10点 22点 周日10点 22点 用于提醒剿灭
         ITimeAdapter jiaomieCycle = date -> {
             Date date1 = TimeUtils.getNextSpecialWeekTime(date,
-                    -1, 1, 10, 0, 0, 0);
+                -1, 1, 10, 0, 0, 0);
             Date date2 = TimeUtils.getNextSpecialWeekTime(date,
-                    -1, 1, 22, 0, 0, 0);
+                -1, 1, 22, 0, 0, 0);
             Date date3 = TimeUtils.getNextSpecialWeekTime(date,
-                    -1, 2, 10, 0, 0, 0);
+                -1, 2, 10, 0, 0, 0);
             Date date4 = TimeUtils.getNextSpecialWeekTime(date,
-                    -1, 2, 22, 0, 0, 0);
+                -1, 2, 22, 0, 0, 0);
             return TimeUtils.getMin(date1, date2, date3, date4);
         };
 
@@ -235,7 +241,7 @@ public class Zibenbot {
                     return new Date(start);
                 }
                 return TimeUtils.getNextSpecialWeekTime(date,
-                        -1, -1, 10, 0, 0, 0);
+                    -1, -1, 10, 0, 0, 0);
             } else {
                 return new Date(date.getTime() + 1000000000000L);
             }
@@ -250,7 +256,7 @@ public class Zibenbot {
                     return new Date(startRiti);
                 }
                 return TimeUtils.getNextSpecialWeekTime(date,
-                        -1, -1, 10, 0, 0, 0);
+                    -1, -1, 10, 0, 0, 0);
             } else {
                 return new Date(date.getTime() + 1000000000000L);
             }
@@ -264,8 +270,8 @@ public class Zibenbot {
         Date date = calendar.getTime();
 
         ISubscribable zhouyouRiti = new SimpleSubscription(this, ritiCycle,
-                () -> String.format("明日方舟今天有危机合约日替，记得打，日替还剩下%d天。",
-                        (endRiti - 21600000) / TimeUtils.DAY - (System.currentTimeMillis() - 21600000) / TimeUtils.DAY)) {
+            () -> String.format("明日方舟今天有危机合约日替，记得打，日替还剩下%d天。",
+                (endRiti - 21600000) / TimeUtils.DAY - (System.currentTimeMillis() - 21600000) / TimeUtils.DAY)) {
 
             private final static String NAME = "提醒白嫖小助手";
 
@@ -278,7 +284,7 @@ public class Zibenbot {
 
         // 创建订阅器对象
         SimpleSubscription maiyao = new SimpleSubscription(this, maiyaoCycle,
-                getImg(appDirectory + "/image/提醒买药小助手.jpg")) {
+            getImg(appDirectory + "/image/提醒买药小助手.jpg")) {
             private final static String NAME = "提醒买药小助手";
 
             @Override
@@ -288,8 +294,8 @@ public class Zibenbot {
         };
 
         ISubscribable zhouYouPiao = new SimpleSubscription(this, zhouYouPiaoCycle,
-                () -> String.format("明日方舟今天有白嫖，记得抽卡，白嫖还剩下%d天。",
-                        (end - 21600000) / TimeUtils.DAY - (System.currentTimeMillis() - 21600000) / TimeUtils.DAY)) {
+            () -> String.format("明日方舟今天有白嫖，记得抽卡，白嫖还剩下%d天。",
+                (end - 21600000) / TimeUtils.DAY - (System.currentTimeMillis() - 21600000) / TimeUtils.DAY)) {
 
             private final static String NAME = "提醒白嫖小助手";
 
@@ -300,7 +306,7 @@ public class Zibenbot {
         };
 
         SimpleSubscription jiaomie = new SimpleSubscription(this, jiaomieCycle,
-                getImg(appDirectory + "/image/提醒剿灭小助手.jpg")) {
+            getImg(appDirectory + "/image/提醒剿灭小助手.jpg")) {
             @Override
             public String getName() {
                 return "提醒剿灭小助手";
@@ -338,7 +344,7 @@ public class Zibenbot {
             }
         });
         subManager.addSubscribable(new ArknightWeiboTask(this,
-                weiboReader) {
+            weiboReader) {
             @Override
             public String getName() {
                 return "舟游发饼小助手";
@@ -383,6 +389,20 @@ public class Zibenbot {
         } catch (Exception e) {
             e.printStackTrace();
         }*/
+        bot.getEventChannel().subscribeAlways(MessageEvent.class, messageEvent -> {
+            SimpleMsg simpleMsg = new SimpleMsg(messageEvent);
+            if (simpleMsg.isGroupMsg() && !enableGroup.contains(simpleMsg.getFromGroup())) {
+                // ignore
+            } else {
+                runFuncs(simpleMsg);
+            }
+        });
+        bot.getEventChannel().subscribeAlways(NewFriendRequestEvent.class, this::onFriendEvent);
+        bot.getEventChannel().subscribeAlways(BotReloginEvent.class, botReloginEvent -> {
+            if (getRegisterFunc().size() == 0) {
+                startup();
+            }
+        });
         return 0;
     }
 

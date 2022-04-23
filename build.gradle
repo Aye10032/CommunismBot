@@ -55,6 +55,9 @@ dependencies {
     compile group: 'net.mamoe', name: 'mirai-core-api-jvm', version: rootProject.ext.miraiVersion
     compile group: 'net.mamoe', name: 'mirai-core-api', version: rootProject.ext.miraiVersion
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.6'
+
 
     // https://mvnrepository.com/artifact/org.jdom/jdom
     compile group: 'org.jdom', name: 'jdom', version: '2.0.2'
@@ -141,7 +144,7 @@ jar {
         for (def f : files) {
             builder.append(classpathPrefix).append("\\").append(f.getName()).append(" ")
         }
-        attributes('Main-Class': 'com.common.MainKt')//入口点
+        attributes('Main-Class': 'com.dazo66.Main')//入口点
         attributes('Class-Path': builder.toString())
     }
 
