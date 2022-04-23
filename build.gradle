@@ -68,9 +68,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.32.3'
 
-    // https://mvnrepository.com/artifact/com.github.theholywaffle/teamspeak3-api
-    compile group: 'com.github.theholywaffle', name: 'teamspeak3-api', version: '1.2.0'
-
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 
@@ -92,7 +89,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
     compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
 
-    //compile group: 'com.aye10032', name:'biliinfo', version: '0.1.1'
     //JavaCV相关
 //    compile group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.3'
     compile group: 'org.bytedeco', name: 'javacv', version: '1.5.3'
