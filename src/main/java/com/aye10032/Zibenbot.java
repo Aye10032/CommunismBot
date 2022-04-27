@@ -88,6 +88,16 @@ public class Zibenbot {
     }
 
     {
+        // 配置logger
+        appDirectory = "data";
+        File logDir = new File(appDirectory + "\\log\\");
+        File[] files = logDir.listFiles(pathname -> System.currentTimeMillis() - pathname.lastModified() > TimeUtils.DAY * 10L);
+        Arrays.asList(files != null ? files : new File[0]).forEach(File::delete);
+        logger = new PlatformLogger("zibenbot", (String s) -> {
+            System.out.println(s);
+            getLoggerStream().println(s);
+            return Unit.INSTANCE;
+        }, true);
         msgUploads.put("IMAGE", (conect, source) -> {
             if ("null".equals(source)) {
                 return "[IMAGE]";
@@ -148,17 +158,6 @@ public class Zibenbot {
 
     public Zibenbot(@Autowired Bot bot) {
         this.bot = bot;
-        // 配置logger
-        appDirectory = "data";
-        File logDir = new File(appDirectory + "\\log\\");
-        File[] files = logDir.listFiles(pathname -> System.currentTimeMillis() - pathname.lastModified() > TimeUtils.DAY * 10L);
-        Arrays.asList(files != null ? files : new File[0]).forEach(File::delete);
-        logger = new PlatformLogger("zibenbot", (String s) -> {
-            System.out.println(s);
-            getLoggerStream().println(s);
-            return Unit.INSTANCE;
-        }, true);
-        bot.getLogger().plus(logger);
         pool = new TimeTaskPool();
         // bot启用的群
         enableGroup.add(995497677L); //提醒人
@@ -181,6 +180,7 @@ public class Zibenbot {
 
     @PostConstruct
     public int startup() {
+        bot.getLogger().plus(logger);
         // 设置基本参数
         SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
         //改成了手动注册
@@ -420,7 +420,7 @@ public class Zibenbot {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return proxy;
+        return null;
     }
 
     public static void logInfoStatic(String info) {

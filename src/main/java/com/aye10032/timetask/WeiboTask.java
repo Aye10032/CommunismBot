@@ -50,7 +50,12 @@ public abstract class WeiboTask extends SubscribableBase {
             return;
         }
         OkHttpClient client = Zibenbot.getOkHttpClient();
-        WeiboSet posts = WeiboUtils.getWeiboSet(client, weiboId);
+        WeiboSet posts = new WeiboSet();
+        try {
+            posts = WeiboUtils.getWeiboSet(client, weiboId);
+        } catch (Throwable e) {
+            Zibenbot.logErrorStatic("获取微博出错：" + ExceptionUtils.printStack(e));
+        }
         if (postMap.get(weiboId) == null) {
             Set<String> set = new HashSet<>();
             posts.forEach(post -> set.add(post.getId()));
