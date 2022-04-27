@@ -17,8 +17,7 @@ public class GbferKillerFunc extends BaseFunc {
 
     @Override
     public void run(SimpleMsg simpleMsg) {
-        if (simpleMsg.getMsg().contains("game.granbluefantasy.jp")
-                && simpleMsg.getMsg().length() > 30) {
+        if (simpleMsg.getMsg().contains("granbluefantasy")) {
             zibenbot.muteMember(simpleMsg.getFromGroup(), simpleMsg.getFromClient(), 114);
             zibenbot.replyMsgWithQuote(simpleMsg, "空骑士爪巴" + zibenbot.getImg(appDirectory + "\\gbfKiller.jpg"));
         }

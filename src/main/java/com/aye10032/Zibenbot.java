@@ -13,15 +13,11 @@ import com.aye10032.utils.StringUtil;
 import com.aye10032.utils.timeutil.*;
 import com.aye10032.utils.weibo.WeiboReader;
 import com.dazo66.config.BotConfig;
-import com.firespoon.bot.command.Command;
-import com.firespoon.bot.commandbody.CommandBody;
 import kotlin.Unit;
-import kotlin.coroutines.Continuation;
-import kotlin.jvm.functions.Function2;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.Mirai;
 import net.mamoe.mirai.contact.*;
-import net.mamoe.mirai.event.EventPriority;
+import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent;
 import net.mamoe.mirai.event.events.BotReloginEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.event.events.NewFriendRequestEvent;
@@ -31,7 +27,6 @@ import net.mamoe.mirai.utils.ExternalResource;
 import net.mamoe.mirai.utils.MiraiLogger;
 import net.mamoe.mirai.utils.PlatformLogger;
 import okhttp3.OkHttpClient;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.stereotype.Component;
@@ -180,6 +175,7 @@ public class Zibenbot {
         enableGroup.add(949214456L);//TIS方舟
         enableGroup.add(295830682L);
         enableGroup.add(866613076L);
+        enableGroup.add(300496876L);
     }
 
 
@@ -403,6 +399,9 @@ public class Zibenbot {
                 startup();
             }
         });
+        // 自动接受入群邀请
+        bot.getEventChannel().subscribeAlways(BotInvitedJoinGroupRequestEvent.class,
+            BotInvitedJoinGroupRequestEvent::accept);
         return 0;
     }
 
@@ -663,20 +662,6 @@ public class Zibenbot {
         logger.verbose(verboseMsg);
     }
 
-    public Command<MessageEvent> getCommand() {
-        return new ZibenbotController("Zibenbot", (o, o2) -> {
-            if (o instanceof MessageEvent) {
-                SimpleMsg simpleMsg = new SimpleMsg(o);
-                if (simpleMsg.isGroupMsg()
-                        && !enableGroup.contains(simpleMsg.getFromGroup())) {
-                    return null;
-                } else {
-                    runFuncs(simpleMsg);
-                }
-            }
-            return null;
-        }, (o, o2) -> Unit.INSTANCE);
-    }
 
     /**
      * 得到已经注册的方法模块
@@ -959,13 +944,5 @@ public class Zibenbot {
         return MSG_IGNORE;
     }*/
 
-    static class ZibenbotController extends Command<MessageEvent> {
-        public ZibenbotController(
-                @NotNull String name,
-                @NotNull Function2<? super MessageEvent, ? super Continuation<? super CommandBody<MessageEvent>>, ?> builder,
-                @NotNull Function2<? super CommandBody<MessageEvent>, ? super Continuation<? super Unit>, ?> action) {
-            super(EventPriority.NORMAL, name, builder, action);
-        }
-    }
 
 }
