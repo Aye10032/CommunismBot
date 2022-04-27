@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.aye10032.utils.timeutil.TimeUtils.MIN;
+import static com.aye10032.utils.timeutil.TimeUtils.SEC;
 
 
 /**
@@ -37,7 +38,7 @@ public abstract class WeiboTask extends SubscribableBase {
     @Override
     public Date getNextTime(Date date) {
         Date ret = new Date();
-        ret.setTime(date.getTime() + 5L * MIN);
+        ret.setTime(date.getTime() + 5L * MIN + 10L * SEC);
         return ret;
     }
 
@@ -45,8 +46,8 @@ public abstract class WeiboTask extends SubscribableBase {
     public void run(List<Reciver> recivers, String[] args) {
         Long weiboId = null;
         Zibenbot.logInfoStatic("开始检查微博");
-        if (args.length > 0) {
-            weiboId = Long.parseLong(args[0]);
+        if (args == null || args.length == 0) {
+            return;
         }
         OkHttpClient client = Zibenbot.getOkHttpClient();
         WeiboSet posts = WeiboUtils.getWeiboSet(client, weiboId);
