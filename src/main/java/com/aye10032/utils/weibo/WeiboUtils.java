@@ -94,9 +94,9 @@ public class WeiboUtils {
 
     public static WeiboPost getWeiboWithPostItem(OkHttpClient client, WeiboSetItem item) throws IOException, ParseException {
         try {
-            if (!item.isLongText()) {
+            /*if (!item.isLongText()) {
                 return itemToPost(item);
-            }
+            }*/
             WeiboPost post = getWeiboWithId(client, item.getId());
             post.setTop(item.getIsTop());
             return post;
@@ -184,8 +184,11 @@ public class WeiboUtils {
 
     private static String cleanString1(String s) {
         //<a href='/n/霍里奇肉性恋'>@霍里奇肉性恋</a>
+        // <a  href="https://m.weibo.cn/p/index?extparam=%E5%8E%9F%E7%A5%9E&containerid=100808fc439dedbb06ca5fd858848e521b8716" data-hide=""><span class='url-icon'><img style='width: 1rem;height: 1rem' src='https://n.sinaimg.cn/photo/5213b46e/20180926/timeline_card_small_super_default.png'></span><span class="surl-text">原神</span></a> <a  href="https://m.weibo.cn/search?containerid=231522type%3D1%26t%3D10%26q%3D%23%E5%8E%9F%E7%A5%9E%23&extparam=%23%E5%8E%9F%E7%A5%9E%23" data-hide=""><span class="surl-text">#原神#</span></a> <br /><br />《原神》2.7版本更新延期补偿说明 <a  href="https://weibo.com/ttarticle/p/show?id=2309404765885876535937" data-hide=""><span class='url-icon'><img style='width: 1rem;height: 1rem' src='https://h5.sinaimg.cn/upload/2015/09/25/3/timeline_card_small_article_default.png'></span><span class="surl-text">《原神》2.7版本更新延期补偿说明</span></a>
         s = s.replaceAll("<a href='/n/([^\\s/ @]+)'>@\\1</a>", "@$1");
         s = s.replaceAll("<a +href=\"(\\S+)\" data-hide=\"\"><span class=\"surl-text\">#(\\S+)#</span></a>", "#$2#");
+        s = s.replaceAll(" <a +href=\"(\\S+)\" data-hide=\"\"><span class='url-icon'>", "$1");
+        s = s.replaceAll("<img style='[1-9a-zA-Z ;:]+' src='(\\S+)'>", "[img:$1]");
         s = s.replaceAll("<br />", "\n");
         s = s.replaceAll("<br><br>", "\n");
         s = s.replaceAll("<a data-url=\"(\\S+)\" href=\"\\S+\" data-hide=\"\"><span class='url-icon'><img style='([1-9a-zA-Z ;:]+)' src='(\\S+)'></span><span class=\"surl-text\">([^\\s<>]+)</span></a>", "$4: $1\n[img:$3]");
