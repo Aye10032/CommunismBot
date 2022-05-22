@@ -16,26 +16,7 @@ public class DataCollect extends BaseFunc {
 
     private Connection c = null;
 
-/*    public static void main(String[] args) {
-        Connection c = null;
-        Statement stmt;
-        try {
-            Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:" + "D:\\program\\GitHub\\FSBot"+
-                    "\\data\\nlpdata\\botnlpdata.db");
-            stmt = c.createStatement();
-            String sql = "SELECT * FROM question where msg='叶受A';";
-            ResultSet rs = stmt.executeQuery(sql);
-            System.out.println(rs.next());
-            rs.close();
-            stmt.close();
-            c.close();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }*/
-
-    public Connection getConnection(){
+    public Connection getConnection() {
         try {
             if (c == null || c.isClosed()) {
                 Class.forName("org.sqlite.JDBC");
@@ -55,7 +36,7 @@ public class DataCollect extends BaseFunc {
     @Override
     public void setUp() {
         File database = new File(zibenbot.appDirectory + "\\nlpdata\\botnlpdata.db");
-        if (!database.exists()){
+        if (!database.exists()) {
             database.getParentFile().mkdirs();
             Connection c = null;
             Statement stmt = null;
@@ -83,27 +64,27 @@ public class DataCollect extends BaseFunc {
     @Override
     public void run(SimpleMsg simpleMsg) {
         boolean flag = false;
-        if (simpleMsg.getFromClient() == 1969631968L){
+        if (simpleMsg.getFromClient() == 1969631968L) {
             return;
-        }else if (simpleMsg.isGroupMsg()) {
+        } else if (simpleMsg.isGroupMsg()) {
             List<Long> atList = zibenbot.getAtMembers(simpleMsg.getMsg());
-            if (atList.size() != 0){
-                for (long qq:atList){
-                    if (qq == 2375985957L || qq == 2155231604L){
+            if (atList.size() != 0) {
+                for (long qq : atList) {
+                    if (qq == 2375985957L || qq == 2155231604L) {
                         flag = true;
                         break;
                     }
                 }
-            }else if ((simpleMsg.getMsg().contains("aye") || simpleMsg.getMsg().contains("Aye") || simpleMsg.getMsg().contains("阿叶")
-                    || simpleMsg.getMsg().contains("小叶") || simpleMsg.getMsg().contains("叶受") || simpleMsg.getMsg().contains("叶哥哥"))&&
+            } else if ((simpleMsg.getMsg().contains("aye") || simpleMsg.getMsg().contains("Aye") || simpleMsg.getMsg().contains("阿叶")
+                    || simpleMsg.getMsg().contains("小叶") || simpleMsg.getMsg().contains("叶受") || simpleMsg.getMsg().contains("叶哥哥")) &&
                     !((simpleMsg.getMsg().equals("aye") || simpleMsg.getMsg().equals("Aye") || simpleMsg.getMsg().equals("阿叶")
-                    || simpleMsg.getMsg().equals("小叶") || simpleMsg.getMsg().equals("叶受") || simpleMsg.getMsg().equals("叶哥哥")))) {
+                            || simpleMsg.getMsg().equals("小叶") || simpleMsg.getMsg().equals("叶受") || simpleMsg.getMsg().equals("叶哥哥")))) {
                 flag = true;
             }
         }
 
         if (flag) {
-            if (simpleMsg.getFromGroup() == 947657871L){
+            if (simpleMsg.getFromGroup() == 947657871L) {
                 if (simpleMsg.getMsg().length() <= 6)
                     flag = false;
             }
@@ -113,7 +94,7 @@ public class DataCollect extends BaseFunc {
             Statement stmt;
             try {
                 stmt = getConnection().createStatement();
-                String sql = "SELECT * FROM question where msg='"+ simpleMsg.getMsg()+"';";
+                String sql = "SELECT * FROM question where msg='" + simpleMsg.getMsg() + "';";
                 ResultSet rs = stmt.executeQuery(sql);
                 boolean hasMSG = rs.next();
                 rs.close();
@@ -123,12 +104,8 @@ public class DataCollect extends BaseFunc {
                     sql =
                             "INSERT INTO question (msg,fromQQ,fromGroup,time) " + "VALUES ('" + simpleMsg.getMsg() + "', '" + simpleMsg.getFromClient() + "', '" + simpleMsg.getFromGroup() + "', '" + ft.format(dNow) + "' );";
                     stmt.executeUpdate(sql);
-                    zibenbot.toPrivateMsg(2375985957L, "已添加数据集：" + simpleMsg.getMsg());
-//                    replyMsg(simpleMsg, "[" + ft.format(dNow) + "][INFO] 本条对话已添加NLP待处理数据集");
+                    zibenbot.toPrivateMsg(2375985957L, "已添加数据集：【" + simpleMsg.getFromGroup() + "】" + simpleMsg.getMsg());
                 }
-                /*else {
-                    replyMsg(CQmsg, "[" + ft.format(dNow) + "][INFO] 已存在此数据");
-                }*/
                 stmt.close();
                 c.close();
             } catch (Exception e) {
