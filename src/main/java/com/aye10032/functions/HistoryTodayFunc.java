@@ -1,6 +1,7 @@
 package com.aye10032.functions;
 
 import com.aye10032.Zibenbot;
+import com.aye10032.data.historytoday.pojo.HistoryToday;
 import com.aye10032.data.historytoday.service.HistoryTodayService;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.FuncExceptionHandler;
@@ -10,6 +11,7 @@ import com.dazo66.command.CommanderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * @program: communismbot
@@ -32,8 +34,27 @@ public class HistoryTodayFunc extends BaseFunc {
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
                 .or("历史上的今天"::equals)
-                .run((cqmsg) -> {
-                    System.out.println("历史上的今天测试");
+                .run((msg) -> {
+                    List<HistoryToday> historyTodayList = historyTodayService.getTodayHistory(getDate());
+                    if (historyTodayList.isEmpty()) {
+                        zibenbot.replyMsg(msg, "历史的今天无事发生");
+                    } else {
+                        StringBuilder builder = new StringBuilder();
+                        builder.append("今天是")
+                                .append(getDateString())
+                                .append(",历史上的今天:\n");
+                        for (int i = 0; i < historyTodayList.size(); i++) {
+                            builder.append(i)
+                                    .append("、");
+                            if (!historyTodayList.get(i).getYear().equals("")) {
+                                builder.append(historyTodayList.get(i).getYear())
+                                        .append(" ");
+                            }
+                            builder.append(historyTodayList.get(i).getHistory())
+                                    .append("\n");
+                        }
+                        zibenbot.replyMsg(msg, builder.toString());
+                    }
                 })
                 .or("历史上的今天"::equals)
                 .next()
@@ -86,6 +107,14 @@ public class HistoryTodayFunc extends BaseFunc {
         Calendar calendar = Calendar.getInstance();
         String month = String.format("%02d", calendar.get(Calendar.MONTH) + 1);
         String date = String.format("%02d", calendar.get(Calendar.DATE));
+
+        return month + date;
+    }
+
+    private String getDateString() {
+        Calendar calendar = Calendar.getInstance();
+        String month = String.format("%d月", calendar.get(Calendar.MONTH) + 1);
+        String date = String.format("%d日", calendar.get(Calendar.DATE));
 
         return month + date;
     }
