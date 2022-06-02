@@ -169,51 +169,6 @@ public class RedStoneFunc extends BaseFunc {
     @Override
     public void run(SimpleMsg simpleMsg) {
         commander.execute(simpleMsg);
-//        StringBuilder returnMSG = new StringBuilder();
-//        String[] strlist = new StringUtil().split(simpleMsg.getMsg());
-//        if (simpleMsg.getMsg().equals("搬运")) {
-//            zibenbot.replyMsg(simpleMsg, "关键词列表:\n" +
-//                    "搬运 <油管链接> [描述]-----添加搬运需求\n" +
-//                    "烤 <油管链接|B站链接> [描述]-----添加翻译需求\n" +
-//                    "搬运列表-----获取当前任务列表\n" +
-//                    "以下命令仅组群内可用:\n" +
-//                    "已搬 <序列号|油管链接>-----从搬运列表中去除\n" +
-//                    "接 <序列号|油管链接|B站链接> [时间段]-----承接翻译\n" +
-//                    "接坑-----查看当前翻译需求队列");
-//        } else if ((simpleMsg.getMsg().startsWith("搬运") || simpleMsg.getMsg().startsWith("反向")) && simpleMsg.getMsg().contains(" ")) {
-//            if (strlist.length == 3) {
-//                addInfo(strlist[1], 0, 0, 0, simpleMsg.getFromClient(), strlist[2]);
-//            } else if (strlist.length == 2) {
-//                addInfo(strlist[1], 0, 0, 0, simpleMsg.getFromClient(), "无描述");
-//            }
-//            zibenbot.replyMsg(simpleMsg, "已添加" + strlist[1] + " " + strlist[2]);
-//            if (simpleMsg.getFromGroup() != 456919710L) {
-//                zibenbot.toGroupMsg(456919710L, "已添加" + strlist[1] + " " + strlist[2]);
-//            }
-//        } else if (simpleMsg.getMsg().startsWith("烤 ")) {
-//            if (strlist.length == 3) {
-//                addInfo(strlist[1], 0, 1, 0, simpleMsg.getFromClient(), strlist[2]);
-//            } else if (strlist.length == 2) {
-//                addInfo(strlist[1], 0, 1, 0, simpleMsg.getFromClient(), "无描述");
-//            }
-//            zibenbot.replyMsg(simpleMsg, "已添加" + strlist[1] + " " + strlist[2]);
-//        } else if (simpleMsg.getMsg().equals("搬运列表")) {
-//            zibenbot.replyMsg(simpleMsg, getFullList());
-//        }
-//        if (simpleMsg.getFromGroup() == 456919710L || simpleMsg.getFromClient() == 2375985957L) {
-//            if (simpleMsg.getMsg().equals("接坑")) {
-//                zibenbot.replyMsg(simpleMsg, getNeedTransList());
-//            } else if (simpleMsg.getMsg().startsWith("已搬 ")) {
-//                done(Integer.parseInt(strlist[1]));
-//            } else if (simpleMsg.getMsg().startsWith("接 ")) {
-//                if (strlist.length != 3) {
-//                    zibenbot.replyMsg(simpleMsg, "格式不正确，回复\"搬运\"查看详细信息");
-//                } else {
-//                    addtrans(Integer.parseInt(strlist[1]), strlist[2], simpleMsg.getFromClient());
-//                }
-//                zibenbot.replyMsg(simpleMsg, getNeedTransList());
-//            }
-//        }
     }
 
     public boolean isUrl(String msg) {
