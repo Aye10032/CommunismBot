@@ -37,7 +37,7 @@ public class HistoryTodayFunc extends BaseFunc {
                 .run((msg) -> {
                     List<HistoryToday> historyTodayList = historyTodayService.getTodayHistory(getDate());
                     if (historyTodayList.isEmpty()) {
-                        zibenbot.replyMsg(msg, "历史的今天无事发生");
+                        zibenbot.replyMsg(msg, "历史上的今天无事发生");
                     } else {
                         StringBuilder builder = new StringBuilder();
                         builder.append("今天是")
