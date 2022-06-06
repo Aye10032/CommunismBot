@@ -32,15 +32,15 @@ public class HistoryTodayFunc extends BaseFunc {
         super(zibenbot);
         this.historyTodayService = historyTodayService;
         commander = new CommanderBuilder<SimpleMsg>()
-            .seteHandler(FuncExceptionHandler.INSTENCE)
-            .start()
-            .or("历史上的今天"::equals)
-            .run((msg) -> {
-                List<HistoryToday> historyTodayList = historyTodayService.getTodayHistory(getDate());
-                if (historyTodayList.isEmpty()) {
-                    zibenbot.replyMsg(msg, "历史的今天无事发生");
-                } else {
-                    StringBuilder builder = new StringBuilder();
+                .seteHandler(FuncExceptionHandler.INSTENCE)
+                .start()
+                .or("历史上的今天"::equals)
+                .run((msg) -> {
+                    List<HistoryToday> historyTodayList = historyTodayService.getTodayHistory(getDate());
+                    if (historyTodayList.isEmpty()) {
+                        zibenbot.replyMsg(msg, "历史上的今天无事发生");
+                    } else {
+                        StringBuilder builder = new StringBuilder();
                         builder.append("今天是")
                                 .append(getDateString())
                                 .append(",历史上的今天:\n");
