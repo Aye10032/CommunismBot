@@ -1,5 +1,6 @@
 package com.aye10032;
 
+import com.aye10032.data.historytoday.service.HistoryTodayService;
 import com.aye10032.functions.*;
 import com.aye10032.functions.funcutil.FuncField;
 import com.aye10032.functions.funcutil.FuncLoader;
@@ -81,10 +82,12 @@ public class Zibenbot {
     private Bot bot;
     final Pattern MSG_TYPE_PATTERN;
     private List<IFunc> registerFunc;
+    @Autowired
+    private HistoryTodayService historyTodayService;
 
     public static OkHttpClient getOkHttpClient() {
         return client.newBuilder().callTimeout(30, TimeUnit.SECONDS)
-                .proxy(Zibenbot.getProxy()).build();
+            .proxy(Zibenbot.getProxy()).build();
     }
 
     {
@@ -191,7 +194,8 @@ public class Zibenbot {
         loader.addFactory(new WeiboFunc.WeiboFuncFactory(this, weiboReader));
         loader.addFactory(new GenshinWeiboFunc.GenshinFuncFactory(this, weiboReader));
         loader.addScanPackage("com.aye10032.utils.timeutil");
-        registerFunc = Collections.unmodifiableList(loader.load());
+        registerFunc = loader.load();
+        registerFunc.add(new HistoryTodayFunc(this, historyTodayService));
         //对功能进行初始化
         for (IFunc func : registerFunc) {
             try {

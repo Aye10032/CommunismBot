@@ -6,9 +6,9 @@ import com.aye10032.data.historytoday.service.HistoryTodayService;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
+import com.aye10032.functions.funcutil.UnloadFunc;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Calendar;
 import java.util.List;
@@ -21,25 +21,26 @@ import java.util.List;
  * @author: Aye10032
  * @date: 2022/6/2 下午 6:24
  */
+@UnloadFunc
 public class HistoryTodayFunc extends BaseFunc {
 
-    @Autowired
     private HistoryTodayService historyTodayService;
 
     private Commander<SimpleMsg> commander;
 
-    public HistoryTodayFunc(Zibenbot zibenbot) {
+    public HistoryTodayFunc(Zibenbot zibenbot, HistoryTodayService historyTodayService) {
         super(zibenbot);
+        this.historyTodayService = historyTodayService;
         commander = new CommanderBuilder<SimpleMsg>()
-                .seteHandler(FuncExceptionHandler.INSTENCE)
-                .start()
-                .or("历史上的今天"::equals)
-                .run((msg) -> {
-                    List<HistoryToday> historyTodayList = historyTodayService.getTodayHistory(getDate());
-                    if (historyTodayList.isEmpty()) {
-                        zibenbot.replyMsg(msg, "历史的今天无事发生");
-                    } else {
-                        StringBuilder builder = new StringBuilder();
+            .seteHandler(FuncExceptionHandler.INSTENCE)
+            .start()
+            .or("历史上的今天"::equals)
+            .run((msg) -> {
+                List<HistoryToday> historyTodayList = historyTodayService.getTodayHistory(getDate());
+                if (historyTodayList.isEmpty()) {
+                    zibenbot.replyMsg(msg, "历史的今天无事发生");
+                } else {
+                    StringBuilder builder = new StringBuilder();
                         builder.append("今天是")
                                 .append(getDateString())
                                 .append(",历史上的今天:\n");
@@ -48,16 +49,16 @@ public class HistoryTodayFunc extends BaseFunc {
                                     .append("、");
                             if (!historyTodayList.get(i).getYear().equals("")) {
                                 builder.append(historyTodayList.get(i).getYear())
-                                        .append(" ");
+                                    .append(" ");
                             }
                             builder.append(historyTodayList.get(i).getHistory())
-                                    .append("\n");
+                                .append("\n");
                         }
-                        zibenbot.replyMsg(msg, builder.toString());
-                    }
-                })
-                .or("历史上的今天"::equals)
-                .next()
+                    zibenbot.replyMsg(msg, builder.toString());
+                }
+            })
+            .next()
+            .or(s -> true)
                 .run((msg) -> {
                     if (msg.getFromClient() == 2375985957L) {
                         String[] msgs = msg.getCommandPieces();
@@ -72,9 +73,10 @@ public class HistoryTodayFunc extends BaseFunc {
                         }
                     }
                 })
-                .pop()
-                .or("历史上的明天"::equals)
-                .next()
+            .pop()
+            .or("历史上的明天"::equals)
+            .next()
+            .or(s -> true)
                 .run((msg) -> {
                     if (msg.getFromClient() == 2375985957L) {
                         String[] msgs = msg.getCommandPieces();
