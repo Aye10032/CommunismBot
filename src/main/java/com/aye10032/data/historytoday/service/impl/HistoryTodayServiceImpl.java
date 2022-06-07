@@ -18,7 +18,7 @@ import java.util.List;
  * @date: 2022/6/2 下午 7:13
  */
 @Service
-public class HistoryTodayImpl implements HistoryTodayService {
+public class HistoryTodayServiceImpl implements HistoryTodayService {
 
     @Autowired
     HistoryTodayMapper mapper;

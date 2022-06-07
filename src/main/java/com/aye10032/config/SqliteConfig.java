@@ -1,6 +1,9 @@
 package com.aye10032.config;
 
+import com.aye10032.data.historytoday.dao.HistoryTodayMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,14 +21,17 @@ import java.io.File;
 @Configuration
 public class SqliteConfig {
 
-    @Value("jdbc:sqlite:history.db")
+    @Autowired
+    HistoryTodayMapper mapper;
+
+    @Value("${spring.datasource.url}")
     private String sqliteUrl;
 
     @PostConstruct
     public void init(){
         if (!StringUtils.isEmpty(sqliteUrl)
                 && new File(sqliteUrl.replace("jdbc:sqlite:", "")).exists()) {
-            System.out.println("表初始化成功");
+            LoggerFactory.getLogger("history-today").info("history-today load success");
         }
     }
 
