@@ -66,4 +66,29 @@ public class HistoryTodayServiceImpl implements HistoryTodayService {
         List<HistoryToday> historyTodayList = mapper.selectByExample(example);
         return historyTodayList;
     }
+
+    @Override
+    public HistoryToday selectHistory(String history, String date, Long from_group) {
+        HistoryTodayExample example = new HistoryTodayExample();
+        example.createCriteria()
+                .andHistoryEqualTo(history)
+                .andEventDateEqualTo(date)
+                .andFromGroupEqualTo(from_group)
+                .andEventTypeEqualTo(HistoryEventType.GROUP);
+
+        List<HistoryToday> historyTodayList = mapper.selectByExample(example);
+
+        return historyTodayList.isEmpty() ? null : historyTodayList.get(0);
+    }
+
+    @Override
+    public void deleteHistory(String history, String date) {
+        HistoryTodayExample example = new HistoryTodayExample();
+        example.createCriteria()
+                .andHistoryEqualTo(history)
+                .andEventDateEqualTo(date)
+                .andEventTypeEqualTo(HistoryEventType.GROUP);
+
+        mapper.deleteByExample(example);
+    }
 }

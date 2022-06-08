@@ -22,4 +22,8 @@ public interface HistoryTodayService {
 
     List<HistoryToday> getGroupHistory(String date, Long from_group);
 
+    HistoryToday selectHistory(String history, String date, Long from_group);
+
+    void deleteHistory(String history, String date);
+
 }

@@ -1,6 +1,7 @@
 package com.aye10032.functions;
 
 import com.aye10032.Zibenbot;
+import com.aye10032.data.HistoryEventType;
 import com.aye10032.data.historytoday.pojo.HistoryToday;
 import com.aye10032.data.historytoday.service.HistoryTodayService;
 import com.aye10032.functions.funcutil.BaseFunc;
@@ -138,6 +139,23 @@ public class HistoryTodayFunc extends BaseFunc {
                     }
                 })
                 .pop()
+                .or("岁月史书"::equals)
+                .next()
+                .orArray(s -> true)
+                .run((msg) -> {
+                    String[] msgs = msg.getCommandPieces();
+                    if (msg.isGroupMsg() && msgs.length == 2) {
+                        HistoryToday history = historyTodayService.selectHistory(msgs[1], getDate(), msg.getFromGroup());
+                        if (history == null){
+                            zibenbot.replyMsg(msg, "不存在这条历史");
+                        }else if (history.getEventType().equals(HistoryEventType.HISTORY)){
+                            zibenbot.replyMsg(msg, "因果不够，无法抹除这条历史");
+                        }else {
+                            historyTodayService.deleteHistory(history.getHistory(), history.getEventDate());
+                            zibenbot.replyMsg(msg, zibenbot.at(msg.getFromClient())+" 发动了岁月史书，抹去了一条历史");
+                        }
+                    }
+                })
                 .build();
     }
 
