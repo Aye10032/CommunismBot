@@ -335,6 +335,14 @@ public class Zibenbot {
                 return NAME;
             }
         });
+        subManager.addSubscribable(new HistoryTodayTask(this, historyTodayService) {
+            private final static String NAME = "历史上的今天小助手";
+
+            @Override
+            public String getName() {
+                return NAME;
+            }
+        });
         subManager.addSubscribable(new SleepTask(this) {
             private final static String NAME = "卞老师小助手";
 
