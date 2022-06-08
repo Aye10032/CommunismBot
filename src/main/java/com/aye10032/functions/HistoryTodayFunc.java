@@ -10,7 +10,6 @@ import com.aye10032.functions.funcutil.UnloadFunc;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -37,36 +36,57 @@ public class HistoryTodayFunc extends BaseFunc {
                 .start()
                 .or("历史上的今天"::equals)
                 .run((msg) -> {
+                    int event_count = 0;
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("今天是")
+                            .append(getDateString())
+                            .append(",历史上的今天发生了这些事：\n");
+
                     List<HistoryToday> history_today_list = historyTodayService.getTodayHistory(getDate());
-                    List<HistoryToday> historyTodayList = new ArrayList<>(history_today_list);
-                    if (msg.isGroupMsg()) {
-                        List<HistoryToday> group_history_list = historyTodayService.getGroupHistory(getDate(), msg.getFromGroup());
-                        historyTodayList.addAll(group_history_list);
-                    }
-                    if (historyTodayList.isEmpty()) {
-                        zibenbot.replyMsg(msg, "历史上的今天无事发生");
-                    } else {
-                        StringBuilder builder = new StringBuilder();
-                        builder.append("今天是")
-                                .append(getDateString())
-                                .append(",历史上的今天:\n");
-                        for (int i = 0; i < historyTodayList.size(); i++) {
-                            builder.append(i)
+                    event_count += history_today_list.size();
+                    if (event_count != 0) {
+                        for (int i = 0; i < history_today_list.size(); i++) {
+                            builder.append(i + 1)
                                     .append("、");
-                            if (!historyTodayList.get(i).getYear().equals("")) {
-                                builder.append(historyTodayList.get(i).getYear())
+                            if (!history_today_list.get(i).getYear().equals("")) {
+                                builder.append(history_today_list.get(i).getYear())
                                         .append(" ");
                             }
-                            builder.append(historyTodayList.get(i).getHistory())
+                            builder.append(history_today_list.get(i).getHistory())
                                     .append("\n");
                         }
-                        zibenbot.replyMsg(msg, builder.toString());
+                    }
+                    if (msg.isGroupMsg()) {
+                        List<HistoryToday> group_history_list = historyTodayService.getGroupHistory(getDate(), msg.getFromGroup());
+                        event_count += group_history_list.size();
+                        if (event_count == 0) {
+                            zibenbot.replyMsg(msg, "历史上的今天无事发生");
+                        } else {
+                            if (group_history_list.size() == 0) {
+                                zibenbot.replyMsg(msg, builder.toString());
+                            } else {
+                                if (history_today_list.size() != 0) {
+                                    builder.append("-------------\n");
+                                }
+                                for (int i = 0; i < group_history_list.size(); i++) {
+                                    builder.append(i + 1)
+                                            .append("、");
+                                    if (!group_history_list.get(i).getYear().equals("")) {
+                                        builder.append(group_history_list.get(i).getYear())
+                                                .append(" ");
+                                    }
+                                    builder.append(group_history_list.get(i).getHistory())
+                                            .append("\n");
+                                }
+                            }
+                            zibenbot.replyMsg(msg, builder.toString());
+                        }
                     }
                 })
                 .next()
-                .or(s -> true)
+                .orArray(s -> true)
                 .run((msg) -> {
-                    if (msg.getFromClient() == 2375985957L) {
+                    if (msg.isPrivateMsg() && msg.getFromClient() == 2375985957L) {
                         String[] msgs = msg.getCommandPieces();
                         if (msgs.length == 2) {
                             historyTodayService.insertHistory(msgs[1], "", getDate());
@@ -77,14 +97,24 @@ public class HistoryTodayFunc extends BaseFunc {
                         } else {
                             zibenbot.replyMsg(msg, "格式不正确！");
                         }
+                    } else if (msg.isGroupMsg()) {
+                        String[] msgs = msg.getCommandPieces();
+                        if (msgs.length == 2) {
+                            historyTodayService.insertHistory(msgs[1], getYear(), getDate(), msg.getFromGroup());
+                            zibenbot.replyMsg(msg, "done");
+                        } else {
+                            zibenbot.replyMsg(msg, "格式不正确！");
+                        }
+                    } else {
+                        zibenbot.replyMsg(msg, "no access!");
                     }
                 })
                 .pop()
                 .or("历史上的明天"::equals)
                 .next()
-                .or(s -> true)
+                .orArray(s -> true)
                 .run((msg) -> {
-                    if (msg.getFromClient() == 2375985957L) {
+                    if (msg.isPrivateMsg() && msg.getFromClient() == 2375985957L) {
                         String[] msgs = msg.getCommandPieces();
                         if (msgs.length == 2) {
                             historyTodayService.insertHistory(msgs[1], "", getTomorrow());
@@ -95,6 +125,16 @@ public class HistoryTodayFunc extends BaseFunc {
                         } else {
                             zibenbot.replyMsg(msg, "格式不正确！");
                         }
+                    } else if (msg.isGroupMsg()) {
+                        String[] msgs = msg.getCommandPieces();
+                        if (msgs.length == 2) {
+                            historyTodayService.insertHistory(msgs[1], getYear(), getTomorrow(), msg.getFromGroup());
+                            zibenbot.replyMsg(msg, "done");
+                        } else {
+                            zibenbot.replyMsg(msg, "格式不正确！");
+                        }
+                    } else {
+                        zibenbot.replyMsg(msg, "no access!");
                     }
                 })
                 .pop()
@@ -134,5 +174,12 @@ public class HistoryTodayFunc extends BaseFunc {
         String date = String.format("%02d", calendar.get(Calendar.DATE));
 
         return month + date;
+    }
+
+    private String getYear() {
+        Calendar calendar = Calendar.getInstance();
+        String year = String.format("%d年", calendar.get(Calendar.YEAR));
+
+        return year;
     }
 }
