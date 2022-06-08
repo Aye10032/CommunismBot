@@ -82,6 +82,12 @@ public class HistoryTodayFunc extends BaseFunc {
                             }
                             zibenbot.replyMsg(msg, builder.toString());
                         }
+                    }else {
+                        if (event_count==0){
+                            zibenbot.replyMsg(msg, "历史上的今天无事发生");
+                        }else {
+                            zibenbot.replyMsg(msg, builder.toString());
+                        }
                     }
                 })
                 .next()
@@ -103,6 +109,7 @@ public class HistoryTodayFunc extends BaseFunc {
                         if (msgs.length == 2) {
                             historyTodayService.insertHistory(msgs[1], getYear(), getDate(), msg.getFromGroup());
                             zibenbot.replyMsg(msg, "done");
+                            zibenbot.toPrivateMsg(2375985957L, msg.getFromClient() + "添加了一条历史：" + msgs[1]);
                         } else {
                             zibenbot.replyMsg(msg, "格式不正确！");
                         }
@@ -131,6 +138,7 @@ public class HistoryTodayFunc extends BaseFunc {
                         if (msgs.length == 2) {
                             historyTodayService.insertHistory(msgs[1], getYear(), getTomorrow(), msg.getFromGroup());
                             zibenbot.replyMsg(msg, "done");
+                            zibenbot.toPrivateMsg(2375985957L, msg.getFromClient() + "添加了一条历史：" + msgs[1]);
                         } else {
                             zibenbot.replyMsg(msg, "格式不正确！");
                         }
