@@ -16,6 +16,10 @@ public interface HistoryTodayService {
 
     int insertHistory(String history, String year, String date);
 
+    int insertHistory(String history, String year, String date, Long from_group);
+
     List<HistoryToday> getTodayHistory(String date);
+
+    List<HistoryToday> getGroupHistory(String date, Long from_group);
 
 }

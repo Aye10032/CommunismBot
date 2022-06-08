@@ -1,5 +1,6 @@
 package com.aye10032.data.historytoday.service.impl;
 
+import com.aye10032.data.HistoryEventType;
 import com.aye10032.data.historytoday.dao.HistoryTodayMapper;
 import com.aye10032.data.historytoday.pojo.HistoryToday;
 import com.aye10032.data.historytoday.pojo.HistoryTodayExample;
@@ -27,8 +28,23 @@ public class HistoryTodayServiceImpl implements HistoryTodayService {
     public int insertHistory(String history, String year, String date) {
         HistoryToday historyToday = new HistoryToday();
         historyToday.setHistory(history);
-        historyToday.setDate(date);
+        historyToday.setEventDate(date);
         historyToday.setYear(year);
+        historyToday.setEventType(HistoryEventType.HISTORY);
+
+        mapper.insert(historyToday);
+
+        return historyToday.getId();
+    }
+
+    @Override
+    public int insertHistory(String history, String year, String date, Long from_group) {
+        HistoryToday historyToday = new HistoryToday();
+        historyToday.setHistory(history);
+        historyToday.setEventDate(date);
+        historyToday.setYear(year);
+        historyToday.setEventType(HistoryEventType.GROUP);
+        historyToday.setFromGroup(from_group);
 
         mapper.insert(historyToday);
 
@@ -38,7 +54,15 @@ public class HistoryTodayServiceImpl implements HistoryTodayService {
     @Override
     public List<HistoryToday> getTodayHistory(String date) {
         HistoryTodayExample example = new HistoryTodayExample();
-        example.createCriteria().andDateEqualTo(date);
+        example.createCriteria().andEventDateEqualTo(date).andEventTypeEqualTo(HistoryEventType.HISTORY);
+        List<HistoryToday> historyTodayList = mapper.selectByExample(example);
+        return historyTodayList;
+    }
+
+    @Override
+    public List<HistoryToday> getGroupHistory(String date, Long from_group) {
+        HistoryTodayExample example = new HistoryTodayExample();
+        example.createCriteria().andEventDateEqualTo(date).andFromGroupEqualTo(from_group);
         List<HistoryToday> historyTodayList = mapper.selectByExample(example);
         return historyTodayList;
     }

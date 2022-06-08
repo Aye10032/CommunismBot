@@ -10,6 +10,7 @@ import com.aye10032.functions.funcutil.UnloadFunc;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -36,7 +37,12 @@ public class HistoryTodayFunc extends BaseFunc {
                 .start()
                 .or("历史上的今天"::equals)
                 .run((msg) -> {
-                    List<HistoryToday> historyTodayList = historyTodayService.getTodayHistory(getDate());
+                    List<HistoryToday> history_today_list = historyTodayService.getTodayHistory(getDate());
+                    List<HistoryToday> historyTodayList = new ArrayList<>(history_today_list);
+                    if (msg.isGroupMsg()) {
+                        List<HistoryToday> group_history_list = historyTodayService.getGroupHistory(getDate(), msg.getFromGroup());
+                        historyTodayList.addAll(group_history_list);
+                    }
                     if (historyTodayList.isEmpty()) {
                         zibenbot.replyMsg(msg, "历史上的今天无事发生");
                     } else {
@@ -49,16 +55,16 @@ public class HistoryTodayFunc extends BaseFunc {
                                     .append("、");
                             if (!historyTodayList.get(i).getYear().equals("")) {
                                 builder.append(historyTodayList.get(i).getYear())
-                                    .append(" ");
+                                        .append(" ");
                             }
                             builder.append(historyTodayList.get(i).getHistory())
-                                .append("\n");
+                                    .append("\n");
                         }
-                    zibenbot.replyMsg(msg, builder.toString());
-                }
-            })
-            .next()
-            .or(s -> true)
+                        zibenbot.replyMsg(msg, builder.toString());
+                    }
+                })
+                .next()
+                .or(s -> true)
                 .run((msg) -> {
                     if (msg.getFromClient() == 2375985957L) {
                         String[] msgs = msg.getCommandPieces();
@@ -73,10 +79,10 @@ public class HistoryTodayFunc extends BaseFunc {
                         }
                     }
                 })
-            .pop()
-            .or("历史上的明天"::equals)
-            .next()
-            .or(s -> true)
+                .pop()
+                .or("历史上的明天"::equals)
+                .next()
+                .or(s -> true)
                 .run((msg) -> {
                     if (msg.getFromClient() == 2375985957L) {
                         String[] msgs = msg.getCommandPieces();
