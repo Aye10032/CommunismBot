@@ -21,7 +21,7 @@ import java.util.List;
 public class HistoryTodayServiceImpl implements HistoryTodayService {
 
     @Autowired
-    HistoryTodayMapper mapper;
+    private HistoryTodayMapper mapper;
 
     @Override
     public int insertHistory(String history, String year, String date) {

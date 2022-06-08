@@ -21,6 +21,8 @@ public class BotConfig {
     private Long qqId;
     @Value("${qqPassword}")
     private String password;
+    @Value("${spring.profiles.active}")
+    private String profiles;
 
     @Bean
     public Bot getBot() throws IOException {
@@ -34,8 +36,9 @@ public class BotConfig {
         configuration.loadDeviceInfoJson(IOUtils.toString(reader));
         reader.close();
         Bot bot = BotFactory.INSTANCE.newBot(qqId, password, configuration);
-        bot.login();
-
+        if (!profiles.contains("test")) {
+            bot.login();
+        }
         // bot.join();
         return bot;
     }
