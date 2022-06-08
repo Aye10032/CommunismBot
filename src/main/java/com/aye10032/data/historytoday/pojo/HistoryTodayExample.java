@@ -65,7 +65,7 @@ public class HistoryTodayExample {
 
     /**
      * @author Aye10032
-     * @date 2022-06-02
+     * @date 2022-06-08
      */
     protected abstract static class GeneratedCriteria {
         protected List<Criterion> criteria;
@@ -308,73 +308,193 @@ public class HistoryTodayExample {
             return (Criteria) this;
         }
 
-        public Criteria andDateIsNull() {
-            addCriterion("date is null");
+        public Criteria andEventDateIsNull() {
+            addCriterion("event_date is null");
             return (Criteria) this;
         }
 
-        public Criteria andDateIsNotNull() {
-            addCriterion("date is not null");
+        public Criteria andEventDateIsNotNull() {
+            addCriterion("event_date is not null");
             return (Criteria) this;
         }
 
-        public Criteria andDateEqualTo(String value) {
-            addCriterion("date =", value, "date");
+        public Criteria andEventDateEqualTo(String value) {
+            addCriterion("event_date =", value, "eventDate");
             return (Criteria) this;
         }
 
-        public Criteria andDateNotEqualTo(String value) {
-            addCriterion("date <>", value, "date");
+        public Criteria andEventDateNotEqualTo(String value) {
+            addCriterion("event_date <>", value, "eventDate");
             return (Criteria) this;
         }
 
-        public Criteria andDateGreaterThan(String value) {
-            addCriterion("date >", value, "date");
+        public Criteria andEventDateGreaterThan(String value) {
+            addCriterion("event_date >", value, "eventDate");
             return (Criteria) this;
         }
 
-        public Criteria andDateGreaterThanOrEqualTo(String value) {
-            addCriterion("date >=", value, "date");
+        public Criteria andEventDateGreaterThanOrEqualTo(String value) {
+            addCriterion("event_date >=", value, "eventDate");
             return (Criteria) this;
         }
 
-        public Criteria andDateLessThan(String value) {
-            addCriterion("date <", value, "date");
+        public Criteria andEventDateLessThan(String value) {
+            addCriterion("event_date <", value, "eventDate");
             return (Criteria) this;
         }
 
-        public Criteria andDateLessThanOrEqualTo(String value) {
-            addCriterion("date <=", value, "date");
+        public Criteria andEventDateLessThanOrEqualTo(String value) {
+            addCriterion("event_date <=", value, "eventDate");
             return (Criteria) this;
         }
 
-        public Criteria andDateLike(String value) {
-            addCriterion("date like", value, "date");
+        public Criteria andEventDateLike(String value) {
+            addCriterion("event_date like", value, "eventDate");
             return (Criteria) this;
         }
 
-        public Criteria andDateNotLike(String value) {
-            addCriterion("date not like", value, "date");
+        public Criteria andEventDateNotLike(String value) {
+            addCriterion("event_date not like", value, "eventDate");
             return (Criteria) this;
         }
 
-        public Criteria andDateIn(List<String> values) {
-            addCriterion("date in", values, "date");
+        public Criteria andEventDateIn(List<String> values) {
+            addCriterion("event_date in", values, "eventDate");
             return (Criteria) this;
         }
 
-        public Criteria andDateNotIn(List<String> values) {
-            addCriterion("date not in", values, "date");
+        public Criteria andEventDateNotIn(List<String> values) {
+            addCriterion("event_date not in", values, "eventDate");
             return (Criteria) this;
         }
 
-        public Criteria andDateBetween(String value1, String value2) {
-            addCriterion("date between", value1, value2, "date");
+        public Criteria andEventDateBetween(String value1, String value2) {
+            addCriterion("event_date between", value1, value2, "eventDate");
             return (Criteria) this;
         }
 
-        public Criteria andDateNotBetween(String value1, String value2) {
-            addCriterion("date not between", value1, value2, "date");
+        public Criteria andEventDateNotBetween(String value1, String value2) {
+            addCriterion("event_date not between", value1, value2, "eventDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andEventTypeIsNull() {
+            addCriterion("event_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEventTypeIsNotNull() {
+            addCriterion("event_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEventTypeEqualTo(Integer value) {
+            addCriterion("event_type =", value, "eventType");
+            return (Criteria) this;
+        }
+
+        public Criteria andEventTypeNotEqualTo(Integer value) {
+            addCriterion("event_type <>", value, "eventType");
+            return (Criteria) this;
+        }
+
+        public Criteria andEventTypeGreaterThan(Integer value) {
+            addCriterion("event_type >", value, "eventType");
+            return (Criteria) this;
+        }
+
+        public Criteria andEventTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("event_type >=", value, "eventType");
+            return (Criteria) this;
+        }
+
+        public Criteria andEventTypeLessThan(Integer value) {
+            addCriterion("event_type <", value, "eventType");
+            return (Criteria) this;
+        }
+
+        public Criteria andEventTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("event_type <=", value, "eventType");
+            return (Criteria) this;
+        }
+
+        public Criteria andEventTypeIn(List<Integer> values) {
+            addCriterion("event_type in", values, "eventType");
+            return (Criteria) this;
+        }
+
+        public Criteria andEventTypeNotIn(List<Integer> values) {
+            addCriterion("event_type not in", values, "eventType");
+            return (Criteria) this;
+        }
+
+        public Criteria andEventTypeBetween(Integer value1, Integer value2) {
+            addCriterion("event_type between", value1, value2, "eventType");
+            return (Criteria) this;
+        }
+
+        public Criteria andEventTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("event_type not between", value1, value2, "eventType");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromGroupIsNull() {
+            addCriterion("from_group is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromGroupIsNotNull() {
+            addCriterion("from_group is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromGroupEqualTo(Long value) {
+            addCriterion("from_group =", value, "fromGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromGroupNotEqualTo(Long value) {
+            addCriterion("from_group <>", value, "fromGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromGroupGreaterThan(Long value) {
+            addCriterion("from_group >", value, "fromGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromGroupGreaterThanOrEqualTo(Long value) {
+            addCriterion("from_group >=", value, "fromGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromGroupLessThan(Long value) {
+            addCriterion("from_group <", value, "fromGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromGroupLessThanOrEqualTo(Long value) {
+            addCriterion("from_group <=", value, "fromGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromGroupIn(List<Long> values) {
+            addCriterion("from_group in", values, "fromGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromGroupNotIn(List<Long> values) {
+            addCriterion("from_group not in", values, "fromGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromGroupBetween(Long value1, Long value2) {
+            addCriterion("from_group between", value1, value2, "fromGroup");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromGroupNotBetween(Long value1, Long value2) {
+            addCriterion("from_group not between", value1, value2, "fromGroup");
             return (Criteria) this;
         }
     }
@@ -387,7 +507,7 @@ public class HistoryTodayExample {
 
     /**
      * @author Aye10032
-     * @date 2022-06-02
+     * @date 2022-06-08
      */
     public static class Criterion {
         private String condition;

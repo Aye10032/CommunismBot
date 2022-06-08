@@ -2,7 +2,7 @@ package com.aye10032.data.historytoday.pojo;
 
 /**
  * @author Aye10032
- * @date 2022-06-02
+ * @date 2022-06-08
  */
 public class HistoryToday {
     private Integer id;
@@ -11,13 +11,19 @@ public class HistoryToday {
 
     private String year;
 
-    private String date;
+    private String eventDate;
 
-    public HistoryToday(Integer id, String history, String year, String date) {
+    private Integer eventType;
+
+    private Long fromGroup;
+
+    public HistoryToday(Integer id, String history, String year, String eventDate, Integer eventType, Long fromGroup) {
         this.id = id;
         this.history = history;
         this.year = year;
-        this.date = date;
+        this.eventDate = eventDate;
+        this.eventType = eventType;
+        this.fromGroup = fromGroup;
     }
 
     public HistoryToday() {
@@ -48,11 +54,27 @@ public class HistoryToday {
         this.year = year;
     }
 
-    public String getDate() {
-        return date;
+    public String getEventDate() {
+        return eventDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setEventDate(String eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public Integer getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(Integer eventType) {
+        this.eventType = eventType;
+    }
+
+    public Long getFromGroup() {
+        return fromGroup;
+    }
+
+    public void setFromGroup(Long fromGroup) {
+        this.fromGroup = fromGroup;
     }
 }

@@ -36,8 +36,16 @@ public class HistoryTodaySqlProvider {
             sql.VALUES("year", "#{year,jdbcType=VARCHAR}");
         }
         
-        if (record.getDate() != null) {
-            sql.VALUES("date", "#{date,jdbcType=VARCHAR}");
+        if (record.getEventDate() != null) {
+            sql.VALUES("event_date", "#{eventDate,jdbcType=VARCHAR}");
+        }
+        
+        if (record.getEventType() != null) {
+            sql.VALUES("event_type", "#{eventType,jdbcType=INTEGER}");
+        }
+        
+        if (record.getFromGroup() != null) {
+            sql.VALUES("from_group", "#{fromGroup,jdbcType=FLOAT}");
         }
         
         return sql.toString();
@@ -52,7 +60,9 @@ public class HistoryTodaySqlProvider {
         }
         sql.SELECT("history");
         sql.SELECT("year");
-        sql.SELECT("date");
+        sql.SELECT("event_date");
+        sql.SELECT("event_type");
+        sql.SELECT("from_group");
         sql.FROM("history_today");
         applyWhere(sql, example, false);
         
@@ -82,8 +92,16 @@ public class HistoryTodaySqlProvider {
             sql.SET("year = #{record.year,jdbcType=VARCHAR}");
         }
         
-        if (record.getDate() != null) {
-            sql.SET("date = #{record.date,jdbcType=VARCHAR}");
+        if (record.getEventDate() != null) {
+            sql.SET("event_date = #{record.eventDate,jdbcType=VARCHAR}");
+        }
+        
+        if (record.getEventType() != null) {
+            sql.SET("event_type = #{record.eventType,jdbcType=INTEGER}");
+        }
+        
+        if (record.getFromGroup() != null) {
+            sql.SET("from_group = #{record.fromGroup,jdbcType=FLOAT}");
         }
         
         applyWhere(sql, example, true);
@@ -97,7 +115,9 @@ public class HistoryTodaySqlProvider {
         sql.SET("id = #{record.id,jdbcType=INTEGER}");
         sql.SET("history = #{record.history,jdbcType=VARCHAR}");
         sql.SET("year = #{record.year,jdbcType=VARCHAR}");
-        sql.SET("date = #{record.date,jdbcType=VARCHAR}");
+        sql.SET("event_date = #{record.eventDate,jdbcType=VARCHAR}");
+        sql.SET("event_type = #{record.eventType,jdbcType=INTEGER}");
+        sql.SET("from_group = #{record.fromGroup,jdbcType=FLOAT}");
         
         HistoryTodayExample example = (HistoryTodayExample) parameter.get("example");
         applyWhere(sql, example, true);
@@ -116,8 +136,16 @@ public class HistoryTodaySqlProvider {
             sql.SET("year = #{year,jdbcType=VARCHAR}");
         }
         
-        if (record.getDate() != null) {
-            sql.SET("date = #{date,jdbcType=VARCHAR}");
+        if (record.getEventDate() != null) {
+            sql.SET("event_date = #{eventDate,jdbcType=VARCHAR}");
+        }
+        
+        if (record.getEventType() != null) {
+            sql.SET("event_type = #{eventType,jdbcType=INTEGER}");
+        }
+        
+        if (record.getFromGroup() != null) {
+            sql.SET("from_group = #{fromGroup,jdbcType=FLOAT}");
         }
         
         sql.WHERE("id = #{id,jdbcType=INTEGER}");

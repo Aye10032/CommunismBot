@@ -23,9 +23,11 @@ public interface HistoryTodayMapper {
 
     @Insert({
         "insert into history_today (history, year, ",
-        "date)",
+        "event_date, event_type, ",
+        "from_group)",
         "values (#{history,jdbcType=VARCHAR}, #{year,jdbcType=VARCHAR}, ",
-        "#{date,jdbcType=VARCHAR})"
+        "#{eventDate,jdbcType=VARCHAR}, #{eventType,jdbcType=INTEGER}, ",
+        "#{fromGroup,jdbcType=FLOAT})"
     })
     @SelectKey(statement="select last_insert_rowid()", keyProperty="id", before=false, resultType=Integer.class)
     int insert(HistoryToday record);
@@ -39,13 +41,15 @@ public interface HistoryTodayMapper {
         @Arg(column="id", javaType=Integer.class, jdbcType=JdbcType.INTEGER, id=true),
         @Arg(column="history", javaType=String.class, jdbcType=JdbcType.VARCHAR),
         @Arg(column="year", javaType=String.class, jdbcType=JdbcType.VARCHAR),
-        @Arg(column="date", javaType=String.class, jdbcType=JdbcType.VARCHAR)
+        @Arg(column="event_date", javaType=String.class, jdbcType=JdbcType.VARCHAR),
+        @Arg(column="event_type", javaType=Integer.class, jdbcType=JdbcType.INTEGER),
+        @Arg(column="from_group", javaType=Long.class, jdbcType=JdbcType.FLOAT)
     })
     List<HistoryToday> selectByExample(HistoryTodayExample example);
 
     @Select({
         "select",
-        "id, history, year, date",
+        "id, history, year, event_date, event_type, from_group",
         "from history_today",
         "where id = #{id,jdbcType=INTEGER}"
     })
@@ -53,7 +57,9 @@ public interface HistoryTodayMapper {
         @Arg(column="id", javaType=Integer.class, jdbcType=JdbcType.INTEGER, id=true),
         @Arg(column="history", javaType=String.class, jdbcType=JdbcType.VARCHAR),
         @Arg(column="year", javaType=String.class, jdbcType=JdbcType.VARCHAR),
-        @Arg(column="date", javaType=String.class, jdbcType=JdbcType.VARCHAR)
+        @Arg(column="event_date", javaType=String.class, jdbcType=JdbcType.VARCHAR),
+        @Arg(column="event_type", javaType=Integer.class, jdbcType=JdbcType.INTEGER),
+        @Arg(column="from_group", javaType=Long.class, jdbcType=JdbcType.FLOAT)
     })
     HistoryToday selectByPrimaryKey(Integer id);
 
@@ -70,7 +76,9 @@ public interface HistoryTodayMapper {
         "update history_today",
         "set history = #{history,jdbcType=VARCHAR},",
           "year = #{year,jdbcType=VARCHAR},",
-          "date = #{date,jdbcType=VARCHAR}",
+          "event_date = #{eventDate,jdbcType=VARCHAR},",
+          "event_type = #{eventType,jdbcType=INTEGER},",
+          "from_group = #{fromGroup,jdbcType=FLOAT}",
         "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(HistoryToday record);
