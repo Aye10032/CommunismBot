@@ -63,9 +63,7 @@ public class HistoryTodayFunc extends BaseFunc {
                         if (event_count == 0) {
                             zibenbot.replyMsg(msg, "历史上的今天无事发生");
                         } else {
-                            if (group_history_list.size() == 0) {
-                                zibenbot.replyMsg(msg, builder.toString());
-                            } else {
+                            if (group_history_list.size() != 0) {
                                 if (history_today_list.size() != 0) {
                                     builder.append("-------------\n");
                                 }
