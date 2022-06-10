@@ -64,9 +64,7 @@ public abstract class HistoryTodayTask extends SubscribableBase {
                 if (event_count == 0) {
                     zibenbot.replyMsg(reciver.getSender(), "历史上的今天无事发生");
                 } else {
-                    if (group_history_list.size() == 0) {
-                        zibenbot.replyMsg(reciver.getSender(), builder.toString());
-                    } else {
+                    if (group_history_list.size() != 0) {
                         if (history_today_list.size() != 0) {
                             builder.append("-------------\n");
                         }
