@@ -335,6 +335,14 @@ public class Zibenbot {
                 return NAME;
             }
         });
+        subManager.addSubscribable(new MoeTask(this) {
+            private final static String NAME = "番剧订阅小助手";
+
+            @Override
+            public String getName() {
+                return NAME;
+            }
+        });
         subManager.addSubscribable(new HistoryTodayTask(this, historyTodayService) {
             private final static String NAME = "历史上的今天小助手";
 

@@ -92,6 +92,8 @@ dependencies {
     // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
     compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
 
+    compile group: 'com.rometools', name: 'rome', version: '1.18.0'
+
     //JavaCV相关
 //    compile group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.3'
     compile group: 'org.bytedeco', name: 'javacv', version: '1.5.3'
