@@ -62,7 +62,7 @@ public class HistoryTodayServiceImpl implements HistoryTodayService {
     @Override
     public List<HistoryToday> getGroupHistory(String date, Long from_group) {
         HistoryTodayExample example = new HistoryTodayExample();
-        example.createCriteria().andEventDateEqualTo(date).andFromGroupEqualTo(from_group);
+        example.createCriteria().andEventDateEqualTo(date).andFromGroupEqualTo(from_group).andEventTypeEqualTo(HistoryEventType.GROUP);
         List<HistoryToday> historyTodayList = mapper.selectByExample(example);
         return historyTodayList;
     }
