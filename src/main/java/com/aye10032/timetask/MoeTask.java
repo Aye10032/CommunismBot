@@ -41,7 +41,7 @@ public abstract class MoeTask extends SubscribableBase {
         now.setTime(new Date().getTime() - 30L * MIN);
         if (recivers != null) {
             for (Reciver reciver : recivers) {
-                msg_builder.append("你订阅的《").append(args[1]).append("》有资源更新了：");
+                msg_builder.append("你订阅的《").append(args[1].replace("-"," ")).append("》有资源更新了：");
                 List<String> result = RSSUtil.getRSSUpdate(args[0], now);
                 if (!result.isEmpty()){
                     for (String entry:result){
@@ -56,7 +56,7 @@ public abstract class MoeTask extends SubscribableBase {
     @Override
     public Pair<Boolean, String> argsCheck(String[] args) {
         if (args.length != 2) {
-            return new Pair<>(false, "缺少参数");
+            return new Pair<>(false, "参数错误，格式为RSS链接+番剧名称，并用-代替空格");
         } else {
             if (args[0].startsWith("https://bangumi.moe/rss/")) {
                 return new Pair<>(true, "");
