@@ -1,13 +1,10 @@
 package com.aye10032.timetask;
 
-import com.aye10032.Zibenbot;
-import com.aye10032.utils.timeutil.ITimeAdapter;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubConfig;
 import com.aye10032.utils.timeutil.SubscribableBase;
 
 import javax.annotation.Nullable;
-import java.util.Date;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -24,16 +21,15 @@ import java.util.function.Supplier;
 public abstract class SimpleSubscription extends SubscribableBase {
 
     private Supplier<String> supplier;
-    private ITimeAdapter cycle;
+    private String cron;
 
-    public SimpleSubscription(Zibenbot zibenbot, ITimeAdapter cycle, String msg) {
-        this(zibenbot, cycle, () -> msg);
+    public SimpleSubscription(String cron, String msg) {
+        this(cron, () -> msg);
     }
 
-    public SimpleSubscription(Zibenbot zibenbot, ITimeAdapter adapter, Supplier<String> supplier) {
-        super(zibenbot);
-        this.cycle = adapter;
+    public SimpleSubscription(String cron, Supplier<String> supplier) {
         this.supplier = supplier;
+        this.cron = cron;
     }
 
     @Override
@@ -41,11 +37,9 @@ public abstract class SimpleSubscription extends SubscribableBase {
         replyAll(recivers, supplier.get());
     }
 
-
-
     @Override
-    public Date getNextTime(Date date) {
-        return cycle.getNextTime(date);
+    public String getCron() {
+        return cron;
     }
 
     @Override

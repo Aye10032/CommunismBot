@@ -1,14 +1,13 @@
 package com.aye10032.timetask;
 
-import com.aye10032.Zibenbot;
 import com.aye10032.data.historytoday.pojo.HistoryToday;
 import com.aye10032.data.historytoday.service.HistoryTodayService;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
-import com.aye10032.utils.timeutil.TimeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,20 +18,15 @@ import java.util.List;
  * @author: Aye10032
  * @date: 2022/6/2 下午 6:15
  */
-public abstract class HistoryTodayTask extends SubscribableBase {
-    private Zibenbot zibenbot;
+@Service
+public class HistoryTodayTask extends SubscribableBase {
+    @Autowired
     private HistoryTodayService historyTodayService;
 
-    public HistoryTodayTask(Zibenbot zibenbot, HistoryTodayService historyTodayService) {
-        super(zibenbot);
-        this.zibenbot = zibenbot;
-        this.historyTodayService = historyTodayService;
-    }
 
     @Override
-    public Date getNextTime(Date date) {
-        Date date1 = TimeUtils.getNextSpecialTime(date, -1, -1, 7, 0, 0, 0);
-        return TimeUtils.getMin(date1);
+    public String getName() {
+        return "历史上的今天小助手";
     }
 
     @Override
@@ -62,7 +56,7 @@ public abstract class HistoryTodayTask extends SubscribableBase {
                 List<HistoryToday> group_history_list = historyTodayService.getGroupHistory(getDate(), reciver.getSender().getFromGroup());
                 event_count += group_history_list.size();
                 if (event_count == 0) {
-                    zibenbot.replyMsg(reciver.getSender(), "历史上的今天无事发生");
+                    getBot().replyMsg(reciver.getSender(), "历史上的今天无事发生");
                 } else {
                     if (group_history_list.size() != 0) {
                         if (history_today_list.size() != 0) {
@@ -76,13 +70,18 @@ public abstract class HistoryTodayTask extends SubscribableBase {
                                         .append(" ");
                             }
                             builder.append(group_history_list.get(i).getHistory())
-                                    .append("\n");
+                                .append("\n");
                         }
                     }
-                    zibenbot.replyMsg(reciver.getSender(), builder.toString());
+                    getBot().replyMsg(reciver.getSender(), builder.toString());
                 }
             }
         }
+    }
+
+    @Override
+    public String getCron() {
+        return "0 0 7 * * ? ";
     }
 
     private String getDate() {

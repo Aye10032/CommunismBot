@@ -1,20 +1,38 @@
 package com.aye10032.data.historytoday.pojo;
 
 /**
- * @author Aye10032
- * @date 2022-06-08
+ * @author dazo66
+ * @date 2022-07-16
  */
 public class HistoryToday {
+    /**
+     *
+     */
     private Integer id;
 
+    /**
+     *
+     */
     private String history;
 
+    /**
+     *
+     */
     private String year;
 
+    /**
+     *
+     */
     private String eventDate;
 
+    /**
+     *
+     */
     private Integer eventType;
 
+    /**
+     *
+     */
     private Long fromGroup;
 
     public HistoryToday(Integer id, String history, String year, String eventDate, Integer eventType, Long fromGroup) {

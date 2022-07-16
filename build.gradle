@@ -110,6 +110,11 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-quartz', version: rootProject.ext.springVersion
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java
     compile 'mysql:mysql-connector-java:8.0.29'
+    compile 'org.reflections:reflections:0.10.2'
+    compileOnly 'org.projectlombok:lombok:1.18.4'
+    annotationProcessor 'org.projectlombok:lombok:1.18.4'
+    testCompileOnly 'org.projectlombok:lombok:1.18.4'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.4'
 
 
 }

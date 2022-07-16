@@ -26,13 +26,14 @@ public class DragraliaNewsFunc extends BaseFunc {
 
     @Override
     public void setUp() {
-        this.task = new DragraliaTask(zibenbot) {
+        this.task = new DragraliaTask() {
             @Override
             public String getName() {
                 //不会用到 直接为null
                 return null;
             }
         };
+        this.task.setBot(zibenbot);
         this.task.loader = new ConfigLoader<>(zibenbot.appDirectory + "/dragraliaFunc.json", Config.class);
         this.task.config = this.task.loader.load();
     }

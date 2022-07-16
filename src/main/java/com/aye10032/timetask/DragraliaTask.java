@@ -5,7 +5,6 @@ import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.*;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
-import com.aye10032.utils.timeutil.TimeUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -18,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.openqa.selenium.WebDriver;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,30 +30,23 @@ import java.util.regex.Pattern;
 /**
  * @author Dazo66
  */
-public abstract class DragraliaTask extends SubscribableBase {
+public class DragraliaTask extends SubscribableBase {
 
     public Config config;
     public ConfigLoader<Config> loader;
-    Zibenbot zibenbot;
     Gson gson = new Gson();
     OkHttpClient client = Zibenbot.getOkHttpClient();
     private JsonParser jsonParser = new JsonParser();
 
-    public DragraliaTask(Zibenbot zibenbot) {
-        super(zibenbot);
-        this.zibenbot = zibenbot;
-        loader = new ConfigLoader<>(zibenbot.appDirectory + "/dragralia_4.json", Config.class);
+    @PostConstruct
+    public void init() {
+        loader = new ConfigLoader<>(getBot().appDirectory + "/dragralia_4.json", Config.class);
         config = loader.load();
     }
 
     @Override
-    public Date getNextTime(Date date) {
-        /*long d = date.getTime();
-        //得到下一个01分
-        //19：00
-        d = d + (TimeUtils.HOUR + TimeUtils.SEC - ((d - TimeUtils.SEC) % TimeUtils.HOUR)) + TimeUtils.SEC;
-        return new Date(d);*/
-        return TimeUtils.getNextSpecialTime(date, -1, -1, -1, 0, 3, 0);
+    public String getName() {
+        return "龙约公告转发小助手";
     }
 
     @Override
@@ -65,7 +58,7 @@ public abstract class DragraliaTask extends SubscribableBase {
                 date = getUpdateDate();
             } catch (Exception e) {
                 e.printStackTrace();
-                //zibenbot.replyMsg(cqMsg, "公告获取异常");
+                //getBot().replyMsg(cqMsg, "公告获取异常");
             }
             Set<Article> articles = getNewArticles(date);
             articles.forEach(a -> {
@@ -74,20 +67,26 @@ public abstract class DragraliaTask extends SubscribableBase {
                     recivers.forEach(r -> list.add(r.getSender()));
                     this.sendArticle(a, list);
                 } catch (Exception e) {
-                    zibenbot.logWarning("发送公告出错：" + ExceptionUtils.printStack(e));
+                    getBot().logWarning("发送公告出错：" + ExceptionUtils.printStack(e));
                 }
             });
         } catch (Exception e) {
-            zibenbot.log(Level.WARNING, ExceptionUtils.printStack(e));
+            getBot().log(Level.WARNING, ExceptionUtils.printStack(e));
         }
+    }
+
+    @Override
+    public String getCron() {
+        // 每20分钟一次
+        return "0 0/20 * * * ? *";
     }
 
     private synchronized Set<Article> getNewArticles(ArticleUpdateDate date) {
         Set<Article> set = new HashSet<>();
         ArticleUpdateDate last = gson.fromJson(config.getWithDafault("last_update_date", "{}"),
-                ArticleUpdateDate.class);
+            ArticleUpdateDate.class);
         long last_data = Long.parseLong(config.getWithDafault("last_data",
-                Long.toString(System.currentTimeMillis() / 1000 - 86400)));
+            Long.toString(System.currentTimeMillis() / 1000 - 86400)));
         long current = System.currentTimeMillis() / 1000;
         //判断是不是过了一天的14点
         if ((current - 21600) / 86400 > (last_data - 21600) / 86400) {
@@ -104,7 +103,7 @@ public abstract class DragraliaTask extends SubscribableBase {
                         throw new RuntimeException("获取公告出错");
                     }
                 } catch (Exception e) {
-                    zibenbot.logWarning("获取公告出错：" + ExceptionUtils.printStack(e));
+                    getBot().logWarning("获取公告出错：" + ExceptionUtils.printStack(e));
                     Article a = new Article();
                     a.message =
                             "更新公告异常\n公告页面：https://dragalialost.com/chs/news/detail/" + a.article_id;
@@ -148,7 +147,7 @@ public abstract class DragraliaTask extends SubscribableBase {
                 saveHistory(set);
             } catch (Exception e) {
                 e.printStackTrace();
-                zibenbot.logWarning("存储公告历史失败！");
+                getBot().logWarning("存储公告历史失败！");
             }
         }
         loader.save(config);
@@ -166,7 +165,7 @@ public abstract class DragraliaTask extends SubscribableBase {
             calendar.add(Calendar.DAY_OF_MONTH, -1);
             day = dateFormat.format(calendar.getTimeInMillis());
         }
-        File file = new File(zibenbot.appDirectory + "\\" + "dragralia" + "\\" + day + ".json");
+        File file = new File(getBot().appDirectory + "\\" + "dragralia" + "\\" + day + ".json");
         String hisRow = "{}";
         if (!file.exists()) {
             file.getParentFile().mkdirs();
@@ -194,7 +193,7 @@ public abstract class DragraliaTask extends SubscribableBase {
 
     public void send(List<SimpleMsg> list, String s) {
         for (SimpleMsg simpleMsg : list) {
-            zibenbot.replyMsg(simpleMsg, s);
+            getBot().replyMsg(simpleMsg, s);
         }
     }
 
@@ -235,13 +234,13 @@ public abstract class DragraliaTask extends SubscribableBase {
             runs.add(() -> downloadImg(a.image_path));
         }
         try {
-            zibenbot.pool.getAsynchronousPool().execute(() -> {
+            getBot().pool.getAsynchronousPool().execute(() -> {
                 StringBuilder builder = new StringBuilder();
                 if (a.article_id != -1) {
                     builder.append("【").append(a.category_name).append("】 ").append(a.title_name).append("\n");
                     if (!"".equals(a.image_path)) {
                         try {
-                            builder.append(zibenbot.getImg(new File(getFileName(a.image_path))));
+                            builder.append(getBot().getImg(new File(getFileName(a.image_path))));
                             builder.append("\n");
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -254,7 +253,7 @@ public abstract class DragraliaTask extends SubscribableBase {
                     if (shouldScreenshot) {
                         if (screenshotFile.get() != null && screenshotFile.get().exists()) {
                             try {
-                                builder.append("公告详情：").append("\n").append(zibenbot.getImg(screenshotFile.get()));
+                                builder.append("公告详情：").append("\n").append(getBot().getImg(screenshotFile.get()));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -303,10 +302,10 @@ public abstract class DragraliaTask extends SubscribableBase {
 
     private File getScreenshot(Article a) {
         String dir;
-        if ("test".equals(zibenbot.appDirectory)) {
+        if ("test".equals(getBot().appDirectory)) {
             dir = "res";
         } else {
-            dir = zibenbot.appDirectory;
+            dir = getBot().appDirectory;
         }
         String url = "https://dragalialost.com/chs/news/detail/" + a.article_id;
         String outputfile = dir + "/dragraliatemp/" + a.article_id + ".png";
@@ -316,7 +315,7 @@ public abstract class DragraliaTask extends SubscribableBase {
                     "document.getElementsByTagName('details')) {\n" + "    item.open = true;\n" + "}");
         } catch (Exception e) {
             e.printStackTrace();
-            zibenbot.logWarning("截图龙约公告出错：" + ExceptionUtils.printStack(e));
+            getBot().logWarning("截图龙约公告出错：" + ExceptionUtils.printStack(e));
         }
         return null;
     }
@@ -330,7 +329,7 @@ public abstract class DragraliaTask extends SubscribableBase {
             File file = new File(getFileName(matcher1.group()));
             if (file.exists()) {
                 try {
-                    msg = msg.replace(tag, zibenbot.getImg(file));
+                    msg = msg.replace(tag, getBot().getImg(file));
                 } catch (Exception e) {
                     msg = msg.replace(tag, "[图片加载错误]");
                 }
@@ -371,7 +370,7 @@ public abstract class DragraliaTask extends SubscribableBase {
     private String getFileName(String url) {
         Matcher matcher = img_name_pattern.matcher(url);
         matcher.find();
-        return zibenbot.appDirectory + "\\dragraliatemp\\" + matcher.group();
+        return getBot().appDirectory + "\\dragraliatemp\\" + matcher.group();
     }
 
     private File downloadImg(String url) {
@@ -436,7 +435,7 @@ public abstract class DragraliaTask extends SubscribableBase {
     }
 
     private void cleanImg() {
-        File dir = new File(zibenbot.appDirectory + "\\dragraliatemp");
+        File dir = new File(getBot().appDirectory + "\\dragraliatemp");
         long current = System.currentTimeMillis();
         int i = 0;
         for (File f : dir.listFiles()) {
@@ -445,7 +444,7 @@ public abstract class DragraliaTask extends SubscribableBase {
                 i++;
             }
         }
-        zibenbot.logInfo("清理了三天前的缓存 " + i + " 张。");
+        getBot().logInfo("清理了三天前的缓存 " + i + " 张。");
     }
 
     private static final String NUMBER_PATTERN = "\\d+";

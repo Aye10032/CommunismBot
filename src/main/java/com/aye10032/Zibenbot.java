@@ -6,12 +6,14 @@ import com.aye10032.functions.funcutil.FuncField;
 import com.aye10032.functions.funcutil.FuncLoader;
 import com.aye10032.functions.funcutil.IFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
-import com.aye10032.timetask.*;
+import com.aye10032.mapper.SubTaskMapper;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.IMsgUpload;
 import com.aye10032.utils.SeleniumUtils;
 import com.aye10032.utils.StringUtil;
-import com.aye10032.utils.timeutil.*;
+import com.aye10032.utils.timeutil.SubscriptFunc;
+import com.aye10032.utils.timeutil.TimeTaskPool;
+import com.aye10032.utils.timeutil.TimeUtils;
 import com.aye10032.utils.weibo.WeiboReader;
 import com.dazo66.config.BotConfig;
 import kotlin.Unit;
@@ -30,6 +32,7 @@ import net.mamoe.mirai.utils.PlatformLogger;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -68,8 +71,6 @@ public class Zibenbot {
      * 时间任务池
      */
     public TimeTaskPool pool;
-    @FuncField
-    public SubscriptManager subManager;
     //public TeamspeakBot teamspeakBot;
     @FuncField
     public BotConfigFunc config;
@@ -180,6 +181,13 @@ public class Zibenbot {
         enableGroup.add(300496876L);
     }
 
+    @Bean
+    public WeiboReader buildWeiboReader() {
+        return new WeiboReader(this, this.appDirectory + "/weiboCache/");
+    }
+
+    @Autowired
+    private SubTaskMapper subTaskMapper;
 
     @PostConstruct
     public int startup() {
@@ -190,6 +198,7 @@ public class Zibenbot {
         log(Level.INFO, "registe func start");
         this.weiboReader = new WeiboReader(this, appDirectory + "/weiboCache/");
         FuncLoader loader = new FuncLoader(this);
+        loader.addFactory(new SubscriptFunc.SubscriptFuncFactory(this, subTaskMapper));
         loader.addFactory(new ArknightWeiboFunc.ArkFuncFactory(this, weiboReader));
         loader.addFactory(new WeiboFunc.WeiboFuncFactory(this, weiboReader));
         loader.addFactory(new GenshinWeiboFunc.GenshinFuncFactory(this, weiboReader));
@@ -202,197 +211,11 @@ public class Zibenbot {
                 func.setUp();
             } catch (Exception e) {
                 logWarning("初始化：" + func.getClass().getName() + "出现异常");
+                e.printStackTrace();
             }
         }
         log(Level.INFO, "registe func end");
 
-
-        // 每天0点 6点 12点 18点
-        ITimeAdapter maiyaoCycle = date -> {
-            Date date1 = TimeUtils.getNextSpecialTime(
-                date, -1, -1, 0, 0, 0, 0);
-            Date date2 = TimeUtils.getNextSpecialTime(
-                date, -1, -1, 6, 0, 0, 0);
-            Date date3 = TimeUtils.getNextSpecialTime(
-                date, -1, -1, 12, 0, 0, 0);
-            Date date4 = TimeUtils.getNextSpecialTime(
-                date, -1, -1, 18, 0, 0, 0);
-            return TimeUtils.getMin(date1, date2, date3, date4);
-        };
-        //每周一10点 22点 周日10点 22点 用于提醒剿灭
-        ITimeAdapter jiaomieCycle = date -> {
-            Date date1 = TimeUtils.getNextSpecialWeekTime(date,
-                -1, 1, 10, 0, 0, 0);
-            Date date2 = TimeUtils.getNextSpecialWeekTime(date,
-                -1, 1, 22, 0, 0, 0);
-            Date date3 = TimeUtils.getNextSpecialWeekTime(date,
-                -1, 2, 10, 0, 0, 0);
-            Date date4 = TimeUtils.getNextSpecialWeekTime(date,
-                -1, 2, 22, 0, 0, 0);
-            return TimeUtils.getMin(date1, date2, date3, date4);
-        };
-
-        long start = 1619856000000L;
-        long end = 1621022340000L;
-        ITimeAdapter zhouYouPiaoCycle = date -> {
-            if (date.getTime() < end) {
-                //第一天要在16点提醒
-                if (date.getTime() < start) {
-                    return new Date(start);
-                }
-                return TimeUtils.getNextSpecialWeekTime(date,
-                    -1, -1, 10, 0, 0, 0);
-            } else {
-                return new Date(date.getTime() + 1000000000000L);
-            }
-        };
-        // 舟游日替
-        long startRiti = 1621065600000L;
-        long endRiti = 1622231940000L;
-        ITimeAdapter ritiCycle = date -> {
-            if (date.getTime() < endRiti) {
-                //第一天要在16点提醒
-                if (date.getTime() < startRiti) {
-                    return new Date(startRiti);
-                }
-                return TimeUtils.getNextSpecialWeekTime(date,
-                    -1, -1, 10, 0, 0, 0);
-            } else {
-                return new Date(date.getTime() + 1000000000000L);
-            }
-        };
-
-        logInfo("registe time task start");
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        Date date = calendar.getTime();
-
-        ISubscribable zhouyouRiti = new SimpleSubscription(this, ritiCycle,
-            () -> String.format("明日方舟今天有危机合约日替，记得打，日替还剩下%d天。",
-                (endRiti - 21600000) / TimeUtils.DAY - (System.currentTimeMillis() - 21600000) / TimeUtils.DAY)) {
-
-            private final static String NAME = "提醒白嫖小助手";
-
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        };
-
-
-        // 创建订阅器对象
-        SimpleSubscription maiyao = new SimpleSubscription(this, maiyaoCycle,
-            getImg(appDirectory + "/image/提醒买药小助手.jpg")) {
-            private final static String NAME = "提醒买药小助手";
-
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        };
-
-        ISubscribable zhouYouPiao = new SimpleSubscription(this, zhouYouPiaoCycle,
-            () -> String.format("明日方舟今天有白嫖，记得抽卡，白嫖还剩下%d天。",
-                (end - 21600000) / TimeUtils.DAY - (System.currentTimeMillis() - 21600000) / TimeUtils.DAY)) {
-
-            private final static String NAME = "提醒白嫖小助手";
-
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        };
-
-        SimpleSubscription jiaomie = new SimpleSubscription(this, jiaomieCycle,
-            getImg(appDirectory + "/image/提醒剿灭小助手.jpg")) {
-            @Override
-            public String getName() {
-                return "提醒剿灭小助手";
-            }
-        };
-        subManager.setTiggerTime(date);
-        subManager.addSubscribable(maiyao);
-        subManager.addSubscribable(jiaomie);
-        subManager.addSubscribable(zhouyouRiti);
-        subManager.addSubscribable(new ArkWebTask(this));
-
-        subManager.addSubscribable(zhouYouPiao);
-        subManager.addSubscribable(new DragraliaTask(this) {
-            private final static String NAME = "龙约公告转发小助手";
-
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        });
-        subManager.addSubscribable(new LiveTask(this) {
-            private final static String NAME = "直播公告小助手";
-
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        });
-        subManager.addSubscribable(new MoeTask(this) {
-            private final static String NAME = "番剧订阅小助手";
-
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        });
-        subManager.addSubscribable(new HistoryTodayTask(this, historyTodayService) {
-            private final static String NAME = "历史上的今天小助手";
-
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        });
-        subManager.addSubscribable(new SleepTask(this) {
-            private final static String NAME = "卞老师小助手";
-
-            @Override
-            public String getName() {
-                return NAME;
-            }
-        });
-        subManager.addSubscribable(new ArknightWeiboTask(this,
-            weiboReader) {
-            @Override
-            public String getName() {
-                return "舟游发饼小助手";
-            }
-        });
-        subManager.addSubscribable(new GenshinWeiboTask(this,
-            weiboReader) {
-            @Override
-            public String getName() {
-                return "原神微博小助手";
-            }
-        });
-        subManager.addSubscribable(new WeiboTask(this, weiboReader) {
-            @Override
-            public String getName() {
-                return "微博订阅小助手";
-            }
-        });
-        subManager.addSubscribable(new FundTask(this));
-        subManager.addSubscribable(
-            new SimpleSubscription(
-                this,
-                date1 -> TimeUtils.getNextSpecialTime(date1, -1, -1, 19, 0, 0, 0),
-                this.getImg(appDirectory + "/tigang.jpg")) {
-                @Override
-                public String getName() {
-                    return "提肛小助手";
-                }
-            });
-        //把订阅管理器注册进线程池
-        pool.add(subManager);
-        logInfo("registe time task end");
         //把订阅管理器注册进可用的模块里
         //registerFunc.add(subManager);
 

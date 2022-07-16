@@ -4,54 +4,48 @@ import com.aye10032.Zibenbot;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
-import com.aye10032.utils.timeutil.TimeUtils;
 import com.aye10032.utils.weibo.*;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 
 /**
  * @author Dazo66
  */
-public abstract class ArknightWeiboTask extends SubscribableBase {
+@Service
+public class ArknightWeiboTask extends SubscribableBase {
 
     private Set<String> postIds = new HashSet<>();
+    @Autowired
     private WeiboReader weiboReader;
     private static JsonParser parser = new JsonParser();
     private WeiboSetItem offAnnounce = null;
 
-    public ArknightWeiboTask(Zibenbot zibenbot, WeiboReader reader) {
-        super(zibenbot);
-        weiboReader = reader;
-        File file = new File(getBot().appDirectory + "\\arknight\\");
+    @PostConstruct
+    public void init() {
+        File file = new File(getBot().appDirectory + "/arknight/");
         if (!file.exists()) {
             file.mkdirs();
         }
     }
 
+
     @Override
-    public Date getNextTime(Date date) {
-        Date ret = new Date();
-        ret.setTime(date.getTime() + TimeUtils.MIN * 3L);
-        Calendar c = Calendar.getInstance();
-        c.setTime(ret);
-        c.set(Calendar.SECOND, 1);
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        if (hour < 8 || hour > 22) {
-            c.set(Calendar.HOUR_OF_DAY, 8);
-            c.set(Calendar.MINUTE, 5);
-            if (hour >= 8) {
-                c.add(Calendar.DAY_OF_YEAR, 1);
-            }
-        }
-        return c.getTime();
+    public String getName() {
+        return "舟游发饼小助手";
     }
 
     @Override
@@ -84,7 +78,7 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
                 }
             }
         }
-        try {
+/*        try {
             WeiboSetItem item = getPostUrlFromOff();
             if (offAnnounce != item && item != null && !item.equals(offAnnounce)) {
                 offAnnounce = item;
@@ -98,17 +92,23 @@ public abstract class ArknightWeiboTask extends SubscribableBase {
             }
         } catch (Exception e) {
             getBot().logWarning("读取方舟制作组通讯出错：" + ExceptionUtils.printStack(e));
-        }
+        }*/
+    }
+
+    @Override
+    public String getCron() {
+        // 每4分钟执行一次
+        return "0 0/4 * * * ? *";
     }
 
     public static WeiboPost getPostFromOff(WeiboSetItem item) throws IOException {
         if (item.isOffAnnounce()) {
             OkHttpClient client = Zibenbot.getOkHttpClient();
             Request officialWebsiteRequest = new Request.Builder()
-                    .url(item.getId())
-                    .method("GET", null)
-                    .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
-                    .build();
+                .url(item.getId())
+                .method("GET", null)
+                .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
+                .build();
             String offWeb = client.newCall(officialWebsiteRequest).execute().body().string();
             WeiboPost post = new WeiboPost();
             post.setUserId("-1");

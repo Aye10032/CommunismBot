@@ -64,8 +64,8 @@ public class HistoryTodayExample {
     }
 
     /**
-     * @author Aye10032
-     * @date 2022-06-08
+     * @author dazo66
+     * @date 2022-07-16
      */
     protected abstract static class GeneratedCriteria {
         protected List<Criterion> criteria;
@@ -506,8 +506,10 @@ public class HistoryTodayExample {
     }
 
     /**
-     * @author Aye10032
-     * @date 2022-06-08
+     *
+     *
+     * @author dazo66
+     * @date 2022-07-16
      */
     public static class Criterion {
         private String condition;

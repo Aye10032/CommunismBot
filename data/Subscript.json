@@ -1,10 +1,6 @@
 {
   "龙约公告转发小助手": [
     {
-      "type": "GROUP_MSG",
-      "id": 814843368
-    },
-    {
       "type": "PRIVATE_MSG",
       "id": 425137292
     },
@@ -16,27 +12,15 @@
   "提醒剿灭小助手": [
     {
       "type": "GROUP_MSG",
-      "id": 814843368
-    },
-    {
-      "type": "GROUP_MSG",
-      "id": 995497677
-    },
-    {
-      "type": "PRIVATE_MSG",
-      "id": 895981998
-    },
-    {
-      "type": "GROUP_MSG",
       "id": 947657871
     },
     {
       "type": "PRIVATE_MSG",
-      "id": 495049457
+      "id": 2437901460
     },
     {
-      "type": "PRIVATE_MSG",
-      "id": 2437901460
+      "type": "GROUP_MSG",
+      "id": 949214456
     }
   ],
   "提醒买药小助手": [],
@@ -103,6 +87,90 @@
       "args": [
         "21415744"
       ]
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 947657871,
+      "args": [
+        "937508"
+      ]
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 947657871,
+      "args": [
+        "23056739"
+      ]
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 995497677,
+      "args": [
+        "2968267"
+      ]
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 995497677,
+      "args": [
+        "21987615"
+      ]
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 995497677,
+      "args": [
+        "5555734"
+      ]
+    },
+    {
+      "type": "PRIVATE_MSG",
+      "id": 895981998,
+      "args": [
+        "21624651"
+      ]
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 866613076,
+      "args": [
+        "21987615"
+      ]
+    },
+    {
+      "type": "PRIVATE_MSG",
+      "id": 495049457,
+      "args": [
+        "23965951"
+      ]
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 995497677,
+      "args": [
+        "5265"
+      ]
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 947657871,
+      "args": [
+        "1363573"
+      ]
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 947657871,
+      "args": [
+        "81435"
+      ]
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 947657871,
+      "args": [
+        "2170652"
+      ]
     }
   ],
   "卞老师小助手": [],
@@ -110,18 +178,6 @@
     {
       "type": "GROUP_MSG",
       "id": 995497677
-    },
-    {
-      "type": "PRIVATE_MSG",
-      "id": 895981998
-    },
-    {
-      "type": "GROUP_MSG",
-      "id": 814843368
-    },
-    {
-      "type": "PRIVATE_MSG",
-      "id": 495049457
     },
     {
       "type": "PRIVATE_MSG",
@@ -134,18 +190,6 @@
       "id": 895981998
     },
     {
-      "type": "GROUP_MSG",
-      "id": 995497677
-    },
-    {
-      "type": "PRIVATE_MSG",
-      "id": 495049457
-    },
-    {
-      "type": "GROUP_MSG",
-      "id": 814843368
-    },
-    {
       "type": "PRIVATE_MSG",
       "id": 675987134
     },
@@ -156,16 +200,13 @@
     {
       "type": "PRIVATE_MSG",
       "id": 2437901460
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 949214456
     }
   ],
   "舟游网页订阅": [
-    {
-      "type": "PRIVATE_MSG",
-      "id": 895981998,
-      "args": [
-        "xXZ%2Bu2DinnFrlieOFLpHS4%2BIN1WTRP%2B7sHzhYA87sWLC2aG%2Bn%2BvM1eZyAhtz1VehAKkIMYaGQSf%2BXOVV3dihWegfoWvV5JuAiwc3dqB8B0%2FGnCdx2L9lPWlv6kaQwMWlP1KjojY2yH55GiNWEWuEe8%2Bm3wWTHy5gvnloyP9SH9T5Xla5Lmye7Jn6IscMdeuhU42SglYKNWOvY%2FmUkpsaqvJ6yXgnFV4vheN0FF%2BgprbOEza3FLFQ6uaH%2Fn0H9543"
-      ]
-    },
     {
       "type": "PRIVATE_MSG",
       "id": 939290931,
@@ -178,6 +219,106 @@
       "id": 450472982,
       "args": [
         "xXZ%2Bu2DinnFrlieOFLpHS5%2BPUkya3i%2Bzmt5dPpt4y47jwhEd%2B6lI%2BXPtTgz5JN72WrMTRm%2BUGcmij10RO3tmQ6qR5ehWGvcZNTe7Pe9x9LXq0IcBdniWj2GNo%2B%2BsPu%2Fb1AB1Ict5KdnOw99bP4RbqhVrUXuBuIqWlH4XCsj%2F3tkMT4oICn0PcdG35QsNKur9DN3qMJQxtEf5cKPJXWoSYDIPaIpVUSKPDo5ePJGKRWqTdBNyTtwNZPBhEMrY9w7I"
+      ]
+    }
+  ],
+  "原神微博小助手": [
+    {
+      "type": "PRIVATE_MSG",
+      "id": 895981998
+    },
+    {
+      "type": "PRIVATE_MSG",
+      "id": 495049457
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 866613076
+    }
+  ],
+  "提肛小助手": [
+    {
+      "type": "GROUP_MSG",
+      "id": 866613076
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 814843368
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 947657871
+    }
+  ],
+  "基金日报": [
+    {
+      "type": "PRIVATE_MSG",
+      "id": 895981998,
+      "args": [
+        "003545",
+        "217022"
+      ]
+    }
+  ],
+  "微博订阅小助手": [
+    {
+      "type": "PRIVATE_MSG",
+      "id": 895981998,
+      "args": [
+        "2282055613"
+      ]
+    },
+    {
+      "type": "PRIVATE_MSG",
+      "id": 495049457,
+      "args": [
+        "6364348124"
+      ]
+    },
+    {
+      "type": "PRIVATE_MSG",
+      "id": 895981998,
+      "args": [
+        "5657120464"
+      ]
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 300496876
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 300496876,
+      "args": [
+        "6364348124"
+      ]
+    }
+  ],
+  "历史上的今天小助手": [
+    {
+      "type": "GROUP_MSG",
+      "id": 995497677
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 947657871
+    }
+  ],
+  "番剧订阅小助手": [
+    {
+      "type": "GROUP_MSG",
+      "id": 995497677,
+      "args": [
+        "https://bangumi.moe/rss/tags/62c125b92fc3ee0d0016bf70",
+        "Lycoris-Recoil"
+      ]
+    },
+    {
+      "type": "GROUP_MSG",
+      "id": 995497677,
+      "args": [
+        "https://bangumi.moe/rss/tags/62c125b02fc3ee0d0016bf56",
+        "彻夜之歌"
       ]
     }
   ]

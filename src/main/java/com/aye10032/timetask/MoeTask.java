@@ -1,10 +1,10 @@
 package com.aye10032.timetask;
 
-import com.aye10032.Zibenbot;
 import com.aye10032.utils.RSSUtil;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
@@ -19,49 +19,47 @@ import static com.aye10032.utils.timeutil.TimeUtils.MIN;
  * @author: Aye10032
  * @date: 2022/7/10 上午 11:20
  */
-public abstract class MoeTask extends SubscribableBase {
-    private Zibenbot zibenbot;
-
-    public MoeTask(Zibenbot zibenbot) {
-        super(zibenbot);
-        this.zibenbot = zibenbot;
-    }
+@Service
+public class MoeTask extends SubscribableBase {
 
     @Override
-    public Date getNextTime(Date date) {
-        Date ret = new Date();
-        ret.setTime(date.getTime() + 30L * MIN);
-        return ret;
+    public String getName() {
+        return "番剧订阅小助手";
     }
 
     @Override
     public void run(List<Reciver> recivers, String[] args) {
         StringBuilder msg_builder = new StringBuilder();
         Date now = new Date();
-        now.setTime(new Date().getTime() - 30L * MIN);
+        now.setTime(System.currentTimeMillis() - 30L * MIN);
         if (recivers != null) {
             for (Reciver reciver : recivers) {
                 msg_builder.append("你订阅的《").append(args[1].replace("-"," ")).append("》有资源更新了：");
                 List<String> result = RSSUtil.getRSSUpdate(args[0], now);
-                if (!result.isEmpty()){
-                    for (String entry:result){
+                if (!result.isEmpty()) {
+                    for (String entry : result) {
                         msg_builder.append("\n----------------\n").append(entry);
                     }
-                    zibenbot.replyMsg(reciver.getSender(), msg_builder.toString());
+                    getBot().replyMsg(reciver.getSender(), msg_builder.toString());
                 }
             }
         }
     }
 
     @Override
+    public String getCron() {
+        return "0 0/30 * * * ? ";
+    }
+
+    @Override
     public Pair<Boolean, String> argsCheck(String[] args) {
         if (args.length != 2) {
-            return new Pair<>(false, "参数错误，格式为RSS链接+番剧名称，并用-代替空格");
+            return Pair.of(false, "参数错误，格式为RSS链接+番剧名称，并用-代替空格");
         } else {
             if (args[0].startsWith("https://bangumi.moe/rss/")) {
-                return new Pair<>(true, "");
+                return Pair.of(true, "");
             } else {
-                return new Pair<>(false, "无效的RSS链接");
+                return Pair.of(false, "无效的RSS链接");
             }
         }
     }

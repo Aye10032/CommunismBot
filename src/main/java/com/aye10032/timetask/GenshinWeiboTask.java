@@ -4,31 +4,34 @@ import com.aye10032.Zibenbot;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
-import com.aye10032.utils.timeutil.TimeUtils;
 import com.aye10032.utils.weibo.WeiboReader;
 import com.aye10032.utils.weibo.WeiboSet;
 import com.aye10032.utils.weibo.WeiboSetItem;
 import com.aye10032.utils.weibo.WeiboUtils;
-import com.google.gson.JsonParser;
 import okhttp3.OkHttpClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 
 /**
  * @author Dazo66
  */
-public abstract class GenshinWeiboTask extends SubscribableBase {
+@Service
+public class GenshinWeiboTask extends SubscribableBase {
 
     private Set<String> postIds = new HashSet<>();
+    @Autowired
     private WeiboReader weiboReader;
-    private static JsonParser parser = new JsonParser();
-    private WeiboSetItem offAnnounce = null;
 
-    public GenshinWeiboTask(Zibenbot zibenbot, WeiboReader reader) {
-        super(zibenbot);
-        weiboReader = reader;
+    @PostConstruct
+    public void init() {
         File file = new File(getBot().appDirectory + "/genshin/");
         if (!file.exists()) {
             file.mkdirs();
@@ -36,21 +39,8 @@ public abstract class GenshinWeiboTask extends SubscribableBase {
     }
 
     @Override
-    public Date getNextTime(Date date) {
-        Date ret = new Date();
-        ret.setTime(date.getTime() + TimeUtils.MIN * 3L);
-        Calendar c = Calendar.getInstance();
-        c.setTime(ret);
-        c.set(Calendar.SECOND, 1);
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        if (hour < 8 || hour > 22) {
-            c.set(Calendar.HOUR_OF_DAY, 8);
-            c.set(Calendar.MINUTE, 5);
-            if (hour >= 8) {
-                c.add(Calendar.DAY_OF_YEAR, 1);
-            }
-        }
-        return c.getTime();
+    public String getName() {
+        return "原神微博小助手";
     }
 
     @Override
@@ -78,6 +68,11 @@ public abstract class GenshinWeiboTask extends SubscribableBase {
                 }
             }
         }
+    }
+
+    @Override
+    public String getCron() {
+        return "0 0/3 * * * ? ";
     }
 
     public static String cleanDes(String offWeb) {

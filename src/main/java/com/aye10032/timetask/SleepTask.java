@@ -1,33 +1,23 @@
 package com.aye10032.timetask;
 
-import com.aye10032.Zibenbot;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
-import com.aye10032.utils.timeutil.TimeUtils;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
  * @Author Aye10032
  * @Date Created in 18:49 10.13
  */
-public abstract class SleepTask extends SubscribableBase {
-
-    private Zibenbot zibenbot;
-
-    public SleepTask(Zibenbot zibenbot) {
-        super(zibenbot);
-        this.zibenbot = zibenbot;
-    }
+@Service
+public class SleepTask extends SubscribableBase {
 
     @Override
-    public Date getNextTime(Date date) {
-        Date date1 = TimeUtils.getNextSpecialTime(date, -1, -1, 7, 0, 0, 0);
-        Date date2 = TimeUtils.getNextSpecialTime(date, -1, -1, 23, 0, 0, 0);
-        return TimeUtils.getMin(date1, date2);
+    public String getName() {
+        return "卞老师小助手";
     }
 
     @Override
@@ -35,16 +25,21 @@ public abstract class SleepTask extends SubscribableBase {
         if (recivers != null) {
             if (compareTo(7)) {
                 for (Reciver reciver : recivers) {
-                    zibenbot.replyMsg(reciver.getSender(),
-                        zibenbot.getImg(new File(zibenbot.appDirectory + "/image/getup.jpg")));
+                    getBot().replyMsg(reciver.getSender(),
+                        getBot().getImg(new File(getBot().appDirectory + "/image/getup.jpg")));
                 }
             } else if (compareTo(23)) {
                 for (Reciver reciver : recivers) {
-                    zibenbot.replyMsg(reciver.getSender(),
-                        zibenbot.getImg(new File(zibenbot.appDirectory + "/image/sleep.jpg")));
+                    getBot().replyMsg(reciver.getSender(),
+                        getBot().getImg(new File(getBot().appDirectory + "/image/sleep.jpg")));
                 }
             }
         }
+    }
+
+    @Override
+    public String getCron() {
+        return "0 0 7,23 * * ? ";
     }
 
     private boolean compareTo(int aim_hour) {
@@ -53,7 +48,7 @@ public abstract class SleepTask extends SubscribableBase {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
 
-        zibenbot.logDebug("now time -> " + hour + ":" + min);
+        getBot().logDebug("now time -> " + hour + ":" + min);
 
         if (hour == aim_hour) {
             return true;

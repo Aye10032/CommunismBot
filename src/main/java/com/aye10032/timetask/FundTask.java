@@ -7,31 +7,20 @@ import com.aye10032.utils.fund.FundingUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.utils.timeutil.TimeUtils;
-import javafx.util.Pair;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
  * @author Dazo66
  */
 public class FundTask extends SubscribableBase {
-    public FundTask(Zibenbot zibenbot) {
-        super(zibenbot);
-    }
 
     @Override
     public String getName() {
         return "基金日报";
-    }
-
-    @Override
-    public Date getNextTime(Date date) {
-        return TimeUtils.getMin(TimeUtils.getNextSpecialTime(date, -1, -1, 11, 31, 0, 0),
-            TimeUtils.getNextSpecialTime(date, -1, -1, 15, 1, 0, 0),
-            TimeUtils.getNextSpecialTime(date, -1, -1, 21, 0, 0, 0));
     }
 
     @Override
@@ -68,11 +57,16 @@ public class FundTask extends SubscribableBase {
     }
 
     @Override
+    public String getCron() {
+        return "0 30 12,15,19 * * ? ";
+    }
+
+    @Override
     public Pair<Boolean, String> argsCheck(String[] args) {
         if (ArrayUtils.isEmpty(args)) {
-            return new Pair<>(false, "订阅的基金为空");
+            return Pair.of(false, "订阅的基金为空");
         }
-        return new Pair<>(Arrays.stream(args).allMatch(s -> {
+        return Pair.of(Arrays.stream(args).allMatch(s -> {
             try {
                 FundingUtils.getFundingStatus(s, TimeUtils.getDateString(System.currentTimeMillis()), Zibenbot.getOkHttpClient());
             } catch (Exception e) {

@@ -19,11 +19,11 @@ public class INMFunc extends BaseFunc {
     public void run(SimpleMsg CQmsg) {
         String s = CQmsg.getMsg();
         if (s.contains("目力")) {
-            zibenbot.replyMsg(CQmsg, zibenbot.getVoice(appDirectory + "\\inm\\目力.amr"));
+            zibenbot.replyMsg(CQmsg, zibenbot.getVoice(appDirectory + "/inm/目力.amr"));
         } else if (s.equals("sodayo") || s.equals("是啊") || s.equals("救世啊")) {
-            zibenbot.replyMsg(CQmsg, zibenbot.getVoice(appDirectory + "\\inm\\sodayo.amr"));
+            zibenbot.replyMsg(CQmsg, zibenbot.getVoice(appDirectory + "/inm/sodayo.amr"));
         } else if (s.contains("压力马斯内") || s.equals("确实") || s.equals("压力吗死内")) {
-            zibenbot.replyMsg(CQmsg, zibenbot.getVoice(appDirectory + "\\inm\\压力马斯内.amr"));
+            zibenbot.replyMsg(CQmsg, zibenbot.getVoice(appDirectory + "/inm/压力马斯内.amr"));
         }
     }
 }

@@ -9,7 +9,10 @@ import com.aye10032.utils.weibo.WeiboSet;
 import com.aye10032.utils.weibo.WeiboSetItem;
 import com.aye10032.utils.weibo.WeiboUtils;
 import okhttp3.OkHttpClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,27 +21,25 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Dazo66
  */
-public abstract class WeiboTask extends SubscribableBase {
+@Service
+public class WeiboTask extends SubscribableBase {
 
     private Map<Long, Set<String>> postMap = new ConcurrentHashMap<>();
+    @Autowired
     private WeiboReader weiboReader;
 
-    public WeiboTask(Zibenbot zibenbot, WeiboReader reader) {
-        super(zibenbot);
-        weiboReader = reader;
+    @PostConstruct
+    public void init() {
         File file = new File(getBot().appDirectory + "/weibo/");
         if (!file.exists()) {
             file.mkdirs();
         }
     }
 
+
     @Override
-    public Date getNextTime(Date date) {
-        Calendar instance = Calendar.getInstance();
-        instance.setTime(new Date(date.getTime()));
-        int amount = instance.get(Calendar.MINUTE);
-        instance.add(Calendar.MINUTE, 5 - amount % 5);
-        return instance.getTime();
+    public String getName() {
+        return "微博订阅小助手";
     }
 
     @Override
@@ -75,5 +76,10 @@ public abstract class WeiboTask extends SubscribableBase {
                 }
             }
         }
+    }
+
+    @Override
+    public String getCron() {
+        return "0 0/5 * * * ? ";
     }
 }
