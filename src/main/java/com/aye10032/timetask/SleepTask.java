@@ -36,12 +36,12 @@ public abstract class SleepTask extends SubscribableBase {
             if (compareTo(7)) {
                 for (Reciver reciver : recivers) {
                     zibenbot.replyMsg(reciver.getSender(),
-                            zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\getup.jpg")));
+                        zibenbot.getImg(new File(zibenbot.appDirectory + "/image/getup.jpg")));
                 }
             } else if (compareTo(23)) {
                 for (Reciver reciver : recivers) {
                     zibenbot.replyMsg(reciver.getSender(),
-                            zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\sleep.jpg")));
+                        zibenbot.getImg(new File(zibenbot.appDirectory + "/image/sleep.jpg")));
                 }
             }
         }

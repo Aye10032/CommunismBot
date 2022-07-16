@@ -1,10 +1,10 @@
 package com.aye10032.functions;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.AyeCompile;
 import com.aye10032.utils.video.BiliInfo;
-import com.aye10032.Zibenbot;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -53,22 +53,22 @@ public class BiliFunc extends BaseFunc {
                 }
                 String pvideo = "\n预览：" + "视频太短，不提供预览。";
                 if (biliInfo.hasPvdeo && biliInfo.getDuration() >= 12) {
-                    pvideo = "\n预览：" + zibenbot.getImg(new File(appDirectory + "\\image\\pvideo.gif"));
+                    pvideo = "\n预览：" + zibenbot.getImg(new File(appDirectory + "/image/pvideo.gif"));
                 } else if (!biliInfo.hasPvdeo) {
                     pvideo = "";
                 }
                 send = biliInfo.getTitle() + "\n"
-                        + biliInfo.getVideourl() + "\n"
-                        + "封面：" + zibenbot.getImg(new File(appDirectory + "\\image\\img.jpg"))
-                        + pvideo
-                        + "\nup主：" + biliInfo.getUp() + zibenbot.getImg(new File(appDirectory + "\\image\\head.jpg"))
-                        + "\n播放：" + formatToW(biliInfo.getView())
-                        + " 弹幕：" + formatToW(biliInfo.getDanmaku())
-                        + "\n点赞：" + formatToW(biliInfo.getLike())
-                        + " 投币：" + formatToW(biliInfo.getCoin())
-                        + " 收藏：" + formatToW(biliInfo.getFavorite())
-                        + " 评论：" + formatToW(biliInfo.getReply())
-                        + "\n简介：" + biliInfo.getDescription();
+                    + biliInfo.getVideourl() + "\n"
+                    + "封面：" + zibenbot.getImg(new File(appDirectory + "/image/img.jpg"))
+                    + pvideo
+                    + "\nup主：" + biliInfo.getUp() + zibenbot.getImg(new File(appDirectory + "\\image\\head.jpg"))
+                    + "\n播放：" + formatToW(biliInfo.getView())
+                    + " 弹幕：" + formatToW(biliInfo.getDanmaku())
+                    + "\n点赞：" + formatToW(biliInfo.getLike())
+                    + " 投币：" + formatToW(biliInfo.getCoin())
+                    + " 收藏：" + formatToW(biliInfo.getFavorite())
+                    + " 评论：" + formatToW(biliInfo.getReply())
+                    + "\n简介：" + biliInfo.getDescription();
             } else if (simpleMsg.isTeamspealMsg()) {
                 send = biliInfo.getTitle() + "\n"
                         + biliInfo.getVideourl() + "\n"

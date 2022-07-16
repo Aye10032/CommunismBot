@@ -8,7 +8,7 @@ public class SetuUtil {
     private File image;
 
     public SetuUtil(String appDirectory) {
-        File file = new File(appDirectory + "\\setu");
+        File file = new File(appDirectory + "/setu");
         File[] fs = file.listFiles();
 
         boolean Flag = true;

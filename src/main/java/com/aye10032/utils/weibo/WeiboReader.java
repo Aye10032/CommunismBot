@@ -89,7 +89,7 @@ public class WeiboReader {
     private String getFileName(String url) {
         Matcher matcher = img_name_pattern.matcher(url);
         matcher.find();
-        return cacheDir.getAbsolutePath() + "\\" + matcher.group();
+        return cacheDir.getAbsolutePath() + "/" + matcher.group();
     }
 
     private static Set<String> getImgUrl(String s) {

@@ -93,7 +93,7 @@ public class Zibenbot {
     {
         // 配置logger
         appDirectory = "data";
-        File logDir = new File(appDirectory + "\\log\\");
+        File logDir = new File(appDirectory + "/log/");
         File[] files = logDir.listFiles(pathname -> System.currentTimeMillis() - pathname.lastModified() > TimeUtils.DAY * 10L);
         Arrays.asList(files != null ? files : new File[0]).forEach(File::delete);
         logger = new PlatformLogger("zibenbot", (String s) -> {
@@ -140,12 +140,12 @@ public class Zibenbot {
 
     private synchronized PrintStream getLoggerStream() {
         if (LOGGER_FILE == null) {
-            File logDir = new File(appDirectory + "\\log");
+            File logDir = new File(appDirectory + "/log");
             if (!logDir.exists()) {
                 logDir.mkdirs();
             }
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            File file = new File(appDirectory + "\\log\\log-" + format.format(new Date()) + ".log");
+            File file = new File(appDirectory + "/log/log-" + format.format(new Date()) + ".log");
             try {
                 if (!file.exists()) {
                     file.createNewFile();
@@ -185,10 +185,10 @@ public class Zibenbot {
     public int startup() {
         bot.getLogger().plus(logger);
         // 设置基本参数
-        SeleniumUtils.setup(appDirectory + "\\ChromeDriver\\chromedriver.exe");
+        SeleniumUtils.setup(appDirectory + "/ChromeDriver/chromedriver.exe");
         //改成了手动注册
         log(Level.INFO, "registe func start");
-        this.weiboReader = new WeiboReader(this, appDirectory + "\\weiboCache\\");
+        this.weiboReader = new WeiboReader(this, appDirectory + "/weiboCache/");
         FuncLoader loader = new FuncLoader(this);
         loader.addFactory(new ArknightWeiboFunc.ArkFuncFactory(this, weiboReader));
         loader.addFactory(new WeiboFunc.WeiboFuncFactory(this, weiboReader));
@@ -384,7 +384,7 @@ public class Zibenbot {
             new SimpleSubscription(
                 this,
                 date1 -> TimeUtils.getNextSpecialTime(date1, -1, -1, 19, 0, 0, 0),
-                this.getImg(appDirectory + "\\tigang.jpg")) {
+                this.getImg(appDirectory + "/tigang.jpg")) {
                 @Override
                 public String getName() {
                     return "提肛小助手";

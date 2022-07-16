@@ -26,6 +26,7 @@ tasks.withType(JavaCompile) {
 }
 
 ext {
+    springVersion = '2.6.6'
     miraiVersion = '2.10.0'
     ktVersion = '1.6.20-M1'
 }
@@ -56,7 +57,7 @@ dependencies {
     compile group: 'net.mamoe', name: 'mirai-core-api', version: rootProject.ext.miraiVersion
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.6'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: rootProject.ext.springVersion
 
     // https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter
     compile group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '2.2.2'
@@ -68,8 +69,10 @@ dependencies {
     // https://mvnrepository.com/artifact/junit/junit
     testCompile group: 'junit', name: 'junit', version: '4.13.1'
 
+/*
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.32.3'
+*/
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
@@ -102,6 +105,13 @@ dependencies {
     compile group: 'org.bytedeco', name: 'openblas', version: '0.3.9-1.5.3', classifier: 'windows-x86_64'
 
     compile group: 'com.github.Aye10032', name: 'rtroapiutil', version: 'v1.2'
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-quartz
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-quartz', version: rootProject.ext.springVersion
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    compile 'mysql:mysql-connector-java:8.0.29'
+
+
 }
 
 tasks.withType(JavaCompile) {
@@ -143,7 +153,7 @@ jar {
         Set<File> files = configurations.runtimeClasspath.files
         def builder = new StringBuilder()
         for (def f : files) {
-            builder.append(classpathPrefix).append("\\").append(f.getName()).append(" ")
+            builder.append(classpathPrefix).append("/").append(f.getName()).append(" ")
         }
         attributes('Main-Class': 'com.dazo66.Main')//入口点
         attributes('Class-Path': builder.toString())

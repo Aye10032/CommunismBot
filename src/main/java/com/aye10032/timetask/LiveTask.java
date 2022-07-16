@@ -43,9 +43,9 @@ public abstract class LiveTask extends SubscribableBase {
                         ImgUtils.downloadImg(liveInfo.getLive_background_url(), args[0], zibenbot.appDirectory);
 
                         msg_builder.append(liveInfo.getNickName(liveInfo.getUid()))
-                                .append("在").append(min).append("分钟前开始了直播：")
-                                .append(liveInfo.getLive_title())
-                                .append(zibenbot.getImg(new File(zibenbot.appDirectory + "\\image\\" + args[0] + ".jpg")))
+                            .append("在").append(min).append("分钟前开始了直播：")
+                            .append(liveInfo.getLive_title())
+                            .append(zibenbot.getImg(new File(zibenbot.appDirectory + "/image/" + args[0] + ".jpg")))
                                 .append("\n").append(liveInfo.getLive_url());
                         zibenbot.replyMsg(reciver.getSender(), msg_builder.toString());
                     }

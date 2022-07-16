@@ -9,6 +9,7 @@ import org.apache.http.HeaderElement;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 
 import java.io.*;
@@ -64,7 +65,10 @@ public class HttpUtils {
     }
 
     public static InputStream getInputStreamFromNet(String url, HttpClient client) throws IOException {
-        return client.execute(new HttpGet(url)).getEntity().getContent();
+        HttpGet request = new HttpGet(url);
+        RequestConfig.Builder builder = RequestConfig.custom().setConnectTimeout(5000).setSocketTimeout(5000);
+        request.setConfig(builder.build());
+        return client.execute(request).getEntity().getContent();
 
     }
 

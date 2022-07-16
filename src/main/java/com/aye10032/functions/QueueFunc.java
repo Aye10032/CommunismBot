@@ -1,10 +1,10 @@
 package com.aye10032.functions;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.QueueDataClass;
-import com.aye10032.Zibenbot;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
 import com.google.common.collect.Lists;
@@ -100,7 +100,7 @@ public class QueueFunc extends BaseFunc {
     public void load(){
         Gson gson = new GsonBuilder().create();
         try {
-            File file = new File(zibenbot.appDirectory + "\\queue.json");
+            File file = new File(zibenbot.appDirectory + "/queue.json");
             if (file.exists()) {
                 FileReader input = new FileReader(file);
                 data = gson.fromJson(IOUtils.toString(input)

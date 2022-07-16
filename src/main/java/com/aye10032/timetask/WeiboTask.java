@@ -26,7 +26,7 @@ public abstract class WeiboTask extends SubscribableBase {
     public WeiboTask(Zibenbot zibenbot, WeiboReader reader) {
         super(zibenbot);
         weiboReader = reader;
-        File file = new File(getBot().appDirectory + "\\weibo\\");
+        File file = new File(getBot().appDirectory + "/weibo/");
         if (!file.exists()) {
             file.mkdirs();
         }

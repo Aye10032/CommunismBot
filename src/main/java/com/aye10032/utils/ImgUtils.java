@@ -91,9 +91,9 @@ public class ImgUtils {
             byte[] data = readInputStream(inStream);
             File imageFile;
             if (appDirectory == null || appDirectory.isEmpty()) {
-                imageFile = new File("image\\" + filename + ".jpg");
+                imageFile = new File("image/" + filename + ".jpg");
             } else {
-                imageFile = new File(appDirectory + "\\image\\" + filename + ".jpg");
+                imageFile = new File(appDirectory + "/image/" + filename + ".jpg");
             }
             if (!imageFile.exists()) {
                 imageFile.getParentFile().mkdirs();
@@ -123,9 +123,9 @@ public class ImgUtils {
             BufferedInputStream in = new BufferedInputStream(inStream);
             File imageFile;
             if (appDirectory == null || appDirectory.isEmpty()) {
-                imageFile = new File("image\\" + filename + ".jpg");
+                imageFile = new File("image/" + filename + ".jpg");
             } else {
-                imageFile = new File(appDirectory + "\\image\\" + filename + ".jpg");
+                imageFile = new File(appDirectory + "/image/" + filename + ".jpg");
             }
             if (!imageFile.exists()) {
                 imageFile.getParentFile().mkdirs();

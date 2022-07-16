@@ -29,7 +29,7 @@ public abstract class GenshinWeiboTask extends SubscribableBase {
     public GenshinWeiboTask(Zibenbot zibenbot, WeiboReader reader) {
         super(zibenbot);
         weiboReader = reader;
-        File file = new File(getBot().appDirectory + "\\genshin\\");
+        File file = new File(getBot().appDirectory + "/genshin/");
         if (!file.exists()) {
             file.mkdirs();
         }

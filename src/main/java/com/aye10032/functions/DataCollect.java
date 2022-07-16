@@ -21,7 +21,7 @@ public class DataCollect extends BaseFunc {
             if (c == null || c.isClosed()) {
                 Class.forName("org.sqlite.JDBC");
                 c = DriverManager.getConnection("jdbc:sqlite:" + zibenbot.appDirectory +
-                        "\\nlpdata\\botnlpdata.db");
+                    "/nlpdata/botnlpdata.db");
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();

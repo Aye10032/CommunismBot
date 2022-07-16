@@ -12,7 +12,7 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        System.load(System.getProperty("user.dir") + "\\data\\cv\\opencv_java430.dll");
+        // System.load(System.getProperty("user.dir") + "\\data\\cv\\opencv_java430.dll");
         SpringApplication.run(Main.class, args);
     }
 
