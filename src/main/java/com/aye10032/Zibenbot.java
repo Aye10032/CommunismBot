@@ -683,7 +683,7 @@ public class Zibenbot {
      * @return 声音字符串
      */
     public String getVoice(String path) {
-        return getMsg("VOICE", path);
+        return getMsg("Audio", path);
     }
 
     /**
