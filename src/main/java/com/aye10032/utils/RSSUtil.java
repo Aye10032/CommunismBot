@@ -1,6 +1,5 @@
 package com.aye10032.utils;
 
-import com.aye10032.functions.DataCollect;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;

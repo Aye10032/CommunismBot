@@ -629,6 +629,14 @@ public class Zibenbot {
         }
     }
 
+    public String getGroupName(long id){
+        Group group = _getGroup(id);
+        if (group != null) {
+            return group.getName();
+        }
+        return "";
+    }
+
     public List<Long> getGroups() {
         List<Long> list = new ArrayList<>();
         bot.getGroups().forEach(group -> list.add(group.getId()));
