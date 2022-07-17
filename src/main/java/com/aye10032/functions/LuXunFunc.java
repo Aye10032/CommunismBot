@@ -5,9 +5,8 @@ import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.dazo66.command.Commander;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
+import org.bytedeco.opencv.opencv_core.*;
+import org.bytedeco.opencv.opencv_imgproc.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,12 +17,13 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.*;
 
-import static org.opencv.core.Core.vconcat;
-import static org.opencv.imgcodecs.Imgcodecs.*;
-import static org.opencv.imgproc.Imgproc.*;
+import static org.bytedeco.opencv.global.opencv_core.*;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 
 //todo 需要增强
 public class LuXunFunc extends BaseFunc {
@@ -138,12 +138,9 @@ public class LuXunFunc extends BaseFunc {
 //                System.out.println(text_width + " " + text_height);
                 text_height = (width / text_width) * text_height;
 //                System.out.println(text_width + " " + text_height);
-                resize(text_src, text_src, new Size(width, text_height), 0, 0, Imgproc.INTER_AREA);
+                resize(text_src, text_src, new Size((int)width, (int)text_height), 0, 0, INTER_AREA);
 
-                List<Mat> imgs = new ArrayList<>();
-                imgs.add(dst);
-                imgs.add(text_src);
-                vconcat(imgs, dst);
+                vconcat(dst, text_src, dst);
             }
             imwrite(output.getAbsolutePath(), dst);
         } catch (Exception e) {
@@ -162,8 +159,8 @@ public class LuXunFunc extends BaseFunc {
 
         Mat dst = src.clone();
 
-        List<Mat> imgs = new ArrayList<>();
-        imgs.add(dst);
+//        List<Mat> imgs = new ArrayList<>();
+//        imgs.add(dst);
 
         Font font = new Font("微软雅黑", Font.PLAIN, 130);
         for (String text : texts) {
@@ -176,16 +173,15 @@ public class LuXunFunc extends BaseFunc {
                 System.out.println(text_width + " " + text_height);
                 text_height = (width / text_width) * text_height;
                 System.out.println(text_width + " " + text_height);
-                resize(text_src, text_src, new Size(width, text_height), 0, 0, Imgproc.INTER_AREA);
+                resize(text_src, text_src, new Size((int) width, (int) text_height), 0, 0, INTER_AREA);
 
                 cvtColor(text_src, text_src, COLOR_BGR2GRAY);
-                imgs.add(text_src);
-
+//                imgs.add(text_src);
+                vconcat(dst, text_src, dst);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        vconcat(imgs, dst);
         imwrite(output.getAbsolutePath(), dst);
 
 //        imshow("test",dst);
