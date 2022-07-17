@@ -41,7 +41,7 @@ public class HistoryTodayFunc extends BaseFunc {
                     StringBuilder builder = new StringBuilder();
                     builder.append("今天是")
                             .append(getDateString())
-                            .append(",历史上的今天发生了这些事：\n");
+                            .append("，历史上的今天发生了这些事：\n");
 
                     List<HistoryToday> history_today_list = historyTodayService.getTodayHistory(getDate());
                     event_count += history_today_list.size();
