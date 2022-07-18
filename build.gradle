@@ -98,28 +98,7 @@ dependencies {
     compile group: 'com.rometools', name: 'rome', version: '1.18.0'
 
     //JavaCV相关
-    implementation('org.bytedeco:javacv-platform:1.5.7'){
-        exclude group:'org.bytedeco', module:'artoolkitplus';
-        exclude group:'org.bytedeco', module:'artoolkitplus-platform';
-        exclude group:'org.bytedeco', module:'ffmpeg';
-        exclude group:'org.bytedeco', module:'ffmpeg-platform';
-        exclude group:'org.bytedeco', module:'flandmark';
-        exclude group:'org.bytedeco', module:'flandmark-platform';
-        exclude group:'org.bytedeco', module:'flycapture';
-        exclude group:'org.bytedeco', module:'flycapture-platform';
-        exclude group:'org.bytedeco', module:'leptonica';
-        exclude group:'org.bytedeco', module:'leptonica-platform';
-        exclude group:'org.bytedeco', module:'libdc1394';
-        exclude group:'org.bytedeco', module:'libdc1394-platform';
-        exclude group:'org.bytedeco', module:'libfreenect';
-        exclude group:'org.bytedeco', module:'libfreenect-platform';
-        exclude group:'org.bytedeco', module:'libfreenect2';
-        exclude group:'org.bytedeco', module:'libfreenect2-platform';
-        exclude group:'org.bytedeco', module:'librealsense';
-        exclude group:'org.bytedeco', module:'librealsense-platform';
-        exclude group:'org.bytedeco', module:'librealsense2';
-        exclude group:'org.bytedeco', module:'librealsense2-platform';
-    }
+    compile group:'org.bytedeco', name: 'javacv-platform', version: '1.5.7'
 
     compile group: 'com.github.Aye10032', name: 'rtroapiutil', version: 'v1.2'
 
