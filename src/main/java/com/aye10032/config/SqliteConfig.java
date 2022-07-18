@@ -27,12 +27,4 @@ public class SqliteConfig {
     @Value("${spring.datasource.url}")
     private String sqliteUrl;
 
-    @PostConstruct
-    public void init(){
-        if (!StringUtils.isEmpty(sqliteUrl)
-                && new File(sqliteUrl.replace("jdbc:sqlite:", "")).exists()) {
-            LoggerFactory.getLogger("history-today").info("history-today load success");
-        }
-    }
-
 }
