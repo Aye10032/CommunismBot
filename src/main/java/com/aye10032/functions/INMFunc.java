@@ -20,15 +20,15 @@ public class INMFunc extends BaseFunc {
                 .start()
                 .or("目力"::contains)
                 .run((msg)->{
-                    zibenbot.replyMsg(msg, zibenbot.getVoice(new File(appDirectory + "/inm/目力.amr")));
+                    zibenbot.replyAudio(msg, new File(appDirectory + "/inm/目力.amr"));
                 })
                 .or(this::containsYarimasune)
                 .run((msg)->{
-                    zibenbot.replyMsg(msg, zibenbot.getVoice(new File(appDirectory + "/inm/压力马斯内.amr")));
+                    zibenbot.replyAudio(msg, new File(appDirectory + "/inm/压力马斯内.amr"));
                 })
                 .or(this::containsSodayo)
                 .run((msg)->{
-                    zibenbot.replyMsg(msg, zibenbot.getVoice(new File(appDirectory + "/inm/sodayo.amr")));
+                    zibenbot.replyAudio(msg, new File(appDirectory + "/inm/sodayo.amr"));
                 })
                 .build();
     }

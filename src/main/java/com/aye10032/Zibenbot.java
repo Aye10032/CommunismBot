@@ -601,6 +601,31 @@ public class Zibenbot {
         }
     }
 
+    /**
+     * 发送语音
+     *
+     * @param fromMsg 消息来源
+     * @param file    语音文件
+     */
+    public void replyAudio(SimpleMsg fromMsg, File file){
+        ExternalResource resource = ExternalResource.create(file);
+        try {
+            if (fromMsg.isGroupMsg()){
+                Group group = _getGroup(fromMsg.getFromGroup());
+                if (group != null){
+                    Audio audio = group.uploadAudio(resource);
+                    group.sendMessage(audio);
+                }
+            }
+        } finally {
+            try {
+                resource.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void logVerbose(String verboseMsg) {
         logger.verbose(verboseMsg);
     }
@@ -682,11 +707,12 @@ public class Zibenbot {
      * @param file 文件
      * @return 声音字符串
      */
-    public String getVoice(File file) {
-        //todo 这边你看看，他意思好像是要先上传到服务器再用这个实例发送的意思
+//    public String getVoice(File file) {
+//        //todo 这边你看看，他意思好像是要先上传到服务器再用这个实例发送的意思
 //        Audio audio = _getGroup(groupId).uploadAudio(ExternalResource.create(file));
-        return getMsg("Audio", file.getAbsolutePath());
-    }
+//
+//        return getMsg("Audio", file.getAbsolutePath());
+//    }
 
     /**
      * 根据文件路径返回图片字符串
