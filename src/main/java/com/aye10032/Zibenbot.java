@@ -115,17 +115,6 @@ public class Zibenbot {
             externalResource.close();
             return s;
         });
-        msgUploads.put("VOICE", (conect, source) -> {
-            if (conect instanceof Group) {
-                ExternalResource externalResource = ExternalResource.create(new File(source));
-                String s = MiraiCode.serializeToMiraiCode(
-                        Collections.singleton(((Group) conect).uploadVoice(externalResource)));
-                externalResource.close();
-                return s;
-            } else {
-                return "[VOICE]";
-            }
-        });
         msgUploads.put("AT", (conect, source) -> {
             if (conect instanceof User) {
                 return at(Long.parseLong(source));
