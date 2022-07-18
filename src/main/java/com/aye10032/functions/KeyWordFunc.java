@@ -24,10 +24,9 @@ public class KeyWordFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .or("nmsl"::equals)
+                .or("nmsl"::equalsIgnoreCase)
                 .run((msg) -> {
-                    zibenbot.replyMsg(msg, zibenbot.at(msg.getFromClient())
-                            + " " + zibenbot.getImg(new File(appDirectory + "/image/dragon.jpg"))
+                    zibenbot.replyMsg(msg, zibenbot.getImg(new File(appDirectory + "/image/dragon.jpg"))
                             + " 疯牛满地跑，难免输了");
                 })
                 .or("炼铜"::contains)
