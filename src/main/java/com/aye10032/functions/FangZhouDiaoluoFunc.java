@@ -47,8 +47,8 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
     public FangZhouDiaoluoFunc(Zibenbot zibenbot) {
         super(zibenbot);
         if (zibenbot != null) {
-            arkonegraphFile = zibenbot.appDirectory + "/fangzhoudiaoluo/Arkonegraph.jpg";
-            cacheFile = zibenbot.appDirectory + "/cacheFile.json";
+            arkonegraphFile = appDirectory + "/fangzhoudiaoluo/Arkonegraph.jpg";
+            cacheFile = appDirectory + "/cacheFile.json";
         } else {
             arkonegraphFile = "res/Arkonegraph.jpg";
             cacheFile = "cacheFile.json";
@@ -252,7 +252,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
 
             this.type = diaoluoType;
             FileReader reader;
-            List<String> strings = IOUtils.readLines(reader = new FileReader(zibenbot.appDirectory + "/fangzhoudiaoluo/name-id.txt"));
+            List<String> strings = IOUtils.readLines(reader = new FileReader(appDirectory + "/fangzhoudiaoluo/name-id.txt"));
             List<DiaoluoType.HeChenType> list = new ArrayList<>();
             for (String s : strings) {
                 if ("".equals(s.trim()) || s.startsWith("//")) {

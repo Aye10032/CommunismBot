@@ -27,13 +27,13 @@ public class KeyWordFunc extends BaseFunc {
                 .or("nmsl"::equals)
                 .run((msg) -> {
                     zibenbot.replyMsg(msg, zibenbot.at(msg.getFromClient())
-                            + " " + zibenbot.getImg(new File(appDirectory + "\\image\\dragon.jpg"))
+                            + " " + zibenbot.getImg(new File(appDirectory + "/image/dragon.jpg"))
                             + " 疯牛满地跑，难免输了");
                 })
                 .or("炼铜"::contains)
                 .run((msg) -> {
                     if (random.nextDouble() < 0.4d) {
-                        zibenbot.replyMsg(msg, zibenbot.getImg(new File(appDirectory + "\\image\\liantong.jpg")));
+                        zibenbot.replyMsg(msg, zibenbot.getImg(new File(appDirectory + "/image/liantong.jpg")));
                     }
                 })
                 .or("疯狂星期四"::contains)

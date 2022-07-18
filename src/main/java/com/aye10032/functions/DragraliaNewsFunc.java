@@ -34,7 +34,7 @@ public class DragraliaNewsFunc extends BaseFunc {
             }
         };
         this.task.setBot(zibenbot);
-        this.task.loader = new ConfigLoader<>(zibenbot.appDirectory + "/dragraliaFunc.json", Config.class);
+        this.task.loader = new ConfigLoader<>(appDirectory + "/dragraliaFunc.json", Config.class);
         this.task.config = this.task.loader.load();
     }
 

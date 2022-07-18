@@ -21,7 +21,7 @@ public class PixivFunc extends BaseFunc {
                 zibenbot.replyMsg(simpleMsg, "ts频道无法发图片，请从群聊或者私聊获取");
                 return;
             }
-            zibenbot.replyMsg(simpleMsg, zibenbot.getImg(new SetuUtil(zibenbot.appDirectory).getImage()));
+            zibenbot.replyMsg(simpleMsg, zibenbot.getImg(new SetuUtil(appDirectory).getImage()));
         }
     }
 }

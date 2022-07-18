@@ -61,7 +61,7 @@ public class BiliFunc extends BaseFunc {
                     + biliInfo.getVideourl() + "\n"
                     + "封面：" + zibenbot.getImg(new File(appDirectory + "/image/img.jpg"))
                     + pvideo
-                    + "\nup主：" + biliInfo.getUp() + zibenbot.getImg(new File(appDirectory + "\\image\\head.jpg"))
+                    + "\nup主：" + biliInfo.getUp() + zibenbot.getImg(new File(appDirectory + "/image/head.jpg"))
                     + "\n播放：" + formatToW(biliInfo.getView())
                     + " 弹幕：" + formatToW(biliInfo.getDanmaku())
                     + "\n点赞：" + formatToW(biliInfo.getLike())
