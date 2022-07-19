@@ -5,6 +5,7 @@ import com.aye10032.entity.SubTask;
 import com.aye10032.entity.SubTaskExample;
 import com.aye10032.functions.funcutil.MsgType;
 import com.aye10032.mapper.SubTaskMapper;
+import com.aye10032.utils.ExceptionUtils;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.tuple.Pair;
@@ -79,8 +80,8 @@ public abstract class SubscribableBase extends QuartzJobBean {
                 timeLimiter.runWithTimeout(() -> run(recivers, args), 10, TimeUnit.MINUTES);
             } catch (TimeoutException e) {
                 getBot().logError("运行订阅器超时:" + getName() + " args: " + entry.getKey());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (Throwable e) {
+                getBot().logError("运行订阅器出现异常:" + getName() + " args: " + entry.getKey() + " throw: " + ExceptionUtils.printStack(e));
             }
         }
     }

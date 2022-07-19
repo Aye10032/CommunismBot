@@ -41,21 +41,22 @@ public class ScheduleConfig implements ApplicationContextAware, InitializingBean
         Map<String, SubscribableBase> beansOfType = applicationContext.getBeansOfType(SubscribableBase.class);
         for (Map.Entry<String, SubscribableBase> entry : beansOfType.entrySet()) {
             JobDetail jobDetail = JobBuilder.newJob(entry.getValue().getClass())
-                .withIdentity(entry.getKey(), "default")
+                .withIdentity(entry.getValue().getName(), "default")
                 .storeDurably()
                 .build();
             Trigger trigger = TriggerBuilder.newTrigger()
                 .forJob(jobDetail)
-                .withIdentity(entry.getKey(), "default")
+                .withIdentity(entry.getValue().getName(), "default")
                 .startNow()
-                // 每天0点执行
                 .withSchedule(CronScheduleBuilder.cronSchedule(entry.getValue().getCron()))
                 .build();
             if (!scheduler.checkExists(jobDetail.getKey())) {
                 scheduler.scheduleJob(jobDetail, trigger);
+            } else {
+                scheduler.deleteJob(jobDetail.getKey());
+                scheduler.scheduleJob(jobDetail, trigger);
             }
         }
-
     }
 
     public List<Map<String, String>> getJobList() {
