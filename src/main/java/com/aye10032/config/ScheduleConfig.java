@@ -103,7 +103,7 @@ public class ScheduleConfig implements ApplicationContextAware, InitializingBean
     }
 
 
-    public Object registerSingletonBean(String beanName, Object singletonObject) {
+/*    public Object registerSingletonBean(String beanName, Object singletonObject) {
 
         //将applicationContext转换为ConfigurableApplicationContext
         ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
@@ -116,7 +116,7 @@ public class ScheduleConfig implements ApplicationContextAware, InitializingBean
 
         //获取动态注册的bean.
         return configurableApplicationContext.getBean(beanName);
-    }
+    }*/
 
 
     @Override
