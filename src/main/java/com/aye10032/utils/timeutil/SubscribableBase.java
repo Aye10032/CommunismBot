@@ -77,6 +77,7 @@ public abstract class SubscribableBase extends QuartzJobBean {
             String[] args = gson.fromJson(entry.getKey(), String[].class);
             List<Reciver> recivers = entry.getValue().stream().map(subTask -> new Reciver(MsgType.getMsgTypeById(subTask.getReciverType()), subTask.getReciverId())).collect(Collectors.toList());
             try {
+                getBot().logInfo("触发定时任务 " + getName() + " " + entry.getKey());
                 timeLimiter.runWithTimeout(() -> run(recivers, args), 10, TimeUnit.MINUTES);
             } catch (TimeoutException e) {
                 getBot().logError("运行订阅器超时:" + getName() + " args: " + entry.getKey());
