@@ -9,6 +9,7 @@ import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.utils.timeutil.TimeUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 /**
  * @author Dazo66
  */
+@Service
 public class FundTask extends SubscribableBase {
 
     @Override
