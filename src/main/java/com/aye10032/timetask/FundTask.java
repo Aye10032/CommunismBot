@@ -60,7 +60,7 @@ public class FundTask extends SubscribableBase {
 
     @Override
     public String getCron() {
-        return "0 30 12,15,19 * * ? ";
+        return "0 30 12,15,21 * * ? ";
     }
 
     @Override

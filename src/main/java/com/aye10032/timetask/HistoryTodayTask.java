@@ -29,6 +29,12 @@ public class HistoryTodayTask extends SubscribableBase {
         return "历史上的今天小助手";
     }
 
+
+    @Override
+    public String getCron() {
+        return "0 0 7 * * ? ";
+    }
+
     @Override
     public void run(List<Reciver> recivers, String[] args) {
         if (recivers != null) {
@@ -36,8 +42,8 @@ public class HistoryTodayTask extends SubscribableBase {
                 int event_count = 0;
                 StringBuilder builder = new StringBuilder();
                 builder.append("早上好，今天是")
-                        .append(getDateString())
-                        .append(",历史上的今天发生了这些事：\n");
+                    .append(getDateString())
+                    .append(",历史上的今天发生了这些事：\n");
 
                 List<HistoryToday> history_today_list = historyTodayService.getTodayHistory(getDate());
                 event_count += history_today_list.size();
@@ -79,10 +85,6 @@ public class HistoryTodayTask extends SubscribableBase {
         }
     }
 
-    @Override
-    public String getCron() {
-        return "0 0 7 * * ? ";
-    }
 
     private String getDate() {
         Calendar calendar = Calendar.getInstance();
