@@ -18,6 +18,12 @@ public interface BanRecordService {
 
     List<BanRecord> getBanRecord(long from_group);
 
-    void updateBanRecord(BanRecord record);
+    List<BanRecord> selectBanRecordById(int id);
+
+    List<BanRecord> selectBanRecordByQQid(long qq, long from_group);
+
+    void updateBanRecord(long qq, long from_group, int ban_time);
+
+    void updateBanRecord(BanRecord banRecord);
 
 }

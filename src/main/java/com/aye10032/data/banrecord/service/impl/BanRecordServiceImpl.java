@@ -7,6 +7,7 @@ import com.aye10032.data.banrecord.mapper.BanRecordMapper;
 import com.aye10032.data.banrecord.service.BanRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.util.resources.cldr.wal.CurrencyNames_wal;
 
 import java.util.Date;
 import java.util.List;
@@ -35,6 +36,7 @@ public class BanRecordServiceImpl implements BanRecordService {
         BanRecord record = new BanRecord();
         record.setQqId(qq);
         record.setFromGroup(from_group);
+        record.setStatus(BANED);
         record.setBanTime(ban_time);
         record.setLastBanDate(date);
 
@@ -47,8 +49,38 @@ public class BanRecordServiceImpl implements BanRecordService {
     public List<BanRecord> getBanRecord(long from_group) {
         BanRecordExample example = new BanRecordExample();
         example.createCriteria().andFromGroupEqualTo(from_group).andStatusEqualTo(BANED);
-        List<BanRecord> banRecordList = mapper.selectByExample(example);
-        return banRecordList;
+        return mapper.selectByExample(example);
+    }
+
+    @Override
+    public List<BanRecord> selectBanRecordById(int id) {
+        BanRecordExample example = new BanRecordExample();
+        example.createCriteria().andIdEqualTo(id);
+        return mapper.selectByExample(example);
+    }
+
+    @Override
+    public List<BanRecord> selectBanRecordByQQid(long qq, long from_group) {
+        BanRecordExample example = new BanRecordExample();
+        example.createCriteria().andFromGroupEqualTo(from_group).andQqIdEqualTo(qq);
+        return mapper.selectByExample(example);
+    }
+
+    @Override
+    public void updateBanRecord(long qq, long from_group, int ban_time) {
+        List<BanRecord> records = selectBanRecordByQQid(qq , from_group);
+        if (records.isEmpty()){
+            insertBanRecord(qq, from_group, ban_time);
+        }else {
+            Date date = new Date();
+            date.setTime(System.currentTimeMillis());
+
+            BanRecord record = records.get(0);
+            record.setBanTime(ban_time);
+            record.setLastBanDate(date);
+            record.setStatus(BANED);
+            mapper.updateByPrimaryKey(record);
+        }
     }
 
     @Override
