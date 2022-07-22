@@ -1,7 +1,7 @@
-package com.aye10032.data.historytoday.dao;
+package com.aye10032.data.historytoday.mapper;
 
-import com.aye10032.data.historytoday.pojo.HistoryToday;
-import com.aye10032.data.historytoday.pojo.HistoryTodayExample;
+import com.aye10032.data.historytoday.entity.HistoryToday;
+import com.aye10032.data.historytoday.entity.HistoryTodayExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

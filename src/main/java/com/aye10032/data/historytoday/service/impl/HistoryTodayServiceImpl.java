@@ -1,9 +1,9 @@
 package com.aye10032.data.historytoday.service.impl;
 
 import com.aye10032.data.HistoryEventType;
-import com.aye10032.data.historytoday.dao.HistoryTodayMapper;
-import com.aye10032.data.historytoday.pojo.HistoryToday;
-import com.aye10032.data.historytoday.pojo.HistoryTodayExample;
+import com.aye10032.data.historytoday.mapper.HistoryTodayMapper;
+import com.aye10032.data.historytoday.entity.HistoryToday;
+import com.aye10032.data.historytoday.entity.HistoryTodayExample;
 import com.aye10032.data.historytoday.service.HistoryTodayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

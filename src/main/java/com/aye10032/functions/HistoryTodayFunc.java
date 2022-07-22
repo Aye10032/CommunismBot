@@ -2,7 +2,7 @@ package com.aye10032.functions;
 
 import com.aye10032.Zibenbot;
 import com.aye10032.data.HistoryEventType;
-import com.aye10032.data.historytoday.pojo.HistoryToday;
+import com.aye10032.data.historytoday.entity.HistoryToday;
 import com.aye10032.data.historytoday.service.HistoryTodayService;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.FuncExceptionHandler;

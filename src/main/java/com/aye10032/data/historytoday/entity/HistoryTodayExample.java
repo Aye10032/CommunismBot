@@ -1,4 +1,4 @@
-package com.aye10032.data.historytoday.pojo;
+package com.aye10032.data.historytoday.entity;
 
 import java.util.ArrayList;
 import java.util.List;

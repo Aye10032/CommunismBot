@@ -1,6 +1,6 @@
 package com.aye10032.data.historytoday.service;
 
-import com.aye10032.data.historytoday.pojo.HistoryToday;
+import com.aye10032.data.historytoday.entity.HistoryToday;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.aye10032.timetask;
 
-import com.aye10032.data.historytoday.pojo.HistoryToday;
+import com.aye10032.data.historytoday.entity.HistoryToday;
 import com.aye10032.data.historytoday.service.HistoryTodayService;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;

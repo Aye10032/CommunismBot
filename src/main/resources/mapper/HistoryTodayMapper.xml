@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.aye10032.data.historytoday.dao.HistoryTodayMapper">
-    <resultMap id="BaseResultMap" type="com.aye10032.data.historytoday.pojo.HistoryToday">
+<mapper namespace="com.aye10032.data.historytoday.mapper.HistoryTodayMapper">
+    <resultMap id="BaseResultMap" type="com.aye10032.data.historytoday.entity.HistoryToday">
         <constructor>
             <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
             <arg column="history" javaType="java.lang.String" jdbcType="VARCHAR"/>
@@ -75,7 +75,7 @@
         id
         , history, year, event_date, event_type, from_group
     </sql>
-    <select id="selectByExample" parameterType="com.aye10032.data.historytoday.pojo.HistoryTodayExample"
+    <select id="selectByExample" parameterType="com.aye10032.data.historytoday.entity.HistoryTodayExample"
             resultMap="BaseResultMap">
         select
         <if test="distinct">
@@ -101,13 +101,13 @@
         from history_today
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <delete id="deleteByExample" parameterType="com.aye10032.data.historytoday.pojo.HistoryTodayExample">
+    <delete id="deleteByExample" parameterType="com.aye10032.data.historytoday.entity.HistoryTodayExample">
         delete from history_today
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insert" parameterType="com.aye10032.data.historytoday.pojo.HistoryToday">
+    <insert id="insert" parameterType="com.aye10032.data.historytoday.entity.HistoryToday">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -116,7 +116,7 @@
         values (#{history,jdbcType=VARCHAR}, #{year,jdbcType=VARCHAR}, #{eventDate,jdbcType=VARCHAR},
         #{eventType,jdbcType=INTEGER}, #{fromGroup,jdbcType=BIGINT})
     </insert>
-    <insert id="insertSelective" parameterType="com.aye10032.data.historytoday.pojo.HistoryToday">
+    <insert id="insertSelective" parameterType="com.aye10032.data.historytoday.entity.HistoryToday">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -156,7 +156,7 @@
             </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="com.aye10032.data.historytoday.pojo.HistoryTodayExample"
+    <select id="countByExample" parameterType="com.aye10032.data.historytoday.entity.HistoryTodayExample"
             resultType="java.lang.Long">
         select count(*) from history_today
         <if test="_parameter != null">
@@ -201,7 +201,7 @@
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.aye10032.data.historytoday.pojo.HistoryToday">
+    <update id="updateByPrimaryKeySelective" parameterType="com.aye10032.data.historytoday.entity.HistoryToday">
         update history_today
         <set>
             <if test="history != null">
@@ -222,7 +222,7 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.aye10032.data.historytoday.pojo.HistoryToday">
+    <update id="updateByPrimaryKey" parameterType="com.aye10032.data.historytoday.entity.HistoryToday">
         update history_today
         set history    = #{history,jdbcType=VARCHAR},
             year       = #{year,jdbcType=VARCHAR},
