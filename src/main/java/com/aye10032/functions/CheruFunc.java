@@ -1,13 +1,17 @@
 package com.aye10032.functions;
 
 import com.aye10032.functions.funcutil.BaseFunc;
+import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.CheruUtil;
 import com.aye10032.Zibenbot;
+import com.dazo66.command.Commander;
+import com.dazo66.command.CommanderBuilder;
 
 public class CheruFunc extends BaseFunc {
 
     private CheruUtil cheruUtil;
+    private Commander<SimpleMsg> commander;
 
     public CheruFunc(Zibenbot zibenbot) {
         super(zibenbot);
@@ -16,26 +20,40 @@ public class CheruFunc extends BaseFunc {
     @Override
     public void setUp() {
         cheruUtil = new CheruUtil();
+        commander = new CommanderBuilder<SimpleMsg>()
+                .seteHandler(FuncExceptionHandler.INSTENCE)
+                .start()
+                .or("切噜"::equals)
+                .next()
+                .or(s->true)
+                .run((msg)->{
+                    String reply = "";
+                    try {
+                        reply = cheruUtil.toCheru(msg.getMsg());
+                    } catch (Exception e) {
+                        reply = e.toString();
+                    }
+                    zibenbot.replyMsg(msg, reply);
+                })
+                .pop()
+                .or("切噜～"::equals)
+                .next()
+                .or(s->true)
+                .run((msg)->{
+                    String reply = msg.getMsg();
+                    try {
+                        reply = cheruUtil.toStr(reply);
+                    } catch (Exception e) {
+                        reply = e.toString();
+                    }
+                    zibenbot.replyMsg(msg, reply);
+                })
+                .pop()
+                .build();
     }
 
     @Override
     public void run(SimpleMsg simpleMsg) {
-        if (simpleMsg.getMsg().startsWith("切噜") && (simpleMsg.getMsg().split(" ").length == 2)) {
-            String msg = "";
-            try {
-                msg = cheruUtil.toCheru(simpleMsg.getMsg().split(" ")[1]);
-            } catch (Exception e) {
-                msg = e.toString();
-            }
-            zibenbot.replyMsg(simpleMsg, msg);
-        } else if (simpleMsg.getMsg().startsWith("切噜～")) {
-            String msg = simpleMsg.getMsg();
-            try {
-                msg = cheruUtil.toStr(msg);
-            } catch (Exception e) {
-                msg = e.toString();
-            }
-            zibenbot.replyMsg(simpleMsg, msg);
-        }
+        commander.execute(simpleMsg);
     }
 }
