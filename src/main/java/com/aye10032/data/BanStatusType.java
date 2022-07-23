@@ -13,4 +13,8 @@ public class BanStatusType {
     public static Integer BANED = 1;
     public static Integer FREE = 0;
 
+    public static Integer KILLER = 0;
+
+    public static Integer VICTIM = 1;
+
 }

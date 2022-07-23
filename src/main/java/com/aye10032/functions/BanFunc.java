@@ -1,7 +1,9 @@
 package com.aye10032.functions;
 
 import com.aye10032.data.banrecord.entity.BanRecord;
+import com.aye10032.data.banrecord.entity.KillRecord;
 import com.aye10032.data.banrecord.service.BanRecordService;
+import com.aye10032.data.banrecord.service.KillRecordService;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
@@ -16,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.aye10032.data.BanStatusType.FREE;
+import static com.aye10032.data.BanStatusType.*;
 import static com.aye10032.utils.timeutil.TimeUtils.MIN;
 import static com.aye10032.utils.timeutil.TimeUtils.SEC;
 
@@ -24,18 +26,21 @@ import static com.aye10032.utils.timeutil.TimeUtils.SEC;
 public class BanFunc extends BaseFunc {
     private Commander<SimpleMsg> commander;
     private BanRecordService banRecordService;
+    private KillRecordService killRecordService;
 
-    public BanFunc(Zibenbot zibenbot) {
+    public BanFunc(Zibenbot zibenbot, BanRecordService banRecordService, KillRecordService killRecordService) {
         super(zibenbot);
+        this.banRecordService = banRecordService;
+        this.killRecordService = killRecordService;
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start(SimpleMsg::isGroupMsg, simpleMsg -> zibenbot.replyMsg(simpleMsg, "对不起，此功能未对私聊或teamspeak开放。"))
                 .or("肃静"::equals)
-                .run((cqmsg) -> {
-                    zibenbot.setMuteAll(cqmsg.getFromGroup(), true);
+                .run((msg) -> {
+                    zibenbot.setMuteAll(msg.getFromGroup(), true);
                 })
                 .or("大赦"::equals)
-                .run((cqmsg) -> done(cqmsg.getFromGroup()))
+                .run((msg) -> done(msg.getFromGroup()))
                 .or("禁言"::equals)
                 .next()
                 .or(s -> zibenbot.getAtMember(s) != -1)
@@ -52,7 +57,8 @@ public class BanFunc extends BaseFunc {
                                         msg.getFromClient(), Integer.parseInt(strings[2]));
 
                                 banRecordService.updateBanRecord(msg.getFromClient(), msg.getFromGroup(), Integer.parseInt(strings[2]));
-                                //TODO kill
+                                killRecordService.addKillRecord(msg.getFromClient(), msg.getFromGroup(), KILLER);
+                                killRecordService.addKillRecord(msg.getFromClient(), msg.getFromGroup(), VICTIM);
                             }
                         }
 /*                        else if (banId == 895981998L) {
@@ -64,7 +70,8 @@ public class BanFunc extends BaseFunc {
                             zibenbot.muteMember(msg.getFromGroup(), banId, Integer.parseInt(strings[2]));
 
                             banRecordService.updateBanRecord(msg.getFromClient(), msg.getFromGroup(), Integer.parseInt(strings[2]));
-                            //TODO kill
+                            killRecordService.addKillRecord(msg.getFromClient(), msg.getFromGroup(), KILLER);
+                            killRecordService.addKillRecord(banId, msg.getFromGroup(), VICTIM);
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
@@ -73,20 +80,34 @@ public class BanFunc extends BaseFunc {
                 .pop()
                 .pop()
                 .or("击杀榜"::equals)
-                .run((cqmsg) -> {
-//                    List<String> list = banRecord.getKillRank(cqmsg.getFromGroup());
-//                    StringBuilder msgs = new StringBuilder();
-//                    if (list.size() >= 10) {
-//                        for (int i = 0; i < 10; i++) {
-//                            msgs.append(list.get(i));
-//                        }
-//                    } else {
-//                        for (String temp : list) {
-//                            msgs.append(temp);
-//                        }
-//                    }
-//                    zibenbot.replyMsg(cqmsg, msgs.toString());
-                    //TODO kill
+                .run((msg) -> {
+                    List<KillRecord> records = killRecordService.selectKillRecordByGroup(msg.getFromGroup(), KILLER);
+                    if (records.isEmpty()){
+                        zibenbot.replyMsg(msg,"本群目前暂无击杀榜");
+                    }else {
+                        StringBuilder builder = new StringBuilder();
+                        builder.append("击杀榜：\n---------------------\n");
+                        for (KillRecord record:records){
+                            builder.append(zibenbot.at(record.getQqId())).append("   ")
+                                    .append(record.getKillTimes()).append("次\n");
+                        }
+                        zibenbot.replyMsg(msg, builder.toString());
+                    }
+                })
+                .or("口球榜"::equals)
+                .run((msg)->{
+                    List<KillRecord> records = killRecordService.selectKillRecordByGroup(msg.getFromGroup(), VICTIM);
+                    if (records.isEmpty()){
+                        zibenbot.replyMsg(msg,"本群目前暂无口球榜");
+                    }else {
+                        StringBuilder builder = new StringBuilder();
+                        builder.append("口球榜：\n---------------------\n");
+                        for (KillRecord record:records){
+                            builder.append(zibenbot.at(record.getQqId())).append("   ")
+                                    .append(record.getKilledTimes()).append("次\n");
+                        }
+                        zibenbot.replyMsg(msg, builder.toString());
+                    }
                 })
                 .build();
     }
