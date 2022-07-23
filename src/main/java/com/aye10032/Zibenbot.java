@@ -1,5 +1,7 @@
 package com.aye10032;
 
+import com.aye10032.data.banrecord.service.BanRecordService;
+import com.aye10032.data.banrecord.service.KillRecordService;
 import com.aye10032.data.historytoday.service.HistoryTodayService;
 import com.aye10032.functions.*;
 import com.aye10032.functions.funcutil.FuncField;
@@ -85,6 +87,10 @@ public class Zibenbot {
     private List<IFunc> registerFunc;
     @Autowired
     private HistoryTodayService historyTodayService;
+    @Autowired
+    private BanRecordService banRecordService;
+    @Autowired
+    private KillRecordService killRecordService;
 
     public static OkHttpClient getOkHttpClient() {
         return client.newBuilder().callTimeout(30, TimeUnit.SECONDS)
@@ -194,6 +200,7 @@ public class Zibenbot {
         loader.addScanPackage("com.aye10032.utils.timeutil");
         registerFunc = loader.load();
         registerFunc.add(new HistoryTodayFunc(this, historyTodayService));
+        registerFunc.add(new BanFunc(this, banRecordService, killRecordService));
         //对功能进行初始化
         for (IFunc func : registerFunc) {
             try {
