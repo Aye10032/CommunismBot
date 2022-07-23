@@ -16,7 +16,7 @@ public interface BanRecordService {
 
     int insertBanRecord(long qq, long from_group, int ban_time);
 
-    List<BanRecord> getBanRecord(long from_group);
+    List<BanRecord> selectBanRecordByGroup(long from_group);
 
     List<BanRecord> selectBanRecordById(int id);
 

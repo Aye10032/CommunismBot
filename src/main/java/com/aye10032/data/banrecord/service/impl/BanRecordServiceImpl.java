@@ -46,7 +46,7 @@ public class BanRecordServiceImpl implements BanRecordService {
     }
 
     @Override
-    public List<BanRecord> getBanRecord(long from_group) {
+    public List<BanRecord> selectBanRecordByGroup(long from_group) {
         BanRecordExample example = new BanRecordExample();
         example.createCriteria().andFromGroupEqualTo(from_group).andStatusEqualTo(BANED);
         return mapper.selectByExample(example);

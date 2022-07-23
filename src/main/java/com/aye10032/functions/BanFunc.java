@@ -14,12 +14,10 @@ import com.dazo66.command.CommanderBuilder;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static com.aye10032.data.BanStatusType.*;
-import static com.aye10032.utils.timeutil.TimeUtils.MIN;
 import static com.aye10032.utils.timeutil.TimeUtils.SEC;
 
 @UnloadFunc
@@ -119,7 +117,7 @@ public class BanFunc extends BaseFunc {
 
     public void done(long fromGroup) {
         String msg;
-        List<BanRecord> banList = banRecordService.getBanRecord(fromGroup);
+        List<BanRecord> banList = banRecordService.selectBanRecordByGroup(fromGroup);
         boolean isEmpty = true;
 
         for (BanRecord record:banList){
