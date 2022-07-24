@@ -8,7 +8,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.io.IOException;
 
 @SpringBootApplication(scanBasePackages = {"com.dazo66", "com.aye10032"})
-@MapperScans({@MapperScan("com.aye10032.data.historytoday.dao"), @MapperScan("com.aye10032.mapper")})
+@MapperScans({
+        @MapperScan("com.aye10032.data.historytoday.mapper"),
+        @MapperScan("com.aye10032.mapper"),
+        @MapperScan("com.aye10032.data.banrecord.mapper")
+})
 public class Main {
 
     public static void main(String[] args) throws IOException {
