@@ -15,9 +15,13 @@ public class RandomUtil {
 
     public String getRandom(String[] list){
         String result = "";
-        int i = random.nextInt(list.length);
+        int i = getRandomIndex(list.length);
         result = list[i];
         return result;
+    }
+
+    public int getRandomIndex(int size){
+        return random.nextInt(size);
     }
 
     /**
