@@ -742,7 +742,7 @@ public class Zibenbot implements ApplicationContextAware {
             i = matcher.start() + 1;
         }
         if (contact instanceof Friend) {
-            String fromto = String.valueOf(bot.getId()) + "-" + String.valueOf(contact.getId());
+            String fromto = bot.getId() + "-" + contact.getId();
             msg = msg.replaceAll("\\[mirai:image:\\{(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})}.mirai]", "[mirai:image:/" + fromto + "-$1$2$3$4$5" + "]");
         } else {
             msg = msg.replaceAll("\\[mirai:image:/(\\d+)-(\\d+)-(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})]", "[mirai:image:{$3-$4-$5-$6-$7}.mirai]");

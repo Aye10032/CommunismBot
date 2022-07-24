@@ -75,6 +75,6 @@ public class ScreenshotFunc extends BaseFunc {
 
 
     public String getOutFileName(String url){
-        return zibenbot.appDirectory + "\\screenshot\\" + url.hashCode() + ".jpg";
+        return zibenbot.appDirectory + "/screenshot/" + url.hashCode() + ".jpg";
     }
 }

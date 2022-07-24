@@ -1,7 +1,8 @@
 package com.aye10032.functions;
 
 import com.aye10032.Zibenbot;
-import com.aye10032.functions.funcutil.*;
+import com.aye10032.functions.funcutil.BaseFunc;
+import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.timetask.ArknightWeiboTask;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.weibo.WeiboReader;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 /**
  * @author Dazo66
  */
-@FuncFactory(ArknightWeiboFunc.ArkFuncFactory.class)
 @Service
 public class ArknightWeiboFunc extends BaseFunc {
 
@@ -105,22 +105,6 @@ public class ArknightWeiboFunc extends BaseFunc {
     @Override
     public void run(SimpleMsg simpleMsg) {
         commander.execute(simpleMsg);
-    }
-
-    public static class ArkFuncFactory implements IFuncFactory {
-
-        private Zibenbot zibenbot;
-        private WeiboReader reader;
-
-        public ArkFuncFactory(Zibenbot zibenbot, WeiboReader reader) {
-            this.zibenbot = zibenbot;
-            this.reader = reader;
-        }
-
-        @Override
-        public IFunc build() {
-            return new ArknightWeiboFunc(zibenbot, reader);
-        }
     }
 
 }

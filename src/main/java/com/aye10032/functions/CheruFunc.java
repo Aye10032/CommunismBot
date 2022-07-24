@@ -29,7 +29,7 @@ public class CheruFunc extends BaseFunc {
             .next()
             .or(s->true)
             .run((msg)->{
-                String reply = "";
+                String reply;
                 try {
                     reply = cheruUtil.toCheru(msg.getMsg());
                 } catch (Exception e) {

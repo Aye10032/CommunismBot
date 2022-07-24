@@ -7,7 +7,6 @@ import com.aye10032.data.historytoday.service.HistoryTodayService;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
-import com.aye10032.functions.funcutil.UnloadFunc;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ import java.util.List;
  * @author: Aye10032
  * @date: 2022/6/2 下午 6:24
  */
-@UnloadFunc
 @Service
 public class HistoryTodayFunc extends BaseFunc {
 

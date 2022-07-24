@@ -1,7 +1,8 @@
 package com.aye10032.functions;
 
 import com.aye10032.Zibenbot;
-import com.aye10032.functions.funcutil.*;
+import com.aye10032.functions.funcutil.BaseFunc;
+import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.weibo.WeiboReader;
 import com.aye10032.utils.weibo.WeiboUtils;
@@ -13,7 +14,6 @@ import java.util.regex.Pattern;
 /**
  * @author Dazo66
  */
-@FuncFactory(WeiboFunc.WeiboFuncFactory.class)
 @Service
 public class WeiboFunc extends BaseFunc {
 
@@ -52,22 +52,6 @@ public class WeiboFunc extends BaseFunc {
                     zibenbot.logWarning("读取微博数据异常：" + ExceptionUtils.printStack(e));
                 }
             }
-        }
-    }
-
-    public static class WeiboFuncFactory implements IFuncFactory {
-
-        private Zibenbot zibenbot;
-        private WeiboReader reader;
-
-        public WeiboFuncFactory(Zibenbot zibenbot, WeiboReader reader) {
-            this.zibenbot = zibenbot;
-            this.reader = reader;
-        }
-
-        @Override
-        public IFunc build() {
-            return new WeiboFunc(zibenbot, reader);
         }
     }
 }

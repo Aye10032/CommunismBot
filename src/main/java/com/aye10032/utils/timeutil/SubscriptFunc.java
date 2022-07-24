@@ -4,11 +4,14 @@ import com.aye10032.Zibenbot;
 import com.aye10032.config.ScheduleConfig;
 import com.aye10032.entity.SubTask;
 import com.aye10032.entity.SubTaskExample;
-import com.aye10032.functions.funcutil.*;
+import com.aye10032.functions.funcutil.IFunc;
+import com.aye10032.functions.funcutil.MsgType;
+import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.mapper.SubTaskMapper;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -19,7 +22,7 @@ import java.util.*;
  *
  * @author Dazo66
  */
-@FuncFactory(SubscriptFunc.SubscriptFuncFactory.class)
+@Service
 public class SubscriptFunc implements IFunc {
 
     private final SubTaskMapper subTaskMapper;
@@ -243,24 +246,6 @@ public class SubscriptFunc implements IFunc {
             map.computeIfAbsent(reciver.getArgs(), (l) -> new ArrayList<>()).add(reciver);
         }
         return map;
-    }
-
-
-    public static class SubscriptFuncFactory implements IFuncFactory {
-
-        private final SubTaskMapper subTaskMapper;
-        private Zibenbot zibenbot;
-
-
-        public SubscriptFuncFactory(Zibenbot zibenbot, SubTaskMapper subTaskMapper) {
-            this.zibenbot = zibenbot;
-            this.subTaskMapper = subTaskMapper;
-        }
-
-        @Override
-        public IFunc build() {
-            return new SubscriptFunc(zibenbot, subTaskMapper);
-        }
     }
 
 }
