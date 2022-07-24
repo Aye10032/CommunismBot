@@ -18,6 +18,7 @@ import org.apache.http.Header;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileReader;
@@ -34,6 +35,7 @@ import static com.aye10032.utils.timeutil.TimeUtils.NEXT_DAY;
 /**
  * @author Dazo66
  */
+@Service
 public class FangZhouDiaoluoFunc extends BaseFunc {
 
     private DiaoluoType type;
@@ -53,10 +55,6 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
             arkonegraphFile = "res/Arkonegraph.jpg";
             cacheFile = "cacheFile.json";
         }
-    }
-
-    public FangZhouDiaoluoFunc() {
-        this(null);
     }
 
     public static Header[] getHeaders() {

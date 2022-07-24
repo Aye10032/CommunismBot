@@ -3,7 +3,9 @@ package com.aye10032.functions;
 import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
+import org.springframework.stereotype.Service;
 
+@Service
 public class GbferKillerFunc extends BaseFunc {
 
     public GbferKillerFunc(Zibenbot zibenbot) {

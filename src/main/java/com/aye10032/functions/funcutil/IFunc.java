@@ -1,5 +1,7 @@
 package com.aye10032.functions.funcutil;
 
+import javax.annotation.PostConstruct;
+
 /**
  * 方法接口类 定义了方法的基本方法
  *
@@ -24,9 +26,15 @@ public interface IFunc {
 
     /**
      * 执行模块
+     *
      * @param simpleMsg
      */
     void run(SimpleMsg simpleMsg);
+
+    @PostConstruct
+    default void init() {
+        setUp();
+    }
 
 
 }

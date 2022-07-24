@@ -5,12 +5,14 @@ import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.AyeCompile;
 import com.aye10032.utils.video.BiliInfo;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
 public class BiliFunc extends BaseFunc {
     Map<Integer, String> code_msg = new HashMap<>();
 
@@ -71,15 +73,15 @@ public class BiliFunc extends BaseFunc {
                     + "\n简介：" + biliInfo.getDescription();
             } else if (simpleMsg.isTeamspealMsg()) {
                 send = biliInfo.getTitle() + "\n"
-                        + biliInfo.getVideourl() + "\n"
-                        + "\nup主：" + biliInfo.getUp()
-                        + "\n播放：" + formatToW(biliInfo.getView())
-                        + " 弹幕：" + formatToW(biliInfo.getDanmaku())
-                        + "\n点赞：" + formatToW(biliInfo.getLike())
-                        + " 投币：" + formatToW(biliInfo.getCoin())
-                        + " 收藏：" + formatToW(biliInfo.getFavorite())
-                        + " 评论：" + formatToW(biliInfo.getReply())
-                        + "\n简介：" + biliInfo.getDescription();
+                    + biliInfo.getVideourl() + "\n"
+                    + "\nup主：" + biliInfo.getUp()
+                    + "\n播放：" + formatToW(biliInfo.getView())
+                    + " 弹幕：" + formatToW(biliInfo.getDanmaku())
+                    + "\n点赞：" + formatToW(biliInfo.getLike())
+                    + " 投币：" + formatToW(biliInfo.getCoin())
+                    + " 收藏：" + formatToW(biliInfo.getFavorite())
+                    + " 评论：" + formatToW(biliInfo.getReply())
+                    + "\n简介：" + biliInfo.getDescription();
             }
             replyMsg(simpleMsg, send);
 

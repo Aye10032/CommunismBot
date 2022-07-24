@@ -6,6 +6,7 @@ import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Random;
@@ -13,6 +14,7 @@ import java.util.Random;
 /**
  * @author Dazo66
  */
+@Service
 public class KeyWordFunc extends BaseFunc {
 
     private Random random;

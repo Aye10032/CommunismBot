@@ -8,6 +8,7 @@ import com.aye10032.utils.ArticleUpdateDate;
 import com.aye10032.utils.Config;
 import com.aye10032.utils.ConfigLoader;
 import com.aye10032.utils.ExceptionUtils;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
@@ -15,6 +16,7 @@ import java.util.*;
 /**
  * @author Dazo66
  */
+@Service
 public class DragraliaNewsFunc extends BaseFunc {
 
     private DragraliaTask task;

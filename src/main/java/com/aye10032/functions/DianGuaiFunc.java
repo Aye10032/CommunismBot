@@ -1,18 +1,20 @@
 package com.aye10032.functions;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.data.MHWData;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
-import com.aye10032.Zibenbot;
 import com.aye10032.utils.ArrayUtils;
 import com.aye10032.utils.RandomUtil;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Dazo66
  */
+@Service
 public class DianGuaiFunc extends BaseFunc {
 
     private MHWData mhwData;

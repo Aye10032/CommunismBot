@@ -10,6 +10,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,6 +22,7 @@ import static com.aye10032.utils.timeutil.TimeUtils.NEXT_HOUR;
 /**
  * @author Dazo66
  */
+@Service
 public class DraSummonSimulatorFunc extends BaseFunc {
 
     public List<SummonEvent> all_summon_event = new ArrayList<>();

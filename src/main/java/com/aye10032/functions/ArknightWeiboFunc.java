@@ -10,6 +10,7 @@ import com.aye10032.utils.weibo.WeiboSetItem;
 import com.aye10032.utils.weibo.WeiboUtils;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
@@ -17,6 +18,7 @@ import java.util.ArrayList;
  * @author Dazo66
  */
 @FuncFactory(ArknightWeiboFunc.ArkFuncFactory.class)
+@Service
 public class ArknightWeiboFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;

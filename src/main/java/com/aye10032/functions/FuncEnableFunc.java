@@ -1,11 +1,13 @@
 package com.aye10032.functions;
 
-import com.aye10032.functions.funcutil.BaseFunc;
-import com.aye10032.functions.funcutil.SimpleMsg;
-import com.aye10032.functions.funcutil.IFunc;
-import com.aye10032.utils.ConfigLoader;
 import com.aye10032.Zibenbot;
+import com.aye10032.functions.funcutil.BaseFunc;
+import com.aye10032.functions.funcutil.IFunc;
+import com.aye10032.functions.funcutil.SimpleMsg;
+import com.aye10032.utils.ConfigLoader;
 import com.google.gson.reflect.TypeToken;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.Map;
 /**
  * @author Dazo66
  */
+@Service
 public class FuncEnableFunc extends BaseFunc {
 
     Map<Long, List<String>> disableList;
@@ -50,35 +53,35 @@ public class FuncEnableFunc extends BaseFunc {
                 if (msgs.length == 1) {
                     StringBuilder builder = new StringBuilder();
                     builder.append("本群当前启用的模块有：\n");
-                    List<IFunc> list = zibenbot.getRegisterFunc();
+                    Map<String, IFunc> list = zibenbot.getRegisterFunc();
                     IFunc func;
-                    for (int i = 0; i < list.size(); i++) {
-                        func = list.get(i);
+                    for (Map.Entry<String, IFunc> entry : list.entrySet()) {
+                        func = entry.getValue();
                         if (func != this && isEnable(simpleMsg.getFromGroup(), func)) {
-                            builder.append("\t").append(func.getClass().getSimpleName());
+                            builder.append("\t").append(StringUtils.capitalize(entry.getKey()));
                             builder.append("\n");
                         }
                     }
                     builder.append("本群当前禁用的模块有：\n");
-                    for (int i = 0; i < list.size(); i++) {
-                        func = list.get(i);
+                    for (Map.Entry<String, IFunc> entry : list.entrySet()) {
+                        func = entry.getValue();
                         if (func != this && !isEnable(simpleMsg.getFromGroup(), func)) {
-                            builder.append("\t").append(func.getClass().getSimpleName());
-                            if (i != list.size() - 1) {
-                                builder.append("\n");
-                            }
+                            builder.append("\t").append(StringUtils.capitalize(entry.getKey()));
                         }
                     }
-                    replyMsg(simpleMsg, builder.toString());
-                //有方法名称
+                    replyMsg(simpleMsg, builder.substring(0, builder.length() - 1));
+                    //有方法名称
                 } else if (msgs.length == 2) {
                     //查找是否有对应的
                     boolean a = false;
-                    for (IFunc func : zibenbot.getRegisterFunc()) {
+                    Map<String, IFunc> list = zibenbot.getRegisterFunc();
+                    IFunc func;
+                    for (Map.Entry<String, IFunc> entry : list.entrySet()) {
+                        func = entry.getValue();
                         if (func == this) {
                             continue;
                         }
-                        if (msgs[1].equals(func.getClass().getSimpleName())) {
+                        if (msgs[1].equals(StringUtils.capitalize(entry.getKey()))) {
                             a = true;
                             break;
                         }

@@ -1,11 +1,6 @@
 package com.aye10032;
 
-import com.aye10032.data.banrecord.service.BanRecordService;
-import com.aye10032.data.banrecord.service.KillRecordService;
-import com.aye10032.data.historytoday.service.HistoryTodayService;
-import com.aye10032.functions.*;
-import com.aye10032.functions.funcutil.FuncField;
-import com.aye10032.functions.funcutil.FuncLoader;
+import com.aye10032.functions.FuncEnableFunc;
 import com.aye10032.functions.funcutil.IFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.mapper.SubTaskMapper;
@@ -13,7 +8,6 @@ import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.IMsgUpload;
 import com.aye10032.utils.SeleniumUtils;
 import com.aye10032.utils.StringUtil;
-import com.aye10032.utils.timeutil.SubscriptFunc;
 import com.aye10032.utils.timeutil.TimeTaskPool;
 import com.aye10032.utils.timeutil.TimeUtils;
 import com.aye10032.utils.weibo.WeiboReader;
@@ -32,8 +26,11 @@ import net.mamoe.mirai.utils.ExternalResource;
 import net.mamoe.mirai.utils.MiraiLogger;
 import net.mamoe.mirai.utils.PlatformLogger;
 import okhttp3.OkHttpClient;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -63,7 +60,7 @@ import static com.aye10032.utils.StringUtil.longMsgSplit;
  */
 @Component
 @AutoConfigureAfter(BotConfig.class)
-public class Zibenbot {
+public class Zibenbot implements ApplicationContextAware {
 
     private static OkHttpClient client = new OkHttpClient();
     public static Proxy proxy = null;
@@ -73,24 +70,13 @@ public class Zibenbot {
      * 时间任务池
      */
     public TimeTaskPool pool;
-    //public TeamspeakBot teamspeakBot;
-    @FuncField
-    public BotConfigFunc config;
-    @FuncField
-    public FuncEnableFunc enableCollFunc;
     public WeiboReader weiboReader;
     public List<Long> enableGroup = new ArrayList<>();
     public String appDirectory;
     final Map<String, IMsgUpload> msgUploads = new HashMap<>();
     private Bot bot;
     final Pattern MSG_TYPE_PATTERN;
-    private List<IFunc> registerFunc;
-    @Autowired
-    private HistoryTodayService historyTodayService;
-    @Autowired
-    private BanRecordService banRecordService;
-    @Autowired
-    private KillRecordService killRecordService;
+    private ApplicationContext applicationContext;
 
     public static OkHttpClient getOkHttpClient() {
         return client.newBuilder().callTimeout(30, TimeUnit.SECONDS)
@@ -192,7 +178,7 @@ public class Zibenbot {
         //改成了手动注册
         log(Level.INFO, "registe func start");
         this.weiboReader = new WeiboReader(this, appDirectory + "/weiboCache/");
-        FuncLoader loader = new FuncLoader(this);
+/*        FuncLoader loader = new FuncLoader(this);
         loader.addFactory(new SubscriptFunc.SubscriptFuncFactory(this, subTaskMapper));
         loader.addFactory(new ArknightWeiboFunc.ArkFuncFactory(this, weiboReader));
         loader.addFactory(new WeiboFunc.WeiboFuncFactory(this, weiboReader));
@@ -210,7 +196,7 @@ public class Zibenbot {
                 e.printStackTrace();
             }
         }
-        log(Level.INFO, "registe func end");
+        log(Level.INFO, "registe func end");*/
 
         //把订阅管理器注册进可用的模块里
         //registerFunc.add(subManager);
@@ -507,8 +493,8 @@ public class Zibenbot {
      *
      * @return 已经注册的方法列表 不可修改
      */
-    public List<IFunc> getRegisterFunc() {
-        return registerFunc;
+    public Map<String, IFunc> getRegisterFunc() {
+        return applicationContext.getBeansOfType(IFunc.class);
     }
 
     private void toPrivateMsg(long clientId, MessageChain chain) {
@@ -779,9 +765,9 @@ public class Zibenbot {
     }
 
     public void runFuncs(SimpleMsg simpleMsg) {
-
-        for (IFunc func : registerFunc) {
-            if (enableCollFunc.isEnable(simpleMsg.getFromGroup(), func)) {
+        FuncEnableFunc funcEnableFunc = applicationContext.getBean(FuncEnableFunc.class);
+        for (IFunc func : getRegisterFunc().values()) {
+            if (funcEnableFunc.isEnable(simpleMsg.getFromGroup(), func)) {
                 try {
                     func.run(simpleMsg);
                 } catch (Exception e) {
@@ -791,6 +777,11 @@ public class Zibenbot {
             }
         }
 
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
 /*    public int teamspeakMsg(long fromGroup, long fromClient, String msg) {

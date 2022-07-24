@@ -4,6 +4,7 @@ import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.SeleniumUtils;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.io.IOException;
 /**
  * @author Dazo66
  */
+@Service
 public class ScreenshotFunc extends BaseFunc {
 
     static String BLANK = " ";

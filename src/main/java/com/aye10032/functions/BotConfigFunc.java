@@ -1,11 +1,12 @@
 package com.aye10032.functions;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.Config;
 import com.aye10032.utils.ConfigListener;
 import com.aye10032.utils.ConfigLoader;
-import com.aye10032.Zibenbot;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 /**
  * @author Dazo66
  */
+@Service
 public class BotConfigFunc extends BaseFunc {
 
     private String configFile;

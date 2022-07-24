@@ -1,5 +1,6 @@
 package com.aye10032.functions;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.data.EatData;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.FuncExceptionHandler;
@@ -9,13 +10,14 @@ import com.aye10032.utils.ConfigLoader;
 import com.aye10032.utils.FoodUtil;
 import com.aye10032.utils.RandomUtil;
 import com.aye10032.utils.food.FoodClaass;
-import com.aye10032.Zibenbot;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Aye10032
  */
+@Service
 public class EatFunc extends BaseFunc {
 
     private FoodUtil foodUtil;

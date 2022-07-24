@@ -5,6 +5,7 @@ import com.aye10032.functions.funcutil.*;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.weibo.WeiboReader;
 import com.aye10032.utils.weibo.WeiboUtils;
+import org.springframework.stereotype.Service;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,6 +14,7 @@ import java.util.regex.Pattern;
  * @author Dazo66
  */
 @FuncFactory(WeiboFunc.WeiboFuncFactory.class)
+@Service
 public class WeiboFunc extends BaseFunc {
 
     private final WeiboReader weiboReader;

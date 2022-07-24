@@ -1,5 +1,6 @@
 package com.aye10032.functions;
 
+import com.aye10032.Zibenbot;
 import com.aye10032.data.banrecord.entity.BanRecord;
 import com.aye10032.data.banrecord.entity.KillRecord;
 import com.aye10032.data.banrecord.service.BanRecordService;
@@ -7,11 +8,10 @@ import com.aye10032.data.banrecord.service.KillRecordService;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
-import com.aye10032.functions.funcutil.UnloadFunc;
-import com.aye10032.Zibenbot;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,7 +20,7 @@ import java.util.List;
 import static com.aye10032.data.BanStatusType.*;
 import static com.aye10032.utils.timeutil.TimeUtils.SEC;
 
-@UnloadFunc
+@Service
 public class BanFunc extends BaseFunc {
     private Commander<SimpleMsg> commander;
     private BanRecordService banRecordService;

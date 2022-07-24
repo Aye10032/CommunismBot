@@ -6,6 +6,7 @@ import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
+import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
@@ -17,6 +18,7 @@ import java.util.Random;
  * @author: Aye10032
  * @date: 2021/8/30 下午 10:21
  */
+@Service
 public class RollFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;

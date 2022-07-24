@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.IOUtils;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileReader;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class QueueFunc extends BaseFunc {
 
     private Map<Long, List<QueueDataClass>> data;
@@ -29,44 +31,44 @@ public class QueueFunc extends BaseFunc {
     public QueueFunc(Zibenbot zibenbot) {
         super(zibenbot);
         commander = new CommanderBuilder<SimpleMsg>()
-                .start()
-                .or("队列"::equals)
-                .run((s)-> {
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("当前队列如下：");
-                    Long groupId = s.isGroupMsg() ? s.getFromGroup() : s.getFromClient() - 2 * s.getFromClient();
-                    List<QueueDataClass> queueList = getQueueList(groupId);
-                    if (queueList.isEmpty()) {
-                        builder.append("\n\t 无");
-                    } else {
-                        queueList.forEach(d ->
-                                builder.append(String.format("\n\t%s    %s", d.getData(), zibenbot.getUserName(d.getSendId())))
-                        );
-                    }
-                    replyMsg(s, builder.toString());
-                })
-                .or(Lists.newArrayList("入队", "队列")::contains)
-                .next()
-                    .or((s) -> true)
-                    .run((s)->{
-                        String d = s.getMsg().substring(s.getMsg().indexOf(" ") + 1);
-                        addToQueue(s, d);
-                        replyMsg(s, String.format("%s 已入队", d));
-                        save();
-                    })
-                .pop()
-                .or("出队"::equals)
-                .run((s)->{
-                    QueueDataClass q = poll(s.isGroupMsg() ? s.getFromGroup() : s.getFromClient() - 2 * s.getFromClient());
-                    if (q == null) {
-                        replyMsg(s, "当前队列为空 ");
-                    } else {
-                        replyMsg(s, String.format("出队内容：%s， %s", q.getData(), zibenbot.at(q.getSendId())));
-                    }
-                    save();
-                })
+            .start()
+            .or("队列"::equals)
+            .run((s)-> {
+                StringBuilder builder = new StringBuilder();
+                builder.append("当前队列如下：");
+                Long groupId = s.isGroupMsg() ? s.getFromGroup() : s.getFromClient() - 2 * s.getFromClient();
+                List<QueueDataClass> queueList = getQueueList(groupId);
+                if (queueList.isEmpty()) {
+                    builder.append("\n\t 无");
+                } else {
+                    queueList.forEach(d ->
+                        builder.append(String.format("\n\t%s    %s", d.getData(), zibenbot.getUserName(d.getSendId())))
+                    );
+                }
+                replyMsg(s, builder.toString());
+            })
+            .or(Lists.newArrayList("入队", "队列")::contains)
+            .next()
+            .or((s) -> true)
+            .run((s)->{
+                String d = s.getMsg().substring(s.getMsg().indexOf(" ") + 1);
+                addToQueue(s, d);
+                replyMsg(s, String.format("%s 已入队", d));
+                save();
+            })
+            .pop()
+            .or("出队"::equals)
+            .run((s)->{
+                QueueDataClass q = poll(s.isGroupMsg() ? s.getFromGroup() : s.getFromClient() - 2 * s.getFromClient());
+                if (q == null) {
+                    replyMsg(s, "当前队列为空 ");
+                } else {
+                    replyMsg(s, String.format("出队内容：%s， %s", q.getData(), zibenbot.at(q.getSendId())));
+                }
+                save();
+            })
 
-                .build();
+            .build();
     }
 
     private List<QueueDataClass> getQueueList(Long groupId) {
@@ -104,13 +106,13 @@ public class QueueFunc extends BaseFunc {
             if (file.exists()) {
                 FileReader input = new FileReader(file);
                 data = gson.fromJson(IOUtils.toString(input)
-                        , new TypeToken<Map<Long, List<QueueDataClass>>>() {
-                        }.getType());
+                    , new TypeToken<Map<Long, List<QueueDataClass>>>() {
+                    }.getType());
                 input.close();
             } else {
                 data = gson.fromJson("{}"
-                        , new TypeToken<Map<Long, List<QueueDataClass>>>() {
-                        }.getType());
+                    , new TypeToken<Map<Long, List<QueueDataClass>>>() {
+                    }.getType());
                 file.getParentFile().mkdirs();
                 file.createNewFile();
                 save();

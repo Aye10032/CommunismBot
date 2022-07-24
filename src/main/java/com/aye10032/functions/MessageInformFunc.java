@@ -6,8 +6,9 @@ import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class MessageInformFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
