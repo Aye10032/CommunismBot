@@ -46,9 +46,9 @@ public class KillRecordServiceImpl implements KillRecordService {
         KillRecordExample example = new KillRecordExample();
         example.createCriteria().andFromGroupEqualTo(from_group);
         if (sort_type == KILLER){
-            example.setOrderByClause("kill_times DES");
+            example.setOrderByClause("kill_times DESC");
         }else {
-            example.setOrderByClause("killed_times DES");
+            example.setOrderByClause("killed_times DESC");
         }
         return mapper.selectByExample(example);
     }
