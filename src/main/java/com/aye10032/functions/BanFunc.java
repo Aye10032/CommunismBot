@@ -67,7 +67,7 @@ public class BanFunc extends BaseFunc {
                         else {
                             zibenbot.muteMember(msg.getFromGroup(), banId, Integer.parseInt(strings[2]));
 
-                            banRecordService.updateBanRecord(msg.getFromClient(), msg.getFromGroup(), Integer.parseInt(strings[2]));
+                            banRecordService.updateBanRecord(banId, msg.getFromGroup(), Integer.parseInt(strings[2]));
                             killRecordService.addKillRecord(msg.getFromClient(), msg.getFromGroup(), KILLER);
                             killRecordService.addKillRecord(banId, msg.getFromGroup(), VICTIM);
                         }
