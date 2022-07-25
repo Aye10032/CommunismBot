@@ -12,6 +12,7 @@ import com.aye10032.utils.timeutil.TimeTaskPool;
 import com.aye10032.utils.timeutil.TimeUtils;
 import com.aye10032.utils.weibo.WeiboReader;
 import com.dazo66.config.BotConfig;
+import com.google.common.collect.Streams;
 import kotlin.Unit;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.Mirai;
@@ -51,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.StreamSupport;
 
 import static com.aye10032.utils.StringUtil.longMsgSplit;
 
@@ -573,6 +575,46 @@ public class Zibenbot implements ApplicationContextAware {
                     String.format("回复ts频道[%s]消息:%s",
                             fromMsg.fromGroup,
                             msg));*/
+                //todo
+            }
+        } catch (Exception e) {
+            logWarning(ExceptionUtils.printStack(e));
+        }
+    }
+
+    /**
+     * 回复压缩消息
+     *
+     * @param fromMsg 消息来源
+     * @param msgs     要回复的消息
+     */
+    public void replyZipMsg(SimpleMsg fromMsg, String... msgs) {
+        try {
+            if (fromMsg.isGroupMsg()) {
+                Contact contact = _getGroup(fromMsg.getFromGroup());
+                if (contact != null) {
+                    ForwardMessageBuilder builder = new ForwardMessageBuilder(contact);
+                    for (String s : msgs) {
+                        MessageChain chain = toMessChain(contact, s);
+                        builder.add(bot.getBot(), chain);
+                    }
+                    contact.sendMessage(builder.build());
+                }
+            } else if (fromMsg.isPrivateMsg()) {
+                Contact contact = getUser(fromMsg.getFromClient());
+                if (contact != null) {
+                    ForwardMessageBuilder builder = new ForwardMessageBuilder(contact);
+                    for (String s : msgs) {
+                        MessageChain chain = toMessChain(contact, s);
+                        builder.add(bot.getBot(), chain);
+                    }
+                    contact.sendMessage(builder.build());
+                }
+            } else if (fromMsg.isTeamspealMsg()) {
+/*            Zibenbot.logger.log(Level.INFO,
+                    String.format("回复ts频道[%s]消息:%s",
+                            fromMsg.fromGroup,
+                            msgs));*/
                 //todo
             }
         } catch (Exception e) {
