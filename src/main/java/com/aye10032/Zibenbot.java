@@ -27,6 +27,7 @@ import net.mamoe.mirai.utils.MiraiLogger;
 import net.mamoe.mirai.utils.PlatformLogger;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.BeansException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.ApplicationContext;
@@ -331,15 +332,7 @@ public class Zibenbot implements ApplicationContextAware {
      * @return at MiraiCode
      */
     public String at(long clientId) {
-        User user = getMember(clientId);
-        if (user == null) {
-            user = getFriend(clientId);
-        }
-        if (user == null) {
-            return String.valueOf(clientId);
-        } else {
-            return at(user);
-        }
+        return _at(clientId);
     }
 
     public void unMute(long groupId, long memberId) {
@@ -442,8 +435,12 @@ public class Zibenbot implements ApplicationContextAware {
         group.sendMessage(toMessChain(group, msg));
     }
 
-    private String at(User user) {
+    private String _at(User user) {
         return String.format("[mirai:at:%s]", user.getId());
+    }
+
+    private String _at(long id) {
+        return String.format("[mirai:at:%s]", id);
     }
 
 
@@ -669,6 +666,12 @@ public class Zibenbot implements ApplicationContextAware {
         User user = getUser(userId);
         if (user != null) {
             return user.getNick();
+        }
+        Member member = getMember(userId);
+        if (member != null) {
+            if (!StringUtils.isEmpty(member.getNick())) {
+                return member.getNick();
+            }
         }
         return "null";
     }
