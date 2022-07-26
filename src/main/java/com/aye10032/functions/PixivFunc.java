@@ -35,7 +35,6 @@ public class PixivFunc extends BaseFunc {
                         saveIndexList(appDirectory + "/setu/today.txt");
                     }
                 })
-                .or("pixiv"::equalsIgnoreCase)
                 .next()
                 .or("all"::equalsIgnoreCase)
                 .run((msg)->{
