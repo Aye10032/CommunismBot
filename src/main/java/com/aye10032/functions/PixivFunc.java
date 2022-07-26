@@ -28,6 +28,17 @@ public class PixivFunc extends BaseFunc {
                 .start()
                 .or(".pixiv"::equalsIgnoreCase)
                 .run((msg) -> {
+                    updateIndexList(appDirectory + "/setu/today.txt");
+                    int initial_size = index_list.size();
+                    zibenbot.replyMsg(msg, zibenbot.getImg(getRandomImage()));
+                    if (initial_size != index_list.size()) {
+                        saveIndexList(appDirectory + "/setu/today.txt");
+                    }
+                })
+                .or("pixiv"::equalsIgnoreCase)
+                .next()
+                .or("all"::equalsIgnoreCase)
+                .run((msg)->{
                     updateIndexList(appDirectory + "/setu/mulu.txt");
                     int initial_size = index_list.size();
                     zibenbot.replyMsg(msg, zibenbot.getImg(getRandomImage()));
@@ -35,6 +46,7 @@ public class PixivFunc extends BaseFunc {
                         saveIndexList(appDirectory + "/setu/mulu.txt");
                     }
                 })
+                .pop()
                 .build();
     }
 
