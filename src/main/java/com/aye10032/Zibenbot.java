@@ -12,6 +12,7 @@ import com.aye10032.utils.timeutil.TimeTaskPool;
 import com.aye10032.utils.timeutil.TimeUtils;
 import com.aye10032.utils.weibo.WeiboReader;
 import com.dazo66.config.BotConfig;
+import com.google.common.collect.Streams;
 import kotlin.Unit;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.Mirai;
@@ -27,6 +28,7 @@ import net.mamoe.mirai.utils.MiraiLogger;
 import net.mamoe.mirai.utils.PlatformLogger;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.BeansException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.ApplicationContext;
@@ -50,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.StreamSupport;
 
 import static com.aye10032.utils.StringUtil.longMsgSplit;
 
@@ -331,15 +334,7 @@ public class Zibenbot implements ApplicationContextAware {
      * @return at MiraiCode
      */
     public String at(long clientId) {
-        User user = getMember(clientId);
-        if (user == null) {
-            user = getFriend(clientId);
-        }
-        if (user == null) {
-            return String.valueOf(clientId);
-        } else {
-            return at(user);
-        }
+        return _at(clientId);
     }
 
     public void unMute(long groupId, long memberId) {
@@ -442,8 +437,12 @@ public class Zibenbot implements ApplicationContextAware {
         group.sendMessage(toMessChain(group, msg));
     }
 
-    private String at(User user) {
+    private String _at(User user) {
         return String.format("[mirai:at:%s]", user.getId());
+    }
+
+    private String _at(long id) {
+        return String.format("[mirai:at:%s]", id);
     }
 
 
@@ -584,6 +583,46 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     /**
+     * 回复压缩消息
+     *
+     * @param fromMsg 消息来源
+     * @param msgs     要回复的消息
+     */
+    public void replyZipMsg(SimpleMsg fromMsg, String... msgs) {
+        try {
+            if (fromMsg.isGroupMsg()) {
+                Contact contact = _getGroup(fromMsg.getFromGroup());
+                if (contact != null) {
+                    ForwardMessageBuilder builder = new ForwardMessageBuilder(contact);
+                    for (String s : msgs) {
+                        MessageChain chain = toMessChain(contact, s);
+                        builder.add(bot.getBot(), chain);
+                    }
+                    contact.sendMessage(builder.build());
+                }
+            } else if (fromMsg.isPrivateMsg()) {
+                Contact contact = getUser(fromMsg.getFromClient());
+                if (contact != null) {
+                    ForwardMessageBuilder builder = new ForwardMessageBuilder(contact);
+                    for (String s : msgs) {
+                        MessageChain chain = toMessChain(contact, s);
+                        builder.add(bot.getBot(), chain);
+                    }
+                    contact.sendMessage(builder.build());
+                }
+            } else if (fromMsg.isTeamspealMsg()) {
+/*            Zibenbot.logger.log(Level.INFO,
+                    String.format("回复ts频道[%s]消息:%s",
+                            fromMsg.fromGroup,
+                            msgs));*/
+                //todo
+            }
+        } catch (Exception e) {
+            logWarning(ExceptionUtils.printStack(e));
+        }
+    }
+
+    /**
      * 发送语音
      *
      * @param fromMsg 消息来源
@@ -669,6 +708,12 @@ public class Zibenbot implements ApplicationContextAware {
         User user = getUser(userId);
         if (user != null) {
             return user.getNick();
+        }
+        Member member = getMember(userId);
+        if (member != null) {
+            if (!StringUtils.isEmpty(member.getNick())) {
+                return member.getNick();
+            }
         }
         return "null";
     }
