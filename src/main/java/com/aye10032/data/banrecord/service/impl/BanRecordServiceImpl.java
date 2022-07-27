@@ -1,18 +1,16 @@
 package com.aye10032.data.banrecord.service.impl;
 
-import com.aye10032.data.BanStatusType;
 import com.aye10032.data.banrecord.entity.BanRecord;
 import com.aye10032.data.banrecord.entity.BanRecordExample;
 import com.aye10032.data.banrecord.mapper.BanRecordMapper;
 import com.aye10032.data.banrecord.service.BanRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.util.resources.cldr.wal.CurrencyNames_wal;
 
 import java.util.Date;
 import java.util.List;
 
-import static com.aye10032.data.BanStatusType.*;
+import static com.aye10032.data.BanStatusType.BANED;
 
 /**
  * @program: communismbot
