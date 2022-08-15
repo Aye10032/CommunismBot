@@ -26,4 +26,13 @@ public class MessageController {
         }
     }
 
+    @RequestMapping(value = "house", method = RequestMethod.POST)
+    public Result<?> updateHouse(String name) {
+        if (name != null) {
+            return Result.success("success");
+        } else {
+            return new Result<>("400", "id不可为空", "");
+        }
+    }
+
 }
