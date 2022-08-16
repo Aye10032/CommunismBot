@@ -59,6 +59,8 @@ public class FFXIVTask extends SubscribableBase {
                     if (has_danger){
                         getBot().replyMsg(reciver.getSender(), builder.toString());
                     }
+                }else {
+                    getBot().logInfo("今天没有危险房屋");
                 }
             }
         }
