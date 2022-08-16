@@ -64,7 +64,6 @@ public class FFXIVFunc extends BaseFunc {
                     }
                 })
                 .pop()
-                .pop()
                 .or("房屋"::equals)
                 .run((msg) -> {
                     List<FFData> dataList = service.selectDataByGroup(msg.getFromGroup());
@@ -88,6 +87,7 @@ public class FFXIVFunc extends BaseFunc {
                         zibenbot.replyMsg(msg, builder.toString());
                     }
                 })
+                .pop()
                 .build();
     }
 
