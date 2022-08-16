@@ -2,6 +2,8 @@ package com.aye10032.config;
 
 import com.aye10032.data.banrecord.mapper.BanRecordMapper;
 import com.aye10032.data.banrecord.mapper.KillRecordMapper;
+import com.aye10032.data.ffxiv.mapper.FFDataMapper;
+import com.aye10032.data.ffxiv.mapper.HouseMapper;
 import com.aye10032.data.historytoday.mapper.HistoryTodayMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,12 @@ public class SqliteConfig {
 
     @Autowired
     KillRecordMapper killRecordMapper;
+
+    @Autowired
+    FFDataMapper dataMapper;
+
+    @Autowired
+    HouseMapper houseMapper;
 
     @Value("${spring.datasource.url}")
     private String sqliteUrl;

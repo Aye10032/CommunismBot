@@ -15,7 +15,9 @@ public interface FFXIVService {
 
     Integer insertHouse(String name);
 
-    FFData selectDataByName(String name);
+    Integer insertData(String name, Long group);
+
+    FFData selectDataByGroup(String name, Long group);
 
     House selectHouseByName(String name);
 

@@ -41,9 +41,19 @@ public class FFXIVServiceImpl implements FFXIVService {
     }
 
     @Override
-    public FFData selectDataByName(String name) {
+    public Integer insertData(String name, Long group) {
+        FFData data = new FFData();
+        data.setName(name);
+        data.setFromGroup(group);
+
+        dataMapper.insert(data);
+        return data.getId();
+    }
+
+    @Override
+    public FFData selectDataByGroup(String name, Long group) {
         FFDataExample example = new FFDataExample();
-        example.createCriteria().andNameEqualTo(name);
+        example.createCriteria().andNameEqualTo(name).andFromGroupEqualTo(group);
         List<FFData> data_list = dataMapper.selectByExample(example);
 
         return data_list.isEmpty() ? null : data_list.get(0);
