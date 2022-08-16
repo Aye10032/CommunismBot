@@ -46,7 +46,7 @@ public class FFXIVServiceImpl implements FFXIVService {
         example.createCriteria().andNameEqualTo(name);
         List<FFData> data_list = dataMapper.selectByExample(example);
 
-        return data_list.isEmpty() ? data_list.get(0) : null;
+        return data_list.isEmpty() ? null : data_list.get(0);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class FFXIVServiceImpl implements FFXIVService {
         example.createCriteria().andNameEqualTo(name);
         List<House> houses = houseMapper.selectByExample(example);
 
-        return houses.isEmpty() ? houses.get(0) : null;
+        return houses.isEmpty() ? null : houses.get(0);
     }
 
     @Override
