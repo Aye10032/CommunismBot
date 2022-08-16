@@ -3,6 +3,8 @@ package com.aye10032.data.ffxiv.service;
 import com.aye10032.data.ffxiv.entity.FFData;
 import com.aye10032.data.ffxiv.entity.House;
 
+import java.util.List;
+
 /**
  * @program: communismbot
  * @className: FFXIVService
@@ -17,7 +19,9 @@ public interface FFXIVService {
 
     Integer insertData(String name, Long group);
 
-    FFData selectDataByGroup(String name, Long group);
+    FFData selectDataByName(String name, Long group);
+
+    List<FFData> selectDataByGroup(Long group);
 
     House selectHouseByName(String name);
 

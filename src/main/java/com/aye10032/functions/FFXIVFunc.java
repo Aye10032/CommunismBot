@@ -11,6 +11,12 @@ import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static com.aye10032.utils.FFXIVUtil.daysBetween;
+
 /**
  * @program: communismbot
  * @className: FFXIVFunc
@@ -43,7 +49,8 @@ public class FFXIVFunc extends BaseFunc {
                         String name = msgs[2];
                         House house = service.selectHouseByName(name);
                         if (house != null) {
-                            FFData data = service.selectDataByGroup(name, msg.getFromGroup());
+                            FFData data = service.selectDataByName(name, msg.getFromGroup());
+                            zibenbot.replyMsg(msg, "绑定完成");
                             if (data != null) {
                                 zibenbot.replyMsg(msg, "已经绑定过啦");
                             } else {
@@ -54,6 +61,31 @@ public class FFXIVFunc extends BaseFunc {
                         }
                     } else {
                         zibenbot.replyMsg(msg, "格式不正确！");
+                    }
+                })
+                .pop()
+                .pop()
+                .or("房屋"::equals)
+                .run((msg) -> {
+                    List<FFData> dataList = service.selectDataByGroup(msg.getFromGroup());
+                    if (dataList.isEmpty()) {
+                        zibenbot.replyMsg(msg, "本群当前没有绑定的信息");
+                    } else {
+                        StringBuilder builder = new StringBuilder();
+                        builder.append("本群FF14房屋刷新时间列表：\n--------------------\n");
+                        for (FFData data : dataList) {
+                            House house = service.selectHouseByName(data.getName());
+                            int time_distance = daysBetween(house.getLastUpdateTime());
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTime(house.getLastUpdateTime());
+                            builder.append(house.getName()).append(" ").append("上次刷新时间:")
+                                    .append(calendar.get(Calendar.YEAR)).append("年")
+                                    .append(calendar.get(Calendar.MONTH) + 1).append("月")
+                                    .append(calendar.get(Calendar.DATE)).append("日 ")
+                                    .append(calendar.get(Calendar.HOUR)).append(":").append(calendar.get(Calendar.MINUTE))
+                                    .append(" 距拆房还剩").append(45-time_distance).append("天\n");
+                        }
+                        zibenbot.replyMsg(msg, builder.toString());
                     }
                 })
                 .build();
@@ -68,4 +100,5 @@ public class FFXIVFunc extends BaseFunc {
     public void run(SimpleMsg simpleMsg) {
         commander.execute(simpleMsg);
     }
+
 }

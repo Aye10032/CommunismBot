@@ -51,12 +51,20 @@ public class FFXIVServiceImpl implements FFXIVService {
     }
 
     @Override
-    public FFData selectDataByGroup(String name, Long group) {
+    public FFData selectDataByName(String name, Long group) {
         FFDataExample example = new FFDataExample();
         example.createCriteria().andNameEqualTo(name).andFromGroupEqualTo(group);
         List<FFData> data_list = dataMapper.selectByExample(example);
 
         return data_list.isEmpty() ? null : data_list.get(0);
+    }
+
+    @Override
+    public List<FFData> selectDataByGroup(Long group) {
+        FFDataExample example = new FFDataExample();
+        example.createCriteria().andFromGroupEqualTo(group);
+
+        return dataMapper.selectByExample(example);
     }
 
     @Override
