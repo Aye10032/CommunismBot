@@ -24,6 +24,7 @@ public class MessageController {
     public Result<?> sendMessage(Long group, String msg) {
         if (group != null) {
             zibenbot.toGroupMsg(group, msg);
+            zibenbot.logInfo("向群" + group + "发送了消息：" + msg);
             return Result.success("success");
         } else {
             return new Result<>("400", "群号不可为空", "");
@@ -34,6 +35,7 @@ public class MessageController {
     public Result<?> updateHouse(String name) {
         if (name != null) {
             service.updateHouse(name);
+            zibenbot.logInfo("更新了" + name + "的房屋信息");
             return Result.success("success");
         } else {
             return new Result<>("400", "id不可为空", "");
