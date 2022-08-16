@@ -8,6 +8,7 @@ import com.aye10032.data.ffxiv.mapper.FFDataMapper;
 import com.aye10032.data.ffxiv.mapper.HouseMapper;
 import com.aye10032.data.ffxiv.service.FFXIVService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author: Aye10032
  * @date: 2022/8/15 下午 8:34
  */
+@Service
 public class FFXIVServiceImpl implements FFXIVService {
 
     @Autowired
