@@ -77,11 +77,11 @@ public class FFXIVFunc extends BaseFunc {
                             int time_distance = daysBetween(house.getLastUpdateTime());
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTime(house.getLastUpdateTime());
-                            builder.append(house.getName()).append(" ").append("上次刷新时间:")
+                            builder.append(house.getName()).append(" ").append("上次刷新时间：")
                                     .append(calendar.get(Calendar.YEAR)).append("年")
                                     .append(calendar.get(Calendar.MONTH) + 1).append("月")
                                     .append(calendar.get(Calendar.DATE)).append("日 ")
-                                    .append(calendar.get(Calendar.HOUR)).append(":").append(calendar.get(Calendar.MINUTE))
+                                    .append(calendar.get(Calendar.HOUR_OF_DAY)).append(":").append(calendar.get(Calendar.MINUTE))
                                     .append(" 距拆房还剩").append(45-time_distance).append("天\n");
                         }
                         zibenbot.replyMsg(msg, builder.toString());
