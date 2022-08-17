@@ -34,8 +34,8 @@ public class FFXIVTask extends SubscribableBase {
 
     @Override
     public void run(List<Reciver> recivers, String[] args) {
-        if (recivers!= null) {
-            for (Reciver reciver:recivers){
+        if (recivers != null) {
+            for (Reciver reciver : recivers) {
                 List<FFData> dataList = service.selectDataByGroup(reciver.getSender().getFromGroup());
                 if (!dataList.isEmpty()) {
                     StringBuilder builder = new StringBuilder();
@@ -44,7 +44,7 @@ public class FFXIVTask extends SubscribableBase {
                     for (FFData data : dataList) {
                         House house = service.selectHouseByName(data.getName());
                         int time_distance = daysBetween(house.getLastUpdateTime());
-                        if (time_distance <= 10) {
+                        if (time_distance >= 35) {
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTime(house.getLastUpdateTime());
                             builder.append(house.getName()).append(" ").append("上次刷新时间：")
@@ -56,10 +56,10 @@ public class FFXIVTask extends SubscribableBase {
                             has_danger = true;
                         }
                     }
-                    if (has_danger){
+                    if (has_danger) {
                         getBot().replyMsg(reciver.getSender(), builder.toString());
                     }
-                }else {
+                } else {
                     getBot().logInfo("今天没有危险房屋");
                 }
             }
