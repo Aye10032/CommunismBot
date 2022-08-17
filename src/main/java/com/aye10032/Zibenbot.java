@@ -157,12 +157,13 @@ public class Zibenbot implements ApplicationContextAware {
         enableGroup.add(792797914L); //TIS Lab
         enableGroup.add(814843368L); //dazo群
         enableGroup.add(1107287775L); //Test
-        enableGroup.add(980042772L);//公会
+        enableGroup.add(980042772L); //公会
         enableGroup.add(583991760L); //粉丝群
-        enableGroup.add(949214456L);//TIS方舟
+        enableGroup.add(949214456L); //TIS方舟
         enableGroup.add(295830682L);
         enableGroup.add(866613076L);
         enableGroup.add(300496876L);
+        enableGroup.add(609372702L); //部队群
     }
 
     @Bean

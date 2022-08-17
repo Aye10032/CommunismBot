@@ -87,6 +87,10 @@ public class FFXIVFunc extends BaseFunc {
                         zibenbot.replyMsg(msg, builder.toString());
                     }
                 })
+                .or("帮助"::equals)
+                .run((msg)->{
+                    zibenbot.replyMsg(msg,"https://www.aye10032.com/2022/08/17/2022-08-17-FF14-house-trigger/");
+                })
                 .pop()
                 .build();
     }
