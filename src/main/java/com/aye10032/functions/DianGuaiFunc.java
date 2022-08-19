@@ -11,6 +11,8 @@ import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 /**
  * @author Dazo66
  */
@@ -26,21 +28,35 @@ public class DianGuaiFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .or("点怪"::equals)
+                .or(".MHW"::equals)
+                .run((cqmsg) -> {
+                    String result = "用" + randomUtil.getRandom(mhwData.getArm()) +
+                            "打" + randomUtil.getRandom(mhwData.getMonster());
+                    zibenbot.replyMsg(cqmsg, result);
+                })
+                .or(".MHWI"::equals)
                 .run((cqmsg) -> {
                     String[] total_list = ArrayUtils.concatAll(mhwData.getMonster(), mhwData.getMonster_ice());
                     String result = "用" + randomUtil.getRandom(mhwData.getArm()) +
                             "打" + randomUtil.getRandom(total_list);
                     zibenbot.replyMsg(cqmsg, result);
                 })
-                .next()
-                    .or("冰原"::equals)
-                    .run((cqmsg) -> {
-                        String result = "用" + randomUtil.getRandom(mhwData.getArm()) +
-                                "打" + randomUtil.getRandom(mhwData.getMonster_ice());
-                        zibenbot.replyMsg(cqmsg, result);
-                    })
-                .pop()
+                .or(".MHR"::equals)
+                .run((cqmsg) -> {
+                    String result = "用" + randomUtil.getRandom(mhwData.getArm()) +
+                            "打" + randomUtil.getRandom(mhwData.getMonster_rise());
+                    zibenbot.replyMsg(cqmsg, result);
+                })
+                .or(".WHRSB"::equals)
+                .run((cqmsg) -> {
+                    String[] total_list = ArrayUtils.concatAll(mhwData.getMonster_rise(), mhwData.getMonster_sunbreak());
+                    Random random = new Random();
+                    boolean flag = random.nextBoolean();
+                    String _fore = flag ? "" : "怪异化的";
+                    String result = "用" + randomUtil.getRandom(mhwData.getArm()) +
+                            "打" + _fore + randomUtil.getRandom(total_list);
+                    zibenbot.replyMsg(cqmsg, result);
+                })
                 .build();
     }
 
