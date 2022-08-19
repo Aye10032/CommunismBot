@@ -47,7 +47,7 @@ public class DianGuaiFunc extends BaseFunc {
                             "打" + randomUtil.getRandom(mhwData.getMonster_rise());
                     zibenbot.replyMsg(cqmsg, result);
                 })
-                .or(".WHRSB"::equalsIgnoreCase)
+                .or(".MHRSB"::equalsIgnoreCase)
                 .run((cqmsg) -> {
                     String[] total_list = ArrayUtils.concatAll(mhwData.getMonster_rise(), mhwData.getMonster_sunbreak());
                     Random random = new Random();
