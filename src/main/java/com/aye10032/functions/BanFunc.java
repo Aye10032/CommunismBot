@@ -33,13 +33,13 @@ public class BanFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start(SimpleMsg::isGroupMsg, simpleMsg -> zibenbot.replyMsg(simpleMsg, "对不起，此功能未对私聊或teamspeak开放。"))
-                .or("肃静"::equals)
+                .or(".肃静"::equals)
                 .run((msg) -> {
                     zibenbot.setMuteAll(msg.getFromGroup(), true);
                 })
-                .or("大赦"::equals)
+                .or(".大赦"::equals)
                 .run((msg) -> done(msg.getFromGroup()))
-                .or("禁言"::equals)
+                .or(".禁言"::equals)
                 .next()
                 .or(s -> zibenbot.getAtMember(s) != -1)
                 .next()
@@ -77,7 +77,7 @@ public class BanFunc extends BaseFunc {
                 })
                 .pop()
                 .pop()
-                .or("击杀榜"::equals)
+                .or(".击杀榜"::equals)
                 .run((msg) -> {
                     List<KillRecord> records = killRecordService.selectKillRecordByGroup(msg.getFromGroup(), KILLER);
                     if (records.isEmpty()){
@@ -92,7 +92,7 @@ public class BanFunc extends BaseFunc {
                         zibenbot.replyMsg(msg, builder.toString());
                     }
                 })
-                .or("口球榜"::equals)
+                .or(".口球榜"::equals)
                 .run((msg)->{
                     List<KillRecord> records = killRecordService.selectKillRecordByGroup(msg.getFromGroup(), VICTIM);
                     if (records.isEmpty()){

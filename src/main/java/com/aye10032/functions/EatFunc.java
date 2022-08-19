@@ -31,7 +31,7 @@ public class EatFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .or("泡面"::equals)
+                .or(".泡面"::equals)
                 .run((cqmsg) -> {
                     String[] total_list = ArrayUtils.concatAll(
                             eatData.getTongyi(), eatData.getKangshifu(), eatData.getHeweidao(), eatData.getHeweidao());
@@ -55,14 +55,14 @@ public class EatFunc extends BaseFunc {
                         zibenbot.replyMsg(cqmsg, randomUtil.getRandom(eatData.getTangdaren()) + "面");
                     })
                 .pop()
-                .or("一食堂"::equals)
+                .or(".一食堂"::equals)
                 .run((cqmsg)->{
                     if (cqmsg.getFromGroup() == 792666782L){
                         zibenbot.replyMsg(cqmsg,randomUtil.getRandomWithSSR(
                                 eatData.getCanteen1(),eatData.getCanteen1sr(),eatData.getCanteen1ssr(),30,100)[0]);
                     }
                 })
-                .or("晚饭"::equals)
+                .or(".晚饭"::equals)
                 .run((cqmsg)->{
                     zibenbot.replyMsg(cqmsg,randomUtil.getRandomWithSSR(
                             eatData.getMainlist(),eatData.getSrList(),eatData.getSsrList(),30,100)[0]);

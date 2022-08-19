@@ -73,9 +73,9 @@ public class SubscriptFunc implements IFunc {
     public void run(SimpleMsg simpleMsg) {
         String[] msgs = simpleMsg.getMsg().trim().split(" ");
         Boolean sw = null;
-        if ("sub".equals(msgs[0]) || "订阅".equals(msgs[0])) {
+        if (".sub".equals(msgs[0]) || ".订阅".equals(msgs[0])) {
             sw = true;
-        } else if ("unsub".equals(msgs[0]) || "取消订阅".equals(msgs[0])) {
+        } else if (".unsub".equals(msgs[0]) || ".取消订阅".equals(msgs[0])) {
             sw = false;
         }
         if (sw != null) {

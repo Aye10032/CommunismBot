@@ -28,26 +28,26 @@ public class DianGuaiFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .or(".MHW"::equals)
+                .or(".MHW"::equalsIgnoreCase)
                 .run((cqmsg) -> {
                     String result = "用" + randomUtil.getRandom(mhwData.getArm()) +
                             "打" + randomUtil.getRandom(mhwData.getMonster());
                     zibenbot.replyMsg(cqmsg, result);
                 })
-                .or(".MHWI"::equals)
+                .or(".MHWI"::equalsIgnoreCase)
                 .run((cqmsg) -> {
                     String[] total_list = ArrayUtils.concatAll(mhwData.getMonster(), mhwData.getMonster_ice());
                     String result = "用" + randomUtil.getRandom(mhwData.getArm()) +
                             "打" + randomUtil.getRandom(total_list);
                     zibenbot.replyMsg(cqmsg, result);
                 })
-                .or(".MHR"::equals)
+                .or(".MHR"::equalsIgnoreCase)
                 .run((cqmsg) -> {
                     String result = "用" + randomUtil.getRandom(mhwData.getArm()) +
                             "打" + randomUtil.getRandom(mhwData.getMonster_rise());
                     zibenbot.replyMsg(cqmsg, result);
                 })
-                .or(".WHRSB"::equals)
+                .or(".WHRSB"::equalsIgnoreCase)
                 .run((cqmsg) -> {
                     String[] total_list = ArrayUtils.concatAll(mhwData.getMonster_rise(), mhwData.getMonster_sunbreak());
                     Random random = new Random();

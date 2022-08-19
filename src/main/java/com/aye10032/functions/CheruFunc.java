@@ -25,7 +25,7 @@ public class CheruFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
             .seteHandler(FuncExceptionHandler.INSTENCE)
             .start()
-            .or("切噜"::equals)
+            .or(".切噜"::equals)
             .next()
             .or(s->true)
             .run((msg)->{
@@ -38,7 +38,7 @@ public class CheruFunc extends BaseFunc {
                 zibenbot.replyMsg(msg, reply);
             })
             .pop()
-            .or("切噜～"::equals)
+            .or(".切噜～"::equals)
             .next()
             .or(s->true)
             .run((msg)->{

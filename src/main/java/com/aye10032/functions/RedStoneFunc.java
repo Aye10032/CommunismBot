@@ -28,19 +28,7 @@ public class RedStoneFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
             .seteHandler(FuncExceptionHandler.INSTENCE)
             .start()
-            .or("搬运"::equals)
-            .run((cqmsg) -> {
-                zibenbot.replyMsg(cqmsg, "关键词列表:\n" +
-                    "搬运 <油管链接> [描述]-----添加搬运需求\n" +
-                    "烤 <油管链接|B站链接> [描述]-----添加翻译需求\n" +
-                    "烤 <序列号> -----为已有视频添加翻译需求\n" +
-                    "搬运列表-----获取当前任务列表\n" +
-                    "以下命令仅组群内可用:\n" +
-                    "已搬 <序列号|油管链接>-----从搬运列表中去除\n" +
-                    "接 <序列号|油管链接|B站链接> [时间段]-----承接翻译\n" +
-                    "翻译列表-----查看当前翻译需求队列");
-            })
-            .or("搬运列表"::equals)
+            .or(".搬运列表"::equals)
             .run((cqmsg) -> {
                 ResultVO<List<VideoInfo>> video_list = GetUtil.getTODOVideo();
                 if (video_list.getCode() == ResultCode.FAILED.getCode()) {
@@ -65,7 +53,7 @@ public class RedStoneFunc extends BaseFunc {
                     zibenbot.replyMsg(cqmsg, builder.toString());
                 }
             })
-            .or("翻译列表"::equals)
+            .or(".翻译列表"::equals)
             .run((cqmsg) -> {
                 ResultVO<List<VideoInfo>> result = GetUtil.getNeedTransVideo();
                 if (result.getCode() == ResultCode.FAILED.getCode()) {
@@ -94,7 +82,7 @@ public class RedStoneFunc extends BaseFunc {
                     zibenbot.replyMsg(cqmsg, builder.toString());
                 }
             })
-            .or("搬运"::equals)
+            .or(".搬运"::equals)
             .next()
             .orArray(this::isUrl)
             .run((msg) -> {
@@ -106,7 +94,7 @@ public class RedStoneFunc extends BaseFunc {
                 zibenbot.replyMsg(msg, "格式不正确");
             })
             .pop()
-            .or("烤"::equals)
+            .or(".烤"::equals)
             .next()
             .or(this::isNumber)
             .run((cqmsg) -> {
@@ -123,7 +111,7 @@ public class RedStoneFunc extends BaseFunc {
                 zibenbot.replyMsg(msg, "格式不正确");
             })
             .pop()
-            .or("接"::equals)
+            .or(".接"::equals)
             .next()
             .orArray(this::hasNumber)
             .run((cqmsg) -> {
@@ -140,7 +128,7 @@ public class RedStoneFunc extends BaseFunc {
                 }
             })
             .pop()
-            .or("已搬"::equals)
+            .or(".已搬"::equals)
             .next()
             .or(this::isNumber)
             .run((cqmsg) -> {
