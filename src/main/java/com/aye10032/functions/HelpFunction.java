@@ -6,6 +6,7 @@ import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
+import org.springframework.stereotype.Service;
 
 /**
  * @program: communismbot
@@ -15,6 +16,7 @@ import com.dazo66.command.CommanderBuilder;
  * @author: Aye10032
  * @date: 2022/8/19 上午 10:31
  */
+@Service
 public class HelpFunction extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
