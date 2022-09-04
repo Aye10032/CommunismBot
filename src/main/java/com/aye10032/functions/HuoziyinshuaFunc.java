@@ -38,11 +38,12 @@ public class HuoziyinshuaFunc extends BaseFunc {
                 .next()
                 .or(s -> true)
                 .run((msg) -> {
+                    String[] msgs = msg.getCommandPieces();
                     try {
                         MediaType mediaType = MediaType.parse("text/plain");
                         RequestBody requestBody = RequestBody.create(mediaType, "");
                         Request request = new Request.Builder()
-                                .url("http://127.0.0.1:5000/yinshua?text=" + msg.getMsg())
+                                .url("http://127.0.0.1:5000/yinshua?text=" + msgs[1])
                                 .method("POST", requestBody)
                                 .build();
                         Response response = client.newCall(request).execute();
