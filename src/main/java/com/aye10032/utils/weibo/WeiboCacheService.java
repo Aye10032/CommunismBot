@@ -17,10 +17,10 @@ public class WeiboCacheService {
 
 
     public static Set<String> getCacheIds(Class clazz) {
-        return cache.getOrDefault(clazz.getName(), new CopyOnWriteArraySet<>());
+        return cache.computeIfAbsent(clazz.getName(), key -> new CopyOnWriteArraySet<>());
     }
 
     public static Set<String> getCacheIds(Object o) {
-        return cache.getOrDefault(o.toString(), new CopyOnWriteArraySet<>());
+        return cache.computeIfAbsent(o.toString(), key -> new CopyOnWriteArraySet<>());
     }
 }
