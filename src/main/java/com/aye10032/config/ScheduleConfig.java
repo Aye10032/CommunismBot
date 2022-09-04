@@ -41,12 +41,10 @@ public class ScheduleConfig implements ApplicationContextAware, InitializingBean
     public void init() {
         Map<String, SubscribableBase> beansOfType = applicationContext.getBeansOfType(SubscribableBase.class);
         for (Map.Entry<String, SubscribableBase> entry : beansOfType.entrySet()) {
-            JobDataMap newJobDataMap = new JobDataMap();
-            newJobDataMap.put("realBean", entry.getValue());
             // 统一使用代理类去获取唯一的bean对象
+            ScheduleProxy.putRealBean(entry.getValue().getName(), entry.getValue());
             JobDetail jobDetail = JobBuilder.newJob(ScheduleProxy.class)
                 .withIdentity(entry.getValue().getName(), "default")
-                .setJobData(newJobDataMap)
                 .storeDurably()
                 .build();
             Trigger trigger = TriggerBuilder.newTrigger()
