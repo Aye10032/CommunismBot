@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 
 /**
@@ -28,7 +30,7 @@ import java.util.Set;
 @Service
 public class ArknightWeiboTask extends SubscribableBase {
 
-    private Set<String> postIds = new HashSet<>();
+    private Set<String> postIds = WeiboCacheService.getCacheIds(ArknightWeiboTask.class);
     @Autowired
     private WeiboReader weiboReader;
     private static JsonParser parser = new JsonParser();
@@ -56,7 +58,7 @@ public class ArknightWeiboTask extends SubscribableBase {
             posts.forEach(post -> postIds.add(post.getId()));
             try {
                 offAnnounce = getPostUrlFromOff();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {

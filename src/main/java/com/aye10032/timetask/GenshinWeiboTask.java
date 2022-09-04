@@ -4,10 +4,7 @@ import com.aye10032.Zibenbot;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
-import com.aye10032.utils.weibo.WeiboReader;
-import com.aye10032.utils.weibo.WeiboSet;
-import com.aye10032.utils.weibo.WeiboSetItem;
-import com.aye10032.utils.weibo.WeiboUtils;
+import com.aye10032.utils.weibo.*;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +23,7 @@ import java.util.Set;
 @Service
 public class GenshinWeiboTask extends SubscribableBase {
 
-    private Set<String> postIds = new HashSet<>();
+    private Set<String> postIds = WeiboCacheService.getCacheIds(GenshinWeiboTask.class);
     @Autowired
     private WeiboReader weiboReader;
 

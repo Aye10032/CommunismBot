@@ -4,10 +4,7 @@ import com.aye10032.Zibenbot;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
-import com.aye10032.utils.weibo.WeiboReader;
-import com.aye10032.utils.weibo.WeiboSet;
-import com.aye10032.utils.weibo.WeiboSetItem;
-import com.aye10032.utils.weibo.WeiboUtils;
+import com.aye10032.utils.weibo.*;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,8 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class WeiboTask extends SubscribableBase {
-
-    private Map<Long, Set<String>> postMap = new ConcurrentHashMap<>();
     @Autowired
     private WeiboReader weiboReader;
 
@@ -51,20 +46,17 @@ public class WeiboTask extends SubscribableBase {
         Long weiboId = Long.valueOf(args[0]);
         OkHttpClient client = Zibenbot.getOkHttpClient();
         WeiboSet posts = WeiboUtils.getWeiboSet(client, weiboId);
-
-        if (postMap.get(weiboId) == null) {
-            Set<String> set = new HashSet<>();
-            posts.forEach(post -> set.add(post.getId()));
-            postMap.put(weiboId, set);
+        Set<String> cacheWeiboIds = WeiboCacheService.getCacheIds(args[0]);
+        if (cacheWeiboIds.isEmpty()) {
+            posts.forEach(post -> cacheWeiboIds.add(post.getId()));
         } else {
             Iterator<WeiboSetItem> postIterator = posts.iterator();
-            Set<String> postIds = this.postMap.get(weiboId);
             while (postIterator.hasNext()) {
                 WeiboSetItem post = postIterator.next();
-                if (postIds.contains(post.getId())) {
+                if (cacheWeiboIds.contains(post.getId())) {
                     postIterator.remove();
                 } else {
-                    postIds.add(post.getId());
+                    cacheWeiboIds.add(post.getId());
                     if (!post.isPerma()) {
                         try {
                             getBot().logInfo(String.format("检测到新的微博：%s", post.getTitle()));
