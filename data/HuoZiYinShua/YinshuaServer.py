@@ -2,7 +2,7 @@ from flask import Flask, jsonify, make_response, request
 from huoZiYinShua import *
 
 app = Flask(__name__)
-HZYS = huoZiYinShua(".\\settings.json")
+HZYS = huoZiYinShua("./settings.json")
 
 
 @app.route('/yinshua', methods=['POST'])
@@ -18,4 +18,4 @@ def not_found(error):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0')

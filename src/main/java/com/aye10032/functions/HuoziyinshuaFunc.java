@@ -74,6 +74,6 @@ public class HuoziyinshuaFunc extends BaseFunc {
 
     @Override
     public void run(SimpleMsg simpleMsg) {
-
+        commander.execute(simpleMsg);
     }
 }
