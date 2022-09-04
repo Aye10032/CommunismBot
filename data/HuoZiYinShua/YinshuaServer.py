@@ -7,10 +7,9 @@ HZYS = huoZiYinShua(".\\settings.json")
 
 @app.route('/yinshua', methods=['POST'])
 def create_task():
-    group = request.args.get('group')
     text = request.args.get('text')
     HZYS.export(text, "./Output.wav", inYsddMode=True)
-    return make_response(jsonify({'success': 'message send', 'group': group}), 201)
+    return make_response(jsonify({'success': 'message send', 'code': 201}), 201)
 
 
 @app.errorhandler(404)
