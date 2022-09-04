@@ -54,7 +54,10 @@ public class HistoryTodayServiceImpl implements HistoryTodayService {
     @Override
     public List<HistoryToday> getTodayHistory(String date) {
         HistoryTodayExample example = new HistoryTodayExample();
-        example.createCriteria().andEventDateEqualTo(date).andEventTypeEqualTo(HistoryEventType.HISTORY);
+        example.createCriteria()
+                .andEventDateEqualTo(date)
+                .andEventTypeEqualTo(HistoryEventType.HISTORY);
+        example.setOrderByClause("year ASC");
         List<HistoryToday> historyTodayList = mapper.selectByExample(example);
         return historyTodayList;
     }
@@ -62,7 +65,11 @@ public class HistoryTodayServiceImpl implements HistoryTodayService {
     @Override
     public List<HistoryToday> getGroupHistory(String date, Long from_group) {
         HistoryTodayExample example = new HistoryTodayExample();
-        example.createCriteria().andEventDateEqualTo(date).andFromGroupEqualTo(from_group).andEventTypeEqualTo(HistoryEventType.GROUP);
+        example.createCriteria()
+                .andEventDateEqualTo(date)
+                .andFromGroupEqualTo(from_group)
+                .andEventTypeEqualTo(HistoryEventType.GROUP);
+        example.setOrderByClause("year ASC");
         List<HistoryToday> historyTodayList = mapper.selectByExample(example);
         return historyTodayList;
     }
