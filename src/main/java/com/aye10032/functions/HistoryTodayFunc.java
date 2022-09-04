@@ -9,6 +9,7 @@ import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
+import kotlinx.serialization.descriptors.PrimitiveKind;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -35,7 +36,7 @@ public class HistoryTodayFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .or("历史上的今天"::equals)
+                .or(this::containsToday)
                 .run((msg) -> {
                     int event_count = 0;
                     StringBuilder builder = new StringBuilder();
@@ -116,7 +117,7 @@ public class HistoryTodayFunc extends BaseFunc {
                     }
                 })
                 .pop()
-                .or("历史上的明天"::equals)
+                .or(this::containsTomorrow)
                 .next()
                 .orArray(s -> true)
                 .run((msg) -> {
@@ -145,7 +146,7 @@ public class HistoryTodayFunc extends BaseFunc {
                     }
                 })
                 .pop()
-                .or("岁月史书"::equals)
+                .or(".岁月史书"::equals)
                 .next()
                 .orArray(s -> true)
                 .run((msg) -> {
@@ -205,5 +206,13 @@ public class HistoryTodayFunc extends BaseFunc {
         String year = String.format("%d年", calendar.get(Calendar.YEAR));
 
         return year;
+    }
+
+    private boolean containsToday(String command){
+        return (command.equals("历史上的今天")||command.equals(".历史上的今天")||command.equalsIgnoreCase(".LSSDJT"));
+    }
+
+    private boolean containsTomorrow(String command){
+        return (command.equals("历史上的明天")||command.equals(".历史上的明天")||command.equalsIgnoreCase(".LSSDMT"));
     }
 }

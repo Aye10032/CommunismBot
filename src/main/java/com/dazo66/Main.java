@@ -11,7 +11,8 @@ import java.io.IOException;
 @MapperScans({
         @MapperScan("com.aye10032.data.historytoday.mapper"),
         @MapperScan("com.aye10032.mapper"),
-        @MapperScan("com.aye10032.data.banrecord.mapper")
+        @MapperScan("com.aye10032.data.banrecord.mapper"),
+        @MapperScan("com.aye10032.data.ffxiv.mapper")
 })
 public class Main {
 

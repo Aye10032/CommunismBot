@@ -29,43 +29,43 @@ public class RollFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .or(".r2"::equals)
+                .or(".r2"::equalsIgnoreCase)
                 .run((cqmsg) ->{
                     Random random = new Random();
                     int flag = random.nextInt(2) + 1;
                     zibenbot.replyMsg(cqmsg, zibenbot.at(cqmsg.getFromClient()) + " 投出了" + flag + "/2点");
                 })
-                .or(".r4"::equals)
+                .or(".r4"::equalsIgnoreCase)
                 .run((cqmsg) ->{
                     Random random = new Random();
                     int flag = random.nextInt(4) + 1;
                     zibenbot.replyMsg(cqmsg, zibenbot.at(cqmsg.getFromClient()) + " 投出了" + flag + "/4点");
                 })
-                .or(".r6"::equals)
+                .or(".r6"::equalsIgnoreCase)
                 .run((cqmsg) ->{
                     Random random = new Random();
                     int flag = random.nextInt(6) + 1;
                     zibenbot.replyMsg(cqmsg, zibenbot.at(cqmsg.getFromClient()) + " 投出了" + flag + "/6点");
                 })
-                .or(".r8"::equals)
+                .or(".r8"::equalsIgnoreCase)
                 .run((cqmsg) ->{
                     Random random = new Random();
                     int flag = random.nextInt(8) + 1;
                     zibenbot.replyMsg(cqmsg, zibenbot.at(cqmsg.getFromClient()) + " 投出了" + flag + "/8点");
                 })
-                .or(".r10"::equals)
+                .or(".r10"::equalsIgnoreCase)
                 .run((cqmsg) ->{
                     Random random = new Random();
                     int flag = random.nextInt(10) + 1;
                     zibenbot.replyMsg(cqmsg, zibenbot.at(cqmsg.getFromClient()) + " 投出了" + flag + "/10点");
                 })
-                .or(".r20"::equals)
+                .or(".r20"::equalsIgnoreCase)
                 .run((cqmsg) ->{
                     Random random = new Random();
                     int flag = random.nextInt(20) + 1;
                     zibenbot.replyMsg(cqmsg, zibenbot.at(cqmsg.getFromClient()) + " 投出了" + flag + "/20点");
                 })
-                .or(".r100"::equals)
+                .or(".r100"::equalsIgnoreCase)
                 .run((cqmsg) ->{
                     Random random = new Random();
                     int flag = random.nextInt(100) + 1;

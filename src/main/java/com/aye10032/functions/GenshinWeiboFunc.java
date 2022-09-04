@@ -76,7 +76,7 @@ public class GenshinWeiboFunc extends BaseFunc {
                     WeiboSetItem[] arrayPosts = posts.toArray(new WeiboSetItem[0]);
                     try {
                         if (arrayPosts[i].isOffAnnounce()) {
-                            zibenbot.logInfo(String.format("检测到方舟新的制作组通讯（来自官网）：%s", arrayPosts[i].getTitle()));
+                            zibenbot.logInfo(String.format("检测到原神微博更新（来自官网）：%s", arrayPosts[i].getTitle()));
                             replyMsg(s, reader.postToUser(ArknightWeiboTask.getPostFromOff(arrayPosts[i])));
                         } else {
                             replyMsg(s, reader.postToUser(WeiboUtils.getWeiboWithPostItem(Zibenbot.getOkHttpClient(), arrayPosts[i])));
