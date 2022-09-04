@@ -1,5 +1,6 @@
 package com.aye10032.config;
 
+import com.aye10032.entity.ScheduleProxy;
 import com.aye10032.mapper.SubTaskMapper;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import lombok.SneakyThrows;
@@ -40,8 +41,12 @@ public class ScheduleConfig implements ApplicationContextAware, InitializingBean
     public void init() {
         Map<String, SubscribableBase> beansOfType = applicationContext.getBeansOfType(SubscribableBase.class);
         for (Map.Entry<String, SubscribableBase> entry : beansOfType.entrySet()) {
-            JobDetail jobDetail = JobBuilder.newJob(entry.getValue().getClass())
+            JobDataMap newJobDataMap = new JobDataMap();
+            newJobDataMap.put("realBean", entry.getValue());
+            // 统一使用代理类去获取唯一的bean对象
+            JobDetail jobDetail = JobBuilder.newJob(ScheduleProxy.class)
                 .withIdentity(entry.getValue().getName(), "default")
+                .setJobData(newJobDataMap)
                 .storeDurably()
                 .build();
             Trigger trigger = TriggerBuilder.newTrigger()
