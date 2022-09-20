@@ -57,7 +57,7 @@ public class EatFunc extends BaseFunc {
                 .pop()
                 .or(".一食堂"::equals)
                 .run((cqmsg)->{
-                    if (cqmsg.getFromGroup() == 792666782L){
+                    if (cqmsg.getFromGroup() == 792666782L || cqmsg.getFromGroup() == 295904863L){
                         zibenbot.replyMsg(cqmsg,randomUtil.getRandomWithSSR(
                                 eatData.getCanteen1(),eatData.getCanteen1sr(),eatData.getCanteen1ssr(),30,100)[0]);
                     }
