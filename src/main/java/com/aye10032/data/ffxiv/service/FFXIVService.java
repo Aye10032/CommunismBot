@@ -26,6 +26,8 @@ public interface FFXIVService {
 
     void updateHouse(String name);
 
+    Integer getItemTypeByName(String name);
+
     FFStone selectStoneByName(String name);
 
     FFPlant selectPlantByName(String name);

@@ -1,8 +1,8 @@
 package com.aye10032.functions;
 
 import com.aye10032.Zibenbot;
-import com.aye10032.data.ffxiv.entity.FFData;
-import com.aye10032.data.ffxiv.entity.House;
+import com.aye10032.data.ffxiv.FFXIVItemType;
+import com.aye10032.data.ffxiv.entity.*;
 import com.aye10032.data.ffxiv.service.FFXIVService;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.FuncExceptionHandler;
@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static com.aye10032.data.ffxiv.FFXIVItemType.*;
 import static com.aye10032.utils.FFXIVUtil.daysBetween;
 
 /**
@@ -97,11 +98,35 @@ public class FFXIVFunc extends BaseFunc {
                 .run((msg)->{
                     String[] msgs = msg.getCommandPieces();
                     if (msgs.length == 3) {
-
+                        String item_name = msgs[2];
+                        Integer type = service.getItemTypeByName(item_name);
+                        if (type == -1){
+                            zibenbot.replyMsg(msg, "雇员带不回来这个哦");
+                        }else {
+                            String item_info = "雇员带不回来这个哦";
+                            if (type.equals(PLANT)){
+                                FFPlant plant = service.selectPlantByName(item_name);
+                                if (plant != null){
+                                    item_info = build_info(plant.getName(), plant.getRank(), plant.getCount(), plant.getValueRequired(), "园艺工");
+                                }
+                            }else if (type.equals(STONE)){
+                                FFStone stone = service.selectStoneByName(item_name);
+                                if (stone != null){
+                                    item_info = build_info(stone.getName(), stone.getRank(), stone.getCount(), stone.getValueRequired(), "采矿工");
+                                }
+                            }else if (type.equals(HUNT)){
+                                FFHunt hunt = service.selectHuntByName(item_name);
+                                if (hunt != null){
+                                    item_info = build_info(hunt.getName(), hunt.getRank(), hunt.getCount(), hunt.getValueRequired(), "战职");
+                                }
+                            }
+                            zibenbot.replyMsg(msg, item_info);
+                        }
                     } else {
                         zibenbot.replyMsg(msg, "格式不正确！");
                     }
                 })
+                .pop()
                 .pop()
                 .build();
     }
@@ -114,6 +139,17 @@ public class FFXIVFunc extends BaseFunc {
     @Override
     public void run(SimpleMsg simpleMsg) {
         commander.execute(simpleMsg);
+    }
+
+    private String build_info(String name, Integer rank, String count, String require, String type){
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(name).append("(").append(type).append(")")
+                .append("\n等级 : ").append(rank)
+                .append("\n获得数 : ").append(count)
+                .append("\n三维要求 : ").append(require);
+
+        return builder.toString();
     }
 
 }

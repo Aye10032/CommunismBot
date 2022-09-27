@@ -25,6 +25,8 @@ public class FFXIVServiceImpl implements FFXIVService {
     @Autowired
     private FFDataMapper dataMapper;
     @Autowired
+    private FFItemMapper itemMapper;
+    @Autowired
     private FFStoneMapper stoneMapper;
     @Autowired
     private FFPlantMapper plantMapper;
@@ -90,6 +92,15 @@ public class FFXIVServiceImpl implements FFXIVService {
         } else {
             insertHouse(name);
         }
+    }
+
+    @Override
+    public Integer getItemTypeByName(String name) {
+        FFItemExample example = new FFItemExample();
+        example.createCriteria().andNameEqualTo(name);
+        List<FFItem> list = itemMapper.selectByExample(example);
+
+        return list.isEmpty() ? -1 : list.get(0).getType();
     }
 
     @Override
