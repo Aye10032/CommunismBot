@@ -104,6 +104,7 @@ public class FFXIVFunc extends BaseFunc {
                             zibenbot.replyMsg(msg, "雇员带不回来这个哦");
                         }else {
                             String item_info = "雇员带不回来这个哦";
+                            zibenbot.logInfo("查询到物品:"+item_name);
                             if (type.equals(PLANT)){
                                 FFPlant plant = service.selectPlantByName(item_name);
                                 if (plant != null){
