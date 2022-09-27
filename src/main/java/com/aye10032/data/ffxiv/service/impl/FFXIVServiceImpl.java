@@ -1,11 +1,7 @@
 package com.aye10032.data.ffxiv.service.impl;
 
-import com.aye10032.data.ffxiv.entity.FFData;
-import com.aye10032.data.ffxiv.entity.FFDataExample;
-import com.aye10032.data.ffxiv.entity.House;
-import com.aye10032.data.ffxiv.entity.HouseExample;
-import com.aye10032.data.ffxiv.mapper.FFDataMapper;
-import com.aye10032.data.ffxiv.mapper.HouseMapper;
+import com.aye10032.data.ffxiv.entity.*;
+import com.aye10032.data.ffxiv.mapper.*;
 import com.aye10032.data.ffxiv.service.FFXIVService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +24,12 @@ public class FFXIVServiceImpl implements FFXIVService {
     private HouseMapper houseMapper;
     @Autowired
     private FFDataMapper dataMapper;
+    @Autowired
+    private FFStoneMapper stoneMapper;
+    @Autowired
+    private FFPlantMapper plantMapper;
+    @Autowired
+    private FFHuntMapper huntMapper;
 
     @Override
     public Integer insertHouse(String name) {
@@ -82,11 +84,38 @@ public class FFXIVServiceImpl implements FFXIVService {
         example.createCriteria().andNameEqualTo(name);
         House house = selectHouseByName(name);
         Calendar calendar = Calendar.getInstance();
-        if (house != null){
+        if (house != null) {
             house.setLastUpdateTime(calendar.getTime());
             houseMapper.updateByExample(house, example);
-        }else {
+        } else {
             insertHouse(name);
         }
+    }
+
+    @Override
+    public FFStone selectStoneByName(String name) {
+        FFStoneExample example = new FFStoneExample();
+        example.createCriteria().andNameEqualTo(name);
+        List<FFStone> list = stoneMapper.selectByExample(example);
+
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public FFPlant selectPlantByName(String name) {
+        FFPlantExample example = new FFPlantExample();
+        example.createCriteria().andNameEqualTo(name);
+        List<FFPlant> list = plantMapper.selectByExample(example);
+
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public FFHunt selectHuntByName(String name) {
+        FFHuntExample example = new FFHuntExample();
+        example.createCriteria().andNameEqualTo(name);
+        List<FFHunt> list = huntMapper.selectByExample(example);
+
+        return list.isEmpty() ? null : list.get(0);
     }
 }

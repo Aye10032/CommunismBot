@@ -1,7 +1,6 @@
 package com.aye10032.data.ffxiv.service;
 
-import com.aye10032.data.ffxiv.entity.FFData;
-import com.aye10032.data.ffxiv.entity.House;
+import com.aye10032.data.ffxiv.entity.*;
 
 import java.util.List;
 
@@ -26,5 +25,11 @@ public interface FFXIVService {
     House selectHouseByName(String name);
 
     void updateHouse(String name);
+
+    FFStone selectStoneByName(String name);
+
+    FFPlant selectPlantByName(String name);
+
+    FFHunt selectHuntByName(String name);
 
 }
