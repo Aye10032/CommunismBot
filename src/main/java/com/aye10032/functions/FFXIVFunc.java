@@ -83,42 +83,45 @@ public class FFXIVFunc extends BaseFunc {
                                     .append(calendar.get(Calendar.MONTH) + 1).append("月")
                                     .append(calendar.get(Calendar.DATE)).append("日 ")
                                     .append(calendar.get(Calendar.HOUR_OF_DAY)).append(":").append(calendar.get(Calendar.MINUTE))
-                                    .append(" 距拆房还剩").append(45-time_distance).append("天\n");
+                                    .append(" 距拆房还剩").append(45 - time_distance).append("天\n");
                         }
                         zibenbot.replyMsg(msg, builder.toString());
                     }
                 })
                 .or("帮助"::equals)
-                .run((msg)->{
-                    zibenbot.replyMsg(msg,"https://www.aye10032.com/2022/08/17/2022-08-17-FF14-house-trigger/");
+                .run((msg) -> {
+                    zibenbot.replyMsg(msg, "https://www.aye10032.com/2022/08/17/2022-08-17-FF14-house-trigger/");
                 })
                 .or("雇员"::equals)
                 .next()
                 .orArray(strings -> true)
-                .run((msg)->{
+                .run((msg) -> {
                     String[] msgs = msg.getCommandPieces();
                     if (msgs.length == 3) {
                         String item_name = msgs[2];
                         Integer type = service.getItemTypeByName(item_name);
-                        if (type == -1){
+                        if (type == -1) {
                             zibenbot.replyMsg(msg, "雇员带不回来这个哦");
-                        }else {
+                        } else {
                             String item_info = "雇员带不回来这个哦";
-                            zibenbot.logInfo("查询到物品:"+item_name);
-                            if (type.equals(PLANT)){
+                            zibenbot.logInfo("查询到物品:" + item_name);
+                            if (type.equals(PLANT)) {
                                 FFPlant plant = service.selectPlantByName(item_name);
-                                if (plant != null){
-                                    item_info = build_info(plant.getName(), plant.getRank(), plant.getCount(), plant.getValueRequired(), "园艺工");
+                                if (plant != null) {
+                                    item_info = build_info(plant.getItemName(), plant.getItemRank(),
+                                            plant.getItemCount(), plant.getValueRequired(), "园艺工");
                                 }
-                            }else if (type.equals(STONE)){
+                            } else if (type.equals(STONE)) {
                                 FFStone stone = service.selectStoneByName(item_name);
-                                if (stone != null){
-                                    item_info = build_info(stone.getName(), stone.getRank(), stone.getCount(), stone.getValueRequired(), "采矿工");
+                                if (stone != null) {
+                                    item_info = build_info(stone.getItemName(), stone.getItemRank(),
+                                            stone.getItemCount(), stone.getValueRequired(), "采矿工");
                                 }
-                            }else if (type.equals(HUNT)){
+                            } else if (type.equals(HUNT)) {
                                 FFHunt hunt = service.selectHuntByName(item_name);
-                                if (hunt != null){
-                                    item_info = build_info(hunt.getName(), hunt.getRank(), hunt.getCount(), hunt.getValueRequired(), "战职");
+                                if (hunt != null) {
+                                    item_info = build_info(hunt.getItemName(), hunt.getItemRank(),
+                                            hunt.getItemCount(), hunt.getValueRequired(), "战职");
                                 }
                             }
                             zibenbot.replyMsg(msg, item_info);
@@ -142,7 +145,7 @@ public class FFXIVFunc extends BaseFunc {
         commander.execute(simpleMsg);
     }
 
-    private String build_info(String name, Integer rank, String count, String require, String type){
+    private String build_info(String name, Integer rank, String count, String require, String type) {
         StringBuilder builder = new StringBuilder();
 
         builder.append(name).append("(").append(type).append(")")

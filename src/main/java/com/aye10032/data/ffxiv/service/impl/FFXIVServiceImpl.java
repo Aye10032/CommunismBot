@@ -97,16 +97,16 @@ public class FFXIVServiceImpl implements FFXIVService {
     @Override
     public Integer getItemTypeByName(String name) {
         FFItemExample example = new FFItemExample();
-        example.createCriteria().andNameEqualTo(name);
+        example.createCriteria().andItemNameEqualTo(name);
         List<FFItem> list = itemMapper.selectByExample(example);
 
-        return list.isEmpty() ? -1 : list.get(0).getType();
+        return list.isEmpty() ? -1 : list.get(0).getItemType();
     }
 
     @Override
     public FFStone selectStoneByName(String name) {
         FFStoneExample example = new FFStoneExample();
-        example.createCriteria().andNameEqualTo(name);
+        example.createCriteria().andItemNameEqualTo(name);
         List<FFStone> list = stoneMapper.selectByExample(example);
 
         return list.isEmpty() ? null : list.get(0);
@@ -115,7 +115,7 @@ public class FFXIVServiceImpl implements FFXIVService {
     @Override
     public FFPlant selectPlantByName(String name) {
         FFPlantExample example = new FFPlantExample();
-        example.createCriteria().andNameEqualTo(name);
+        example.createCriteria().andItemNameEqualTo(name);
         List<FFPlant> list = plantMapper.selectByExample(example);
 
         return list.isEmpty() ? null : list.get(0);
@@ -124,7 +124,7 @@ public class FFXIVServiceImpl implements FFXIVService {
     @Override
     public FFHunt selectHuntByName(String name) {
         FFHuntExample example = new FFHuntExample();
-        example.createCriteria().andNameEqualTo(name);
+        example.createCriteria().andItemNameEqualTo(name);
         List<FFHunt> list = huntMapper.selectByExample(example);
 
         return list.isEmpty() ? null : list.get(0);

@@ -15,17 +15,17 @@ public class FFStone {
     /**
      * 
      */
-    private Integer rank;
+    private Integer itemRank;
 
     /**
      * 
      */
-    private String name;
+    private String itemName;
 
     /**
      * 
      */
-    private String count;
+    private String itemCount;
 
     /**
      * 
@@ -35,15 +35,15 @@ public class FFStone {
     /**
      * 
      */
-    private String exp;
+    private String gainExp;
 
-    public FFStone(Integer id, Integer rank, String name, String count, String valueRequired, String exp) {
+    public FFStone(Integer id, Integer itemRank, String itemName, String itemCount, String valueRequired, String gainExp) {
         this.id = id;
-        this.rank = rank;
-        this.name = name;
-        this.count = count;
+        this.itemRank = itemRank;
+        this.itemName = itemName;
+        this.itemCount = itemCount;
         this.valueRequired = valueRequired;
-        this.exp = exp;
+        this.gainExp = gainExp;
     }
 
     public FFStone() {
@@ -58,28 +58,28 @@ public class FFStone {
         this.id = id;
     }
 
-    public Integer getRank() {
-        return rank;
+    public Integer getItemRank() {
+        return itemRank;
     }
 
-    public void setRank(Integer rank) {
-        this.rank = rank;
+    public void setItemRank(Integer itemRank) {
+        this.itemRank = itemRank;
     }
 
-    public String getName() {
-        return name;
+    public String getItemName() {
+        return itemName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
-    public String getCount() {
-        return count;
+    public String getItemCount() {
+        return itemCount;
     }
 
-    public void setCount(String count) {
-        this.count = count;
+    public void setItemCount(String itemCount) {
+        this.itemCount = itemCount;
     }
 
     public String getValueRequired() {
@@ -90,11 +90,11 @@ public class FFStone {
         this.valueRequired = valueRequired;
     }
 
-    public String getExp() {
-        return exp;
+    public String getGainExp() {
+        return gainExp;
     }
 
-    public void setExp(String exp) {
-        this.exp = exp;
+    public void setGainExp(String gainExp) {
+        this.gainExp = gainExp;
     }
 }

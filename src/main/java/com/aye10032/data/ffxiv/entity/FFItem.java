@@ -15,17 +15,17 @@ public class FFItem {
     /**
      * 
      */
-    private String name;
+    private String itemName;
 
     /**
      * 
      */
-    private Integer type;
+    private Integer itemType;
 
-    public FFItem(Integer id, String name, Integer type) {
+    public FFItem(Integer id, String itemName, Integer itemType) {
         this.id = id;
-        this.name = name;
-        this.type = type;
+        this.itemName = itemName;
+        this.itemType = itemType;
     }
 
     public FFItem() {
@@ -40,19 +40,19 @@ public class FFItem {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getItemName() {
+        return itemName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
-    public Integer getType() {
-        return type;
+    public Integer getItemType() {
+        return itemType;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setItemType(Integer itemType) {
+        this.itemType = itemType;
     }
 }
