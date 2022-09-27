@@ -4,11 +4,11 @@
   <resultMap id="BaseResultMap" type="com.aye10032.data.ffxiv.entity.FFStone">
     <constructor>
       <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="rank" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="count" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="item_rank" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="item_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="item_count" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="value_required" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="exp" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="gain_exp" javaType="java.lang.String" jdbcType="VARCHAR" />
     </constructor>
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -70,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, rank, name, count, value_required, exp
+    id, item_rank, item_name, item_count, value_required, gain_exp
   </sql>
   <select id="selectByExample" parameterType="com.aye10032.data.ffxiv.entity.FFStoneExample" resultMap="BaseResultMap">
     select
@@ -106,10 +106,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into ffxiv_stone (rank, name, count, 
-      value_required, exp)
-    values (#{rank,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{count,jdbcType=VARCHAR}, 
-      #{valueRequired,jdbcType=VARCHAR}, #{exp,jdbcType=VARCHAR})
+    insert into ffxiv_stone (item_rank, item_name, item_count, 
+      value_required, gain_exp)
+    values (#{itemRank,jdbcType=INTEGER}, #{itemName,jdbcType=VARCHAR}, #{itemCount,jdbcType=VARCHAR}, 
+      #{valueRequired,jdbcType=VARCHAR}, #{gainExp,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.aye10032.data.ffxiv.entity.FFStone">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -117,37 +117,37 @@
     </selectKey>
     insert into ffxiv_stone
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="rank != null">
-        rank,
+      <if test="itemRank != null">
+        item_rank,
       </if>
-      <if test="name != null">
-        name,
+      <if test="itemName != null">
+        item_name,
       </if>
-      <if test="count != null">
-        count,
+      <if test="itemCount != null">
+        item_count,
       </if>
       <if test="valueRequired != null">
         value_required,
       </if>
-      <if test="exp != null">
-        exp,
+      <if test="gainExp != null">
+        gain_exp,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="rank != null">
-        #{rank,jdbcType=INTEGER},
+      <if test="itemRank != null">
+        #{itemRank,jdbcType=INTEGER},
       </if>
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
+      <if test="itemName != null">
+        #{itemName,jdbcType=VARCHAR},
       </if>
-      <if test="count != null">
-        #{count,jdbcType=VARCHAR},
+      <if test="itemCount != null">
+        #{itemCount,jdbcType=VARCHAR},
       </if>
       <if test="valueRequired != null">
         #{valueRequired,jdbcType=VARCHAR},
       </if>
-      <if test="exp != null">
-        #{exp,jdbcType=VARCHAR},
+      <if test="gainExp != null">
+        #{gainExp,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -163,20 +163,20 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.rank != null">
-        rank = #{record.rank,jdbcType=INTEGER},
+      <if test="record.itemRank != null">
+        item_rank = #{record.itemRank,jdbcType=INTEGER},
       </if>
-      <if test="record.name != null">
-        name = #{record.name,jdbcType=VARCHAR},
+      <if test="record.itemName != null">
+        item_name = #{record.itemName,jdbcType=VARCHAR},
       </if>
-      <if test="record.count != null">
-        count = #{record.count,jdbcType=VARCHAR},
+      <if test="record.itemCount != null">
+        item_count = #{record.itemCount,jdbcType=VARCHAR},
       </if>
       <if test="record.valueRequired != null">
         value_required = #{record.valueRequired,jdbcType=VARCHAR},
       </if>
-      <if test="record.exp != null">
-        exp = #{record.exp,jdbcType=VARCHAR},
+      <if test="record.gainExp != null">
+        gain_exp = #{record.gainExp,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -186,11 +186,11 @@
   <update id="updateByExample" parameterType="map">
     update ffxiv_stone
     set id = #{record.id,jdbcType=INTEGER},
-      rank = #{record.rank,jdbcType=INTEGER},
-      name = #{record.name,jdbcType=VARCHAR},
-      count = #{record.count,jdbcType=VARCHAR},
+      item_rank = #{record.itemRank,jdbcType=INTEGER},
+      item_name = #{record.itemName,jdbcType=VARCHAR},
+      item_count = #{record.itemCount,jdbcType=VARCHAR},
       value_required = #{record.valueRequired,jdbcType=VARCHAR},
-      exp = #{record.exp,jdbcType=VARCHAR}
+      gain_exp = #{record.gainExp,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -198,31 +198,31 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.aye10032.data.ffxiv.entity.FFStone">
     update ffxiv_stone
     <set>
-      <if test="rank != null">
-        rank = #{rank,jdbcType=INTEGER},
+      <if test="itemRank != null">
+        item_rank = #{itemRank,jdbcType=INTEGER},
       </if>
-      <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+      <if test="itemName != null">
+        item_name = #{itemName,jdbcType=VARCHAR},
       </if>
-      <if test="count != null">
-        count = #{count,jdbcType=VARCHAR},
+      <if test="itemCount != null">
+        item_count = #{itemCount,jdbcType=VARCHAR},
       </if>
       <if test="valueRequired != null">
         value_required = #{valueRequired,jdbcType=VARCHAR},
       </if>
-      <if test="exp != null">
-        exp = #{exp,jdbcType=VARCHAR},
+      <if test="gainExp != null">
+        gain_exp = #{gainExp,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.aye10032.data.ffxiv.entity.FFStone">
     update ffxiv_stone
-    set rank = #{rank,jdbcType=INTEGER},
-      name = #{name,jdbcType=VARCHAR},
-      count = #{count,jdbcType=VARCHAR},
+    set item_rank = #{itemRank,jdbcType=INTEGER},
+      item_name = #{itemName,jdbcType=VARCHAR},
+      item_count = #{itemCount,jdbcType=VARCHAR},
       value_required = #{valueRequired,jdbcType=VARCHAR},
-      exp = #{exp,jdbcType=VARCHAR}
+      gain_exp = #{gainExp,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

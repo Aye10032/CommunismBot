@@ -4,8 +4,8 @@
   <resultMap id="BaseResultMap" type="com.aye10032.data.ffxiv.entity.FFItem">
     <constructor>
       <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="item_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="item_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
     </constructor>
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -67,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, type
+    id, item_name, item_type
   </sql>
   <select id="selectByExample" parameterType="com.aye10032.data.ffxiv.entity.FFItemExample" resultMap="BaseResultMap">
     select
@@ -103,8 +103,8 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into ffxiv_item (name, type)
-    values (#{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER})
+    insert into ffxiv_item (item_name, item_type)
+    values (#{itemName,jdbcType=VARCHAR}, #{itemType,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.aye10032.data.ffxiv.entity.FFItem">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -112,19 +112,19 @@
     </selectKey>
     insert into ffxiv_item
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        name,
+      <if test="itemName != null">
+        item_name,
       </if>
-      <if test="type != null">
-        type,
+      <if test="itemType != null">
+        item_type,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
+      <if test="itemName != null">
+        #{itemName,jdbcType=VARCHAR},
       </if>
-      <if test="type != null">
-        #{type,jdbcType=INTEGER},
+      <if test="itemType != null">
+        #{itemType,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -140,11 +140,11 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.name != null">
-        name = #{record.name,jdbcType=VARCHAR},
+      <if test="record.itemName != null">
+        item_name = #{record.itemName,jdbcType=VARCHAR},
       </if>
-      <if test="record.type != null">
-        type = #{record.type,jdbcType=INTEGER},
+      <if test="record.itemType != null">
+        item_type = #{record.itemType,jdbcType=INTEGER},
       </if>
     </set>
     <if test="_parameter != null">
@@ -154,8 +154,8 @@
   <update id="updateByExample" parameterType="map">
     update ffxiv_item
     set id = #{record.id,jdbcType=INTEGER},
-      name = #{record.name,jdbcType=VARCHAR},
-      type = #{record.type,jdbcType=INTEGER}
+      item_name = #{record.itemName,jdbcType=VARCHAR},
+      item_type = #{record.itemType,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -163,19 +163,19 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.aye10032.data.ffxiv.entity.FFItem">
     update ffxiv_item
     <set>
-      <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+      <if test="itemName != null">
+        item_name = #{itemName,jdbcType=VARCHAR},
       </if>
-      <if test="type != null">
-        type = #{type,jdbcType=INTEGER},
+      <if test="itemType != null">
+        item_type = #{itemType,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.aye10032.data.ffxiv.entity.FFItem">
     update ffxiv_item
-    set name = #{name,jdbcType=VARCHAR},
-      type = #{type,jdbcType=INTEGER}
+    set item_name = #{itemName,jdbcType=VARCHAR},
+      item_type = #{itemType,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
