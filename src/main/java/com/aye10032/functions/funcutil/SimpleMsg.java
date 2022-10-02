@@ -22,6 +22,8 @@ public class SimpleMsg implements ICommand {
     private MessageEvent event;
     private MessageSource source;
 
+    private MessageChain msgChain;
+
     public SimpleMsg(long fromGroup, long fromClient, String msg, MsgType type) {
         this.fromGroup = fromGroup;
         this.fromClient = fromClient;
@@ -45,6 +47,7 @@ public class SimpleMsg implements ICommand {
 
     private String getMsgFromEvent(MessageEvent event) {
         MessageChain chain = event.getMessage();
+        msgChain = chain;
         MessageChainBuilder builder = new MessageChainBuilder();
         chain.forEach((Message m) -> {
             if (m instanceof At) {
@@ -122,6 +125,14 @@ public class SimpleMsg implements ICommand {
      */
     public void setType(MsgType type) {
         this.type = type;
+    }
+
+    /**
+     * 获取MessageChain对象 用于处理非文本信息
+     * @return MessageChain对象
+     */
+    public MessageChain getMsgChain() {
+        return msgChain;
     }
 
     /**
