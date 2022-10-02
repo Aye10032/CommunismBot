@@ -21,6 +21,7 @@ import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent;
 import net.mamoe.mirai.event.events.BotReloginEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.event.events.NewFriendRequestEvent;
+import net.mamoe.mirai.internal.message.OnlineAudioImpl;
 import net.mamoe.mirai.message.code.MiraiCode;
 import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.ExternalResource;

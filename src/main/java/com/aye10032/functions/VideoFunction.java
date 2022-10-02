@@ -33,12 +33,6 @@ public class VideoFunction extends BaseFunc {
                         zibenbot.replyMsg(msg, msg.getMsg());
                     }
                 })
-                .or(s->true)
-                .run((msg)->{
-                    if (msg.isPrivateMsg()&&msg.getFromClient() == 2375985957L){
-                        zibenbot.replyMsg(msg, msg.getMsg());
-                    }
-                })
                 .build();
     }
 
