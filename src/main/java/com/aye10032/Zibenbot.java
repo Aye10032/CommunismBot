@@ -21,7 +21,6 @@ import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent;
 import net.mamoe.mirai.event.events.BotReloginEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.event.events.NewFriendRequestEvent;
-import net.mamoe.mirai.internal.message.OnlineAudioImpl;
 import net.mamoe.mirai.message.code.MiraiCode;
 import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.ExternalResource;
@@ -757,7 +756,7 @@ public class Zibenbot implements ApplicationContextAware {
      * @return 返回List of BufferImage
      */
     public List<java.awt.Image> getImgFromMsg(SimpleMsg msg) {
-        MessageChain chain = MiraiCode.deserializeMiraiCode(msg.getMsg());
+        MessageChain chain = msg.getMsgChain();
         List<java.awt.Image> list = new CopyOnWriteArrayList<>();
         chain.stream()
                 .filter(m -> m instanceof Image)
@@ -772,6 +771,13 @@ public class Zibenbot implements ApplicationContextAware {
                     }
                 });
         return list;
+    }
+
+    public OnlineAudio getAudioFromMsg(SimpleMsg msg){
+        MessageChain chain = msg.getMsgChain();
+        OnlineAudio audio = (OnlineAudio) chain.get(0);
+
+        return audio;
     }
 
     public String getMsg(String type, String source) {
