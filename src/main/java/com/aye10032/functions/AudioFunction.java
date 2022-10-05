@@ -9,6 +9,7 @@ import com.dazo66.command.CommanderBuilder;
 import net.mamoe.mirai.message.data.OnlineAudio;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 /**
@@ -32,8 +33,8 @@ public class AudioFunction extends BaseFunc {
                 .or(this::isAudio)
                 .run((msg)->{
                     if (msg.isPrivateMsg()&&msg.getFromClient() == 2375985957L){
-                        zibenbot.getAudioFromMsg(msg);
-                        zibenbot.replyMsg(msg, "done");
+                        File audio = zibenbot.getAudioFromMsg(msg);
+                        zibenbot.replyMsg(msg, "done" + audio.getAbsolutePath());
                     }
                 })
                 .build();

@@ -791,7 +791,6 @@ public class Zibenbot implements ApplicationContextAware {
             AudioUtils.init(new File(appDirectory + "/HuoZiYinShua"));
             mp3_file = AudioUtils.silkToMp3(slk_file);
 
-            Zibenbot.logInfoStatic(mp3_file.getAbsolutePath());
             return mp3_file;
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
