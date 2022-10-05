@@ -42,6 +42,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.*;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -80,7 +81,7 @@ public class Zibenbot implements ApplicationContextAware {
 
     public static OkHttpClient getOkHttpClient() {
         return client.newBuilder().callTimeout(30, TimeUnit.SECONDS)
-            .proxy(Zibenbot.getProxy()).build();
+                .proxy(Zibenbot.getProxy()).build();
     }
 
     {
@@ -227,7 +228,7 @@ public class Zibenbot implements ApplicationContextAware {
         });
         // 自动接受入群邀请
         bot.getEventChannel().subscribeAlways(BotInvitedJoinGroupRequestEvent.class,
-            BotInvitedJoinGroupRequestEvent::accept);
+                BotInvitedJoinGroupRequestEvent::accept);
         return 0;
     }
 
@@ -584,7 +585,7 @@ public class Zibenbot implements ApplicationContextAware {
      * 回复压缩消息
      *
      * @param fromMsg 消息来源
-     * @param msgs     要回复的消息
+     * @param msgs    要回复的消息
      */
     public void replyZipMsg(SimpleMsg fromMsg, String... msgs) {
         try {
@@ -626,12 +627,12 @@ public class Zibenbot implements ApplicationContextAware {
      * @param fromMsg 消息来源
      * @param file    语音文件
      */
-    public void replyAudio(SimpleMsg fromMsg, File file){
+    public void replyAudio(SimpleMsg fromMsg, File file) {
         ExternalResource resource = ExternalResource.create(file);
         try {
-            if (fromMsg.isGroupMsg()){
+            if (fromMsg.isGroupMsg()) {
                 Group group = _getGroup(fromMsg.getFromGroup());
-                if (group != null){
+                if (group != null) {
                     Audio audio = group.uploadAudio(resource);
                     group.sendMessage(audio);
                 }
@@ -673,7 +674,7 @@ public class Zibenbot implements ApplicationContextAware {
         }
     }
 
-    public String getGroupName(long id){
+    public String getGroupName(long id) {
         Group group = _getGroup(id);
         if (group != null) {
             return group.getName();
@@ -770,32 +771,25 @@ public class Zibenbot implements ApplicationContextAware {
         return list;
     }
 
-    public int getAudioFromMsg(SimpleMsg msg){
+    public int getAudioFromMsg(SimpleMsg msg) {
         File file;
         try {
             MessageChain chain = msg.getMsgChain();
             OnlineAudio audio = chain.get(OnlineAudio.Key);
             assert audio != null;
 
-            if (audio.getCodec().equals(AudioCodec.AMR)){
-                Zibenbot.logInfoStatic("AMR");
-            } else if (audio.getCodec().equals(AudioCodec.SILK)) {
-                Zibenbot.logInfoStatic("SILK");
-            }
-
+            file = new File(appDirectory + "/HuoZiYinShua/origin.amr");
             URL url = new URL((audio).getUrlForDownload());
-            file = new File(appDirectory + "/HuoZiYinShua/origin.silk");
-            BufferedInputStream bis = new BufferedInputStream(url.openStream());
-            FileOutputStream fos = new FileOutputStream(file);
-
-            byte[] buffer = new byte[1024];
-            int count=0;
-            while((count = bis.read(buffer,0,1024)) != -1)
-            {
-                fos.write(buffer, 0, count);
+            InputStream inputStream = url.openStream();
+            BufferedInputStream in = new BufferedInputStream(inputStream);
+            BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(file.toPath()));
+            byte[] bytes = new byte[1024];
+            int len = 0;
+            while ((len = in.read(bytes)) != -1) {
+                out.write(bytes, 0, len);
             }
-            fos.close();
-            bis.close();
+            out.close();
+            in.close();
 
             return 0;
         } catch (MalformedURLException e) {
