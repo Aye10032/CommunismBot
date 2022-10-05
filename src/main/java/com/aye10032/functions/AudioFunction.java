@@ -51,8 +51,7 @@ public class AudioFunction extends BaseFunc {
     }
 
     private boolean isAudio(String msg){
-        String reg = "\\[mirai:audio:\\{(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})}.mirai]";
 
-        return Pattern.matches(reg, msg);
+        return msg.startsWith("[mirai:audio:");
     }
 }
