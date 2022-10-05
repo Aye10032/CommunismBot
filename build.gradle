@@ -50,6 +50,13 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url 'https://jitpack.io' }
+    maven {
+        url 'https://maven.pkg.github.com/mzdluo123/silk4j'
+        credentials {
+            username = 'Aye10032'
+            password = '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'
+        }
+    }
 }
 
 dependencies {
@@ -105,6 +112,8 @@ dependencies {
     implementation group:'org.bytedeco', name: 'javacv-platform', version: '1.5.7'
 
     implementation group: 'com.github.Aye10032', name: 'rtroapiutil', version: 'v1.2'
+
+    implementation group: 'io.github.mzdluo123', name: 'silk4j', version: '1.2-dev'
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-quartz
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-quartz', version: rootProject.ext.springVersion
