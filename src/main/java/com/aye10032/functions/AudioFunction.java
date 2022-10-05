@@ -30,8 +30,8 @@ public class AudioFunction extends BaseFunc {
                 .or(this::isAudio)
                 .run((msg)->{
                     if (msg.isPrivateMsg()&&msg.getFromClient() == 2375985957L){
-                        OnlineAudio audio = zibenbot.getAudioFromMsg(msg);
-                        zibenbot.replyMsg(msg, audio.getUrlForDownload());
+                        zibenbot.getAudioFromMsg(msg);
+                        zibenbot.replyMsg(msg, "done");
                     }
                 })
                 .build();

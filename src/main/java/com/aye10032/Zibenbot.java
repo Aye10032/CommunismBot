@@ -39,10 +39,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.net.*;
 import java.text.SimpleDateFormat;
@@ -773,11 +770,32 @@ public class Zibenbot implements ApplicationContextAware {
         return list;
     }
 
-    public OnlineAudio getAudioFromMsg(SimpleMsg msg){
-        MessageChain chain = msg.getMsgChain();
-        OnlineAudio audio = chain.get(OnlineAudio.Key);
+    public int getAudioFromMsg(SimpleMsg msg){
+        File file;
+        try {
+            MessageChain chain = msg.getMsgChain();
+            OnlineAudio audio = chain.get(OnlineAudio.Key);
+            assert audio != null;
+            URL url = new URL((audio).getUrlForDownload());
+            file = new File(appDirectory + "/HuoZiYinShua/origin.amr");
+            BufferedInputStream bis = new BufferedInputStream(url.openStream());
+            FileOutputStream fos = new FileOutputStream(file);
 
-        return audio;
+            byte[] buffer = new byte[1024];
+            int count=0;
+            while((count = bis.read(buffer,0,1024)) != -1)
+            {
+                fos.write(buffer, 0, count);
+            }
+            fos.close();
+            bis.close();
+
+            return 0;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getMsg(String type, String source) {
