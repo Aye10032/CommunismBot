@@ -788,6 +788,7 @@ public class Zibenbot implements ApplicationContextAware {
             while ((len = in.read(bytes)) != -1) {
                 out.write(bytes, 0, len);
             }
+            out.flush();
             out.close();
             in.close();
 
