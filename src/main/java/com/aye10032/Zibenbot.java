@@ -27,6 +27,7 @@ import net.mamoe.mirai.utils.ExternalResource;
 import net.mamoe.mirai.utils.MiraiLogger;
 import net.mamoe.mirai.utils.PlatformLogger;
 import okhttp3.OkHttpClient;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeansException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -779,18 +780,11 @@ public class Zibenbot implements ApplicationContextAware {
             assert audio != null;
 
             file = new File(appDirectory + "/HuoZiYinShua/origin.amr");
-            URL url = new URL((audio).getUrlForDownload());
-            InputStream inputStream = url.openStream();
-            BufferedInputStream in = new BufferedInputStream(inputStream);
+            byte[] bytes1 = IOUtils.toByteArray(new URL((audio).getUrlForDownload()));
             BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(file.toPath()));
-            byte[] bytes = new byte[1024];
-            int len = 0;
-            while ((len = in.read(bytes)) != -1) {
-                out.write(bytes, 0, len);
-            }
+            out.write(bytes1);
+            out.flush();
             out.close();
-            in.close();
-
             return 0;
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
