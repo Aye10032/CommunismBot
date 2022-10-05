@@ -780,16 +780,17 @@ public class Zibenbot implements ApplicationContextAware {
             OnlineAudio audio = chain.get(OnlineAudio.Key);
             assert audio != null;
 
-            slk_file = new File(appDirectory + "/HuoZiYinShua/origin.slk");
+            slk_file = new File(appDirectory + "/HuoZiYinShua/origin.silk");
             byte[] bytes1 = IOUtils.toByteArray(new URL((audio).getUrlForDownload()));
-            BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(slk_file.toPath()));
-            out.write(bytes1);
-            out.flush();
-            out.close();
+            BufferedOutputStream slk_out = new BufferedOutputStream(Files.newOutputStream(slk_file.toPath()));
+            slk_out.write(bytes1);
+            slk_out.flush();
+            slk_out.close();
 
             File mp3_file;
             AudioUtils.init(new File(appDirectory + "/HuoZiYinShua"));
             mp3_file = AudioUtils.silkToMp3(slk_file);
+
             Zibenbot.logInfoStatic(mp3_file.getAbsolutePath());
             return mp3_file;
         } catch (MalformedURLException e) {
