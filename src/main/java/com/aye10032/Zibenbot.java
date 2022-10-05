@@ -775,7 +775,7 @@ public class Zibenbot implements ApplicationContextAware {
 
     public OnlineAudio getAudioFromMsg(SimpleMsg msg){
         MessageChain chain = msg.getMsgChain();
-        OnlineAudio audio = (OnlineAudio) chain.get(0);
+        OnlineAudio audio = chain.get(OnlineAudio.Key);
 
         return audio;
     }
