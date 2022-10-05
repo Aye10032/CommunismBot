@@ -13,6 +13,7 @@ import com.aye10032.utils.timeutil.TimeUtils;
 import com.aye10032.utils.weibo.WeiboReader;
 import com.dazo66.config.BotConfig;
 import com.google.common.collect.Streams;
+import io.github.mzdluo123.silk4j.AudioUtils;
 import kotlin.Unit;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.Mirai;
@@ -772,20 +773,25 @@ public class Zibenbot implements ApplicationContextAware {
         return list;
     }
 
-    public int getAudioFromMsg(SimpleMsg msg) {
-        File file;
+    public File getAudioFromMsg(SimpleMsg msg) {
+        File slk_file;
         try {
             MessageChain chain = msg.getMsgChain();
             OnlineAudio audio = chain.get(OnlineAudio.Key);
             assert audio != null;
 
-            file = new File(appDirectory + "/HuoZiYinShua/origin.amr");
+            slk_file = new File(appDirectory + "/HuoZiYinShua/origin.slk");
             byte[] bytes1 = IOUtils.toByteArray(new URL((audio).getUrlForDownload()));
-            BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(file.toPath()));
+            BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(slk_file.toPath()));
             out.write(bytes1);
             out.flush();
             out.close();
-            return 0;
+
+            File mp3_file;
+            AudioUtils.init(new File(appDirectory + "/HuoZiYinShua"));
+            mp3_file = AudioUtils.silkToMp3(slk_file);
+            Zibenbot.logInfoStatic(mp3_file.getAbsolutePath());
+            return mp3_file;
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {

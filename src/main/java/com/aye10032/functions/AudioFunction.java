@@ -9,6 +9,8 @@ import com.dazo66.command.CommanderBuilder;
 import net.mamoe.mirai.message.data.OnlineAudio;
 import org.springframework.stereotype.Service;
 
+import java.util.regex.Pattern;
+
 /**
  * @program: communismbot
  * @className: VideoFunction
@@ -48,6 +50,8 @@ public class AudioFunction extends BaseFunc {
     }
 
     private boolean isAudio(String msg){
-        return msg.startsWith("[mirai:audio:");
+        String reg = "\\[mirai:audio:\\{(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})}.mirai]";
+
+        return Pattern.matches(reg, msg);
     }
 }
