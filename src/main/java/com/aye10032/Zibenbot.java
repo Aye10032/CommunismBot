@@ -776,8 +776,15 @@ public class Zibenbot implements ApplicationContextAware {
             MessageChain chain = msg.getMsgChain();
             OnlineAudio audio = chain.get(OnlineAudio.Key);
             assert audio != null;
+
+            if (audio.getCodec().equals(AudioCodec.AMR)){
+                Zibenbot.logInfoStatic("AMR");
+            } else if (audio.getCodec().equals(AudioCodec.SILK)) {
+                Zibenbot.logInfoStatic("SILK");
+            }
+
             URL url = new URL((audio).getUrlForDownload());
-            file = new File(appDirectory + "/HuoZiYinShua/origin.amr");
+            file = new File(appDirectory + "/HuoZiYinShua/origin.silk");
             BufferedInputStream bis = new BufferedInputStream(url.openStream());
             FileOutputStream fos = new FileOutputStream(file);
 
