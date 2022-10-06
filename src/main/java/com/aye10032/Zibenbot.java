@@ -15,6 +15,7 @@ import com.dazo66.config.BotConfig;
 import com.google.common.collect.Streams;
 import io.github.mzdluo123.silk4j.AudioUtils;
 import kotlin.Unit;
+import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.Mirai;
 import net.mamoe.mirai.contact.*;
@@ -63,11 +64,11 @@ import static com.aye10032.utils.StringUtil.longMsgSplit;
  */
 @Component
 @AutoConfigureAfter(BotConfig.class)
+@Slf4j
 public class Zibenbot implements ApplicationContextAware {
 
     private static OkHttpClient client = new OkHttpClient();
     public static Proxy proxy = null;
-    private static MiraiLogger logger;
     private static Pattern AT_REGEX = Pattern.compile("\\[mirai:at:(\\d+)]");
     /**
      * 时间任务池
@@ -92,11 +93,6 @@ public class Zibenbot implements ApplicationContextAware {
         File logDir = new File(appDirectory + "/log/");
         File[] files = logDir.listFiles(pathname -> System.currentTimeMillis() - pathname.lastModified() > TimeUtils.DAY * 10L);
         Arrays.asList(files != null ? files : new File[0]).forEach(File::delete);
-        logger = new PlatformLogger("zibenbot", (String s) -> {
-            System.out.println(s);
-            getLoggerStream().println(s);
-            return Unit.INSTANCE;
-        }, true);
         msgUploads.put("IMAGE", (conect, source) -> {
             if ("null".equals(source)) {
                 return "[IMAGE]";
@@ -176,7 +172,7 @@ public class Zibenbot implements ApplicationContextAware {
 
     @PostConstruct
     public int startup() {
-        bot.getLogger().plus(logger);
+        // bot.getLogger().plus(logger);
         // 设置基本参数
         SeleniumUtils.setup(appDirectory + "/ChromeDriver/chromedriver.exe");
         //改成了手动注册
@@ -216,6 +212,11 @@ public class Zibenbot implements ApplicationContextAware {
         }*/
         bot.getEventChannel().subscribeAlways(MessageEvent.class, messageEvent -> {
             SimpleMsg simpleMsg = new SimpleMsg(messageEvent);
+            if (simpleMsg.isGroupMsg()) {
+                log.info("收到群消息：[{}]{}: {}", simpleMsg.getFromGroup() ,messageEvent.getSender().getNick(), simpleMsg.getMsg());
+            } else {
+                log.info("收到私聊消息：[{}]{}: {}", simpleMsg.getFromClient() ,messageEvent.getSender().getNick(), simpleMsg.getMsg());
+            }
             if (simpleMsg.isGroupMsg() && !enableGroup.contains(simpleMsg.getFromGroup())) {
                 // ignore
             } else {
@@ -253,7 +254,7 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     public static void logInfoStatic(String info) {
-        logger.info(info);
+        log.info(info);
     }
 
     /**
@@ -350,7 +351,7 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     public static void logDebugStatic(String debugMsg) {
-        logger.debug(debugMsg);
+        log.debug(debugMsg);
     }
 
     public void toPrivateMsg(long clientId, String msg) {
@@ -390,7 +391,7 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     public static void logErrorStatic(String errorMsg) {
-        logger.error(errorMsg);
+        log.error(errorMsg);
     }
 
 /*    public int toTeamspeakMsg(String msg) {
@@ -453,15 +454,15 @@ public class Zibenbot implements ApplicationContextAware {
      * @param info 输出信息
      */
     public void logInfo(String info) {
-        logger.info(info);
+        log.info(info);
     }
 
     public void logDebug(String debugMsg) {
-        logger.debug(debugMsg);
+        log.debug(debugMsg);
     }
 
     public void logError(String errorMsg) {
-        logger.error(errorMsg);
+        log.error(errorMsg);
     }
 
     public void log(Level level, String msg) {
@@ -476,15 +477,15 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     public void logWarning(String warnMsg) {
-        logger.warning(warnMsg);
+        logWarningStatic(warnMsg);
     }
 
     public static void logWarningStatic(String warnMsg) {
-        logger.warning(warnMsg);
+        log.warn(warnMsg);
     }
 
     public static void logVerboseStatic(String verboseMsg) {
-        logger.verbose(verboseMsg);
+        log.debug(verboseMsg);
     }
 
 
@@ -649,7 +650,7 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     public void logVerbose(String verboseMsg) {
-        logger.verbose(verboseMsg);
+        log.debug(verboseMsg);
     }
 
     public void onFriendEvent(NewFriendRequestEvent event) {
