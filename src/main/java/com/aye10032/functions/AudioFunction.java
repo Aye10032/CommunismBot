@@ -6,7 +6,11 @@ import com.aye10032.functions.funcutil.FuncExceptionHandler;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.mamoe.mirai.message.data.OnlineAudio;
+import okhttp3.*;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +30,7 @@ import java.util.regex.Pattern;
 public class AudioFunction extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
+    private OkHttpClient client;
 
     public AudioFunction(Zibenbot zibenbot) {
         super(zibenbot);
@@ -34,11 +39,32 @@ public class AudioFunction extends BaseFunc {
                 .start()
                 .or(this::isAudio)
                 .run((msg)->{
-                    if (msg.isPrivateMsg()&&msg.getFromClient() == 2375985957L){
-                        File audio = zibenbot.getAudioFromMsg(msg);
-                        zibenbot.replyMsg(msg, "done" + audio.getAbsolutePath());
-                        File file = new File(appDirectory + "/HuoZiYinShua/audio");
+                    if (msg.getFromClient() != 2155231604L){
+                        String filename = zibenbot.getAudioFromMsg(msg).getName();
                         try {
+                            MediaType mediaType = MediaType.parse("text/plain");
+                            RequestBody requestBody = RequestBody.create(mediaType, "");
+                            Request request = new Request.Builder()
+                                    .url("http://127.0.0.1:5000/daofang?filename=" + filename)
+                                    .method("POST", requestBody)
+                                    .build();
+                            Response response = client.newCall(request).execute();
+                            String body = null;
+                            if (response.body() != null) {
+                                body = new String(response.body().bytes());
+                                JsonElement element = JsonParser.parseString(body);
+
+                                if (element.isJsonObject()) {
+                                    JsonObject jsonObject = element.getAsJsonObject();
+                                    int code = jsonObject.get("code").getAsInt();
+                                    if (code == 201) {
+                                        File file = new File(appDirectory + "/HuoZiYinShua/daofang.wav");
+                                        zibenbot.replyMsg(msg, "来点大家想看的东西");
+                                        zibenbot.replyAudio(msg,file);
+                                    }
+                                }
+                            }
+                            File file = new File(appDirectory + "/HuoZiYinShua/audio");
                             FileUtils.deleteDirectory(file);
                             file.mkdirs();
                         } catch (IOException e) {
