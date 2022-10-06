@@ -788,7 +788,7 @@ public class Zibenbot implements ApplicationContextAware {
             slk_out.close();
 
             File mp3_file;
-            AudioUtils.init(new File(appDirectory + "/HuoZiYinShua"));
+            AudioUtils.init(new File(appDirectory + "/HuoZiYinShua/audio"));
             mp3_file = AudioUtils.silkToMp3(slk_file);
 
             return mp3_file;

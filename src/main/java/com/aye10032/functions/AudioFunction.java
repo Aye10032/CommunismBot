@@ -7,9 +7,11 @@ import com.aye10032.functions.funcutil.SimpleMsg;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
 import net.mamoe.mirai.message.data.OnlineAudio;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 /**
@@ -35,6 +37,13 @@ public class AudioFunction extends BaseFunc {
                     if (msg.isPrivateMsg()&&msg.getFromClient() == 2375985957L){
                         File audio = zibenbot.getAudioFromMsg(msg);
                         zibenbot.replyMsg(msg, "done" + audio.getAbsolutePath());
+                        File file = new File(appDirectory + "/HuoZiYinShua/audio");
+                        try {
+                            FileUtils.deleteDirectory(file);
+                            file.mkdirs();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 })
                 .build();
@@ -42,7 +51,10 @@ public class AudioFunction extends BaseFunc {
 
     @Override
     public void setUp() {
-
+        File file = new File(appDirectory + "/HuoZiYinShua/audio");
+        if (!file.exists()){
+            file.mkdirs();
+        }
     }
 
     @Override
