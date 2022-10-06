@@ -42,12 +42,12 @@ public class SimpleMsg implements ICommand {
         }
         fromClient = event.getSender().getId();
         msg = getMsgFromEvent(event);
+        msgChain = event.getMessage();
         this.event = event;
     }
 
     private String getMsgFromEvent(MessageEvent event) {
         MessageChain chain = event.getMessage();
-        msgChain = chain;
         MessageChainBuilder builder = new MessageChainBuilder();
         chain.forEach((Message m) -> {
             if (m instanceof At) {
