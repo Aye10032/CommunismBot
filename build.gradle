@@ -35,6 +35,7 @@ ext {
     springVersion = '2.6.6'
     miraiVersion = '2.13.0-M1'
     ktVersion = '1.7.10'
+    coroutinesVersion = '1.6.4'
 }
 
 apply plugin: "ua.eshepelyuk.ManifestClasspath"
@@ -70,6 +71,8 @@ dependencies {
     implementation group: 'net.mamoe', name: 'mirai-core-api-jvm', version: rootProject.ext.miraiVersion
     implementation group: 'net.mamoe', name: 'mirai-core-api', version: rootProject.ext.miraiVersion
     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:${rootProject.ext.coroutinesVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${rootProject.ext.coroutinesVersion}")
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: rootProject.ext.springVersion
 
@@ -121,9 +124,6 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.29'
     implementation 'org.reflections:reflections:0.10.2'
     implementation 'org.projectlombok:lombok:1.18.4'
-    annotationProcessor 'org.projectlombok:lombok:1.18.4'
-    testCompileOnly 'org.projectlombok:lombok:1.18.4'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.4'
 
 
 }
