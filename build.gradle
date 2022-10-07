@@ -61,7 +61,9 @@ repositories {
 }
 
 dependencies {
-
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:${rootProject.ext.coroutinesVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${rootProject.ext.coroutinesVersion}")
     implementation 'junit:junit:4.12'
 
 //    implementation 'net.mamoe:mirai-core-qqandroid:1.2.3'//此处版本应替换为当前最新
@@ -70,9 +72,7 @@ dependencies {
     implementation group: 'net.mamoe', name: 'mirai-core-jvm', version: rootProject.ext.miraiVersion
     implementation group: 'net.mamoe', name: 'mirai-core-api-jvm', version: rootProject.ext.miraiVersion
     implementation group: 'net.mamoe', name: 'mirai-core-api', version: rootProject.ext.miraiVersion
-    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:${rootProject.ext.coroutinesVersion}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${rootProject.ext.coroutinesVersion}")
+
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: rootProject.ext.springVersion
 
