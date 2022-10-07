@@ -16,7 +16,7 @@
     <property name="log.log_name" value="log"/>
     <!-- 日志最大的历史 30天 -->
     <property name="log.maxHistory" value="30"/>
-    <property name="log.level" value="debug"/>
+    <property name="log.level" value="INFO"/>
     <property name="log.maxSize" value="10MB" />
 
     <!-- ConsoleAppender 控制台输出日志 -->
