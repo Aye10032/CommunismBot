@@ -16,7 +16,7 @@
     <property name="log.log_name" value="log"/>
     <!-- 日志最大的历史 30天 -->
     <property name="log.maxHistory" value="30"/>
-    <property name="log.level" value="debug"/>
+    <property name="log.level" value="INFO"/>
     <property name="log.maxSize" value="10MB" />
 
     <!-- ConsoleAppender 控制台输出日志 -->
@@ -47,7 +47,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!--日志输出位置 可相对、和绝对路径 -->
             <fileNamePattern>
-                ${log.log_dir}/error/%d{yyyy-MM-dd}/error_${log.log_name}-%i.log
+                ${log.log_dir}/error-%d{yyyy-MM-dd}-%i.log
             </fileNamePattern>
             <!-- 可选节点，控制保留的归档文件的最大数量，超出数量就删除旧文件,假设设置每个月滚动，且<maxHistory>是6，
             则只保存最近6个月的文件，删除之前的旧文件。注意，删除旧文件是，那些为了归档而创建的目录也会被删除 -->
@@ -71,7 +71,7 @@
             <onMismatch>DENY</onMismatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log.log_dir}/info/%d{yyyy-MM-dd}/info_${log.log_name}-%i.log</fileNamePattern>
+            <fileNamePattern>${log.log_dir}/info-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
             <maxHistory>${log.maxHistory}</maxHistory>
             <MaxFileSize>${log.maxSize}</MaxFileSize>
         </rollingPolicy>
@@ -89,7 +89,7 @@
             <onMismatch>DENY</onMismatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log.log_dir}/debug/%d{yyyy-MM-dd}/debug_${log.log_name}-%i.log</fileNamePattern>
+            <fileNamePattern>${log.log_dir}/debug-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
             <maxHistory>${log.maxHistory}</maxHistory>
             <MaxFileSize>${log.maxSize}</MaxFileSize>
         </rollingPolicy>
@@ -101,7 +101,7 @@
     <!--设置一个向上传递的appender,所有级别的日志都会输出-->
     <appender name="app" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log.log_dir}/app/%d{yyyy-MM-dd}/app_${log.log_name}-%i.log</fileNamePattern>
+            <fileNamePattern>${log.log_dir}/app-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
             <maxHistory>${log.maxHistory}</maxHistory>
             <MaxFileSize>${log.maxSize}</MaxFileSize>
         </rollingPolicy>
