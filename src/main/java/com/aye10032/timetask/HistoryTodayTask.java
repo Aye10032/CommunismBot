@@ -61,9 +61,7 @@ public class HistoryTodayTask extends SubscribableBase {
                 }
                 List<HistoryToday> group_history_list = historyTodayService.getGroupHistory(getDate(), reciver.getSender().getFromGroup());
                 event_count += group_history_list.size();
-                if (event_count == 0) {
-                    getBot().replyMsg(reciver.getSender(), "历史上的今天无事发生");
-                } else {
+                if (event_count != 0) {
                     if (group_history_list.size() != 0) {
                         if (history_today_list.size() != 0) {
                             builder.append("-------------\n");
