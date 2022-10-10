@@ -35,7 +35,12 @@ public class MoeTask extends SubscribableBase {
         if (recivers != null) {
             for (Reciver reciver : recivers) {
                 msg_builder.append("你订阅的《").append(args[1].replace("-"," ")).append("》有资源更新了：");
-                List<String> result = RSSUtil.getRSSUpdate(args[0], now);
+                List<String> result;
+                if (args[0].startsWith("https://www.dmhy.org/topics/rss/")) {
+                    result = RSSUtil.getRSSUpdate(args[0], now, true);
+                }else {
+                    result = RSSUtil.getRSSUpdate(args[0], now, false);
+                }
                 if (!result.isEmpty()) {
                     for (String entry : result) {
                         msg_builder.append("\n----------------\n").append(entry);
@@ -56,7 +61,7 @@ public class MoeTask extends SubscribableBase {
         if (args.length != 2) {
             return Pair.of(false, "参数错误，格式为RSS链接+番剧名称，并用-代替空格");
         } else {
-            if (args[0].startsWith("https://bangumi.moe/rss/")) {
+            if (args[0].startsWith("https://bangumi.moe/rss/")||args[0].startsWith("https://www.dmhy.org/topics/rss/")) {
                 return Pair.of(true, "");
             } else {
                 return Pair.of(false, "无效的RSS链接");

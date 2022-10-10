@@ -7,9 +7,9 @@ import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -23,10 +23,17 @@ import java.util.List;
  */
 public class RSSUtil {
 
-    public static List<String> getRSSUpdate(String url, Date date){
+    public static List<String> getRSSUpdate(String url, Date date, boolean use_proxy){
         List<String> result = new ArrayList<>();
         try {
-            SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
+            URLConnection connection;
+            if (use_proxy){
+                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 1080));
+                connection = new URL(url).openConnection(proxy);
+            }else {
+                connection = new URL(url).openConnection();
+            }
+            SyndFeed feed = new SyndFeedInput().build(new XmlReader(connection));
             List<SyndEntry> list = feed.getEntries();
             for (SyndEntry entry:list) {
                 if (entry.getPublishedDate().compareTo(date) > 0) {
