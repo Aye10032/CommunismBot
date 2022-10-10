@@ -41,6 +41,7 @@ public class HelpFunction extends BaseFunc {
                             "原神\n" +
                             "历史上的今天\n" +
                             "表情合成\n" +
+                            "活字印刷\n" +
                             "pixiv\n" +
                             "红石科技搬运组\n" +
                             "ROLL点\n" +
@@ -114,6 +115,7 @@ public class HelpFunction extends BaseFunc {
                             ".ff14 help-----返回插件使用手册\n" +
                             ".ff14 绑定 [游戏ID]-----绑定游戏内ID\n" +
                             ".ff14 房屋-----返回房屋的上次刷新时间\n" +
+                            ".ff14 雇员 [材料名]-----素材的雇员探险等级\n" +
                             ".订阅|sub ff14小助手-----当有房屋进入拆除倒计时时发送消息";
                     zibenbot.replyMsg(msg, message);
                 })
@@ -138,6 +140,12 @@ public class HelpFunction extends BaseFunc {
                     String message = "简单的表情包生成功能\n-----------\n" +
                             ".鲁迅 [文字]-----鲁迅说过……\n" +
                             ".黑白 [图片] [文字]-----合成黑白图片+文字";
+                    zibenbot.replyMsg(msg, message);
+                })
+                .or("活字印刷"::equals)
+                .run((msg) -> {
+                    String message = "我这只有电棍的音源，凑合用用吧\n-----------\n" +
+                            ".活字印刷 [文字]-----合成鬼叫";
                     zibenbot.replyMsg(msg, message);
                 })
                 .or("pixiv"::equals)
@@ -168,7 +176,7 @@ public class HelpFunction extends BaseFunc {
                 })
                 .or("RSS订阅"::equals)
                 .run((msg) -> {
-                    String message = "RSS番剧资源订阅，目前仅测试了https://bangumi.moe/的RSS链接可用，其它不一定兼容\n-----------\n" +
+                    String message = "RSS番剧资源订阅，目前支持https://bangumi.moe/和https://share.dmhy.org/的RSS链接可用，其它不一定兼容\n-----------\n" +
                             ".订阅|sub 番剧订阅小助手 [RSS链接] [番剧名称]-----番剧名称中若有空格，用-代替，不用加书名号";
                     zibenbot.replyMsg(msg, message);
                 })
