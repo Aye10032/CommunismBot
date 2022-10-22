@@ -24,7 +24,7 @@ plugins {
 
 compileJava {
     sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    targetCompatibility = '16'
 }
 
 tasks.withType(JavaCompile) {
@@ -41,6 +41,8 @@ apply plugin: "ua.eshepelyuk.ManifestClasspath"
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
 
 group 'com.aye10032'
 version '2.1.0'
@@ -60,17 +62,10 @@ repositories {
 }
 
 dependencies {
-/*    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:${rootProject.ext.coroutinesVersion}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${rootProject.ext.coroutinesVersion}")*/
     implementation group: 'junit', name: 'junit', version: '4.12'
 
-//    implementation 'net.mamoe:mirai-core-qqandroid:1.2.3'//此处版本应替换为当前最新
     implementation group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion
-//    implementation group: 'net.mamoe', name: 'mirai-core-jvm', version: rootProject.ext.miraiVersion
-//    implementation group: 'net.mamoe', name: 'mirai-core-api-jvm', version: rootProject.ext.miraiVersion
-//    implementation group: 'net.mamoe', name: 'mirai-core-api', version: rootProject.ext.miraiVersion
-//    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
+
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: rootProject.ext.springVersion
 
@@ -81,10 +76,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jdom/jdom
     implementation group: 'org.jdom', name: 'jdom', version: '2.0.2'
 
-/*
-    // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
-    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.32.3'
-*/
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'

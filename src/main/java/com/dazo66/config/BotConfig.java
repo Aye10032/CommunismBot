@@ -35,6 +35,9 @@ public class BotConfig {
         FileReader reader = new FileReader("device.json");
         configuration.loadDeviceInfoJson(IOUtils.toString(reader));
         reader.close();
+        configuration.setHeartbeatStrategy(BotConfiguration.HeartbeatStrategy.STAT_HB);
+        configuration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PHONE);
+
         Bot bot = BotFactory.INSTANCE.newBot(qqId, password, configuration);
         if (!profiles.contains("test")) {
             bot.login();
