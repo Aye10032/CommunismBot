@@ -16,10 +16,10 @@ buildscript {
 
 plugins {
     id 'java'
-    id "org.jetbrains.kotlin.jvm" version "1.6.20-M1"
+    id 'org.jetbrains.kotlin.jvm' version '1.6.21'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.21'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'org.springframework.boot' version '2.6.6'
-    // id("net.mamoe.kotlin-jvm-blocking-bridge") version "1.10.6-1530.2"
 }
 
 compileJava {
@@ -34,7 +34,7 @@ tasks.withType(JavaCompile) {
 ext {
     springVersion = '2.6.6'
     miraiVersion = '2.13.0-RC2'
-    ktVersion = '1.6.20-M1'
+    ktVersion = '1.6.21'
 }
 
 apply plugin: "ua.eshepelyuk.ManifestClasspath"
@@ -63,7 +63,7 @@ dependencies {
 /*    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:${rootProject.ext.coroutinesVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${rootProject.ext.coroutinesVersion}")*/
-    implementation 'junit:junit:4.12'
+    implementation group: 'junit', name: 'junit', version: '4.12'
 
 //    implementation 'net.mamoe:mirai-core-qqandroid:1.2.3'//此处版本应替换为当前最新
     implementation group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion
