@@ -53,7 +53,6 @@ public class AudioFunction extends BaseFunc {
                             String body = null;
                             if (response.body() != null) {
                                 body = new String(response.body().bytes());
-                                System.out.println(body);
                                 JsonElement element = JsonParser.parseString(body);
 
                                 if (element.isJsonObject()) {
@@ -83,6 +82,7 @@ public class AudioFunction extends BaseFunc {
         if (!file.exists()){
             file.mkdirs();
         }
+        client = new OkHttpClient().newBuilder().build();
     }
 
     @Override
