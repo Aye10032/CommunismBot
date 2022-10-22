@@ -33,7 +33,7 @@ tasks.withType(JavaCompile) {
 
 ext {
     springVersion = '2.6.6'
-    miraiVersion = '2.10.0'
+    miraiVersion = '2.13.0-RC2'
     ktVersion = '1.6.20-M1'
 }
 
