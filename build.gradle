@@ -52,23 +52,12 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url 'https://jitpack.io' }
-//    maven {
-//        url 'https://maven.pkg.github.com/mzdluo123/silk4j'
-//        credentials {
-//            username = 'Aye10032'
-//            password = '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'
-//        }
-//    }
 }
 
 dependencies {
     implementation group: 'junit', name: 'junit', version: '4.12'
 
-//    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
     implementation group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion
-
-//    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
-    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core-jvm', version: '1.6.21'
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: rootProject.ext.springVersion
@@ -114,12 +103,12 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-quartz
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-quartz', version: rootProject.ext.springVersion
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java
-    implementation 'mysql:mysql-connector-java:8.0.29'
-    implementation 'org.reflections:reflections:0.10.2'
-    implementation 'org.projectlombok:lombok:1.18.4'
-    annotationProcessor 'org.projectlombok:lombok:1.18.4'
-    testCompileOnly 'org.projectlombok:lombok:1.18.4'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.4'
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.29'
+    implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
+    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
+    testCompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
+    testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
 
 
 
