@@ -24,7 +24,7 @@ plugins {
 
 compileJava {
     sourceCompatibility = '1.8'
-    targetCompatibility = '16'
+    targetCompatibility = '11'
 }
 
 tasks.withType(JavaCompile) {
