@@ -57,7 +57,13 @@ repositories {
 dependencies {
     implementation group: 'junit', name: 'junit', version: '4.12'
 
-    implementation group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion
+    implementation(group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion) {
+        exclude(group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-core-jvm')
+        exclude(group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-jdk8')
+    }
+
+    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core-jvm', version: '1.6.4'
+    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-jdk8', version: '1.6.4'
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: rootProject.ext.springVersion
@@ -94,7 +100,7 @@ dependencies {
     implementation group: 'com.rometools', name: 'rome', version: '1.18.0'
 
     //JavaCV相关
-    implementation group:'org.bytedeco', name: 'javacv-platform', version: '1.5.7'
+    implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.7'
 
     implementation group: 'com.github.Aye10032', name: 'rtroapiutil', version: 'v1.2'
 
@@ -111,7 +117,6 @@ dependencies {
     testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
 
 
-
 }
 
 tasks.withType(JavaCompile) {
@@ -119,10 +124,10 @@ tasks.withType(JavaCompile) {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 test {
