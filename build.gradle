@@ -42,8 +42,8 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
 
-group 'com.firespoon'
-version '2.0.0'
+group 'com.aye10032'
+version '2.1.0'
 
 repositories {
 
@@ -66,12 +66,11 @@ dependencies {
     implementation 'junit:junit:4.12'
 
 //    implementation 'net.mamoe:mirai-core-qqandroid:1.2.3'//此处版本应替换为当前最新
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.10"
     implementation group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion
-    implementation group: 'net.mamoe', name: 'mirai-core-jvm', version: rootProject.ext.miraiVersion
-    implementation group: 'net.mamoe', name: 'mirai-core-api-jvm', version: rootProject.ext.miraiVersion
-    implementation group: 'net.mamoe', name: 'mirai-core-api', version: rootProject.ext.miraiVersion
-    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
+//    implementation group: 'net.mamoe', name: 'mirai-core-jvm', version: rootProject.ext.miraiVersion
+//    implementation group: 'net.mamoe', name: 'mirai-core-api-jvm', version: rootProject.ext.miraiVersion
+//    implementation group: 'net.mamoe', name: 'mirai-core-api', version: rootProject.ext.miraiVersion
+//    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: rootProject.ext.ktVersion
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: rootProject.ext.springVersion
 
