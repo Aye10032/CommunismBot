@@ -41,6 +41,7 @@ public class AudioFunction extends BaseFunc {
                 .run((msg)->{
                     if (msg.getFromClient() != 2155231604L){
                         String filename = zibenbot.getAudioFromMsg(msg).getName();
+                        zibenbot.logInfo("下载音频文件"+filename);
                         try {
                             MediaType mediaType = MediaType.parse("text/plain");
                             RequestBody requestBody = RequestBody.create(mediaType, "");
