@@ -44,7 +44,7 @@ public class AudioFunction extends BaseFunc {
                         zibenbot.logInfo("下载音频文件"+filename);
                         try {
                             MediaType mediaType = MediaType.parse("text/plain");
-                            RequestBody requestBody = RequestBody.create(mediaType, "");
+                            RequestBody requestBody = RequestBody.create("", mediaType);
                             Request request = new Request.Builder()
                                     .url("http://127.0.0.1:5000/daofang?filename=" + filename)
                                     .method("POST", requestBody)
@@ -53,6 +53,7 @@ public class AudioFunction extends BaseFunc {
                             String body = null;
                             if (response.body() != null) {
                                 body = new String(response.body().bytes());
+                                System.out.println(body);
                                 JsonElement element = JsonParser.parseString(body);
 
                                 if (element.isJsonObject()) {
