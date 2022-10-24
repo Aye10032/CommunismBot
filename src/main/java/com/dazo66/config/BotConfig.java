@@ -32,11 +32,12 @@ public class BotConfig {
         BotConfiguration configuration = BotConfiguration.getDefault();
         configuration.copy();
         //conf.enableContactCache()
-        FileReader reader = new FileReader("device.json");
-        configuration.loadDeviceInfoJson(IOUtils.toString(reader));
-        reader.close();
+//        FileReader reader = new FileReader("device.json");
+//        configuration.loadDeviceInfoJson(IOUtils.toString(reader));
+//        reader.close();
+        configuration.fileBasedDeviceInfo("device.json");
         configuration.setHeartbeatStrategy(BotConfiguration.HeartbeatStrategy.STAT_HB);
-        configuration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_WATCH);
+        configuration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PHONE);
 
         Bot bot = BotFactory.INSTANCE.newBot(qqId, password, configuration);
         if (!profiles.contains("test")) {
