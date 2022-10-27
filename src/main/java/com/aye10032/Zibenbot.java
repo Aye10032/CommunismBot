@@ -144,7 +144,8 @@ public class Zibenbot implements ApplicationContextAware {
         this.bot = bot;
         pool = new TimeTaskPool();
         // bot启用的群
-        enableGroup.add(995497677L); //提醒人
+//        enableGroup.add(995497677L); //提醒人 死于2022年10月27日11:08分
+        enableGroup.add(1044102726L); //提醒人
         enableGroup.add(792666782L); //实验室
         enableGroup.add(517709950L); //植物群
         enableGroup.add(295904863L); //魔方社
