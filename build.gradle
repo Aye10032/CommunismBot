@@ -3,7 +3,7 @@ import java.text.SimpleDateFormat
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
@@ -24,7 +24,7 @@ plugins {
 
 compileJava {
     sourceCompatibility = '1.8'
-    targetCompatibility = '11'
+    targetCompatibility = '17'
 }
 
 tasks.withType(JavaCompile) {
@@ -33,7 +33,7 @@ tasks.withType(JavaCompile) {
 
 ext {
     springVersion = '2.6.6'
-    miraiVersion = '2.13.0-RC2'
+    miraiVersion = '2.13.0'
     ktVersion = '1.6.21'
 }
 
@@ -50,7 +50,6 @@ version '2.1.0'
 repositories {
 
     mavenCentral()
-    jcenter()
     maven { url 'https://jitpack.io' }
 }
 
@@ -103,6 +102,7 @@ dependencies {
     implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.7'
 
     implementation group: 'com.github.Aye10032', name: 'rtroapiutil', version: 'v1.2'
+    implementation group: 'com.github.Aye10032', name: 'GenshinUtil', version: 'v1.0.0'
 
     implementation(fileTree(dir: 'libs', includes: ['*.jar']))
 
@@ -124,10 +124,10 @@ tasks.withType(JavaCompile) {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }
 
 test {
