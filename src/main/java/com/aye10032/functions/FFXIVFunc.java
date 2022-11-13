@@ -175,7 +175,6 @@ public class FFXIVFunc extends BaseFunc {
 
                             Integer index;
                             try {
-                                log.info(replyMsg1.getMsg());
                                 index = Integer.valueOf(replyMsg1.getMsg().trim());
                             } catch (Exception e) {
                                 replyMsg(replyMsg1, "回复消息必须是序号哦~");

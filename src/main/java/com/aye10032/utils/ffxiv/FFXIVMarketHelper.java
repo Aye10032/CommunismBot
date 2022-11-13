@@ -35,7 +35,7 @@ public class FFXIVMarketHelper {
     }
 
     public Collection<FFXIVSimpleInfo> searchItemWithId(String itemId) {
-
+        log.info("search item {}", itemId);
         Request request = new Request.Builder()
                 .url(String.format("https://universalis.app/api/v2/%s/%s?entriesWithin=10", worldDcRegion, itemId))
                 .method("GET", null)
