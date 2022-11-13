@@ -874,11 +874,7 @@ public class Zibenbot implements ApplicationContextAware {
 
 
     public void replyMsgWithQuoteHook(SimpleMsg fromMsg, String msg, IQuoteHook hook) {
-        String key = msg;
-        if (key.length() > 70) {
-            key = key.substring(0, 70);
-        }
-        hookCache.put(key.hashCode(), hook);
+        hookCache.put(SimpleMsg.getQuoteKey(msg), hook);
         replyMsg(fromMsg, msg);
 
     }

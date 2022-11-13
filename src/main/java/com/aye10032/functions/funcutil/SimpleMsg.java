@@ -212,6 +212,15 @@ public class SimpleMsg implements ICommand {
         return key.hashCode();
     }
 
+
+    public static int getQuoteKey(String msg) {
+        String key = msg;
+        if (key.length() > 70) {
+            key = key.substring(0, 70);
+        }
+        return key.hashCode();
+    }
+
     @Override
     public int hashCode() {
         return getMsg().hashCode();
