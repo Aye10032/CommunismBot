@@ -56,7 +56,6 @@ public class SimpleMsg implements ICommand {
         if (quoteReply != null) {
             MessageChain quoteChain = quoteReply.getSource().getOriginalMessage();
             quoteMsg = new SimpleMsg(fromGroup, quoteReply.getSource().getFromId(), quoteChain, type);
-            event.getMessage().remove(quoteReply);
             log.info("引用消息不为空:{}", quoteMsg.getMsg());
         }
         msgChain = event.getMessage();
@@ -71,6 +70,8 @@ public class SimpleMsg implements ICommand {
                 builder.add(m);
             } else if (m instanceof MessageSource) {
                 source = (MessageSource) m;
+            } else if (m instanceof QuoteReply) {
+                // ignore
             } else {
                 builder.add(m);
             }
