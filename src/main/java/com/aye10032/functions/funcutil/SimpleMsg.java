@@ -52,16 +52,16 @@ public class SimpleMsg implements ICommand {
             type = MsgType.PRIVATE_MSG;
         }
         fromClient = event.getSender().getId();
-        msgChain = event.getMessage();
-        msg = getMsgFromEvent(msgChain);
-        this.event = event;
         QuoteReply quoteReply = event.getMessage().get(QuoteReply.Key);
         if (quoteReply != null) {
             MessageChain quoteChain = quoteReply.getSource().getOriginalMessage();
             quoteMsg = new SimpleMsg(fromGroup, quoteReply.getSource().getFromId(), quoteChain, type);
-
+            event.getMessage().remove(quoteReply);
             log.info("引用消息不为空:{}", quoteMsg.getMsg());
         }
+        msgChain = event.getMessage();
+        msg = getMsgFromEvent(msgChain);
+        this.event = event;
     }
 
     private String getMsgFromEvent(MessageChain chain) {
