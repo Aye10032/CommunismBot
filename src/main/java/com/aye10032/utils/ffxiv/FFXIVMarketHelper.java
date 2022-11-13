@@ -17,6 +17,7 @@ import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,10 +35,10 @@ public class FFXIVMarketHelper {
         this.worldDcRegion = worldDcRegion;
     }
 
+    @SneakyThrows
     public Collection<FFXIVSimpleInfo> searchItemWithId(String itemId) {
-        log.info("search item {}", itemId);
         Request request = new Request.Builder()
-                .url(String.format("https://universalis.app/api/v2/%s/%s?entriesWithin=10", worldDcRegion, itemId))
+                .url(String.format("https://universalis.app/api/v2/%s/%s?entriesWithin=10", URLEncoder.encode(worldDcRegion, StandardCharsets.UTF_8.name()), itemId))
                 .method("GET", null)
                 .header("Referer", "https://docs.universalis.app/")
                 .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
