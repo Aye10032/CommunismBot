@@ -20,13 +20,13 @@ public class UniversalisResponse {
     private String dcName;
     private double currentAveragePrice;
     private double currentAveragePriceNQ;
-    private int currentAveragePriceHQ;
+    private double currentAveragePriceHQ;
     private int regularSaleVelocity;
     private int nqSaleVelocity;
     private int hqSaleVelocity;
     private int averagePrice;
-    private int averagePriceNQ;
-    private int averagePriceHQ;
+    private double averagePriceNQ;
+    private double averagePriceHQ;
     private long minPrice;
     private long minPriceNQ;
     private int minPriceHQ;
