@@ -24,10 +24,19 @@ public class SimpleMsg implements ICommand {
 
     private MessageChain msgChain;
 
+    private SimpleMsg quoteMsg;
+
     public SimpleMsg(long fromGroup, long fromClient, String msg, MsgType type) {
         this.fromGroup = fromGroup;
         this.fromClient = fromClient;
         this.msg = msg;
+        this.type = type;
+    }
+
+    public SimpleMsg(long fromGroup, long fromClient, MessageChain chain, MsgType type) {
+        this.fromGroup = fromGroup;
+        this.fromClient = fromClient;
+        this.msg = getMsgFromEvent(chain);
         this.type = type;
     }
 
@@ -41,13 +50,17 @@ public class SimpleMsg implements ICommand {
             type = MsgType.PRIVATE_MSG;
         }
         fromClient = event.getSender().getId();
-        msg = getMsgFromEvent(event);
         msgChain = event.getMessage();
+        msg = getMsgFromEvent(msgChain);
         this.event = event;
+        QuoteReply quoteReply = event.getMessage().get(QuoteReply.Key);
+        if (quoteReply != null) {
+            MessageChain quoteChain = quoteReply.getSource().getOriginalMessage();
+            quoteMsg = new SimpleMsg(fromGroup, quoteReply.getSource().getFromId(), quoteChain, type);
+        }
     }
 
-    private String getMsgFromEvent(MessageEvent event) {
-        MessageChain chain = event.getMessage();
+    private String getMsgFromEvent(MessageChain chain) {
         MessageChainBuilder builder = new MessageChainBuilder();
         chain.forEach((Message m) -> {
             if (m instanceof At) {
@@ -59,6 +72,14 @@ public class SimpleMsg implements ICommand {
             }
         });
         return builder.build().toString();
+    }
+
+    /**
+     * 获得这条消息引用的消息
+     * @return
+     */
+    public SimpleMsg getQuoteMsg() {
+        return quoteMsg;
     }
 
     /**
@@ -177,5 +198,10 @@ public class SimpleMsg implements ICommand {
      */
     public static SimpleMsg getTempMsg(String testMsg){
         return new SimpleMsg(995497677L, 2375985957L, testMsg, MsgType.GROUP_MSG);
+    }
+
+    @Override
+    public int hashCode() {
+        return getMsg().hashCode();
     }
 }

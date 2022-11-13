@@ -27,4 +27,8 @@ public class StringCommand implements ICommand {
         return new StringCommand(command);
     }
 
+    @Override
+    public String toString() {
+        return command;
+    }
 }

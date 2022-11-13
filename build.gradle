@@ -48,7 +48,7 @@ group 'com.aye10032'
 version '2.1.0'
 
 repositories {
-
+    maven { url 'https://maven.aliyun.com/repository/public/' }
     mavenCentral()
     maven { url 'https://jitpack.io' }
 }

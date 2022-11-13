@@ -51,4 +51,18 @@ public abstract class BaseFunc implements IFunc {
             System.out.println(msg);
         }
     }
+
+    /**
+     * 回复消息 并且施加回复钩子 如果有用户回复这个消息会触发钩子
+     *
+     * @param fromMsg 从哪来的什么消息
+     * @param msg     要回复的内容
+     */
+    public void replyMsgWithQuoteHook(SimpleMsg fromMsg, String msg, IQuoteHook hook) {
+        if (zibenbot != null) {
+            zibenbot.replyMsgWithQuoteHook(fromMsg, msg, hook);
+        } else {
+            System.out.println(msg);
+        }
+    }
 }

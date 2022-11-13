@@ -6,14 +6,18 @@ import com.aye10032.data.ffxiv.entity.*;
 import com.aye10032.data.ffxiv.service.FFXIVService;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.FuncExceptionHandler;
+import com.aye10032.functions.funcutil.IQuoteHook;
 import com.aye10032.functions.funcutil.SimpleMsg;
+import com.aye10032.utils.ffxiv.FFXIVMarketHelper;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
+import com.dazo66.command.CommanderUtils;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.aye10032.data.ffxiv.FFXIVItemType.*;
 import static com.aye10032.utils.FFXIVUtil.daysBetween;
@@ -32,6 +36,13 @@ public class FFXIVFunc extends BaseFunc {
     private FFXIVService service;
 
     private Commander<SimpleMsg> commander;
+
+    private FFXIVMarketHelper ffxivMarketHelper;
+
+    private Cache<Integer, List<String>> searchListCache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterAccess(240, TimeUnit.MINUTES)
+            .build();
 
     public FFXIVFunc(Zibenbot zibenbot, FFXIVService service) {
         super(zibenbot);
@@ -131,13 +142,59 @@ public class FFXIVFunc extends BaseFunc {
                     }
                 })
                 .pop()
+                .or(s -> CommanderUtils.multiMatch(Arrays.asList("查价", "比价", "市场"), s))
+                .next()
+                .or(s -> true)
+                .run(msg -> {
+                    String name = msg.getCommandPieces()[2];
+                    Map<String, String> nameIdMap = ffxivMarketHelper.searchItemWithName(name);
+                    if (nameIdMap.containsKey(name)) {
+                        replyMsg(msg, ffxivMarketHelper.getPrintText(name, ffxivMarketHelper.searchItemWithId(name)));
+                    } else {
+                        if (nameIdMap.size() == 0) {
+                            replyMsg(msg, "找不到这个东西，是非卖品吗?还是小笨笨打错字了¿");
+                            return;
+                        }
+                        ArrayList<String> names = new ArrayList<>(nameIdMap.keySet());
+                        ArrayList<String> ids = new ArrayList<>(nameIdMap.values());
+                        StringBuilder builder = new StringBuilder();
+                        builder.append("请问你找的是下面哪个东西呢，回复这条消息1-").append(names.size()).append("进行选择").append("\n");
+                        for (int i = 0; i < names.size(); i++) {
+                            builder.append("\t").append(i + 1).append(". ").append(names.get(i)).append("\n");
+                        }
+                        String replyMsg = builder.substring(0, builder.length() - 1);
+                        searchListCache.put(replyMsg.hashCode(), ids);
+
+                        replyMsgWithQuoteHook(msg, replyMsg, (originMsg, replyMsg1) -> {
+                            List<String> historyIds = searchListCache.getIfPresent(originMsg.hashCode());
+                            if (historyIds == null) {
+                                return;
+                            }
+
+                            Integer index;
+                            try {
+                                index = Integer.valueOf(replyMsg1.getMsg().trim());
+                            } catch (Exception e) {
+                                replyMsg(replyMsg1, "回复消息必须是序号哦~");
+                                return;
+                            }
+                            if (index <= 0 || index > historyIds.size()) {
+                                replyMsg(replyMsg1, "回复消息不可以超过序号范围哦~");
+                                return;
+                            }
+                            replyMsg(msg, ffxivMarketHelper.getPrintText(name, ffxivMarketHelper.searchItemWithId(historyIds.get(index - 1))));
+
+                        });
+                    }
+                })
+                .pop()
                 .pop()
                 .build();
     }
 
     @Override
     public void setUp() {
-
+        ffxivMarketHelper = new FFXIVMarketHelper(Zibenbot.getOkHttpClient(), "陆行鸟");
     }
 
     @Override
