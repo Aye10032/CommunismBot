@@ -840,10 +840,12 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     public void runFuncs(SimpleMsg simpleMsg) {
-        IQuoteHook hook = hookCache.getIfPresent(simpleMsg.getQuoteKey());
-        if (simpleMsg.getQuoteMsg() != null && hook != null) {
+        if (simpleMsg.getQuoteMsg() != null) {
             try {
-                hook.run(simpleMsg.getQuoteMsg(), simpleMsg);
+                IQuoteHook hook = hookCache.getIfPresent(simpleMsg.getQuoteMsg().getQuoteKey());
+                if (hook != null) {
+                    hook.run(simpleMsg.getQuoteMsg(), simpleMsg);
+                }
             } catch (Exception e) {
                 log.error("回调触发出错：" + simpleMsg.getQuoteMsg().getMsg() + "\n", simpleMsg.getMsg());
             }
