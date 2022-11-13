@@ -166,7 +166,7 @@ public class FFXIVFunc extends BaseFunc {
                         searchListCache.put(replyMsg.hashCode(), ids);
 
                         replyMsgWithQuoteHook(msg, replyMsg, (originMsg, replyMsg1) -> {
-                            List<String> historyIds = searchListCache.getIfPresent(originMsg.hashCode());
+                            List<String> historyIds = searchListCache.getIfPresent(originMsg.getQuoteKey());
                             if (historyIds == null) {
                                 return;
                             }

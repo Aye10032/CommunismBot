@@ -59,6 +59,7 @@ public class SimpleMsg implements ICommand {
         if (quoteReply != null) {
             MessageChain quoteChain = quoteReply.getSource().getOriginalMessage();
             quoteMsg = new SimpleMsg(fromGroup, quoteReply.getSource().getFromId(), quoteChain, type);
+
             log.info("引用消息不为空:{}", quoteMsg.getMsg());
         }
     }
@@ -201,6 +202,14 @@ public class SimpleMsg implements ICommand {
      */
     public static SimpleMsg getTempMsg(String testMsg){
         return new SimpleMsg(995497677L, 2375985957L, testMsg, MsgType.GROUP_MSG);
+    }
+
+    public int getQuoteKey() {
+        String key = msg;
+        if (key.length() > 70) {
+            key = key.substring(0, 70);
+        }
+        return key.hashCode();
     }
 
     @Override

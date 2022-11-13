@@ -5,10 +5,7 @@ import com.aye10032.functions.funcutil.IFunc;
 import com.aye10032.functions.funcutil.IQuoteHook;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.mapper.SubTaskMapper;
-import com.aye10032.utils.ExceptionUtils;
-import com.aye10032.utils.IMsgUpload;
-import com.aye10032.utils.SeleniumUtils;
-import com.aye10032.utils.StringUtil;
+import com.aye10032.utils.*;
 import com.aye10032.utils.timeutil.TimeTaskPool;
 import com.aye10032.utils.timeutil.TimeUtils;
 import com.aye10032.utils.weibo.WeiboReader;
@@ -843,7 +840,7 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     public void runFuncs(SimpleMsg simpleMsg) {
-        IQuoteHook hook = hookCache.getIfPresent(simpleMsg.hashCode());
+        IQuoteHook hook = hookCache.getIfPresent(simpleMsg.getQuoteKey());
         if (simpleMsg.getQuoteMsg() != null && hook != null) {
             try {
                 hook.run(simpleMsg.getQuoteMsg(), simpleMsg);
@@ -877,7 +874,11 @@ public class Zibenbot implements ApplicationContextAware {
 
 
     public void replyMsgWithQuoteHook(SimpleMsg fromMsg, String msg, IQuoteHook hook) {
-        hookCache.put(fromMsg.hashCode(), hook);
+        String key = msg;
+        if (key.length() > 70) {
+            key = key.substring(0, 70);
+        }
+        hookCache.put(key.hashCode(), hook);
         replyMsg(fromMsg, msg);
 
     }
