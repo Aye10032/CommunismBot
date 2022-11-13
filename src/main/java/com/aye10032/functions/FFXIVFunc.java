@@ -142,6 +142,7 @@ public class FFXIVFunc extends BaseFunc {
                     }
                 })
                 .pop()
+                .pop()
                 .or(s -> CommanderUtils.multiMatch(Arrays.asList("查价", "比价", "市场"), s))
                 .next()
                 .or(s -> true)
