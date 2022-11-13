@@ -14,6 +14,7 @@ import com.dazo66.command.CommanderBuilder;
 import com.dazo66.command.CommanderUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -31,6 +32,7 @@ import static com.aye10032.utils.FFXIVUtil.daysBetween;
  * @date: 2022/8/16 下午 7:17
  */
 @Service
+@Slf4j
 public class FFXIVFunc extends BaseFunc {
 
     private FFXIVService service;
@@ -173,6 +175,7 @@ public class FFXIVFunc extends BaseFunc {
 
                             Integer index;
                             try {
+                                log.info(replyMsg1.getMsg());
                                 index = Integer.valueOf(replyMsg1.getMsg().trim());
                             } catch (Exception e) {
                                 replyMsg(replyMsg1, "回复消息必须是序号哦~");
