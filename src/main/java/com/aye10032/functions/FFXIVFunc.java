@@ -149,7 +149,7 @@ public class FFXIVFunc extends BaseFunc {
                     String name = msg.getCommandPieces()[2];
                     Map<String, String> nameIdMap = ffxivMarketHelper.searchItemWithName(name);
                     if (nameIdMap.containsKey(name)) {
-                        replyMsg(msg, ffxivMarketHelper.getPrintText(name, ffxivMarketHelper.searchItemWithId(name)));
+                        replyMsg(msg, ffxivMarketHelper.getPrintText(name, ffxivMarketHelper.searchItemWithId(nameIdMap.get(name))));
                     } else {
                         if (nameIdMap.size() == 0) {
                             replyMsg(msg, "找不到这个东西，是非卖品吗?还是小笨笨打错字了¿");
