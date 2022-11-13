@@ -79,6 +79,24 @@ public class SimpleMsg implements ICommand {
         return builder.build().toString();
     }
 
+    public String getPlainMsg() {
+        MessageChainBuilder builder = new MessageChainBuilder();
+        msgChain.forEach((Message m) -> {
+            if (m instanceof At) {
+                // ignore
+            } else if (m instanceof MessageSource) {
+                // ignore
+            } else if (m instanceof QuoteReply) {
+                // ignore
+            } else if (m instanceof Image) {
+                // ignore
+            } else {
+                builder.add(m);
+            }
+        });
+        return builder.build().toString();
+    }
+
     /**
      * 获得这条消息引用的消息
      * @return

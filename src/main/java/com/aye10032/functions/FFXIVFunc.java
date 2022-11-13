@@ -180,7 +180,7 @@ public class FFXIVFunc extends BaseFunc {
 
                             Integer index;
                             try {
-                                index = Integer.valueOf(replyMsg1.getMsg().trim());
+                                index = Integer.valueOf(replyMsg1.getPlainMsg().trim());
                             } catch (Exception e) {
                                 replyMsg(replyMsg1, "回复消息必须是序号哦~");
                                 return;
