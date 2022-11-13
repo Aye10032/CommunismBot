@@ -142,7 +142,7 @@ public class FFXIVMarketHelper {
         }
         StringBuilder builder = new StringBuilder();
         builder.append("【").append(name).append("】: ").append("\n");
-        infos.forEach(
+        infos.stream().limit(20).forEach(
                 ffxivSimpleInfo -> {
                     builder.append(String.format("%s:%s * %d", ffxivSimpleInfo.getDcName(), ffxivSimpleInfo.getPrice(), ffxivSimpleInfo.getCount()));
                     builder.append("\n");

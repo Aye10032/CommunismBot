@@ -153,8 +153,13 @@ public class FFXIVFunc extends BaseFunc {
                     if (nameIdMap.containsKey(name)) {
                         replyMsg(msg, ffxivMarketHelper.getPrintText(name, ffxivMarketHelper.searchItemWithId(nameIdMap.get(name))));
                     } else {
+
                         if (nameIdMap.size() == 0) {
                             replyMsg(msg, "找不到这个东西，是非卖品吗?还是小笨笨打错字了¿");
+                            return;
+                        }
+                        if (nameIdMap.size() == 1) {
+                            replyMsg(msg, ffxivMarketHelper.getPrintText(name, ffxivMarketHelper.searchItemWithId(nameIdMap.values().stream().findFirst().get())));
                             return;
                         }
                         ArrayList<String> names = new ArrayList<>(nameIdMap.keySet());
