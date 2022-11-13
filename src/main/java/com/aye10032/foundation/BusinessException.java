@@ -2,8 +2,10 @@ package com.aye10032.foundation;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class BusinessException extends RuntimeException {
 
     private int code;

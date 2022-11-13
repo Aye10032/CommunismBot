@@ -81,6 +81,7 @@ public class FFXIVMarketHelper {
      */
     @SneakyThrows
     public Map<String, String> searchItemWithName(String keyword) {
+        log.info("开始查物品：{}", keyword);
         // https://cafemaker.wakingsands.com/search?string=%E6%A1%A6%E6%9C%A8&indexes=item&language=chs&filters=ItemSearchCategory.ID%3E=1&columns=ID,Icon,Name,LevelItem,Rarity,ItemSearchCategory.Name,ItemSearchCategory.ID,ItemKind.Name&limit=100&sort_field=LevelItem&sort_order=desc
         String url = String.format("https://cafemaker.wakingsands.com/search?string=%s&indexes=item&language=chs&columns=ID,Name&limit=100&sort_field=LevelItem&sort_order=desc", keyword);
         // String encode = URLEncoder.encode(url, StandardCharsets.UTF_8.name());
