@@ -1,6 +1,7 @@
 package com.aye10032.functions.funcutil;
 
 import com.dazo66.command.interfaces.ICommand;
+import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.GroupTempMessageEvent;
@@ -13,6 +14,7 @@ import net.mamoe.mirai.message.data.*;
  *
  * @author Dazo66
  */
+@Slf4j
 public class SimpleMsg implements ICommand {
 
     private long fromGroup = -1;
@@ -55,6 +57,7 @@ public class SimpleMsg implements ICommand {
         this.event = event;
         QuoteReply quoteReply = event.getMessage().get(QuoteReply.Key);
         if (quoteReply != null) {
+            log.info("引用消息不为空");
             MessageChain quoteChain = quoteReply.getSource().getOriginalMessage();
             quoteMsg = new SimpleMsg(fromGroup, quoteReply.getSource().getFromId(), quoteChain, type);
         }

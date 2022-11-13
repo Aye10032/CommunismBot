@@ -47,8 +47,12 @@ public class FFXIVMarketHelper {
             if (execute.code() == 200) {
                 Gson gson = new Gson();
                 String jsonString = IOUtils.toString(execute.body().byteStream(), StandardCharsets.UTF_8);
+                log.info(jsonString);
                 UniversalisResponse universalisResponse = gson.fromJson(jsonString, UniversalisResponse.class);
                 Map<String, FFXIVSimpleInfo> map = new LinkedHashMap<>();
+                if (universalisResponse.getListings() == null) {
+                    return Collections.emptyList();
+                }
                 for (TradeInfo listing : universalisResponse.getListings()) {
                     String key = getTradeInfoKey(listing);
                     if (map.containsKey(key)) {
