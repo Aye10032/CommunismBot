@@ -145,6 +145,7 @@ public class FFXIVMarketHelper {
         infos.stream().limit(20).forEach(
                 ffxivSimpleInfo -> {
                     builder.append(String.format("%s:%s * %d", ffxivSimpleInfo.getDcName(), ffxivSimpleInfo.getPrice(), ffxivSimpleInfo.getCount()));
+                    builder.append(ffxivSimpleInfo.isHq() ? "HQ" : "NQ");
                     builder.append("\n");
                 }
         );
