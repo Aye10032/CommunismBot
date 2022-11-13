@@ -37,7 +37,7 @@ public class FFXIVMarketHelper {
     public Collection<FFXIVSimpleInfo> searchItemWithId(String itemId) {
 
         Request request = new Request.Builder()
-                .url(String.format("https://universalis.app/api/v2/%s/%s?entriesWithin=50", worldDcRegion, itemId))
+                .url(String.format("https://universalis.app/api/v2/%s/%s?entriesWithin=10", worldDcRegion, itemId))
                 .method("GET", null)
                 .header("Referer", "https://docs.universalis.app/")
                 .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
@@ -142,7 +142,7 @@ public class FFXIVMarketHelper {
         builder.append("【").append(name).append("】: ").append("\n");
         infos.forEach(
                 ffxivSimpleInfo -> {
-                    builder.append(String.format("%s:%s * %d%n", ffxivSimpleInfo.getDcName(), ffxivSimpleInfo.getPrice(), ffxivSimpleInfo.getCount()));
+                    builder.append(String.format("%s:%s * %d", ffxivSimpleInfo.getDcName(), ffxivSimpleInfo.getPrice(), ffxivSimpleInfo.getCount()));
                     builder.append("\n");
                 }
         );

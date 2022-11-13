@@ -57,9 +57,9 @@ public class SimpleMsg implements ICommand {
         this.event = event;
         QuoteReply quoteReply = event.getMessage().get(QuoteReply.Key);
         if (quoteReply != null) {
-            log.info("引用消息不为空");
             MessageChain quoteChain = quoteReply.getSource().getOriginalMessage();
             quoteMsg = new SimpleMsg(fromGroup, quoteReply.getSource().getFromId(), quoteChain, type);
+            log.info("引用消息不为空:{}", quoteMsg.getMsg());
         }
     }
 
