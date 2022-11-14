@@ -2,16 +2,17 @@ package com.aye10032;
 
 import com.aye10032.functions.FuncEnableFunc;
 import com.aye10032.functions.funcutil.IFunc;
+import com.aye10032.functions.funcutil.IQuoteHook;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.mapper.SubTaskMapper;
-import com.aye10032.utils.ExceptionUtils;
-import com.aye10032.utils.IMsgUpload;
-import com.aye10032.utils.SeleniumUtils;
-import com.aye10032.utils.StringUtil;
+import com.aye10032.utils.*;
 import com.aye10032.utils.timeutil.TimeTaskPool;
 import com.aye10032.utils.timeutil.TimeUtils;
 import com.aye10032.utils.weibo.WeiboReader;
 import com.dazo66.config.BotConfig;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Streams;
 import io.github.mzdluo123.silk4j.AudioUtils;
 import kotlin.Unit;
@@ -251,7 +252,7 @@ public class Zibenbot implements ApplicationContextAware {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return proxy;
     }
 
     public static void logInfoStatic(String info) {
@@ -839,6 +840,16 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     public void runFuncs(SimpleMsg simpleMsg) {
+        if (simpleMsg.getQuoteMsg() != null) {
+            try {
+                IQuoteHook hook = hookCache.getIfPresent(simpleMsg.getQuoteMsg().getQuoteKey());
+                if (hook != null) {
+                    hook.run(simpleMsg.getQuoteMsg(), simpleMsg);
+                }
+            } catch (Exception e) {
+                log.error("回调触发出错：" + simpleMsg.getQuoteMsg().getMsg() + "\n", simpleMsg.getMsg());
+            }
+        }
         FuncEnableFunc funcEnableFunc = applicationContext.getBean(FuncEnableFunc.class);
         for (IFunc func : getRegisterFunc().values()) {
             if (funcEnableFunc.isEnable(simpleMsg.getFromGroup(), func)) {
@@ -856,6 +867,18 @@ public class Zibenbot implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    private Cache<Integer, IQuoteHook> hookCache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterAccess(240, TimeUnit.MINUTES)
+            .build();
+
+
+    public void replyMsgWithQuoteHook(SimpleMsg fromMsg, String msg, IQuoteHook hook) {
+        hookCache.put(SimpleMsg.getQuoteKey(msg), hook);
+        replyMsg(fromMsg, msg);
+
     }
 
 /*    public int teamspeakMsg(long fromGroup, long fromClient, String msg) {

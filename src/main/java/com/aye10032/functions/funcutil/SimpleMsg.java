@@ -1,6 +1,7 @@
 package com.aye10032.functions.funcutil;
 
 import com.dazo66.command.interfaces.ICommand;
+import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.GroupTempMessageEvent;
@@ -13,6 +14,7 @@ import net.mamoe.mirai.message.data.*;
  *
  * @author Dazo66
  */
+@Slf4j
 public class SimpleMsg implements ICommand {
 
     private long fromGroup = -1;
@@ -24,10 +26,19 @@ public class SimpleMsg implements ICommand {
 
     private MessageChain msgChain;
 
+    private SimpleMsg quoteMsg;
+
     public SimpleMsg(long fromGroup, long fromClient, String msg, MsgType type) {
         this.fromGroup = fromGroup;
         this.fromClient = fromClient;
         this.msg = msg;
+        this.type = type;
+    }
+
+    public SimpleMsg(long fromGroup, long fromClient, MessageChain chain, MsgType type) {
+        this.fromGroup = fromGroup;
+        this.fromClient = fromClient;
+        this.msg = getMsgFromEvent(chain);
         this.type = type;
     }
 
@@ -41,24 +52,57 @@ public class SimpleMsg implements ICommand {
             type = MsgType.PRIVATE_MSG;
         }
         fromClient = event.getSender().getId();
-        msg = getMsgFromEvent(event);
+        QuoteReply quoteReply = event.getMessage().get(QuoteReply.Key);
+        if (quoteReply != null) {
+            MessageChain quoteChain = quoteReply.getSource().getOriginalMessage();
+            quoteMsg = new SimpleMsg(fromGroup, quoteReply.getSource().getFromId(), quoteChain, type);
+            log.info("引用消息不为空:{}", quoteMsg.getMsg());
+        }
         msgChain = event.getMessage();
+        msg = getMsgFromEvent(msgChain);
         this.event = event;
     }
 
-    private String getMsgFromEvent(MessageEvent event) {
-        MessageChain chain = event.getMessage();
+    private String getMsgFromEvent(MessageChain chain) {
         MessageChainBuilder builder = new MessageChainBuilder();
         chain.forEach((Message m) -> {
             if (m instanceof At) {
                 builder.add(m);
             } else if (m instanceof MessageSource) {
                 source = (MessageSource) m;
+            } else if (m instanceof QuoteReply) {
+                // ignore
             } else {
                 builder.add(m);
             }
         });
         return builder.build().toString();
+    }
+
+    public String getPlainMsg() {
+        MessageChainBuilder builder = new MessageChainBuilder();
+        msgChain.forEach((Message m) -> {
+            if (m instanceof At) {
+                // ignore
+            } else if (m instanceof MessageSource) {
+                // ignore
+            } else if (m instanceof QuoteReply) {
+                // ignore
+            } else if (m instanceof Image) {
+                // ignore
+            } else {
+                builder.add(m);
+            }
+        });
+        return builder.build().toString();
+    }
+
+    /**
+     * 获得这条消息引用的消息
+     * @return
+     */
+    public SimpleMsg getQuoteMsg() {
+        return quoteMsg;
     }
 
     /**
@@ -177,5 +221,27 @@ public class SimpleMsg implements ICommand {
      */
     public static SimpleMsg getTempMsg(String testMsg){
         return new SimpleMsg(995497677L, 2375985957L, testMsg, MsgType.GROUP_MSG);
+    }
+
+    public int getQuoteKey() {
+        String key = msg;
+        if (key.length() > 70) {
+            key = key.substring(0, 70);
+        }
+        return key.hashCode();
+    }
+
+
+    public static int getQuoteKey(String msg) {
+        String key = msg;
+        if (key.length() > 70) {
+            key = key.substring(0, 70);
+        }
+        return key.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return getMsg().hashCode();
     }
 }

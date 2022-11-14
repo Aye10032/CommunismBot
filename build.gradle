@@ -24,7 +24,7 @@ plugins {
 
 compileJava {
     sourceCompatibility = '1.8'
-    targetCompatibility = '11'
+    targetCompatibility = '8'
 }
 
 tasks.withType(JavaCompile) {
@@ -33,7 +33,7 @@ tasks.withType(JavaCompile) {
 
 ext {
     springVersion = '2.6.6'
-    miraiVersion = '2.13.0'
+    miraiVersion = '2.13.0-RC2'
     ktVersion = '1.6.21'
 }
 
@@ -48,7 +48,7 @@ group 'com.aye10032'
 version '2.1.0'
 
 repositories {
-
+    maven { url 'https://maven.aliyun.com/repository/public/' }
     mavenCentral()
     maven { url 'https://jitpack.io' }
 }
@@ -124,10 +124,10 @@ tasks.withType(JavaCompile) {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "8"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "8"
 }
 
 test {
