@@ -24,7 +24,7 @@ plugins {
 
 compileJava {
     sourceCompatibility = '1.8'
-    targetCompatibility = '8'
+    targetCompatibility = '11'
 }
 
 tasks.withType(JavaCompile) {
@@ -33,7 +33,7 @@ tasks.withType(JavaCompile) {
 
 ext {
     springVersion = '2.6.6'
-    miraiVersion = '2.13.0-RC2'
+    miraiVersion = '2.13.0'
     ktVersion = '1.6.21'
 }
 
@@ -124,10 +124,10 @@ tasks.withType(JavaCompile) {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "8"
+    kotlinOptions.jvmTarget = "11"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 test {
