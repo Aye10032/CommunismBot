@@ -24,7 +24,7 @@ plugins {
 
 compileJava {
     sourceCompatibility = '1.8'
-    targetCompatibility = '8'
+    targetCompatibility = '11'
 }
 
 tasks.withType(JavaCompile) {
@@ -124,10 +124,10 @@ tasks.withType(JavaCompile) {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "8"
+    kotlinOptions.jvmTarget = "11"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 test {
