@@ -33,7 +33,7 @@ tasks.withType(JavaCompile) {
 
 ext {
     springVersion = '2.6.6'
-    miraiVersion = '2.13.0-RC2'
+    miraiVersion = '2.13.2'
     ktVersion = '1.6.21'
 }
 
@@ -56,13 +56,14 @@ repositories {
 dependencies {
     implementation group: 'junit', name: 'junit', version: '4.12'
 
-    implementation(group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion) {
-        exclude(group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-core-jvm')
-        exclude(group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-jdk8')
-    }
+    implementation group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion
+//    implementation(group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion) {
+//        exclude(group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-core-jvm')
+//        exclude(group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-jdk8')
+//    }
 
-    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core-jvm', version: '1.6.4'
-    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-jdk8', version: '1.6.4'
+//    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core-jvm', version: '1.6.4'
+//    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-jdk8', version: '1.6.4'
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: rootProject.ext.springVersion
