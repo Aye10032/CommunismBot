@@ -17,7 +17,7 @@ buildscript {
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.7.10'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.21'
+//    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.21'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'org.springframework.boot' version '2.6.6'
 }
@@ -49,7 +49,7 @@ version '2.1.0'
 
 repositories {
     mavenLocal()
-//    maven { url 'https://maven.aliyun.com/repository/public/' }
+    maven { url 'https://maven.aliyun.com/repository/public/' }
     maven { url 'https://jitpack.io' }
     mavenCentral()
 }
@@ -57,14 +57,14 @@ repositories {
 dependencies {
     implementation group: 'junit', name: 'junit', version: '4.12'
 
-//    implementation group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion
-    implementation(group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion) {
-//        exclude(group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-core-jvm')
-//        exclude(group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-jdk8')
-        exclude(group: 'net.mamoe', module: 'mirai-core-api-jvm')
-    }
-
-    implementation group: 'net.mamoe', name: 'mirai-core-api-jvm', version: rootProject.ext.miraiVersion
+    implementation group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion
+//    implementation(group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion) {
+////        exclude(group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-core-jvm')
+////        exclude(group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-jdk8')
+//        exclude(group: 'net.mamoe', module: 'mirai-core-api-jvm')
+//    }
+//
+//    implementation group: 'net.mamoe', name: 'mirai-core-api-jvm', version: rootProject.ext.miraiVersion
 
 //    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core-jvm', version: '1.6.4'
 //    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-jdk8', version: '1.6.4'
@@ -104,7 +104,7 @@ dependencies {
     implementation group: 'com.rometools', name: 'rome', version: '1.18.0'
 
     //JavaCV相关
-    implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.7'
+    implementation group: 'org.bytedeco', name: 'javacv-linux', version: '1.5.7'
 
     implementation group: 'com.github.Aye10032', name: 'rtroapiutil', version: 'v1.2'
     implementation group: 'com.github.Aye10032', name: 'GenshinUtil', version: 'v1.0.0'
