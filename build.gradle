@@ -17,7 +17,7 @@ buildscript {
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.7.10'
-//    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.21'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.7.10'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'org.springframework.boot' version '2.6.6'
 }
@@ -34,7 +34,7 @@ tasks.withType(JavaCompile) {
 ext {
     springVersion = '2.6.6'
     miraiVersion = '2.13.2'
-    ktVersion = '1.6.21'
+    ktVersion = '1.7.10'
 }
 
 apply plugin: "ua.eshepelyuk.ManifestClasspath"
@@ -104,7 +104,7 @@ dependencies {
     implementation group: 'com.rometools', name: 'rome', version: '1.18.0'
 
     //JavaCV相关
-    implementation group: 'org.bytedeco', name: 'javacv-linux', version: '1.5.7'
+    implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.7'
 
     implementation group: 'com.github.Aye10032', name: 'rtroapiutil', version: 'v1.2'
     implementation group: 'com.github.Aye10032', name: 'GenshinUtil', version: 'v1.0.0'
