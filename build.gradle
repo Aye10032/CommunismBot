@@ -48,9 +48,10 @@ group 'com.aye10032'
 version '2.1.0'
 
 repositories {
-    mavenCentral()
+    mavenLocal()
     maven { url 'https://maven.aliyun.com/repository/public/' }
     maven { url 'https://jitpack.io' }
+    mavenCentral()
 }
 
 dependencies {
