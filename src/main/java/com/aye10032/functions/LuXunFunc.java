@@ -5,8 +5,6 @@ import com.aye10032.Zibenbot;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.dazo66.command.Commander;
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Size;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -21,9 +19,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
-import static org.bytedeco.opencv.global.opencv_core.vconcat;
-import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
-import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 @Service
 public class LuXunFunc extends BaseFunc {
@@ -46,7 +41,7 @@ public class LuXunFunc extends BaseFunc {
 
     @Override
     public void run(SimpleMsg simpleMsg) {
-        String[] msgs = simpleMsg.getMsg().trim().split(" ");
+        /*String[] msgs = simpleMsg.getMsg().trim().split(" ");
         if (msgs.length == 0) {
             return;
         }
@@ -73,10 +68,10 @@ public class LuXunFunc extends BaseFunc {
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
     }
 
-    public void addText(int flag, String text, File output) {
+    /*public void addText(int flag, String text, File output) {
         Mat src = imread(ImgMap.get(flag));
 
         float height = src.rows();
@@ -195,5 +190,5 @@ public class LuXunFunc extends BaseFunc {
         g.dispose();
 
         ImageIO.write(image, "png", outFile);
-    }
+    }*/
 }
