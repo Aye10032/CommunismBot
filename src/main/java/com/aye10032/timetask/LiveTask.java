@@ -27,7 +27,7 @@ public class LiveTask extends SubscribableBase {
         if (recivers != null) {
             for (Reciver reciver : recivers) {
                 LiveInfo liveInfo = new LiveInfo(args[0]);
-                Zibenbot.logDebugStatic("直播间"+args[0]+"检查结果："+liveInfo.Is_living());
+                Zibenbot.logDebugStatic("直播间" + args[0] + "检查结果：" + liveInfo.Is_living());
                 if (liveInfo.HasLive() && liveInfo.Is_living()) {
                     long l = now.getTime() - liveInfo.getLive_date().getTime();
                     long min = ((l / (60 * 1000)));
@@ -35,12 +35,13 @@ public class LiveTask extends SubscribableBase {
                         ImgUtils.downloadImg(liveInfo.getLive_background_url(), args[0], getBot().appDirectory);
 
                         msg_builder.append(liveInfo.getNickName(liveInfo.getUid()))
-                            .append("在").append(min).append("分钟前开始了直播：")
-                            .append(liveInfo.getLive_title())
-                            .append(getBot().getImg(new File(getBot().appDirectory + "/image/" + args[0] + ".jpg")))
-                            .append("\n").append(liveInfo.getLive_url());
+                                .append("在").append(min).append("分钟前开始了直播：")
+                                .append(liveInfo.getLive_title())
+                                .append(getBot().getImg(new File(getBot().appDirectory + "/image/" + args[0] + ".jpg")))
+                                .append("\n").append(liveInfo.getLive_url());
                         getBot().replyMsg(reciver.getSender(), msg_builder.toString());
                     }
+                    Zibenbot.logDebugStatic("直播间" + args[0] + "直播开始于：" + min + "分钟之前");
                 }
             }
         }
