@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 public class LiveInfo {
 
@@ -42,14 +43,12 @@ public class LiveInfo {
 
             Response response = client.newCall(request).execute();
             if (response.body() != null) {
-                body = new String(response.body().bytes());
+                body = new String(Objects.requireNonNull(response.body()).bytes());
             }
 
-            JsonParser jsonParser = new JsonParser();
-            JsonElement element = jsonParser.parse(body);
+            JsonElement element = JsonParser.parseString(Objects.requireNonNull(body));
 
             if (element.isJsonObject()) {
-//                System.out.println(element);
                 JsonObject jsonObject = element.getAsJsonObject();
 
                 code = jsonObject.get("code").getAsInt();
@@ -126,11 +125,10 @@ public class LiveInfo {
 
             Response response = client.newCall(request).execute();
             if (response.body() != null) {
-                body = new String(response.body().bytes());
+                body = new String(Objects.requireNonNull(response.body()).bytes());
             }
 
-            JsonParser jsonParser = new JsonParser();
-            name = jsonParser.parse(body).getAsJsonObject().get("data").getAsJsonObject().get("name").getAsString();
+            name = JsonParser.parseString(body).getAsJsonObject().get("data").getAsJsonObject().get("name").getAsString();
         } catch (IOException e) {
             e.printStackTrace();
         }
