@@ -31,7 +31,7 @@ public class LiveTask extends SubscribableBase {
                 if (liveInfo.HasLive() && liveInfo.Is_living()) {
                     long l = now.getTime() - liveInfo.getLive_date().getTime();
                     long min = ((l / (60 * 1000)));
-                    if (min < 5) {
+                    if (min <= 5) {
                         ImgUtils.downloadImg(liveInfo.getLive_background_url(), args[0], getBot().appDirectory);
 
                         msg_builder.append(liveInfo.getNickName(liveInfo.getUid()))
