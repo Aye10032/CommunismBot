@@ -84,8 +84,8 @@ public class Zibenbot implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     public static OkHttpClient getOkHttpClient() {
-        return client.newBuilder().callTimeout(30, TimeUnit.SECONDS)
-                .proxy(Zibenbot.getProxy()).build();
+        return client.newBuilder().callTimeout(30, TimeUnit.SECONDS).build();
+//                .proxy(Zibenbot.getProxy()).build();
     }
 
     {

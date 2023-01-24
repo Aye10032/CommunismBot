@@ -104,8 +104,7 @@ public class LiveInfo {
     public Date getLive_date() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            Date date = sdf.parse(getLive_time());
-            this.live_date = date;
+            this.live_date = sdf.parse(getLive_time());
         } catch (ParseException e) {
             e.printStackTrace();
         }
