@@ -113,6 +113,7 @@ public class LiveInfo {
 
     public String getNickName(int uid) {
         String url = this.userapi + uid + "&jsonp=jsonp";
+        System.out.println(url);
         String body = "";
         String name = "";
         try {

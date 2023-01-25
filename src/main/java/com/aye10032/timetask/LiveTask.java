@@ -34,6 +34,7 @@ public class LiveTask extends SubscribableBase {
                     if (min <= 5) {
                         ImgUtils.downloadImg(liveInfo.getLive_background_url(), args[0], getBot().appDirectory);
 
+                        Zibenbot.logDebugStatic("尝试获取" + liveInfo.getUid() + "昵称");
                         msg_builder.append(liveInfo.getNickName(liveInfo.getUid()))
                                 .append("在").append(min).append("分钟前开始了直播：")
                                 .append(liveInfo.getLive_title())
