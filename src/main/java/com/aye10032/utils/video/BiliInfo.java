@@ -86,11 +86,9 @@ public class BiliInfo {
                 body = new String(response.body().bytes());
             }
 
-            JsonParser jsonParser = new JsonParser();
-            JsonElement element = jsonParser.parse(body);
+            JsonElement element = JsonParser.parseString(body);
 
             if (element.isJsonObject()) {
-                System.out.println(element);
                 JsonObject jsonObject = element.getAsJsonObject();
 
                 code = jsonObject.get("code").getAsInt();
