@@ -6,6 +6,7 @@ import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.utils.video.LiveInfo;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -22,25 +23,25 @@ public class LiveTask extends SubscribableBase {
 
     @Override
     public void run(List<Reciver> recivers, String[] args) {
-        StringBuilder msg_builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         Date now = new Date();
         if (recivers != null) {
             for (Reciver reciver : recivers) {
                 LiveInfo liveInfo = new LiveInfo(args[0]);
                 Zibenbot.logDebugStatic("直播间" + args[0] + "检查结果：" + liveInfo.Is_living());
                 if (liveInfo.HasLive() && liveInfo.Is_living()) {
-                    long l = now.getTime() - liveInfo.getLive_date().getTime();
+                    long l = now.getTime() - liveInfo.getLiveDate().getTime();
                     long min = ((l / (60 * 1000)));
                     if (min <= 5) {
-                        ImgUtils.downloadImg(liveInfo.getLive_background_url(), args[0], getBot().appDirectory);
+                        ImgUtils.downloadImg(liveInfo.getLiveBackgroundUrl(), args[0], getBot().appDirectory);
 
                         Zibenbot.logDebugStatic("尝试获取" + liveInfo.getUid() + "昵称");
-                        msg_builder.append(liveInfo.getNickName(liveInfo.getUid()))
+                        builder.append(liveInfo.getNickName(liveInfo.getUid()))
                                 .append("在").append(min).append("分钟前开始了直播：")
-                                .append(liveInfo.getLive_title())
+                                .append(liveInfo.getLiveTitle())
                                 .append(getBot().getImg(new File(getBot().appDirectory + "/image/" + args[0] + ".jpg")))
-                                .append("\n").append(liveInfo.getLive_url());
-                        getBot().replyMsg(reciver.getSender(), msg_builder.toString());
+                                .append("\n").append(liveInfo.getLiveUrl());
+                        getBot().replyMsg(reciver.getSender(), builder.toString());
                     }
                     Zibenbot.logDebugStatic("直播间" + args[0] + "直播开始于：" + min + "分钟之前");
                 }

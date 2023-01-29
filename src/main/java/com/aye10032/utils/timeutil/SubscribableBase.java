@@ -6,6 +6,7 @@ import com.aye10032.entity.SubTaskExample;
 import com.aye10032.functions.funcutil.MsgType;
 import com.aye10032.mapper.SubTaskMapper;
 import com.aye10032.utils.ExceptionUtils;
+import com.aye10032.utils.FutureHelper;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,7 +32,7 @@ public abstract class SubscribableBase extends QuartzJobBean {
 
     private SubTaskMapper subTaskMapper;
     private Zibenbot bot;
-    private static SimpleTimeLimiter timeLimiter = SimpleTimeLimiter.create(new ThreadPoolExecutor(5, 5, 100, TimeUnit.MINUTES, new ArrayBlockingQueue<>(1000)));
+    private static SimpleTimeLimiter timeLimiter = SimpleTimeLimiter.create(new ThreadPoolExecutor(10, 200, 10, TimeUnit.MINUTES, new ArrayBlockingQueue<>(10)));
 
     @Autowired
     public void setBot(Zibenbot bot) {
@@ -74,16 +75,20 @@ public abstract class SubscribableBase extends QuartzJobBean {
         Map<String, List<SubTask>> collect = subTasks.stream().collect(Collectors.groupingBy(SubTask::getArgs));
         Gson gson = new Gson();
         for (Map.Entry<String, List<SubTask>> entry : collect.entrySet()) {
-            String[] args = gson.fromJson(entry.getKey(), String[].class);
-            List<Reciver> recivers = entry.getValue().stream().map(subTask -> new Reciver(MsgType.getMsgTypeById(subTask.getReciverType()), subTask.getReciverId())).collect(Collectors.toList());
-            try {
-                getBot().logInfo("触发定时任务 " + getName() + " " + entry.getKey());
-                timeLimiter.runWithTimeout(() -> run(recivers, args), 10, TimeUnit.MINUTES);
-            } catch (TimeoutException e) {
-                getBot().logError("运行订阅器超时:" + getName() + " args: " + entry.getKey());
-            } catch (Throwable e) {
-                getBot().logError("运行订阅器出现异常:" + getName() + " args: " + entry.getKey() + " throw: " + ExceptionUtils.printStack(e));
-            }
+            // 异步处理
+            FutureHelper.asyncRun(() -> {
+                String[] args = gson.fromJson(entry.getKey(), String[].class);
+                List<Reciver> recivers = entry.getValue().stream().map(subTask -> new Reciver(MsgType.getMsgTypeById(subTask.getReciverType()), subTask.getReciverId())).collect(Collectors.toList());
+                try {
+                    getBot().logInfo("触发定时任务 " + getName() + " " + entry.getKey());
+                    timeLimiter.runWithTimeout(() -> run(recivers, args), 10, TimeUnit.MINUTES);
+                } catch (TimeoutException e) {
+                    getBot().logError("运行订阅器超时:" + getName() + " args: " + entry.getKey());
+                } catch (Throwable e) {
+                    getBot().logError("运行订阅器出现异常:" + getName() + " args: " + entry.getKey() + " throw: " + ExceptionUtils.printStack(e));
+                }
+            });
+
         }
     }
 

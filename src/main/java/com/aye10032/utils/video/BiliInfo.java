@@ -2,40 +2,34 @@ package com.aye10032.utils.video;
 
 import com.aye10032.Zibenbot;
 import com.aye10032.utils.ImgUtils;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.madgag.gif.fmsware.AnimatedGifEncoder;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
+@Getter
 public class BiliInfo {
 
-    protected String apiURL1 = "https://api.bilibili.com/x/web-interface/view?";
-    protected String apiURL2 = "&type=jsonp";
+    protected static final String apiURL1 = "https://api.bilibili.com/x/web-interface/view?";
+    protected static final String apiURL2 = "&type=jsonp";
     protected String pvideoapi = "https://api.bilibili.com/pvideo?aid=";
     protected String apiURL;
-    private String appDirectory = "";
-    private String pvideodir;
 
     private String title = "";
     private String description = "";
     private String imgurl = "";
-    private String videourl_av = "https://www.bilibili.com/video/av";
-    private String videourl_bv = "https://www.bilibili.com/video/BV";
-    private String videourl;
+    private String videoUrlAv = "https://www.bilibili.com/video/av";
+    private String videoUrlBv = "https://www.bilibili.com/video/BV";
+    private String videoUrl;
 
     private String headurl = "";
     private String up = "";
@@ -50,26 +44,19 @@ public class BiliInfo {
     private String aid = "";
     private String bvid = "";
     private int duration = 0;
-    private P_Video p_video;
-    private int pv_time = 360;
-    public boolean hasPvdeo = true;
-    public boolean hasVideo = true;
-    public int code = 0;
+    private boolean hasVideo = true;
+    private int code = 0;
+    private String faceImageFilePath = null;
+    private String upImageFilePath = null;
 
 
     public BiliInfo(String avn, String appDirectory) {
         if (avn.startsWith("a") || avn.startsWith("A")) {
-            this.videourl = videourl_av + avn.substring(2);
+            this.videoUrl = videoUrlAv + avn.substring(2);
             this.apiURL = apiURL1 + "aid=" + avn.substring(2) + apiURL2;
         } else {
-            this.videourl = videourl_bv + avn.substring(2);
+            this.videoUrl = videoUrlBv + avn.substring(2);
             this.apiURL = apiURL1 + "bvid=BV" + avn.substring(2) + apiURL2;
-        }
-        this.appDirectory = appDirectory;
-        if (appDirectory == null || appDirectory.isEmpty()) {
-            pvideodir = "image/pvideo.gif";
-        } else {
-            pvideodir = appDirectory + "/image/pvideo.gif";
         }
 
         String body = null;
@@ -93,7 +80,6 @@ public class BiliInfo {
 
                 code = jsonObject.get("code").getAsInt();
                 if (code != 0) {
-                    hasPvdeo = false;
                     hasVideo = false;
                     return;
                 }
@@ -119,40 +105,26 @@ public class BiliInfo {
                 this.aid = dataJson.get("aid").getAsString();
                 this.bvid = dataJson.get("bvid").getAsString();
 
-                Request request1 = new Request.Builder()
-                        .url(pvideoapi + this.aid)
-                        .method("GET", null)
-                        .build();
+            }
 
-                Response response1 = client.newCall(request1).execute();
-                if (response1.body() != null) {
-                    body = new String(response1.body().bytes());
-                }
-                Gson gson = new Gson();
-                this.p_video = gson.fromJson(body, P_Video.class);
-                this.hasPvdeo = p_video.code == 0 ? true : false;
+            File faceImageFile = ImgUtils.downloadImg(headurl, avn + "_head", appDirectory, 200, 200);
+            if (faceImageFile != null) {
+                faceImageFilePath = faceImageFile.getPath();
             }
-            if (hasPvdeo) {
-                try {
-                    creatPvideo_6min();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    hasPvdeo = false;
-                }
+            File upImageFile = ImgUtils.downloadImg(imgurl, avn + "_img", appDirectory);
+            if (upImageFile != null) {
+                upImageFilePath = upImageFile.getPath();
             }
-            ImgUtils.downloadImg(headurl, "head", appDirectory, 200, 200);
-            ImgUtils.downloadImg(imgurl, "img", appDirectory);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("查询b站视频信息出错：", e);
+            throw new RuntimeException(e);
         }
     }
 
 
-    private void creatPvideo_6min() {
-        for (String url : p_video.data.image) {
-
-        }
+/*
+    private void creatPvideo6Min() {
         List<BufferedImage> images = new ArrayList<>();
 
         int count = 0;
@@ -202,17 +174,21 @@ public class BiliInfo {
                 gc.setColor(Color.WHITE);
                 gc.drawImage(image1, 0, 0, null);
                 encoder.addFrame(zoomImage);
-                /*try {
+                */
+/*try {
                     ImageIO.write(img, "JPG", new File("res/test/" + Integer.toString(i.getAndIncrement()) + ".jpg"));
                 } catch (IOException e) {
                     e.printStackTrace();
-                }*/
+                }*//*
+
             });
 
             encoder.finish();
         }
     }
+*/
 
+/*
     private void creatPvideo_all() {
         List<BufferedImage> raw_images = new ArrayList<>();
         for (String url : p_video.data.image) {
@@ -291,93 +267,26 @@ public class BiliInfo {
                 gc.setColor(Color.WHITE);
                 gc.drawImage(image1, 0, 0, null);
                 encoder.addFrame(zoomImage);
-                /*try {
+                */
+/*try {
                     ImageIO.write(img, "JPG", new File("res/test/" + Integer.toString(i.getAndIncrement()) + ".jpg"));
                 } catch (IOException e) {
                     e.printStackTrace();
-                }*/
+                }*//*
+
             });
 
             encoder.finish();
         }
     }
+*/
 
     static int[] toIntArray(List<Integer> list) {
         int[] ret = new int[list.size()];
-        for (int i = 0; i < ret.length; i++)
+        for (int i = 0; i < ret.length; i++) {
             ret[i] = list.get(i);
-        return ret;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getImgurl() {
-        return this.imgurl;
-    }
-
-    public String getVideourl() {
-        return this.videourl;
-    }
-
-    public int getLike() {
-        return like;
-    }
-
-    public int getCoin() {
-        return coin;
-    }
-
-    public int getFavorite() {
-        return favorite;
-    }
-
-    public int getView() {
-        return view;
-    }
-
-    public int getDanmaku() {
-        return danmaku;
-    }
-
-    public int getReply() {
-        return reply;
-    }
-
-    public String getUp() {
-        return up;
-    }
-
-    public String getHeadurl() {
-        return headurl;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public class P_Video {
-        int code = 0;
-        String message = "0";
-        int ttl = 1;
-        P_Video.data data;
-
-        class data {
-            String pvdata = null;
-            int img_x_len;
-            int img_y_len;
-            int img_x_size;
-            int img_y_size;
-            String[] image;
-            int[] index;
-
         }
-
+        return ret;
     }
 
 }

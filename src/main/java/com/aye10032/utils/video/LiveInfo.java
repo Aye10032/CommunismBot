@@ -4,6 +4,7 @@ import com.aye10032.Zibenbot;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -14,24 +15,25 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+@Slf4j
 public class LiveInfo {
 
     protected String liveapi = "https://api.live.bilibili.com/room/v1/Room/get_info?id=";
     protected String userapi = "https://api.bilibili.com/x/space/acc/info?mid=";
 
     private int code = 0;
-    private String live_url = "https://live.bilibili.com/";
-    private String live_title = "";
-    private String live_background_url = "";
+    private String liveUrl = "https://live.bilibili.com/";
+    private String liveTitle = "";
+    private String liveBackgroundUrl = "";
     private int uid = 0;
-    private boolean is_living = false;
-    private String live_time = "";
-    private Date live_date = null;
+    private boolean isLiving = false;
+    private String liveTime = "";
+    private Date liveDate = null;
 
     private boolean hasLive = true;
 
-    public LiveInfo(String live_id) {
-        String url = liveapi + live_id;
+    public LiveInfo(String liveId) {
+        String url = liveapi + liveId;
 
         String body = null;
         try {
@@ -59,17 +61,17 @@ public class LiveInfo {
 
                 JsonObject dataJson = jsonObject.get("data").getAsJsonObject();
                 this.uid = dataJson.get("uid").getAsInt();
-                this.live_url += dataJson.get("room_id").getAsString();
-                this.live_title = dataJson.get("title").getAsString();
-                this.live_background_url = dataJson.get("user_cover").getAsString();
-                this.live_time = dataJson.get("live_time").getAsString();
+                this.liveUrl += dataJson.get("room_id").getAsString();
+                this.liveTitle = dataJson.get("title").getAsString();
+                this.liveBackgroundUrl = dataJson.get("user_cover").getAsString();
+                this.liveTime = dataJson.get("live_time").getAsString();
 
                 if (dataJson.get("live_status").getAsInt() == 1) {
-                    this.is_living = true;
+                    this.isLiving = true;
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("检查直播间信息失败：", e);
         }
     }
 
@@ -78,37 +80,37 @@ public class LiveInfo {
     }
 
     public boolean Is_living() {
-        return is_living;
+        return isLiving;
     }
 
     public int getUid() {
         return uid;
     }
 
-    public String getLive_url() {
-        return live_url;
+    public String getLiveUrl() {
+        return liveUrl;
     }
 
-    public String getLive_title() {
-        return live_title;
+    public String getLiveTitle() {
+        return liveTitle;
     }
 
-    public String getLive_background_url() {
-        return live_background_url;
+    public String getLiveBackgroundUrl() {
+        return liveBackgroundUrl;
     }
 
-    public String getLive_time() {
-        return live_time;
+    public String getLiveTime() {
+        return liveTime;
     }
 
-    public Date getLive_date() {
+    public Date getLiveDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            this.live_date = sdf.parse(getLive_time());
+            this.liveDate = sdf.parse(getLiveTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return live_date;
+        return liveDate;
     }
 
     public String getNickName(int uid) {

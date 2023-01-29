@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Service
 public class BiliFunc extends BaseFunc {
-    Map<Integer, String> code_msg = new HashMap<>();
+    Map<Integer, String> codeMsg = new HashMap<>();
     AyeCompile compile;
     private Commander<SimpleMsg> commander;
 
@@ -30,30 +30,28 @@ public class BiliFunc extends BaseFunc {
                 .run((cqmsg) -> {
                     if (cqmsg.getFromClient() != 2155231604L) {
                         BiliInfo biliInfo;
-                        if (compile.hasBV()) {
-                            biliInfo = new BiliInfo(compile.getBVString(), appDirectory);
-                        } else {
-                            biliInfo = new BiliInfo(compile.getAVString(), appDirectory);
+                        try {
+                            if (compile.hasBV()) {
+                                biliInfo = new BiliInfo(compile.getBVString(), appDirectory);
+                            } else {
+                                biliInfo = new BiliInfo(compile.getAVString(), appDirectory);
+                            }
+                        } catch (Exception e) {
+                            return;
                         }
+
                         String send = "";
-                        if (!biliInfo.hasVideo) {
+                        if (!biliInfo.isHasVideo()) {
                             send += "错误代码：";
-                            send += biliInfo.code;
+                            send += biliInfo.getCode();
                             send += " ";
-                            send += code_msg.get(biliInfo.code);
+                            send += codeMsg.get(biliInfo.getCode());
                             zibenbot.replyMsg(cqmsg, send);
                             return;
                         }
-                        String pvideo = "\n预览：" + "视频太短，不提供预览。";
-                        if (biliInfo.hasPvdeo && biliInfo.getDuration() >= 12) {
-                            pvideo = "\n预览：" + zibenbot.getImg(new File(appDirectory + "/image/pvideo.gif"));
-                        } else if (!biliInfo.hasPvdeo) {
-                            pvideo = "";
-                        }
                         send = biliInfo.getTitle() + "\n"
-                                + biliInfo.getVideourl() + "\n"
+                                + biliInfo.getVideoUrl() + "\n"
                                 + "封面：" + zibenbot.getImg(new File(appDirectory + "/image/img.jpg"))
-                                + pvideo
                                 + "\nup主：" + biliInfo.getUp() + zibenbot.getImg(new File(appDirectory + "/image/head.jpg"))
                                 + "\n播放：" + formatToW(biliInfo.getView())
                                 + " 弹幕：" + formatToW(biliInfo.getDanmaku())
@@ -71,13 +69,13 @@ public class BiliFunc extends BaseFunc {
 
     @Override
     public void setUp() {
-        code_msg.put(-200, "视频撞车了，请访问源视频。");
-        code_msg.put(-400, "视频找不到。");
-        code_msg.put(62002, "视频找不到。");
-        code_msg.put(62003, "视频审核已通过，正在发布中。");
-        code_msg.put(62004, "视频正在审核中，请耐心等待。");
-        code_msg.put(62005, "视频需要登陆后查看。");
-        code_msg.put(-403, "视频需要登陆后查看。");
+        codeMsg.put(-200, "视频撞车了，请访问源视频。");
+        codeMsg.put(-400, "视频找不到。");
+        codeMsg.put(62002, "视频找不到。");
+        codeMsg.put(62003, "视频审核已通过，正在发布中。");
+        codeMsg.put(62004, "视频正在审核中，请耐心等待。");
+        codeMsg.put(62005, "视频需要登陆后查看。");
+        codeMsg.put(-403, "视频需要登陆后查看。");
     }
 
     @Override

@@ -81,7 +81,7 @@ public class ImgUtils {
         }
     }
 
-    public static void downloadImg(String imgurl, String filename, String appDirectory) {
+    public static File downloadImg(String imgurl, String filename, String appDirectory) {
         try {
             URL img = new URL(imgurl);
             HttpURLConnection conn = (HttpURLConnection) img.openConnection();
@@ -102,6 +102,7 @@ public class ImgUtils {
             FileOutputStream outStream = new FileOutputStream(imageFile);
             outStream.write(data);
             outStream.close();
+            return imageFile;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (ProtocolException e) {
@@ -111,9 +112,10 @@ public class ImgUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    public static void downloadImg(String imgurl, String filename, String appDirectory, int height, int width) {
+    public static File downloadImg(String imgurl, String filename, String appDirectory, int height, int width) {
         try {
             URL img = new URL(imgurl);
             HttpURLConnection conn = (HttpURLConnection) img.openConnection();
@@ -138,6 +140,7 @@ public class ImgUtils {
             ImageIO.write(tag, "jpg", out);
             in.close();
             out.close();
+            return imageFile;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (ProtocolException e) {
@@ -147,6 +150,7 @@ public class ImgUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     private static byte[] readInputStream(InputStream inStream) throws IOException {
