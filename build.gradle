@@ -21,7 +21,7 @@ plugins {
 
 compileJava {
     sourceCompatibility = '1.8'
-    targetCompatibility = '11'
+    targetCompatibility = '17'
 }
 
 tasks.withType(JavaCompile) {
@@ -108,9 +108,9 @@ dependencies {
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.29'
     implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
-    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
-    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
-    testCompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
+    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
+    testCompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
     testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
 
 
