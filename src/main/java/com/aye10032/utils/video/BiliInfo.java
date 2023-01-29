@@ -107,13 +107,13 @@ public class BiliInfo {
 
             }
 
-            File faceImageFile = ImgUtils.downloadImg(headurl, avn + "_head", appDirectory, 200, 200);
-            if (faceImageFile != null) {
-                faceImageFilePath = faceImageFile.getPath();
-            }
-            File upImageFile = ImgUtils.downloadImg(imgurl, avn + "_img", appDirectory);
+            File upImageFile = ImgUtils.downloadImg(headurl, avn + "_head", appDirectory, 200, 200);
+            File faceImageFile = ImgUtils.downloadImg(imgurl, avn + "_img", appDirectory);
             if (upImageFile != null) {
                 upImageFilePath = upImageFile.getPath();
+            }
+            if (faceImageFile != null) {
+                faceImageFilePath = faceImageFile.getPath();
             }
 
         } catch (IOException e) {

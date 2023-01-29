@@ -8,6 +8,7 @@ import com.aye10032.utils.AyeCompile;
 import com.aye10032.utils.video.BiliInfo;
 import com.dazo66.command.Commander;
 import com.dazo66.command.CommanderBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -51,8 +52,8 @@ public class BiliFunc extends BaseFunc {
                         }
                         send = biliInfo.getTitle() + "\n"
                                 + biliInfo.getVideoUrl() + "\n"
-                                + "封面：" + zibenbot.getImg(biliInfo.getFaceImageFilePath())
-                                + "\nup主：" + biliInfo.getUp() + zibenbot.getImg(biliInfo.getUpImageFilePath())
+                                + "封面：" + (StringUtils.isNotEmpty(biliInfo.getFaceImageFilePath()) ? zibenbot.getImg(biliInfo.getFaceImageFilePath()) : "【图片下载出错】")
+                                + "\nup主：" + (StringUtils.isNotEmpty(biliInfo.getFaceImageFilePath()) ? zibenbot.getImg(biliInfo.getUpImageFilePath()) : "【图片下载出错】")
                                 + "\n播放：" + formatToW(biliInfo.getView())
                                 + " 弹幕：" + formatToW(biliInfo.getDanmaku())
                                 + "\n点赞：" + formatToW(biliInfo.getLike())
