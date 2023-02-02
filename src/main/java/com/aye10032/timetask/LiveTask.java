@@ -32,7 +32,7 @@ public class LiveTask extends SubscribableBase {
                 if (liveInfo.HasLive() && liveInfo.Is_living()) {
                     long l = now.getTime() - liveInfo.getLiveDate().getTime();
                     long min = ((l / (60 * 1000)));
-                    if (min <= 5) {
+                    if (min < 5) {
                         ImgUtils.downloadImg(liveInfo.getLiveBackgroundUrl(), args[0], getBot().appDirectory);
 
                         Zibenbot.logDebugStatic("尝试获取" + liveInfo.getUid() + "昵称");

@@ -115,13 +115,13 @@ public class LiveInfo {
 
     public String getNickName(int uid) {
         String url = this.userapi + uid + "&jsonp=jsonp";
-        System.out.println(url);
         String body = "";
         String name = "";
         try {
             OkHttpClient client = Zibenbot.getOkHttpClient();
             Request request = new Request.Builder()
                     .url(url)
+                    .header("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36")
                     .method("GET", null)
                     .build();
 
