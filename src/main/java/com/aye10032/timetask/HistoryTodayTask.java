@@ -45,27 +45,26 @@ public class HistoryTodayTask extends SubscribableBase {
                     .append(getDateString())
                     .append(",历史上的今天发生了这些事：\n");
 
-                List<HistoryToday> history_today_list = historyTodayService.getTodayHistory(getDate());
-                event_count += history_today_list.size();
-                if (event_count != 0) {
-                    for (int i = 0; i < history_today_list.size(); i++) {
-                        builder.append(i + 1)
-                                .append("、");
-                        if (!history_today_list.get(i).getYear().equals("")) {
-                            builder.append(history_today_list.get(i).getYear())
-                                    .append(" ");
-                        }
-                        builder.append(history_today_list.get(i).getHistory())
-                                .append("\n");
-                    }
-                }
+//                List<HistoryToday> history_today_list = historyTodayService.getTodayHistory(getDate());
+//                event_count += history_today_list.size();
+//                if (event_count != 0) {
+//                    for (int i = 0; i < history_today_list.size(); i++) {
+//                        builder.append(i + 1)
+//                                .append("、");
+//                        if (!history_today_list.get(i).getYear().equals("")) {
+//                            builder.append(history_today_list.get(i).getYear())
+//                                    .append(" ");
+//                        }
+//                        builder.append(history_today_list.get(i).getHistory())
+//                                .append("\n");
+//                    }
+//                }
                 List<HistoryToday> group_history_list = historyTodayService.getGroupHistory(getDate(), reciver.getSender().getFromGroup());
                 event_count += group_history_list.size();
                 if (event_count != 0) {
-                    if (group_history_list.size() != 0) {
-                        if (history_today_list.size() != 0) {
-                            builder.append("-------------\n");
-                        }
+//                        if (history_today_list.size() != 0) {
+//                            builder.append("-------------\n");
+//                        }
                         for (int i = 0; i < group_history_list.size(); i++) {
                             builder.append(i + 1)
                                     .append("、");
@@ -76,7 +75,6 @@ public class HistoryTodayTask extends SubscribableBase {
                             builder.append(group_history_list.get(i).getHistory())
                                 .append("\n");
                         }
-                    }
                     getBot().replyMsg(reciver.getSender(), builder.toString());
                 }
             }
