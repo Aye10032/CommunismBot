@@ -50,6 +50,7 @@ public class BotConfig {
         configuration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PHONE);
 
         Bot bot = BotFactory.INSTANCE.newBot(qqId, password, configuration);
+        bot.getLogger().info(info().values().toString());
 
         if (!profiles.contains("test")) {
             bot.login();
