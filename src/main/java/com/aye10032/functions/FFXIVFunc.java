@@ -170,7 +170,7 @@ public class FFXIVFunc extends BaseFunc {
                             builder.append("\t").append(i + 1).append(". ").append(names.get(i)).append("\n");
                         }
                         String replyMsg = builder.substring(0, builder.length() - 1);
-                        searchListCache.put(SimpleMsg.getQuoteKey(replyMsg), ids);
+                        searchListCache.put(SimpleMsg.getQuoteKey(msg.getFromGroup(), zibenbot.getBotQQId(), replyMsg), ids);
 
                         replyMsgWithQuoteHook(msg, replyMsg, (originMsg, replyMsg1) -> {
                             List<String> historyIds = searchListCache.getIfPresent(originMsg.getQuoteKey());

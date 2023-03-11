@@ -94,7 +94,7 @@ public class SimpleMsg implements ICommand {
                 builder.add(m);
             }
         });
-        return builder.build().toString();
+        return builder.build().toString().trim();
     }
 
     /**
@@ -224,7 +224,7 @@ public class SimpleMsg implements ICommand {
     }
 
     public int getQuoteKey() {
-        String key = msg;
+        String key = fromGroup + fromClient + msg;
         if (key.length() > 70) {
             key = key.substring(0, 70);
         }
@@ -232,8 +232,8 @@ public class SimpleMsg implements ICommand {
     }
 
 
-    public static int getQuoteKey(String msg) {
-        String key = msg;
+    public static int getQuoteKey(Long fromGroup, Long fromClient, String msg) {
+        String key = fromGroup + fromClient + msg;
         if (key.length() > 70) {
             key = key.substring(0, 70);
         }

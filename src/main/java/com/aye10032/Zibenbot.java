@@ -238,6 +238,10 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
 
+    public Long getBotQQId() {
+        return bot.getId();
+    }
+
     public static Proxy getProxy() {
         Socket s = new Socket();
         SocketAddress add = new InetSocketAddress("127.0.0.1", 1080);
@@ -876,7 +880,7 @@ public class Zibenbot implements ApplicationContextAware {
 
 
     public void replyMsgWithQuoteHook(SimpleMsg fromMsg, String msg, IQuoteHook hook) {
-        hookCache.put(SimpleMsg.getQuoteKey(msg), hook);
+        hookCache.put(SimpleMsg.getQuoteKey(fromMsg.getFromGroup(), bot.getBot().getId(), msg), hook);
         replyMsg(fromMsg, msg);
 
     }
