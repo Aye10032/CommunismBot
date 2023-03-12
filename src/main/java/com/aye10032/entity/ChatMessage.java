@@ -13,7 +13,6 @@ import java.util.Date;
 @TableName("openai_chat_message")
 public class ChatMessage {
 
-
     private Long id;
     private Date gmtCreate;
     private String contextId;

@@ -244,7 +244,7 @@ public class Zibenbot implements ApplicationContextAware {
 
     public static Proxy getProxy() {
         Socket s = new Socket();
-        proxy = new Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved("127.0.0.1", 7891));
+        proxy = new Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved("127.0.0.1", 1080));
         return proxy;
     }
 
