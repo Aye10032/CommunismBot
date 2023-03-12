@@ -45,11 +45,7 @@ public class ChatGPTFunc extends BaseFunc {
                 String s = chatContextService.newContext(chatMessage);
                 ChatContext chatContext = new ChatContext();
                 chatContext.setContext(Lists.newArrayList(chatMessage));
-                AiResult aiResult = openAiService.chatGpt(GPT_3_5_TURBO, chatContext);
-                ChatMessage replyMessage = aiResult.getChoices().get(0).getMessage();
-                replyMessage.setMessageKey(SimpleMsg.getQuoteKey(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), simpleMsg.getMsg()));
-                chatContextService.push(s, replyMessage);
-                replyMsg(simpleMsg, replyMessage.getContent());
+                chat(simpleMsg, s, chatContext);
                 return;
             }
         }
@@ -63,12 +59,16 @@ public class ChatGPTFunc extends BaseFunc {
             chatMessages.add(ChatMessage.of("user", simpleMsg.getMsg().replace("chat ", "")));
             ChatContext chatContext = new ChatContext();
             chatContext.setContext(chatMessages);
-            AiResult aiResult = openAiService.chatGpt(GPT_3_5_TURBO, chatContext);
-            ChatMessage replyMessage = aiResult.getChoices().get(0).getMessage();
-            replyMessage.setMessageKey(SimpleMsg.getQuoteKey(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), simpleMsg.getMsg()));
-            chatContextService.push(contextId, replyMessage);
-            replyMsg(simpleMsg, replyMessage.getContent());
+            chat(simpleMsg, contextId, chatContext);
         }
 
+    }
+
+    private void chat(SimpleMsg simpleMsg, String s, ChatContext chatContext) {
+        AiResult aiResult = openAiService.chatGpt(GPT_3_5_TURBO, chatContext);
+        ChatMessage replyMessage = aiResult.getChoices().get(0).getMessage();
+        replyMessage.setMessageKey(SimpleMsg.getQuoteKey(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), simpleMsg.getMsg()));
+        chatContextService.push(s, replyMessage);
+        replyMsg(simpleMsg, replyMessage.getContent());
     }
 }
