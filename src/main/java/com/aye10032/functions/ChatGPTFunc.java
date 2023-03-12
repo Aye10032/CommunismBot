@@ -67,7 +67,7 @@ public class ChatGPTFunc extends BaseFunc {
     private void chat(SimpleMsg simpleMsg, String s, ChatContext chatContext) {
         AiResult aiResult = openAiService.chatGpt(GPT_3_5_TURBO, chatContext);
         ChatMessage replyMessage = aiResult.getChoices().get(0).getMessage();
-        replyMessage.setMessageKey(SimpleMsg.getQuoteKey(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), simpleMsg.getMsg()));
+        replyMessage.setMessageKey(SimpleMsg.getQuoteKey(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), replyMessage.getContent()));
         chatContextService.push(s, replyMessage);
         replyMsg(simpleMsg, replyMessage.getContent());
     }
