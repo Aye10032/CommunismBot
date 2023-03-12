@@ -224,16 +224,12 @@ public class SimpleMsg implements ICommand {
     }
 
     public int getQuoteKey() {
-        String key = fromGroup + fromClient + msg;
-        if (key.length() > 70) {
-            key = key.substring(0, 70);
-        }
-        return key.hashCode();
+        return SimpleMsg.getQuoteKeyStatic(fromGroup, fromClient, msg);
     }
 
 
-    public static int getQuoteKey(Long fromGroup, Long fromClient, String msg) {
-        String key = fromGroup + fromClient + msg;
+    public static int getQuoteKeyStatic(Long fromGroup, Long fromClient, String msg) {
+        String key = fromGroup + fromClient + msg.replace("\\", "");
         if (key.length() > 70) {
             key = key.substring(0, 70);
         }

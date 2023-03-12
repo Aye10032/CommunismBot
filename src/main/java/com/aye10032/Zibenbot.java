@@ -12,10 +12,7 @@ import com.aye10032.utils.weibo.WeiboReader;
 import com.dazo66.config.BotConfig;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Streams;
 import io.github.mzdluo123.silk4j.AudioUtils;
-import kotlin.Unit;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.Mirai;
@@ -27,8 +24,6 @@ import net.mamoe.mirai.event.events.NewFriendRequestEvent;
 import net.mamoe.mirai.message.code.MiraiCode;
 import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.ExternalResource;
-import net.mamoe.mirai.utils.MiraiLogger;
-import net.mamoe.mirai.utils.PlatformLogger;
 import okhttp3.OkHttpClient;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeansException;
@@ -54,7 +49,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.StreamSupport;
 
 import static com.aye10032.utils.StringUtil.longMsgSplit;
 
@@ -869,7 +863,7 @@ public class Zibenbot implements ApplicationContextAware {
 
 
     public void replyMsgWithQuoteHook(SimpleMsg fromMsg, String msg, IQuoteHook hook) {
-        hookCache.put(SimpleMsg.getQuoteKey(fromMsg.getFromGroup(), bot.getBot().getId(), msg), hook);
+        hookCache.put(SimpleMsg.getQuoteKeyStatic(fromMsg.getFromGroup(), bot.getBot().getId(), msg), hook);
         replyMsg(fromMsg, msg);
 
     }
