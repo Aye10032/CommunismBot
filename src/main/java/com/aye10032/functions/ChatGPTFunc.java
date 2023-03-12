@@ -65,10 +65,14 @@ public class ChatGPTFunc extends BaseFunc {
     }
 
     private void chat(SimpleMsg simpleMsg, String s, ChatContext chatContext) {
-        AiResult aiResult = openAiService.chatGpt(GPT_3_5_TURBO, chatContext);
-        ChatMessage replyMessage = aiResult.getChoices().get(0).getMessage();
-        replyMessage.setMessageKey(SimpleMsg.getQuoteKey(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), replyMessage.getContent()));
-        chatContextService.push(s, replyMessage);
-        replyMsg(simpleMsg, replyMessage.getContent());
+        try {
+            AiResult aiResult = openAiService.chatGpt(GPT_3_5_TURBO, chatContext);
+            ChatMessage replyMessage = aiResult.getChoices().get(0).getMessage();
+            replyMessage.setMessageKey(SimpleMsg.getQuoteKey(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), replyMessage.getContent()));
+            chatContextService.push(s, replyMessage);
+            replyMsg(simpleMsg, replyMessage.getContent());
+        } catch (Exception e) {
+            replyMsg(simpleMsg, "调用出错了，请稍后再试。");
+        }
     }
 }
