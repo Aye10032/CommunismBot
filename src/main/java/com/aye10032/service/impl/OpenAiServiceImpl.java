@@ -32,7 +32,8 @@ public class OpenAiServiceImpl implements OpenAiService {
 
 
     public OkHttpClient getOkHttpClient() {
-        return httpClient.newBuilder().callTimeout(30, TimeUnit.SECONDS)
+        return httpClient.newBuilder().connectTimeout(30, TimeUnit.SECONDS)
+                .callTimeout(30, TimeUnit.SECONDS)
                 .proxy(Zibenbot.getProxy()).build();
     }
     @Override

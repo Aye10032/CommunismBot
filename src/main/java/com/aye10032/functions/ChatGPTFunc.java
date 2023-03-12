@@ -40,7 +40,7 @@ public class ChatGPTFunc extends BaseFunc {
     public void run(SimpleMsg simpleMsg) {
         if (simpleMsg.getCommandPieces().length > 1) {
             if (simpleMsg.getCommandPieces()[0].equals("chat")) {
-                ChatMessage chatMessage = ChatMessage.of("user", simpleMsg.getMsg().substring(4).trim());
+                ChatMessage chatMessage = ChatMessage.of("user", simpleMsg.getPlainMsg().substring(4).trim());
                 chatMessage.setMessageKey(simpleMsg.getQuoteKey());
                 String s = chatContextService.newContext(chatMessage);
                 ChatContext chatContext = new ChatContext();
@@ -56,7 +56,7 @@ public class ChatGPTFunc extends BaseFunc {
             }
             String contextId = chatMessage.getContextId();
             List<ChatMessage> chatMessages = chatContextService.load(contextId);
-            chatMessages.add(ChatMessage.of("user", simpleMsg.getMsg().replace("chat ", "")));
+            chatMessages.add(ChatMessage.of("user", simpleMsg.getPlainMsg().replace("chat ", "")));
             ChatContext chatContext = new ChatContext();
             chatContext.setContext(chatMessages);
             chat(simpleMsg, contextId, chatContext);
