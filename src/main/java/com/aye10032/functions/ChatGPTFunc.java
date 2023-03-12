@@ -8,8 +8,10 @@ import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.service.ChatContextService;
 import com.aye10032.service.OpenAiService;
+import com.aye10032.utils.StringUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,21 +82,17 @@ public class ChatGPTFunc extends BaseFunc {
         try {
             AiResult aiResult = openAiService.chatGpt(GPT_3_5_TURBO, chatContext);
             ChatMessage replyMessage = aiResult.getChoices().get(0).getMessage();
-            replyMessage.setMessageKey(SimpleMsg.getQuoteKeyStatic(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), replyMessage.getContent()));
+            String content = replyMessage.getContent();
+            if (content.startsWith("\n\n")) {
+                content = content.substring(2);
+            }
+            content = content.replace("\\", "\\\\");
+            replyMessage.setMessageKey(SimpleMsg.getQuoteKeyStatic(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), content));
             chatContextService.push(s, replyMessage);
-            replyMsg(simpleMsg, replyMessage.getContent());
+            replyMsg(simpleMsg, content);
         } catch (Exception e) {
             replyMsg(simpleMsg, "调用出错了，请稍后再试。");
             throw new RuntimeException();
         }
     }
-
-    public static void main(String[] args) {
-        System.out.println((1044102726 + 2155231604L + "\n" +
-                "\n" +
-                "/\\_/\\  \n" +
-                "( o.o )  \n" +
-                " > ^ <").replace("\\", "").hashCode());
-    }
-
 }
