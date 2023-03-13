@@ -20,6 +20,8 @@ public class ChatMessage {
     private String role;
     private String content;
 
+    private Boolean used;
+
 
     public static ChatMessage of(String role, String content) {
         ChatMessage chatMessages = new ChatMessage();

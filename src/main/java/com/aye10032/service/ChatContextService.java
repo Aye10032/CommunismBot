@@ -48,4 +48,5 @@ public interface ChatContextService {
     ChatMessage queryByMessageKey(Integer messageKey);
 
 
+    void usedMessage(Long id);
 }

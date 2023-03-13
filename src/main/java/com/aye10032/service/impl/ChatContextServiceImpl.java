@@ -58,6 +58,14 @@ public class ChatContextServiceImpl implements ChatContextService {
         return chatMessages.isEmpty() ? null : chatMessages.get(0);
     }
 
+    @Override
+    public void usedMessage(Long id) {
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setId(id);
+        chatMessage.setUsed(true);
+        chatMessageMapper.updateById(chatMessage);
+    }
+
     public static void main(String[] args) {
         System.out.println((1044102726 + 2155231604L + "我无法回答你的问题，因为孙笑川是虚构人物，他没有真实存在过。如果你想更具体地了解他的故事，建议查阅相关的小说或电影。").hashCode());
     }

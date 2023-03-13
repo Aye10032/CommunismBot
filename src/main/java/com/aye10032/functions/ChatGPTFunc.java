@@ -63,6 +63,11 @@ public class ChatGPTFunc extends BaseFunc {
                 if (chatMessage == null) {
                     return;
                 }
+                if (chatMessage.getUsed() == Boolean.TRUE) {
+                    replyMsg(simpleMsg, "这条语句已经回复过了 不能修改了哦~");
+                    return;
+                }
+                chatContextService.usedMessage(chatMessage.getId());
                 String contextId = chatMessage.getContextId();
                 log.info("上下文会话：{}", contextId);
                 List<ChatMessage> chatMessages = chatContextService.load(contextId);
