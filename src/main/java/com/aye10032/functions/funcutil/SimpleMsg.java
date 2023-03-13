@@ -56,7 +56,7 @@ public class SimpleMsg implements ICommand {
         if (quoteReply != null) {
             MessageChain quoteChain = quoteReply.getSource().getOriginalMessage();
             quoteMsg = new SimpleMsg(fromGroup, quoteReply.getSource().getFromId(), quoteChain, type);
-            log.info("引用消息不为空:{}", quoteMsg.getMsg());
+            log.info("引用消息不为空:{}", quoteMsg.getQuoteKey());
         }
         msgChain = event.getMessage();
         msg = getMsgFromEvent(msgChain);
@@ -224,16 +224,12 @@ public class SimpleMsg implements ICommand {
     }
 
     public int getQuoteKey() {
-        String key = fromGroup + fromClient + msg;
-        if (key.length() > 70) {
-            key = key.substring(0, 70);
-        }
-        return key.hashCode();
+        return SimpleMsg.getQuoteKeyStatic(fromGroup, fromClient, msg);
     }
 
 
-    public static int getQuoteKey(Long fromGroup, Long fromClient, String msg) {
-        String key = fromGroup + fromClient + msg;
+    public static int getQuoteKeyStatic(Long fromGroup, Long fromClient, String msg) {
+        String key = fromGroup + fromClient + msg.replace("\\", "");
         if (key.length() > 70) {
             key = key.substring(0, 70);
         }

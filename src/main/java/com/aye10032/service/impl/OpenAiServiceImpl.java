@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author dazo66(sundazhong.sdz)
@@ -31,15 +32,20 @@ public class OpenAiServiceImpl implements OpenAiService {
 
 
     public OkHttpClient getOkHttpClient() {
-        return httpClient.newBuilder().callTimeout(30, TimeUnit.SECONDS)
+        return httpClient.newBuilder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .callTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
                 .proxy(Zibenbot.getProxy()).build();
     }
     @Override
     public AiResult chatGpt(String moduleType, ChatContext chatContext) {
         ChatRequest chatRequest = new ChatRequest();
-        chatRequest.setMessages(chatContext.getContext());
+        chatRequest.setMessages(chatContext.getContext().stream().map(ChatRequest.Message::of).collect(Collectors.toList()));
         chatRequest.setModel(moduleType);
         MediaType mediaType = MediaType.parse("application/json");
+
         RequestBody requestBody = RequestBody.create(JsonUtils.toJson(chatRequest), mediaType);
         Request request = new Request.Builder().url("https://api.openai.com/v1/chat/completions").method("POST", requestBody).header("Authorization", "Bearer " + openaiApiKey).build();
         try {
@@ -54,7 +60,7 @@ public class OpenAiServiceImpl implements OpenAiService {
 
     public static void main(String[] args) {
         OpenAiServiceImpl openAiService = new OpenAiServiceImpl();
-        openAiService.openaiApiKey = "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";
+        openAiService.openaiApiKey = "=";
         ChatContext chatContext = new ChatContext();
         chatContext.setContext(Lists.newArrayList(ChatMessage.of("user", "What is the OpenAI mission?")));
         AiResult aiResult = openAiService.chatGpt("gpt-3.5-turbo", chatContext);

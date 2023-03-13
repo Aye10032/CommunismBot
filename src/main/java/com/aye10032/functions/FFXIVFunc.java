@@ -1,12 +1,10 @@
 package com.aye10032.functions;
 
 import com.aye10032.Zibenbot;
-import com.aye10032.data.ffxiv.FFXIVItemType;
 import com.aye10032.data.ffxiv.entity.*;
 import com.aye10032.data.ffxiv.service.FFXIVService;
 import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.FuncExceptionHandler;
-import com.aye10032.functions.funcutil.IQuoteHook;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.ffxiv.FFXIVMarketHelper;
 import com.dazo66.command.Commander;
@@ -170,7 +168,7 @@ public class FFXIVFunc extends BaseFunc {
                             builder.append("\t").append(i + 1).append(". ").append(names.get(i)).append("\n");
                         }
                         String replyMsg = builder.substring(0, builder.length() - 1);
-                        searchListCache.put(SimpleMsg.getQuoteKey(msg.getFromGroup(), zibenbot.getBotQQId(), replyMsg), ids);
+                        searchListCache.put(SimpleMsg.getQuoteKeyStatic(msg.getFromGroup(), zibenbot.getBotQQId(), replyMsg), ids);
 
                         replyMsgWithQuoteHook(msg, replyMsg, (originMsg, replyMsg1) -> {
                             List<String> historyIds = searchListCache.getIfPresent(originMsg.getQuoteKey());

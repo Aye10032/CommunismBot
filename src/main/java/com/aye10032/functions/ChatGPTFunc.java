@@ -8,9 +8,14 @@ import com.aye10032.functions.funcutil.BaseFunc;
 import com.aye10032.functions.funcutil.SimpleMsg;
 import com.aye10032.service.ChatContextService;
 import com.aye10032.service.OpenAiService;
+import com.aye10032.utils.StringUtil;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 
@@ -18,6 +23,7 @@ import java.util.List;
  * @author dazo66(sundazhong.sdz)
  * @date 2023/3/11 17:56
  **/
+@Slf4j
 @Service
 public class ChatGPTFunc extends BaseFunc {
 
@@ -37,38 +43,56 @@ public class ChatGPTFunc extends BaseFunc {
     }
 
     @Override
+    @Transactional
     public void run(SimpleMsg simpleMsg) {
-        if (simpleMsg.getCommandPieces().length > 1) {
-            if (simpleMsg.getCommandPieces()[0].equals("chat")) {
-                ChatMessage chatMessage = ChatMessage.of("user", simpleMsg.getMsg().substring(4).trim());
-                chatMessage.setMessageKey(simpleMsg.getQuoteKey());
-                String s = chatContextService.newContext(chatMessage);
+        try {
+            if (simpleMsg.getCommandPieces().length > 1) {
+                if (simpleMsg.getCommandPieces()[0].equals("chat")) {
+                    ChatMessage chatMessage = ChatMessage.of("user", simpleMsg.getPlainMsg().substring(4).trim());
+                    chatMessage.setMessageKey(simpleMsg.getQuoteKey());
+                    String s = chatContextService.newContext(chatMessage);
+                    log.info("新发起会话：{}", s);
+                    ChatContext chatContext = new ChatContext();
+                    chatContext.setContext(Lists.newArrayList(chatMessage));
+                    chat(simpleMsg, s, chatContext);
+                    return;
+                }
+            }
+            if (simpleMsg.getQuoteMsg() != null) {
+                ChatMessage chatMessage = chatContextService.queryByMessageKey(simpleMsg.getQuoteMsg().getQuoteKey());
+                if (chatMessage == null) {
+                    return;
+                }
+                String contextId = chatMessage.getContextId();
+                log.info("上下文会话：{}", contextId);
+                List<ChatMessage> chatMessages = chatContextService.load(contextId);
+                chatMessages.add(ChatMessage.of("user", simpleMsg.getPlainMsg().replace("chat ", "")));
                 ChatContext chatContext = new ChatContext();
-                chatContext.setContext(Lists.newArrayList(chatMessage));
-                AiResult aiResult = openAiService.chatGpt(GPT_3_5_TURBO, chatContext);
-                ChatMessage replyMessage = aiResult.getChoices().get(0).getMessage();
-                replyMessage.setMessageKey(SimpleMsg.getQuoteKey(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), simpleMsg.getMsg()));
-                chatContextService.push(s, replyMessage);
-                replyMsg(simpleMsg, replyMessage.getContent());
-                return;
+                chatContext.setContext(chatMessages);
+                chat(simpleMsg, contextId, chatContext);
             }
-        }
-        if (simpleMsg.getQuoteMsg() != null) {
-            ChatMessage chatMessage = chatContextService.queryByMessageKey(simpleMsg.getQuoteMsg().getQuoteKey());
-            if (chatMessage == null) {
-                return;
-            }
-            String contextId = chatMessage.getContextId();
-            List<ChatMessage> chatMessages = chatContextService.load(contextId);
-            chatMessages.add(ChatMessage.of("user", simpleMsg.getMsg().replace("chat ", "")));
-            ChatContext chatContext = new ChatContext();
-            chatContext.setContext(chatMessages);
-            AiResult aiResult = openAiService.chatGpt(GPT_3_5_TURBO, chatContext);
-            ChatMessage replyMessage = aiResult.getChoices().get(0).getMessage();
-            replyMessage.setMessageKey(SimpleMsg.getQuoteKey(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), simpleMsg.getMsg()));
-            chatContextService.push(contextId, replyMessage);
-            replyMsg(simpleMsg, replyMessage.getContent());
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
 
+
+    }
+
+    private void chat(SimpleMsg simpleMsg, String s, ChatContext chatContext) {
+        try {
+            AiResult aiResult = openAiService.chatGpt(GPT_3_5_TURBO, chatContext);
+            ChatMessage replyMessage = aiResult.getChoices().get(0).getMessage();
+            String content = replyMessage.getContent();
+            if (content.startsWith("\n\n")) {
+                content = content.substring(2);
+            }
+            content = content.replace("\\", "\\\\");
+            replyMessage.setMessageKey(SimpleMsg.getQuoteKeyStatic(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), content));
+            chatContextService.push(s, replyMessage);
+            replyMsg(simpleMsg, content);
+        } catch (Exception e) {
+            replyMsg(simpleMsg, "调用出错了，请稍后再试。");
+            throw new RuntimeException();
+        }
     }
 }

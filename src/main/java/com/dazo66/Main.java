@@ -4,6 +4,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.annotation.MapperScans;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.io.IOException;
 
@@ -14,6 +15,7 @@ import java.io.IOException;
         @MapperScan("com.aye10032.data.banrecord.mapper"),
         @MapperScan("com.aye10032.data.ffxiv.mapper")
 })
+@EnableTransactionManagement
 public class Main {
 
     public static void main(String[] args) throws IOException {

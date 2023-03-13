@@ -12,6 +12,19 @@ import java.util.List;
 public class ChatRequest {
 
     private String model;
-    private List<ChatMessage> messages;
+    private List<Message> messages;
+
+    @Data
+    public static class Message {
+        private String role;
+        private String content;
+
+        public static Message of(ChatMessage chatMessage) {
+            Message message = new Message();
+            message.setRole(chatMessage.getRole());
+            message.setContent(chatMessage.getContent());
+            return message;
+        }
+    }
 
 }
