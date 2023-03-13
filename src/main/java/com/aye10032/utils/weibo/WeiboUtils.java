@@ -234,7 +234,7 @@ public class WeiboUtils {
         WeiboSetItem itme = new WeiboSetItem(id, title, isTop, false);
         String text = cleanString1(o.get("text").getAsString());
         StringBuilder builder = new StringBuilder(text);
-        if (o.get("pic_num").getAsInt() > 0) {
+        if (o.get("pic_num") != null && o.get("pic_num").getAsInt() > 0) {
             for (JsonElement element : o.getAsJsonArray("pics")) {
                 builder.append("\n");
                 builder.append(
