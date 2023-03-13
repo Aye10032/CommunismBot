@@ -229,10 +229,11 @@ public class SimpleMsg implements ICommand {
 
 
     public static int getQuoteKeyStatic(Long fromGroup, Long fromClient, String msg) {
-        String key = fromGroup + fromClient + msg.replace("\\", "");
-        if (key.length() > 70) {
-            key = key.substring(0, 70);
+        String msgTemp = msg.replace("\\", "");
+        if (msgTemp.length() > 20) {
+            msgTemp = msgTemp.substring(0, 20);
         }
+        String key = fromGroup + fromClient + msgTemp;
         return key.hashCode();
     }
 

@@ -53,8 +53,9 @@ public class ChatContextServiceImpl implements ChatContextService {
 
     @Override
     public ChatMessage queryByMessageKey(Integer messageKey) {
-        return chatMessageMapper.selectOne(new LambdaQueryWrapper<ChatMessage>().eq(ChatMessage::getMessageKey, messageKey)
+        List<ChatMessage> chatMessages = chatMessageMapper.selectList(new LambdaQueryWrapper<ChatMessage>().eq(ChatMessage::getMessageKey, messageKey)
                 .orderByDesc(ChatMessage::getId));
+        return chatMessages.isEmpty() ? null : chatMessages.get(0);
     }
 
     public static void main(String[] args) {
