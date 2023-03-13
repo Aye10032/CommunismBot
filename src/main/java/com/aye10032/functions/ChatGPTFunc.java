@@ -47,7 +47,7 @@ public class ChatGPTFunc extends BaseFunc {
     public void run(SimpleMsg simpleMsg) {
         try {
             if (simpleMsg.getCommandPieces().length > 1) {
-                if (simpleMsg.getCommandPieces()[0].equals("chat")) {
+                if (simpleMsg.getCommandPieces()[0].equalsIgnoreCase("moss")) {
                     ChatMessage chatMessage = ChatMessage.of("user", simpleMsg.getPlainMsg().substring(4).trim());
                     chatMessage.setMessageKey(simpleMsg.getQuoteKey());
                     String s = chatContextService.newContext(chatMessage);
@@ -56,6 +56,8 @@ public class ChatGPTFunc extends BaseFunc {
                     chatContext.setContext(Lists.newArrayList(chatMessage));
                     chat(simpleMsg, s, chatContext);
                     return;
+                } else if (simpleMsg.getCommandPieces()[0].equalsIgnoreCase("chat")) {
+                    replyMsg(simpleMsg, "chat这个前缀太土了，你可以叫我MOSS");
                 }
             }
             if (simpleMsg.getQuoteMsg() != null) {
