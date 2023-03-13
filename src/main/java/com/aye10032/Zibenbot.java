@@ -137,7 +137,6 @@ public class Zibenbot implements ApplicationContextAware {
 
     public Zibenbot(@Autowired Bot bot) {
         this.bot = bot;
-        pool = new TimeTaskPool();
         // bot启用的群
 //        enableGroup.add(995497677L); //提醒人 死于2022年10月27日11:08分
         enableGroup.add(1044102726L); //提醒人
@@ -216,7 +215,7 @@ public class Zibenbot implements ApplicationContextAware {
             if (simpleMsg.isGroupMsg() && !enableGroup.contains(simpleMsg.getFromGroup())) {
                 // ignore
             } else {
-                runFuncs(simpleMsg);
+                FutureHelper.asyncRun(() -> runFuncs(simpleMsg));
             }
         });
         bot.getEventChannel().subscribeAlways(NewFriendRequestEvent.class, this::onFriendEvent);
