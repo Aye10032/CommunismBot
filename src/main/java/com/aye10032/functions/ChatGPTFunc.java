@@ -86,6 +86,7 @@ public class ChatGPTFunc extends BaseFunc {
             if (content.startsWith("\n\n")) {
                 content = content.substring(2);
             }
+            replyMessage.setContent(content);
             content = content.replace("\\", "\\\\");
             replyMessage.setMessageKey(SimpleMsg.getQuoteKeyStatic(simpleMsg.getFromGroup(), zibenbot.getBotQQId(), content));
             chatContextService.push(s, replyMessage);
