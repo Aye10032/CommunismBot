@@ -28,14 +28,14 @@ public class OpenAiServiceImpl implements OpenAiService {
     @Value("${openai.api.key}")
     private String openaiApiKey;
 
-    private OkHttpClient httpClient = new OkHttpClient();
+    private final OkHttpClient httpClient = new OkHttpClient();
 
 
     public OkHttpClient getOkHttpClient() {
         return httpClient.newBuilder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .callTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .proxy(Zibenbot.getProxy()).build();
     }
