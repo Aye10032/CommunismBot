@@ -7,24 +7,22 @@ import com.aye10032.entity.ChatMessage;
 import com.aye10032.entity.ChatRequest;
 import com.aye10032.service.OpenAiService;
 import com.aye10032.utils.JsonUtils;
-import com.aye10032.utils.StringUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import okhttp3.internal.sse.RealEventSource;
 import okhttp3.sse.*;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -96,12 +94,14 @@ public class OpenAiServiceImpl implements OpenAiService {
                         synchronized (lock) {
                             lock.notify();
                         }
+                    } else {
+                        results.add(JsonUtils.fromJson(data, AiResult.class));
                     }
-                    results.add(JsonUtils.fromJson(data, AiResult.class));
                 }
 
                 @Override
                 public void onClosed(EventSource eventSource) {
+                    log.info("chatgpt request close!");
                     synchronized (lock) {
                         lock.notify();
                     }
@@ -109,11 +109,19 @@ public class OpenAiServiceImpl implements OpenAiService {
 
                 @Override
                 public void onFailure(EventSource eventSource, Throwable t, Response response) {
+                    if (t != null) {
+                        log.error("onFailure", t);
+                    } else {
+                        try {
+                            log.error("onFailure {}", IOUtils.toString(response.body().bytes()));
+                        } catch (IOException ex) {
+                            // ignore
+                        }
+                    }
+                    failure.set(true);;
                     synchronized (lock) {
                         lock.notify();
                     }
-                    log.error("onFailure", t);
-                    failure.set(true);;
                 }
             });
             realEventSource.connect(okHttpClient);
@@ -128,14 +136,14 @@ public class OpenAiServiceImpl implements OpenAiService {
             if (failure.get() || results.size() == 0) {
                 throw new RuntimeException("调用出错");
             }
-            return margeStreemResult(results);
+            return margeStreamResult(results);
         } catch (Exception e) {
             log.error("调用openai失败：", e);
             return null;
         }
     }
 
-    private AiResult margeStreemResult(List<AiResult> results) {
+    private AiResult margeStreamResult(List<AiResult> results) {
         AiResult aiResult = new AiResult();
         StringBuilder content = new StringBuilder();
         String role = "assistant";
@@ -167,7 +175,7 @@ public class OpenAiServiceImpl implements OpenAiService {
 
     public static void main(String[] args) {
         OpenAiServiceImpl openAiService = new OpenAiServiceImpl();
-        openAiService.openaiApiKey = "=";
+        openAiService.openaiApiKey = "";
         ChatContext chatContext = new ChatContext();
         chatContext.setContext(Lists.newArrayList(ChatMessage.of("user", "来一段1000字的故事")));
 //        AiResult aiResult = openAiService.chatGpt("gpt-3.5-turbo", chatContext);
