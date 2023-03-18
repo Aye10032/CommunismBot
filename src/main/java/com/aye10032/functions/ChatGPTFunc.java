@@ -46,14 +46,25 @@ public class ChatGPTFunc extends BaseFunc {
     @Transactional
     public void run(SimpleMsg simpleMsg) {
         try {
+            ChatMessage systemPrompt = ChatMessage.of("system", "You are a helpful assistant");
+
             if (simpleMsg.getCommandPieces().length > 1) {
+                if (simpleMsg.getCommandPieces()[0].equalsIgnoreCase("550w")) {
+                    systemPrompt = ChatMessage.of("system", simpleMsg.getPlainMsg().substring(4).trim());
+                }
+                if (simpleMsg.getCommandPieces()[0].equalsIgnoreCase("550a")) {
+                    systemPrompt = ChatMessage.of("system", "You are a helpful assistant");
+                    replyMsg(simpleMsg, "系统已重置");
+                }
                 if (simpleMsg.getCommandPieces()[0].equalsIgnoreCase("moss")) {
                     ChatMessage chatMessage = ChatMessage.of("user", simpleMsg.getPlainMsg().substring(4).trim());
                     chatMessage.setMessageKey(simpleMsg.getQuoteKey());
                     String s = chatContextService.newContext(chatMessage);
                     log.info("新发起会话：{}", s);
+                    List<ChatMessage> chatMessages = Lists.newArrayList(systemPrompt);
+                    chatMessages.add(chatMessage);
                     ChatContext chatContext = new ChatContext();
-                    chatContext.setContext(Lists.newArrayList(chatMessage));
+                    chatContext.setContext(chatMessages);
                     chat(simpleMsg, s, chatContext);
                     return;
                 } else if (simpleMsg.getCommandPieces()[0].equalsIgnoreCase("chat")) {
