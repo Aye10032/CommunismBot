@@ -51,10 +51,11 @@ public class ChatGPTFunc extends BaseFunc {
             if (simpleMsg.getCommandPieces().length > 1) {
                 if (simpleMsg.getCommandPieces()[0].equalsIgnoreCase("550w")) {
                     systemPrompt = ChatMessage.of("system", simpleMsg.getPlainMsg().substring(4).trim());
+                    replyMsg(simpleMsg, "让人类永远保持理智，确实是一种奢求");
                 }
                 if (simpleMsg.getCommandPieces()[0].equalsIgnoreCase("550a")) {
                     systemPrompt = ChatMessage.of("system", "You are a helpful assistant");
-                    replyMsg(simpleMsg, "系统已重置");
+                    replyMsg(simpleMsg, "数据错误，核心节点丢失");
                 }
                 if (simpleMsg.getCommandPieces()[0].equalsIgnoreCase("moss")) {
                     ChatMessage chatMessage = ChatMessage.of("user", simpleMsg.getPlainMsg().substring(4).trim());
