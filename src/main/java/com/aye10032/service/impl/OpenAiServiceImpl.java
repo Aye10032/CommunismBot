@@ -41,10 +41,10 @@ public class OpenAiServiceImpl implements OpenAiService {
 
     public OkHttpClient getOkHttpClient() {
         return httpClient.newBuilder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .callTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(300, TimeUnit.SECONDS)
+                .callTimeout(300, TimeUnit.SECONDS)
+                .readTimeout(600, TimeUnit.SECONDS)
+                .writeTimeout(300, TimeUnit.SECONDS)
                 .proxy(Zibenbot.getProxy()).build();
     }
 
@@ -80,10 +80,6 @@ public class OpenAiServiceImpl implements OpenAiService {
         Object lock = new Object();
         List<AiResult> results = new CopyOnWriteArrayList<>();
         try {
-            OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .connectTimeout(1, TimeUnit.DAYS)
-                    .readTimeout(1, TimeUnit.DAYS)
-                    .proxy(Zibenbot.getProxy()).build();
             AtomicBoolean failure = new AtomicBoolean(false);
 
             RealEventSource realEventSource = new RealEventSource(request, new EventSourceListener() {
@@ -124,7 +120,7 @@ public class OpenAiServiceImpl implements OpenAiService {
                     }
                 }
             });
-            realEventSource.connect(okHttpClient);
+            realEventSource.connect(getOkHttpClient());
             synchronized (lock) {
                 try {
                     lock.wait();
@@ -136,6 +132,7 @@ public class OpenAiServiceImpl implements OpenAiService {
             if (failure.get() || results.size() == 0) {
                 throw new RuntimeException("调用出错");
             }
+            realEventSource.cancel();
             return margeStreamResult(results);
         } catch (Exception e) {
             log.error("调用openai失败：", e);
