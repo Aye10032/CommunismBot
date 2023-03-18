@@ -242,7 +242,8 @@ public class WeiboUtils {
             }
         }
         itme.setText(builder.toString());
-        itme.setLongText(o.get("isLongText").getAsBoolean());
+        JsonElement isLongText = o.get("isLongText");
+        itme.setLongText(isLongText == null ? false : isLongText.getAsBoolean());
         itme.setUserID(o.getAsJsonObject("user").get("id").getAsString());
         itme.setUserName(o.getAsJsonObject("user").get("screen_name").getAsString());
         //itme.setPerma();
