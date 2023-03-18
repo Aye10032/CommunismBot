@@ -87,7 +87,9 @@ public class ChatGPTFunc extends BaseFunc {
 
     private void chat(SimpleMsg simpleMsg, String s, ChatContext chatContext) {
         try {
-            AiResult aiResult = openAiService.chatGpt(GPT_3_5_TURBO, chatContext);
+//            AiResult aiResult = openAiService.chatGpt(GPT_3_5_TURBO, chatContext);
+            AiResult aiResult = openAiService.chatGptStream(GPT_3_5_TURBO, chatContext);
+
             ChatMessage replyMessage = aiResult.getChoices().get(0).getMessage();
             String content = replyMessage.getContent();
             if (content.startsWith("\n\n")) {

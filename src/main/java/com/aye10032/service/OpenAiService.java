@@ -9,4 +9,5 @@ import com.aye10032.entity.ChatContext;
  **/
 public interface OpenAiService {
     AiResult chatGpt(String moduleType, ChatContext chatContext);
+    AiResult chatGptStream(String moduleType, ChatContext chatContext);
 }

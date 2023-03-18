@@ -14,6 +14,8 @@ public class ChatRequest {
     private String model;
     private List<Message> messages;
 
+    private boolean stream;
+
     @Data
     public static class Message {
         private String role;
