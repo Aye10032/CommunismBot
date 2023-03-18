@@ -33,6 +33,8 @@ public class ChatGPTFunc extends BaseFunc {
     @Autowired
     private OpenAiService openAiService;
 
+    private ChatMessage systemPrompt = ChatMessage.of("system", "You are a helpful assistant");
+
     public ChatGPTFunc(Zibenbot zibenbot) {
         super(zibenbot);
     }
@@ -46,8 +48,6 @@ public class ChatGPTFunc extends BaseFunc {
     @Transactional
     public void run(SimpleMsg simpleMsg) {
         try {
-            ChatMessage systemPrompt = ChatMessage.of("system", "You are a helpful assistant");
-
             if (simpleMsg.getCommandPieces().length > 1) {
                 if (simpleMsg.getCommandPieces()[0].equalsIgnoreCase("550w")) {
                     systemPrompt = ChatMessage.of("system", simpleMsg.getPlainMsg().substring(4).trim());
@@ -84,6 +84,7 @@ public class ChatGPTFunc extends BaseFunc {
                 chatContextService.usedMessage(chatMessage.getId());
                 String contextId = chatMessage.getContextId();
                 log.info("上下文会话：{}", contextId);
+                chatContextService.push(contextId, systemPrompt);
                 List<ChatMessage> chatMessages = chatContextService.load(contextId);
                 chatMessages.add(ChatMessage.of("user", simpleMsg.getPlainMsg().replace("chat ", "")));
                 ChatContext chatContext = new ChatContext();
