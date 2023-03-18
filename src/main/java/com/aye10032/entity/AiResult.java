@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author dazo66(sundazhong.sdz)
@@ -16,7 +17,7 @@ public class AiResult {
     public int created;
     public String model;
     public Usage usage;
-    public ArrayList<Choice> choices;
+    public List<Choice> choices;
 
     @Data
     public static class Choice {
@@ -24,6 +25,8 @@ public class AiResult {
         @JsonProperty("finish_reason")
         private String finishReason;
         private int index;
+        // 流消息使用这个字段接收
+        private ChatMessage delta;
     }
 
     @Data

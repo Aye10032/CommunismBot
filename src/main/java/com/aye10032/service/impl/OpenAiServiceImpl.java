@@ -7,16 +7,24 @@ import com.aye10032.entity.ChatMessage;
 import com.aye10032.entity.ChatRequest;
 import com.aye10032.service.OpenAiService;
 import com.aye10032.utils.JsonUtils;
+import com.aye10032.utils.StringUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import okhttp3.internal.sse.RealEventSource;
 import okhttp3.sse.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -67,25 +75,29 @@ public class OpenAiServiceImpl implements OpenAiService {
         chatRequest.setMessages(chatContext.getContext().stream().map(ChatRequest.Message::of).collect(Collectors.toList()));
         chatRequest.setModel(moduleType);
         chatRequest.setStream(true);
-        MediaType mediaType = MediaType.parse("text/event-stream");
+        MediaType mediaType = MediaType.parse("application/json");
 
         RequestBody requestBody = RequestBody.create(JsonUtils.toJson(chatRequest), mediaType);
         Request request = new Request.Builder().url("https://api.openai.com/v1/chat/completions").method("POST", requestBody).header("Authorization", "Bearer " + openaiApiKey).build();
         Object lock = new Object();
+        List<AiResult> results = new CopyOnWriteArrayList<>();
         try {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(1, TimeUnit.DAYS)
                     .readTimeout(1, TimeUnit.DAYS)
                     .proxy(Zibenbot.getProxy()).build();
-            final String[] message = new String[1];
-            final boolean[] failure = new boolean[1];
+            AtomicBoolean failure = new AtomicBoolean(false);
 
             RealEventSource realEventSource = new RealEventSource(request, new EventSourceListener() {
 
                 @Override
                 public void onEvent(EventSource eventSource, String id, String type, String data) {
-                    message[0] = data;
-                    log.info(data);
+                    if ("[DONE]".equals(data)) {
+                        synchronized (lock) {
+                            lock.notify();
+                        }
+                    }
+                    results.add(JsonUtils.fromJson(data, AiResult.class));
                 }
 
                 @Override
@@ -100,7 +112,7 @@ public class OpenAiServiceImpl implements OpenAiService {
                     synchronized (lock) {
                         lock.notify();
                     }
-                    failure[0] = true;
+                    failure.set(true);;
                 }
             });
             realEventSource.connect(okHttpClient);
@@ -112,22 +124,49 @@ public class OpenAiServiceImpl implements OpenAiService {
                     throw new RuntimeException(e);
                 }
             }
-            if (failure[0]) {
-                throw new Exception("openai服务端断开连接");
+            if (failure.get() || results.size() == 0) {
+                throw new RuntimeException("调用出错");
             }
-
-            //=======================================
-
-            return JsonUtils.fromJson(message[0], AiResult.class);
+            return margeStreemResult(results);
         } catch (Exception e) {
             log.error("调用openai失败：", e);
             return null;
         }
     }
 
+    private AiResult margeStreemResult(List<AiResult> results) {
+        AiResult aiResult = new AiResult();
+        StringBuilder content = new StringBuilder();
+        String role = "assistant";
+        for (AiResult result : results) {
+            List<AiResult.Choice> choices = result.getChoices();
+            for (AiResult.Choice choice : choices) {
+                ChatMessage delta = choice.getDelta();
+                if (delta == null) {
+                    continue;
+                }
+                if (!StringUtils.isEmpty(delta.getRole())) {
+                    role = delta.getRole();
+                }
+                if (!StringUtils.isEmpty(delta.getContent())) {
+                    content.append(delta.getContent());
+                }
+            }
+        }
+        aiResult.setCreated(results.get(0).getCreated());
+        aiResult.setId(results.get(0).getId());
+        aiResult.setModel(results.get(0).getModel());
+        aiResult.setObject(results.get(0).getObject());
+        ChatMessage message = ChatMessage.of(role, content.toString());
+        AiResult.Choice choice = new AiResult.Choice();
+        choice.setMessage(message);
+        aiResult.setChoices(Collections.singletonList(choice));
+        return aiResult;
+    }
+
     public static void main(String[] args) {
         OpenAiServiceImpl openAiService = new OpenAiServiceImpl();
-        openAiService.openaiApiKey = "=";
+        openAiService.openaiApiKey = "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";
         ChatContext chatContext = new ChatContext();
         chatContext.setContext(Lists.newArrayList(ChatMessage.of("user", "What is the OpenAI mission?")));
 //        AiResult aiResult = openAiService.chatGpt("gpt-3.5-turbo", chatContext);
