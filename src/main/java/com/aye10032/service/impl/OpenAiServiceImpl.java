@@ -166,7 +166,7 @@ public class OpenAiServiceImpl implements OpenAiService {
 
     public static void main(String[] args) {
         OpenAiServiceImpl openAiService = new OpenAiServiceImpl();
-        openAiService.openaiApiKey = "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";
+        openAiService.openaiApiKey = "=";
         ChatContext chatContext = new ChatContext();
         chatContext.setContext(Lists.newArrayList(ChatMessage.of("user", "What is the OpenAI mission?")));
 //        AiResult aiResult = openAiService.chatGpt("gpt-3.5-turbo", chatContext);
