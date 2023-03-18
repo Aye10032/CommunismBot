@@ -112,6 +112,7 @@ public class OpenAiServiceImpl implements OpenAiService {
                     synchronized (lock) {
                         lock.notify();
                     }
+                    log.error("onFailure", t);
                     failure.set(true);;
                 }
             });
@@ -168,7 +169,7 @@ public class OpenAiServiceImpl implements OpenAiService {
         OpenAiServiceImpl openAiService = new OpenAiServiceImpl();
         openAiService.openaiApiKey = "=";
         ChatContext chatContext = new ChatContext();
-        chatContext.setContext(Lists.newArrayList(ChatMessage.of("user", "What is the OpenAI mission?")));
+        chatContext.setContext(Lists.newArrayList(ChatMessage.of("user", "来一段1000字的故事")));
 //        AiResult aiResult = openAiService.chatGpt("gpt-3.5-turbo", chatContext);
         AiResult aiResult = openAiService.chatGptStream("gpt-3.5-turbo", chatContext);
         System.out.println(JsonUtils.toJson(aiResult));
