@@ -85,6 +85,7 @@ public class OpenAiServiceImpl implements OpenAiService {
                 @Override
                 public void onEvent(EventSource eventSource, String id, String type, String data) {
                     message[0] = data;
+                    log.info(data);
                 }
 
                 @Override
