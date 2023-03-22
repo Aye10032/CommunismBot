@@ -57,13 +57,11 @@ public class WeiboTask extends SubscribableBase {
                     postIterator.remove();
                 } else {
                     cacheWeiboIds.add(post.getId());
-                    if (!post.isPerma()) {
-                        try {
-                            getBot().logInfo(String.format("检测到新的微博：%s", post.getTitle()));
-                            replyAll(recivers, weiboReader.postToUser(WeiboUtils.getWeiboWithPostItem(client, post)));
-                        } catch (Exception e) {
-                            getBot().logWarning("获取微博出错：" + ExceptionUtils.printStack(e));
-                        }
+                    try {
+                        getBot().logInfo(String.format("检测到新的微博：%s", post.getTitle()));
+                        replyAll(recivers, weiboReader.postToUser(WeiboUtils.getWeiboWithPostItem(client, post)));
+                    } catch (Exception e) {
+                        getBot().logWarning("获取微博出错：" + ExceptionUtils.printStack(e));
                     }
                 }
             }

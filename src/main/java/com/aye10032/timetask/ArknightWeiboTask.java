@@ -69,13 +69,11 @@ public class ArknightWeiboTask extends SubscribableBase {
                     postIterator.remove();
                 } else {
                     postIds.add(post.getId());
-                    if (!post.isPerma()) {
-                        try {
-                            getBot().logInfo(String.format("检测到方舟新的饼：%s", post.getTitle()));
-                            replyAll(recivers, weiboReader.postToUser(WeiboUtils.getWeiboWithPostItem(client, post)));
-                        } catch (Exception e) {
-                            getBot().logWarning("获取饼出错：" + ExceptionUtils.printStack(e));
-                        }
+                    try {
+                        getBot().logInfo(String.format("检测到方舟新的饼：%s", post.getTitle()));
+                        replyAll(recivers, weiboReader.postToUser(WeiboUtils.getWeiboWithPostItem(client, post)));
+                    } catch (Exception e) {
+                        getBot().logWarning("获取饼出错：" + ExceptionUtils.printStack(e));
                     }
                 }
             }
