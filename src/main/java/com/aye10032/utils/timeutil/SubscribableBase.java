@@ -9,6 +9,8 @@ import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.FutureHelper;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.gson.Gson;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,10 +109,13 @@ public abstract class SubscribableBase extends QuartzJobBean {
      *
      * @param s 消息
      */
+    @SneakyThrows
     public void replyAll(List<Reciver> recipients, String s) {
         if (recipients != null) {
             for (Reciver reciver : recipients) {
                 bot.replyMsg(reciver.getSender(), s);
+                // 一秒只发一条消息
+                Thread.sleep(RandomUtils.nextLong(1000L, 5000L));
             }
         }
     }
