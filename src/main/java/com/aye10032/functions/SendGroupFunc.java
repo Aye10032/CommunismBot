@@ -55,6 +55,14 @@ public class SendGroupFunc extends BaseFunc {
                 sendGroupMSG(simpleMsg, groupMap.get(4));
             } else if (msg.startsWith("send5")) {
                 sendGroupMSG(simpleMsg, groupMap.get(5));
+            } else if (msg.startsWith("sendp") && simpleMsg.getCommandPieces().length > 3) {
+                long sendId = Long.parseLong(msg.split(" ")[1]);
+                int flag = msg.indexOf(" ", msg.indexOf(" ") + 1);
+                simpleMsg.setFromClient(sendId);
+                simpleMsg.setFromGroup(-1);
+                simpleMsg.setType(MsgType.PRIVATE_MSG);
+                msg = msg.substring(flag + 1);
+                replyMsg(simpleMsg, msg);
             }
         }
     }
