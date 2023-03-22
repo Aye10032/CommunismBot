@@ -136,7 +136,7 @@ public class OpenAiServiceImpl implements OpenAiService {
             return margeStreamResult(results);
         } catch (Exception e) {
             log.error("调用openai失败：", e);
-            return null;
+            throw e;
         }
     }
 

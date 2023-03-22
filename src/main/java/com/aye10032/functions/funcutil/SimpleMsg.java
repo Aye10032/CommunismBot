@@ -80,6 +80,9 @@ public class SimpleMsg implements ICommand {
     }
 
     public String getPlainMsg() {
+        if (msgChain == null) {
+            return msg;
+        }
         MessageChainBuilder builder = new MessageChainBuilder();
         msgChain.forEach((Message m) -> {
             if (m instanceof At) {
@@ -220,7 +223,7 @@ public class SimpleMsg implements ICommand {
      * @return
      */
     public static SimpleMsg getTempMsg(String testMsg){
-        return new SimpleMsg(995497677L, 2375985957L, testMsg, MsgType.GROUP_MSG);
+        return new SimpleMsg(1044102726L, 114514L, testMsg, MsgType.GROUP_MSG);
     }
 
     public int getQuoteKey() {

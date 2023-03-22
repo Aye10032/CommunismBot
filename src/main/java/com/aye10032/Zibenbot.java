@@ -553,12 +553,14 @@ public class Zibenbot implements ApplicationContextAware {
     public void replyMsg(SimpleMsg fromMsg, String msg) {
         try {
             if (fromMsg.isGroupMsg()) {
+                log.info("send to {}[{}]:{}", fromMsg.getFromGroup(), fromMsg.getFromClient(), msg);
                 Contact contact = _getGroup(fromMsg.getFromGroup());
                 if (contact != null) {
                     MessageChain chain = toMessChain(contact, msg);
                     contact.sendMessage(chain);
                 }
             } else if (fromMsg.isPrivateMsg()) {
+                log.info("send to {}:{}", fromMsg.getFromClient(), msg);
                 MessageChain chain = toMessChain(getUser(fromMsg.getFromClient()), msg);
                 toPrivateMsg(fromMsg.getFromClient(), chain);
             } else if (fromMsg.isTeamspealMsg()) {
