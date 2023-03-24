@@ -390,14 +390,14 @@ public class Zibenbot implements ApplicationContextAware {
 
     private User getUser(long clientId) {
         try {
-            User user = bot.getStranger(clientId);
+            User user = bot.getFriend(clientId);
             if (user == null) {
-                return bot.getFriend(clientId);
+                return getMember(clientId) ;
             } else {
                 return user;
             }
         } catch (NoSuchElementException e) {
-            return getMember(clientId);
+            return bot.getStranger(clientId);
         }
     }
 
