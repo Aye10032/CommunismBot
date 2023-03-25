@@ -1,7 +1,7 @@
 package com.aye10032.mapper;
 
-import com.aye10032.entity.SubTask;
-import com.aye10032.entity.SubTaskExample;
+import com.aye10032.foundation.entity.base.sub.SubTask;
+import com.aye10032.foundation.entity.base.sub.SubTaskExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -1,17 +1,18 @@
 package com.aye10032.service.impl;
 
-import com.aye10032.Zibenbot;
-import com.aye10032.entity.AiResult;
-import com.aye10032.entity.ChatContext;
-import com.aye10032.entity.ChatMessage;
-import com.aye10032.entity.ChatRequest;
+import com.aye10032.bot.Zibenbot;
+import com.aye10032.foundation.entity.base.ChatMessage;
+import com.aye10032.foundation.entity.dto.AiResult;
+import com.aye10032.foundation.entity.dto.ChatContext;
+import com.aye10032.foundation.entity.dto.ChatRequest;
+import com.aye10032.foundation.utils.JsonUtils;
 import com.aye10032.service.OpenAiService;
-import com.aye10032.utils.JsonUtils;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import okhttp3.internal.sse.RealEventSource;
-import okhttp3.sse.*;
+import okhttp3.sse.EventSource;
+import okhttp3.sse.EventSourceListener;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -114,7 +115,8 @@ public class OpenAiServiceImpl implements OpenAiService {
                             // ignore
                         }
                     }
-                    failure.set(true);;
+                    failure.set(true);
+                    ;
                     synchronized (lock) {
                         lock.notify();
                     }

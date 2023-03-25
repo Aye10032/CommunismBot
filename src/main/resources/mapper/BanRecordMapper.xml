@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.aye10032.data.banrecord.mapper.BanRecordMapper">
-  <resultMap id="BaseResultMap" type="com.aye10032.data.banrecord.entity.BanRecord">
+<mapper namespace="com.aye10032.mapper.BanRecordMapper">
+  <resultMap id="BaseResultMap" type="com.aye10032.foundation.entity.base.ban.record.BanRecord">
     <constructor>
       <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="qq_id" javaType="java.lang.Long" jdbcType="BIGINT" />
@@ -72,7 +72,7 @@
   <sql id="Base_Column_List">
     id, qq_id, from_group, status, last_ban_date, ban_time
   </sql>
-  <select id="selectByExample" parameterType="com.aye10032.data.banrecord.entity.BanRecordExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.aye10032.foundation.entity.base.ban.record.BanRecordExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -96,13 +96,13 @@
     delete from ban_record
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.aye10032.data.banrecord.entity.BanRecordExample">
+  <delete id="deleteByExample" parameterType="com.aye10032.foundation.entity.base.ban.record.BanRecordExample">
     delete from ban_record
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.aye10032.data.banrecord.entity.BanRecord">
+  <insert id="insert" parameterType="com.aye10032.foundation.entity.base.ban.record.BanRecord">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -111,7 +111,7 @@
     values (#{qqId,jdbcType=BIGINT}, #{fromGroup,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, 
       #{lastBanDate,jdbcType=TIMESTAMP}, #{banTime,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.aye10032.data.banrecord.entity.BanRecord">
+  <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.ban.record.BanRecord">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -151,7 +151,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.aye10032.data.banrecord.entity.BanRecordExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.aye10032.foundation.entity.base.ban.record.BanRecordExample" resultType="java.lang.Long">
     select count(*) from ban_record
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -195,7 +195,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.aye10032.data.banrecord.entity.BanRecord">
+  <update id="updateByPrimaryKeySelective" parameterType="com.aye10032.foundation.entity.base.ban.record.BanRecord">
     update ban_record
     <set>
       <if test="qqId != null">
@@ -216,7 +216,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.aye10032.data.banrecord.entity.BanRecord">
+  <update id="updateByPrimaryKey" parameterType="com.aye10032.foundation.entity.base.ban.record.BanRecord">
     update ban_record
     set qq_id = #{qqId,jdbcType=BIGINT},
       from_group = #{fromGroup,jdbcType=BIGINT},

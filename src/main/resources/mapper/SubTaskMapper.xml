@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.aye10032.mapper.SubTaskMapper">
-    <resultMap id="BaseResultMap" type="com.aye10032.entity.SubTask">
+    <resultMap id="BaseResultMap" type="com.aye10032.foundation.entity.base.sub.SubTask">
         <constructor>
             <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
             <arg column="reciver_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
@@ -74,7 +74,7 @@
         id
         , reciver_type, reciver_id, args, sub_name
     </sql>
-    <select id="selectByExample" parameterType="com.aye10032.entity.SubTaskExample" resultMap="BaseResultMap">
+    <select id="selectByExample" parameterType="com.aye10032.foundation.entity.base.sub.SubTaskExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
             distinct
@@ -99,13 +99,13 @@
         from sub_task
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <delete id="deleteByExample" parameterType="com.aye10032.entity.SubTaskExample">
+    <delete id="deleteByExample" parameterType="com.aye10032.foundation.entity.base.sub.SubTaskExample">
         delete from sub_task
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insert" parameterType="com.aye10032.entity.SubTask">
+    <insert id="insert" parameterType="com.aye10032.foundation.entity.base.sub.SubTask">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -114,7 +114,7 @@
         values (#{reciverType,jdbcType=INTEGER}, #{reciverId,jdbcType=BIGINT}, #{args,jdbcType=VARCHAR},
         #{subName,jdbcType=VARCHAR})
     </insert>
-    <insert id="insertSelective" parameterType="com.aye10032.entity.SubTask">
+    <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.sub.SubTask">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -148,7 +148,7 @@
             </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="com.aye10032.entity.SubTaskExample" resultType="java.lang.Long">
+    <select id="countByExample" parameterType="com.aye10032.foundation.entity.base.sub.SubTaskExample" resultType="java.lang.Long">
         select count(*) from sub_task
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -188,7 +188,7 @@
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.aye10032.entity.SubTask">
+    <update id="updateByPrimaryKeySelective" parameterType="com.aye10032.foundation.entity.base.sub.SubTask">
         update sub_task
         <set>
             <if test="reciverType != null">
@@ -206,7 +206,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.aye10032.entity.SubTask">
+    <update id="updateByPrimaryKey" parameterType="com.aye10032.foundation.entity.base.sub.SubTask">
         update sub_task
         set reciver_type = #{reciverType,jdbcType=INTEGER},
             reciver_id   = #{reciverId,jdbcType=BIGINT},

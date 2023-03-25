@@ -1,7 +1,7 @@
 package com.aye10032.service;
 
-import com.aye10032.entity.AiResult;
-import com.aye10032.entity.ChatContext;
+import com.aye10032.foundation.entity.dto.AiResult;
+import com.aye10032.foundation.entity.dto.ChatContext;
 
 /**
  * @author dazo66(sundazhong.sdz)
@@ -9,5 +9,6 @@ import com.aye10032.entity.ChatContext;
  **/
 public interface OpenAiService {
     AiResult chatGpt(String moduleType, ChatContext chatContext);
+
     AiResult chatGptStream(String moduleType, ChatContext chatContext);
 }

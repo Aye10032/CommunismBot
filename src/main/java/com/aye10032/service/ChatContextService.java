@@ -1,6 +1,6 @@
 package com.aye10032.service;
 
-import com.aye10032.entity.ChatMessage;
+import com.aye10032.foundation.entity.base.ChatMessage;
 
 import java.util.List;
 
@@ -12,7 +12,8 @@ public interface ChatContextService {
 
     /**
      * 加载上下文
-     * @param id 上下文id
+     *
+     * @param id    上下文id
      * @param limit 限制条数
      * @return 上下文列表
      */
@@ -20,6 +21,7 @@ public interface ChatContextService {
 
     /**
      * 加载上下文 不限制条数 默认会加载所有的上下文
+     *
      * @param id 上下文id
      * @return 上下文列表
      */
@@ -27,6 +29,7 @@ public interface ChatContextService {
 
     /**
      * 创建新的上下文
+     *
      * @param chatMessage 开始消息
      * @return 上下文唯一id
      */
@@ -34,6 +37,7 @@ public interface ChatContextService {
 
     /**
      * push到指定上下文后面
+     *
      * @param chatMessage
      * @return
      */
@@ -41,6 +45,7 @@ public interface ChatContextService {
 
     /**
      * 根据message key查询
+     *
      * @param messageKey message key
      * @return ChatMessage
      */
