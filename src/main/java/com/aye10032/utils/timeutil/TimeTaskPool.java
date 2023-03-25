@@ -1,6 +1,9 @@
 package com.aye10032.utils.timeutil;
 
 import com.aye10032.Zibenbot;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +17,8 @@ import java.util.List;
  *
  * @author Dazo66
  */
+@Slf4j
+@Component
 public class TimeTaskPool {
 
     //创建线程安全的列表
@@ -26,6 +31,7 @@ public class TimeTaskPool {
     //异步线程池
     //使用方法 asynchronousPool(callback, runnables);
     //当后面所有的任务异步运行完毕后， 执行callback
+    @Autowired
     private AsynchronousTaskPool asynchronousPool;
 
     public AsynchronousTaskPool getAsynchronousPool() {
@@ -47,10 +53,10 @@ public class TimeTaskPool {
             task.setTiggerTime(task.getNextTiggerTime());
             tasks.add(task);
             flow.flush();
-            Zibenbot.logInfoStatic(String.format("添加时间任务 触发时间：%s 当前时间%s",
+            log.info(String.format("添加时间任务 触发时间：%s 当前时间%s",
                     task.getTiggerTime().toString(), new Date().toString()));
         } else {
-            Zibenbot.logWarningStatic("重复的时间任务：" + task.getClass().getName());
+            log.warn("重复的时间任务：" + task.getClass().getName());
         }
     }
 

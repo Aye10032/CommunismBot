@@ -3,6 +3,7 @@ package com.aye10032.entity;
 import com.aye10032.Zibenbot;
 import com.aye10032.utils.ExceptionUtils;
 import com.google.gson.internal.$Gson$Preconditions;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
@@ -14,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author dazo66(sundazhong.sdz)
  * @date 2022/9/4 14:13
  **/
+@Slf4j
 public class ScheduleProxy extends QuartzJobBean {
 
     private static Map<String, QuartzJobBean> realBeanMap = new ConcurrentHashMap<>();
@@ -23,7 +25,7 @@ public class ScheduleProxy extends QuartzJobBean {
         try {
             realBeanMap.get(context.getJobDetail().getKey().getName()).execute(context);
         } catch (Throwable e) {
-            Zibenbot.logErrorStatic("运行定时任务失败：" + ExceptionUtils.printStack(e));
+            log.info("运行定时任务失败：" + ExceptionUtils.printStack(e));
         }
     }
 

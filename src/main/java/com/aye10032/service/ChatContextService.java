@@ -1,7 +1,6 @@
 package com.aye10032.service;
 
 import com.aye10032.entity.ChatMessage;
-import com.aye10032.functions.funcutil.SimpleMsg;
 
 import java.util.List;
 

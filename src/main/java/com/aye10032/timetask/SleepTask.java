@@ -2,6 +2,7 @@ package com.aye10032.timetask;
 
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import java.util.List;
  * @Date Created in 18:49 10.13
  */
 @Service
+@Slf4j
 public class SleepTask extends SubscribableBase {
 
     @Override
@@ -48,7 +50,7 @@ public class SleepTask extends SubscribableBase {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
 
-        getBot().logDebug("now time -> " + hour + ":" + min);
+        log.debug("now time -> " + hour + ":" + min);
 
         if (hour == aim_hour) {
             return true;

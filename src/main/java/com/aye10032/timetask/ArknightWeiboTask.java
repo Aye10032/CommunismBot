@@ -8,6 +8,7 @@ import com.aye10032.utils.weibo.*;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @author Dazo66
  */
 @Service
+@Slf4j
 public class ArknightWeiboTask extends SubscribableBase {
 
     private Set<String> postIds = WeiboCacheService.getCacheIds(ArknightWeiboTask.class);
@@ -70,10 +72,10 @@ public class ArknightWeiboTask extends SubscribableBase {
                 } else {
                     postIds.add(post.getId());
                     try {
-                        getBot().logInfo(String.format("检测到方舟新的饼：%s", post.getTitle()));
+                        log.info(String.format("检测到方舟新的饼：%s", post.getTitle()));
                         replyAll(recivers, weiboReader.postToUser(WeiboUtils.getWeiboWithPostItem(client, post)));
                     } catch (Exception e) {
-                        getBot().logWarning("获取饼出错：" + ExceptionUtils.printStack(e));
+                        log.info("获取饼出错：" + ExceptionUtils.printStack(e));
                     }
                 }
             }

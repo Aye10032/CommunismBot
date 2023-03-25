@@ -4,8 +4,14 @@ import com.aye10032.Zibenbot;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.HttpUtils;
 import com.aye10032.utils.timeutil.AsynTaskStatus;
+import com.aye10032.utils.timeutil.AsynchronousTaskPool;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -18,16 +24,25 @@ import java.util.regex.Pattern;
 /**
  * @author Dazo66
  */
+@Slf4j
+@Service
 public class WeiboReader {
 
     private File cacheDir;
+
+    @Value("weibo.data.cache.path")
+    private String weiboCachePath;
+    @Autowired
+    private AsynchronousTaskPool pool;
+
+    @Autowired
     private Zibenbot zibenbot;
     private static final Pattern pattern = Pattern.compile("\\[img:([\\w.:/\\-]+/([\\w.]+))]");
-    private static Pattern img_name_pattern = Pattern.compile("\\w+.(png|jpg|gif)");
+    private static final Pattern IMG_NAME_PATTERN = Pattern.compile("\\w+.(png|jpg|gif)");
 
-    public WeiboReader(Zibenbot zibenbot, String cacheDir) {
-        this.cacheDir = new File(cacheDir);
-        this.zibenbot = zibenbot;
+    @PostConstruct
+    public void init() {
+        this.cacheDir = new File(weiboCachePath);
         if (!this.cacheDir.exists()) {
             this.cacheDir.mkdirs();
         }
@@ -43,7 +58,7 @@ public class WeiboReader {
             imgFiles.add(new File(getFileName(url)));
             runnables.add(() -> downloadImg(url));
         });
-        AsynTaskStatus status = zibenbot.pool.getAsynchronousPool().execute(
+        AsynTaskStatus status = pool.execute(
                 () ->
                         imgFiles.forEach(file -> {
                             String s = des.get();
@@ -80,14 +95,14 @@ public class WeiboReader {
         } catch (Exception e) {
             tempFile.delete();
             outFile.delete();
-            zibenbot.logWarning("微博图片下载出错：" + ExceptionUtils.printStack(e));
+            log.error("微博图片下载出错：" + ExceptionUtils.printStack(e));
             return null;
         }
         return outFile;
     }
 
     private String getFileName(String url) {
-        Matcher matcher = img_name_pattern.matcher(url);
+        Matcher matcher = IMG_NAME_PATTERN.matcher(url);
         matcher.find();
         return cacheDir.getAbsolutePath() + "/" + matcher.group();
     }

@@ -2,11 +2,17 @@ package com.aye10032.config;
 
 import com.aye10032.Zibenbot;
 import com.aye10032.timetask.SimpleSubscription;
+import com.aye10032.utils.timeutil.AsynchronousTaskPool;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class BeanConfig {
+
+    @Bean
+    public AsynchronousTaskPool asynchronousTaskPool() {
+        return new AsynchronousTaskPool();
+    }
 
     @Bean("maiyao")
     public SimpleSubscription maiyao(Zibenbot zibenbot) {

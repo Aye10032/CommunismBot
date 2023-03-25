@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.intellij.lang.annotations.MagicConstant;
@@ -28,6 +29,7 @@ import java.util.TimeZone;
 /**
  * @author Dazo66
  */
+@Slf4j
 public class WeiboUtils {
 
     private static SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.ENGLISH);
@@ -101,7 +103,7 @@ public class WeiboUtils {
             post.setTop(item.getIsTop());
             return post;
         } catch (Exception e) {
-            Zibenbot.logWarningStatic(ExceptionUtils.printStack(e));
+            log.error(ExceptionUtils.printStack(e));
             return itemToPost(item);
         }
 
@@ -137,7 +139,7 @@ public class WeiboUtils {
                 .header("X-Requested-With", "XMLHttpRequest")
                 .build();
         String string = client.newCall(weiboListRequest).execute().body().string();
-        Zibenbot.logWarningStatic(string);
+        log.info(string);
         JsonObject object = parser.parse(string).getAsJsonObject().getAsJsonObject("data");
         WeiboPost post = buildPostFromJsonObject(object);
         return post;

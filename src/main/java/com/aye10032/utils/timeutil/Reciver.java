@@ -1,7 +1,7 @@
 package com.aye10032.utils.timeutil;
 
-import com.aye10032.functions.funcutil.MsgType;
-import com.aye10032.functions.funcutil.SimpleMsg;
+import com.aye10032.timetask.functions.funcutil.MsgType;
+import com.aye10032.timetask.functions.funcutil.SimpleMsg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -22,7 +22,7 @@ public class Reciver {
     /**
      * 构建一个没有参数的收件人
      *
-     * @param type 收件人类型 可用的类型{@link com.aye10032.functions.funcutil.MsgType}
+     * @param type 收件人类型 可用的类型{@link MsgType}
      * @param id   收件人群号
      */
     public Reciver(@NotNull MsgType type, @NotNull Long id) {
@@ -32,7 +32,7 @@ public class Reciver {
 
     /**
      * 构建一个有参数的收件人
-     * @param type 收件人类型 可用的类型{@link com.aye10032.functions.funcutil.MsgType}
+     * @param type 收件人类型 可用的类型{@link MsgType}
      * @param id 收件人群号
      * @param args 用户参数
      */

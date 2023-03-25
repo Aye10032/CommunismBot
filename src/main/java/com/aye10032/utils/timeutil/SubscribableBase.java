@@ -3,13 +3,14 @@ package com.aye10032.utils.timeutil;
 import com.aye10032.Zibenbot;
 import com.aye10032.entity.SubTask;
 import com.aye10032.entity.SubTaskExample;
-import com.aye10032.functions.funcutil.MsgType;
+import com.aye10032.timetask.functions.funcutil.MsgType;
 import com.aye10032.mapper.SubTaskMapper;
 import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.FutureHelper;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.quartz.JobExecutionContext;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  *
  * @author Dazo66
  */
+@Slf4j
 public abstract class SubscribableBase extends QuartzJobBean {
 
     private SubTaskMapper subTaskMapper;
@@ -82,12 +84,12 @@ public abstract class SubscribableBase extends QuartzJobBean {
                 String[] args = gson.fromJson(entry.getKey(), String[].class);
                 List<Reciver> recivers = entry.getValue().stream().map(subTask -> new Reciver(MsgType.getMsgTypeById(subTask.getReciverType()), subTask.getReciverId())).collect(Collectors.toList());
                 try {
-                    getBot().logInfo("触发定时任务 " + getName() + " " + entry.getKey());
+                    log.info("触发定时任务 " + getName() + " " + entry.getKey());
                     timeLimiter.runWithTimeout(() -> run(recivers, args), 10, TimeUnit.MINUTES);
                 } catch (TimeoutException e) {
-                    getBot().logError("运行订阅器超时:" + getName() + " args: " + entry.getKey());
+                    log.error("运行订阅器超时:" + getName() + " args: " + entry.getKey());
                 } catch (Throwable e) {
-                    getBot().logError("运行订阅器出现异常:" + getName() + " args: " + entry.getKey() + " throw: " + ExceptionUtils.printStack(e));
+                    log.error("运行订阅器出现异常:" + getName() + " args: " + entry.getKey() + " throw: " + ExceptionUtils.printStack(e));
                 }
             });
 

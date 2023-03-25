@@ -7,6 +7,7 @@ import com.aye10032.utils.fund.FundingUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.utils.timeutil.TimeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
  * @author Dazo66
  */
 @Service
+@Slf4j
 public class FundTask extends SubscribableBase {
 
     @Override
@@ -49,7 +51,7 @@ public class FundTask extends SubscribableBase {
                     builder.append(String.format("  %s %s: %s \n", status.getName(), status.getNetWorthDate(), status.getDayGrowth()));
                 }
             } catch (Exception e) {
-                Zibenbot.logInfoStatic(ExceptionUtils.printStack(e));
+                log.error(ExceptionUtils.printStack(e));
                 builder.append(String.format("  %s (读取异常)\n", s));
             }
         }

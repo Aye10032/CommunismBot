@@ -1,8 +1,9 @@
 package com.aye10032.timetask;
 
 import com.aye10032.Zibenbot;
-import com.aye10032.functions.funcutil.SimpleMsg;
+import com.aye10032.timetask.functions.funcutil.SimpleMsg;
 import com.aye10032.utils.*;
+import com.aye10032.utils.timeutil.AsynchronousTaskPool;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import com.google.gson.Gson;
@@ -10,12 +11,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.openqa.selenium.WebDriver;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
@@ -23,13 +26,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author Dazo66
  */
+@Slf4j
 public class DragraliaTask extends SubscribableBase {
 
     public Config config;
@@ -37,6 +40,8 @@ public class DragraliaTask extends SubscribableBase {
     Gson gson = new Gson();
     OkHttpClient client = Zibenbot.getOkHttpClient();
     private JsonParser jsonParser = new JsonParser();
+    @Autowired
+    private AsynchronousTaskPool pool;
 
     @PostConstruct
     public void init() {
@@ -67,11 +72,10 @@ public class DragraliaTask extends SubscribableBase {
                     recivers.forEach(r -> list.add(r.getSender()));
                     this.sendArticle(a, list);
                 } catch (Exception e) {
-                    getBot().logWarning("发送公告出错：" + ExceptionUtils.printStack(e));
+                    log.warn("发送公告出错：" + ExceptionUtils.printStack(e));
                 }
             });
         } catch (Exception e) {
-            getBot().log(Level.WARNING, ExceptionUtils.printStack(e));
         }
     }
 
@@ -96,18 +100,18 @@ public class DragraliaTask extends SubscribableBase {
             if (!last.new_article_list.contains(i)) {
                 try {
                     Article article = getArticleFromNet(i, false);
-                    if (article != null && article.title_name != null) {
+                    if (article != null && article.titleName != null) {
                         set.add(article);
                         last.new_article_list.add(i);
                     } else {
                         throw new RuntimeException("获取公告出错");
                     }
                 } catch (Exception e) {
-                    getBot().logWarning("获取公告出错：" + ExceptionUtils.printStack(e));
+                    log.warn("获取公告出错：" + ExceptionUtils.printStack(e));
                     Article a = new Article();
                     a.message =
-                            "更新公告异常\n公告页面：https://dragalialost.com/chs/news/detail/" + a.article_id;
-                    a.article_id = -1;
+                            "更新公告异常\n公告页面：https://dragalialost.com/chs/news/detail/" + a.articleId;
+                    a.articleId = -1;
                     set.add(a);
                 }
             }
@@ -123,7 +127,7 @@ public class DragraliaTask extends SubscribableBase {
             if (d == null || d.update_time < i.update_time) {
                 try {
                     Article article = getArticleFromNet(i.id, true);
-                    if (article != null && article.title_name != null) {
+                    if (article != null && article.titleName != null) {
                         set.add(article);
                         last.update_article_list.remove(d);
                         last.update_article_list.add(i);
@@ -133,8 +137,8 @@ public class DragraliaTask extends SubscribableBase {
                 } catch (Exception e) {
                     Article a = new Article();
                     a.message =
-                            "更新公告异常\n公告页面：https://dragalialost.com/chs/news/detail/" + a.article_id;
-                    a.article_id = -1;
+                            "更新公告异常\n公告页面：https://dragalialost.com/chs/news/detail/" + a.articleId;
+                    a.articleId = -1;
                     set.add(a);
                 }
             }
@@ -147,7 +151,7 @@ public class DragraliaTask extends SubscribableBase {
                 saveHistory(set);
             } catch (Exception e) {
                 e.printStackTrace();
-                getBot().logWarning("存储公告历史失败！");
+                log.warn("存储公告历史失败！");
             }
         }
         loader.save(config);
@@ -202,11 +206,11 @@ public class DragraliaTask extends SubscribableBase {
         List<String> img_tag_list = new ArrayList<>();
         List<Runnable> runs = new ArrayList<>();
         //轻松龙约替换
-        if (dragralia_life_pattern.matcher(a.title_name).find()) {
+        if (dragralia_life_pattern.matcher(a.titleName).find()) {
             setDragraliaLifeArticle(a);
         }
         //纳姆波澜历险记替换
-        if (plotsynopsis_pattern.matcher(a.title_name).find()) {
+        if (plotsynopsis_pattern.matcher(a.titleName).find()) {
             setPlotsynopsisArticle(a);
         }
         String msg = StringEscapeUtils.unescapeHtml4(a.message);
@@ -234,10 +238,10 @@ public class DragraliaTask extends SubscribableBase {
             runs.add(() -> downloadImg(a.image_path));
         }
         try {
-            getBot().pool.getAsynchronousPool().execute(() -> {
+            pool.execute(() -> {
                 StringBuilder builder = new StringBuilder();
-                if (a.article_id != -1) {
-                    builder.append("【").append(a.category_name).append("】 ").append(a.title_name).append("\n");
+                if (a.articleId != -1) {
+                    builder.append("【").append(a.category_name).append("】 ").append(a.titleName).append("\n");
                     if (!"".equals(a.image_path)) {
                         try {
                             builder.append(getBot().getImg(new File(getFileName(a.image_path))));
@@ -259,7 +263,7 @@ public class DragraliaTask extends SubscribableBase {
                             }
                         } else {
                             builder.append("公告加载失败，请前往官网查看：\n");
-                            builder.append("https://dragalialost.com/chs/news/detail/").append(a.article_id);
+                            builder.append("https://dragalialost.com/chs/news/detail/").append(a.articleId);
                         }
                     } else {
                         builder.append(ret);
@@ -276,7 +280,7 @@ public class DragraliaTask extends SubscribableBase {
 
     private void setDragraliaLifeArticle(Article a) {
         try {
-            Matcher matcher = Pattern.compile(NUMBER_PATTERN).matcher(a.title_name);
+            Matcher matcher = Pattern.compile(NUMBER_PATTERN).matcher(a.titleName);
             matcher.find();
             Integer ep_num = Integer.valueOf(matcher.group());
             RequestBody formBody = new FormBody.Builder().add("lang", "chs").add("type",
@@ -307,15 +311,15 @@ public class DragraliaTask extends SubscribableBase {
         } else {
             dir = getBot().appDirectory;
         }
-        String url = "https://dragalialost.com/chs/news/detail/" + a.article_id;
-        String outputfile = dir + "/dragraliatemp/" + a.article_id + ".png";
+        String url = "https://dragalialost.com/chs/news/detail/" + a.articleId;
+        String outputfile = dir + "/dragraliatemp/" + a.articleId + ".png";
         try {
             WebDriver driver = SeleniumUtils.getDriver();
             return SeleniumUtils.getScreenshot(driver, url, outputfile, 4000, "for(item of " +
                     "document.getElementsByTagName('details')) {\n" + "    item.open = true;\n" + "}");
         } catch (Exception e) {
             e.printStackTrace();
-            getBot().logWarning("截图龙约公告出错：" + ExceptionUtils.printStack(e));
+            log.warn("截图龙约公告出错：" + ExceptionUtils.printStack(e));
         }
         return null;
     }
@@ -444,7 +448,7 @@ public class DragraliaTask extends SubscribableBase {
                 i++;
             }
         }
-        getBot().logInfo("清理了三天前的缓存 " + i + " 张。");
+        log.info("清理了三天前的缓存 " + i + " 张。");
     }
 
     private static final String NUMBER_PATTERN = "\\d+";
@@ -459,7 +463,7 @@ public class DragraliaTask extends SubscribableBase {
 
     private void setPlotsynopsisArticle(Article a) {
         try {
-            Matcher matcher = Pattern.compile(NUMBER_PATTERN).matcher(a.title_name);
+            Matcher matcher = Pattern.compile(NUMBER_PATTERN).matcher(a.titleName);
             matcher.find();
             Integer ep_num = Integer.valueOf(matcher.group());
             RequestBody formBody = new FormBody.Builder().add("lang", "chs").add("type",
@@ -496,7 +500,7 @@ public class DragraliaTask extends SubscribableBase {
 
     public static class Article implements Comparable {
         //文章id
-        public int article_id;
+        public int articleId;
         //类型名字
         public String category_name;
         //日期
@@ -506,13 +510,13 @@ public class DragraliaTask extends SubscribableBase {
         public String pr_category_id;
         public String prev_article_id;
         public long start_time;
-        public String title_name;
+        public String titleName;
         public boolean isUpdate = false;
         public long update_time;
 
         @Override
         public int hashCode() {
-            return article_id * 114514;
+            return articleId * 114514;
         }
 
         @Override

@@ -5,6 +5,7 @@ import com.aye10032.data.ffxiv.entity.House;
 import com.aye10032.data.ffxiv.service.FFXIVService;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import static com.aye10032.utils.FFXIVUtil.daysBetween;
  * @date: 2022/8/17 上午 12:23
  */
 @Service
+@Slf4j
 public class FFXIVTask extends SubscribableBase {
 
     @Autowired
@@ -60,7 +62,7 @@ public class FFXIVTask extends SubscribableBase {
                         getBot().replyMsg(reciver.getSender(), builder.toString());
                     }
                 } else {
-                    getBot().logInfo("今天没有危险房屋");
+                    log.info("今天没有危险房屋");
                 }
             }
         }

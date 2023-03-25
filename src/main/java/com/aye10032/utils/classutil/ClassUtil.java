@@ -1,7 +1,7 @@
 package com.aye10032.utils.classutil;
 
 
-import com.aye10032.functions.funcutil.IFunc;
+import com.aye10032.timetask.functions.funcutil.IFunc;
 
 import java.io.File;
 import java.util.ArrayList;

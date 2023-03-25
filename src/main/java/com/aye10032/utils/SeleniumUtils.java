@@ -1,6 +1,7 @@
 package com.aye10032.utils;
 
 import com.aye10032.Zibenbot;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -13,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Dazo66
  */
+@Slf4j
 public class SeleniumUtils {
 
     private static ChromeOptions options = new ChromeOptions();
@@ -68,19 +70,19 @@ public class SeleniumUtils {
     public synchronized static File getScreenshot(WebDriver driver, String url, String outFileName, int timeOut, String... js) throws IOException, InterruptedException {
         try {
             driver.get(url = addhttp(url));
-            Zibenbot.logInfoStatic("Chrome Dirver switch to" + url);
+            log.info("Chrome Dirver switch to" + url);
             Thread.sleep(timeOut);
             JavascriptExecutor driver_js = SeleniumUtils.getDriverJs(driver);
             //Double width = Double.valueOf(driver_js.executeScript(
             //        "return document.getElementsByTagName('html')[0].getBoundingClientRect().width;").toString());
             Double height = Double.parseDouble(driver_js.executeScript("return document.getElementsByTagName('body')[0].getBoundingClientRect().height;").toString()) + 200.0d;
-            Zibenbot.logInfoStatic(String.format("截图网页自适应获得高度%d", height.intValue()));
+            log.info(String.format("截图网页自适应获得高度%d", height.intValue()));
             for (String s : js) {
                 driver_js.executeScript(s);
             }
             driver.manage().window().setSize(new Dimension(1366, height.intValue()));
             byte[] bytes = driver.findElement(By.tagName("html")).getScreenshotAs(OutputType.BYTES);
-            Zibenbot.logInfoStatic("Chrome Dirver switch to about:blank");
+            log.info("Chrome Dirver switch to about:blank");
             //bytes = ImgUtils.compress(bytes, "png");
             IOUtil.saveFileWithBytes(outFileName, bytes);
         } catch (Exception e) {

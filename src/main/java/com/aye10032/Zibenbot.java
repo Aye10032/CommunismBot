@@ -1,9 +1,9 @@
 package com.aye10032;
 
-import com.aye10032.functions.FuncEnableFunc;
-import com.aye10032.functions.funcutil.IFunc;
-import com.aye10032.functions.funcutil.IQuoteHook;
-import com.aye10032.functions.funcutil.SimpleMsg;
+import com.aye10032.timetask.functions.FuncEnableFunc;
+import com.aye10032.timetask.functions.funcutil.IFunc;
+import com.aye10032.timetask.functions.funcutil.IQuoteHook;
+import com.aye10032.timetask.functions.funcutil.SimpleMsg;
 import com.aye10032.mapper.SubTaskMapper;
 import com.aye10032.utils.*;
 import com.aye10032.utils.timeutil.TimeTaskPool;
@@ -26,9 +26,11 @@ import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.ExternalResource;
 import okhttp3.OkHttpClient;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -61,24 +63,18 @@ import static com.aye10032.utils.StringUtil.longMsgSplit;
 @AutoConfigureAfter(BotConfig.class)
 @Slf4j
 public class Zibenbot implements ApplicationContextAware {
-
-    private static OkHttpClient client = new OkHttpClient();
     public static Proxy proxy = null;
-    private static Pattern AT_REGEX = Pattern.compile("\\[mirai:at:(\\d+)]");
-    /**
-     * 时间任务池
-     */
-    public TimeTaskPool pool;
-    public WeiboReader weiboReader;
+    private static final Pattern AT_REGEX = Pattern.compile("\\[mirai:at:(\\d+)]");
     public List<Long> enableGroup = new ArrayList<>();
+    @Value("{bot.data.cache.path}")
     public String appDirectory;
-    final Map<String, IMsgUpload> msgUploads = new HashMap<>();
-    private Bot bot;
+    private final Map<String, IMsgUpload> msgUploads = new HashMap<>();
+    private final Bot bot;
     final Pattern MSG_TYPE_PATTERN;
     private ApplicationContext applicationContext;
 
     public static OkHttpClient getOkHttpClient() {
-        return client.newBuilder().callTimeout(30, TimeUnit.SECONDS).build();
+        return new OkHttpClient().newBuilder().callTimeout(30, TimeUnit.SECONDS).build();
 //                .proxy(Zibenbot.getProxy()).build();
     }
 
@@ -112,32 +108,8 @@ public class Zibenbot implements ApplicationContextAware {
                 , StringUtil.splicing("|", msgUploads.keySet())));
     }
 
-    private PrintStream LOGGER_FILE = null;
-
-    private synchronized PrintStream getLoggerStream() {
-        if (LOGGER_FILE == null) {
-            File logDir = new File(appDirectory + "/log");
-            if (!logDir.exists()) {
-                logDir.mkdirs();
-            }
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            File file = new File(appDirectory + "/log/log-" + format.format(new Date()) + ".log");
-            try {
-                if (!file.exists()) {
-                    file.createNewFile();
-                }
-                LOGGER_FILE = new PrintStream(new FileOutputStream(file, true), true);
-                LOGGER_FILE.println("------------------------------------------------------------------");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return LOGGER_FILE;
-    }
-
     public Zibenbot(@Autowired Bot bot) {
         this.bot = bot;
-        pool = new TimeTaskPool();
         // bot启用的群
 //        enableGroup.add(995497677L); //提醒人 死于2022年10月27日11:08分
         enableGroup.add(1044102726L); //提醒人
@@ -158,54 +130,13 @@ public class Zibenbot implements ApplicationContextAware {
         enableGroup.add(609372702L); //部队群
     }
 
-    @Bean
-    public WeiboReader buildWeiboReader() {
-        return new WeiboReader(this, this.appDirectory + "/weiboCache/");
-    }
-
     @Autowired
     private SubTaskMapper subTaskMapper;
 
     @PostConstruct
     public int startup() {
-        // bot.getLogger().plus(logger);
-        // 设置基本参数
-        SeleniumUtils.setup(appDirectory + "/ChromeDriver/chromedriver.exe");
         //改成了手动注册
-        log(Level.INFO, "registe func start");
-        this.weiboReader = new WeiboReader(this, appDirectory + "/weiboCache/");
-/*        FuncLoader loader = new FuncLoader(this);
-        loader.addFactory(new SubscriptFunc.SubscriptFuncFactory(this, subTaskMapper));
-        loader.addFactory(new ArknightWeiboFunc.ArkFuncFactory(this, weiboReader));
-        loader.addFactory(new WeiboFunc.WeiboFuncFactory(this, weiboReader));
-        loader.addFactory(new GenshinWeiboFunc.GenshinFuncFactory(this, weiboReader));
-        loader.addScanPackage("com.aye10032.utils.timeutil");
-        registerFunc = loader.load();
-        registerFunc.add(new HistoryTodayFunc(this, historyTodayService));
-        registerFunc.add(new BanFunc(this, banRecordService, killRecordService));
-        //对功能进行初始化
-        for (IFunc func : registerFunc) {
-            try {
-                func.setUp();
-            } catch (Exception e) {
-                logWarning("初始化：" + func.getClass().getName() + "出现异常");
-                e.printStackTrace();
-            }
-        }
-        log(Level.INFO, "registe func end");*/
-
-        //把订阅管理器注册进可用的模块里
-        //registerFunc.add(subManager);
-
-
-
-/*        //创建teamspeakbot对象
-        teamspeakBot = new TeamspeakBot(this);
-        try {
-            teamspeakBot.setup();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+        log.info("registe func start");
         bot.getEventChannel().subscribeAlways(MessageEvent.class, messageEvent -> {
             SimpleMsg simpleMsg = new SimpleMsg(messageEvent);
             if (simpleMsg.isGroupMsg()) {
@@ -240,10 +171,6 @@ public class Zibenbot implements ApplicationContextAware {
         Socket s = new Socket();
         proxy = new Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved("127.0.0.1", 7891));
         return proxy;
-    }
-
-    public static void logInfoStatic(String info) {
-        log.info(info);
     }
 
     /**
@@ -294,7 +221,7 @@ public class Zibenbot implements ApplicationContextAware {
             NormalMember member = _getGroup(groupId).get(memberId);
             muteMember(member, second);
         } catch (Exception e) {
-            logWarning("禁言失败：" + memberId + e);
+            log.warn("禁言失败：" + memberId + e);
         }
     }
 
@@ -307,7 +234,7 @@ public class Zibenbot implements ApplicationContextAware {
     public void setMuteAll(long groupId, boolean muteAll) {
         Group g = _getGroup(groupId);
         if (g == null) {
-            logWarning("全体禁言失败，找不到group：" + groupId);
+            log.warn("全体禁言失败，找不到group：" + groupId);
             return;
         }
         g.getSettings().setMuteAll(muteAll);
@@ -334,8 +261,7 @@ public class Zibenbot implements ApplicationContextAware {
             member = _getGroup(groupId).get(memberId);
             unMute(member);
         } catch (Exception e) {
-            logWarning("取消禁言失败：" + memberId + e);
-            return;
+            log.warn("取消禁言失败：" + memberId + e);
         }
     }
 
@@ -350,7 +276,7 @@ public class Zibenbot implements ApplicationContextAware {
     private void toPrivateMsg(long clientId, MessageChain chain, boolean flag) {
         Contact contact = getUser(clientId);
         if (contact == null) {
-            logWarning("找不到Contact：" + clientId);
+            log.warn("找不到Contact：" + clientId);
             return;
         }
         if (!flag) {
@@ -371,22 +297,13 @@ public class Zibenbot implements ApplicationContextAware {
             } else if (s.contains("resultType=32")) {
                 contact.sendMessage("发送消息失败，请尝试添加好友再获取。");
             } else {
-                logWarning(ExceptionUtils.printStack(e));
+                log.warn(ExceptionUtils.printStack(e));
             }
         } catch (Exception e) {
-            logWarning("发送消息失败：");
-            logWarning(ExceptionUtils.printStack(e));
+            log.error("发送消息失败：");
+            log.error(ExceptionUtils.printStack(e));
         }
     }
-
-    public static void logErrorStatic(String errorMsg) {
-        log.error(errorMsg);
-    }
-
-/*    public int toTeamspeakMsg(String msg) {
-        teamspeakBot.api.sendChannelMessage(msg);
-        return 1;
-    }*/
 
     private User getUser(long clientId) {
         try {
@@ -422,7 +339,7 @@ public class Zibenbot implements ApplicationContextAware {
     public void toGroupMsg(long groupId, String msg) {
         Group group = _getGroup(groupId);
         if (group == null) {
-            logWarning("找不到Group：" + groupId);
+            log.warn("找不到Group：" + groupId);
             return;
         }
         group.sendMessage(toMessChain(group, msg));
@@ -435,48 +352,6 @@ public class Zibenbot implements ApplicationContextAware {
     private String _at(long id) {
         return String.format("[mirai:at:%s]", id);
     }
-
-
-    /**
-     * log方法
-     *
-     * @param info 输出信息
-     */
-    public void logInfo(String info) {
-        log.info(info);
-    }
-
-    public void logDebug(String debugMsg) {
-        log.debug(debugMsg);
-    }
-
-    public void logError(String errorMsg) {
-        log.error(errorMsg);
-    }
-
-    public void log(Level level, String msg) {
-        if (level == Level.WARNING) {
-            logWarning(msg);
-        } else if (level == Level.ALL) {
-            logVerbose(msg);
-        } else {
-            logInfo(msg);
-        }
-
-    }
-
-    public void logWarning(String warnMsg) {
-        logWarningStatic(warnMsg);
-    }
-
-    public static void logWarningStatic(String warnMsg) {
-        log.warn(warnMsg);
-    }
-
-    public static void logVerboseStatic(String verboseMsg) {
-        log.debug(verboseMsg);
-    }
-
 
     /**
      * 得到已经注册的方法模块
@@ -498,7 +373,7 @@ public class Zibenbot implements ApplicationContextAware {
             field.setAccessible(true);
             return new QuoteReply((MessageSource) field.get(msg));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("getQuote exception: {}", e);
             return null;
         }
     }
@@ -533,14 +408,10 @@ public class Zibenbot implements ApplicationContextAware {
                 ret.addAll(chain);
                 toPrivateMsg(fromMsg.getFromClient(), chain);
             } else if (fromMsg.isTeamspealMsg()) {
-/*            Zibenbot.logger.log(Level.INFO,
-                    String.format("回复ts频道[%s]消息:%s",
-                            fromMsg.fromGroup,
-                            msg));*/
-                //todo
+
             }
         } catch (Exception e) {
-            logWarning(ExceptionUtils.printStack(e));
+            log.error(ExceptionUtils.printStack(e));
         }
     }
 
@@ -564,14 +435,10 @@ public class Zibenbot implements ApplicationContextAware {
                 MessageChain chain = toMessChain(getUser(fromMsg.getFromClient()), msg);
                 toPrivateMsg(fromMsg.getFromClient(), chain);
             } else if (fromMsg.isTeamspealMsg()) {
-/*            Zibenbot.logger.log(Level.INFO,
-                    String.format("回复ts频道[%s]消息:%s",
-                            fromMsg.fromGroup,
-                            msg));*/
-                //todo
+
             }
         } catch (Exception e) {
-            logWarning(ExceptionUtils.printStack(e));
+            log.error(ExceptionUtils.printStack(e));
         }
     }
 
@@ -604,14 +471,10 @@ public class Zibenbot implements ApplicationContextAware {
                     contact.sendMessage(builder.build());
                 }
             } else if (fromMsg.isTeamspealMsg()) {
-/*            Zibenbot.logger.log(Level.INFO,
-                    String.format("回复ts频道[%s]消息:%s",
-                            fromMsg.fromGroup,
-                            msgs));*/
-                //todo
+
             }
         } catch (Exception e) {
-            logWarning(ExceptionUtils.printStack(e));
+            log.error(ExceptionUtils.printStack(e));
         }
     }
 
@@ -766,26 +629,24 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     public File getAudioFromMsg(SimpleMsg msg) {
-        File silk_file;
+        File silkFile;
         try {
             MessageChain chain = msg.getMsgChain();
             OnlineAudio audio = chain.get(OnlineAudio.Key);
             assert audio != null;
 
-            silk_file = new File(appDirectory + "/HuoZiYinShua/origin.silk");
+            silkFile = new File(appDirectory + "/HuoZiYinShua/origin.silk");
             byte[] bytes1 = IOUtils.toByteArray(new URL((audio).getUrlForDownload()));
-            BufferedOutputStream silk_out = new BufferedOutputStream(Files.newOutputStream(silk_file.toPath()));
-            silk_out.write(bytes1);
-            silk_out.flush();
-            silk_out.close();
+            BufferedOutputStream silkOut = new BufferedOutputStream(Files.newOutputStream(silkFile.toPath()));
+            silkOut.write(bytes1);
+            silkOut.flush();
+            silkOut.close();
 
-            File mp3_file;
+            File mp3File;
             AudioUtils.init(new File(appDirectory + "/HuoZiYinShua/audio"));
-            mp3_file = AudioUtils.silkToMp3(silk_file);
+            mp3File = AudioUtils.silkToMp3(silkFile);
 
-            return mp3_file;
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            return mp3File;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -805,12 +666,6 @@ public class Zibenbot implements ApplicationContextAware {
             msg = msg.replace(matcher.group(0), _upload(contact, matcher.group(1), matcher.group(2)));
             i = matcher.start() + 1;
         }
-        if (contact instanceof Friend) {
-            String fromto = bot.getId() + "-" + contact.getId();
-            msg = msg.replaceAll("\\[mirai:image:\\{(\\w{8})-(\\w{4})-(\\w{4})-(\\w{4})-(\\w{12})}.mirai]", "[mirai:image:/" + fromto + "-$1$2$3$4$5" + "]");
-        } else {
-            msg = msg.replaceAll("\\[mirai:image:/(\\d+)-(\\d+)-(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})]", "[mirai:image:{$3-$4-$5-$6-$7}.mirai]");
-        }
         return msg;
     }
 
@@ -824,7 +679,7 @@ public class Zibenbot implements ApplicationContextAware {
                 // ignore
             }
         }
-        logErrorStatic(String.format("上传%s失败：%s", type, ExceptionUtils.printStack(e)));
+        log.error(String.format("上传%s失败：%s", type, ExceptionUtils.printStack(e)));
         return "[" + type + "]";
     }
 
@@ -846,7 +701,7 @@ public class Zibenbot implements ApplicationContextAware {
                     func.run(simpleMsg);
                 } catch (Exception e) {
                     replyMsg(simpleMsg, String.format("运行出错（%s）：%s", func.toString(), e));
-                    logWarning(ExceptionUtils.printStack(e));
+                    log.error(ExceptionUtils.printStack(e));
                 }
             }
         }
@@ -854,11 +709,11 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
-    private Cache<Integer, IQuoteHook> hookCache = CacheBuilder.newBuilder()
+    private final Cache<Integer, IQuoteHook> hookCache = CacheBuilder.newBuilder()
             .maximumSize(1000)
             .expireAfterAccess(240, TimeUnit.MINUTES)
             .build();
@@ -869,19 +724,5 @@ public class Zibenbot implements ApplicationContextAware {
         replyMsg(fromMsg, msg);
 
     }
-
-/*    public int teamspeakMsg(long fromGroup, long fromClient, String msg) {
-        // 如果消息来自匿名者
-        SimpleMsg cqMsg = new SimpleMsg(-1, -1, fromGroup, fromClient, null, msg, -1, MsgType.TEAMSPEAK_MSG);
-        for (IFunc func : registerFunc) {
-            try {
-                func.run(cqMsg);
-            } catch (Exception e) {
-                replyMsg(cqMsg, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
-            }
-        }
-        return MSG_IGNORE;
-    }*/
-
 
 }

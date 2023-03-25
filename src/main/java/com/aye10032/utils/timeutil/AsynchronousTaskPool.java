@@ -3,6 +3,7 @@ package com.aye10032.utils.timeutil;
 
 import com.aye10032.Zibenbot;
 import com.aye10032.utils.ExceptionUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -12,6 +13,7 @@ import java.util.concurrent.*;
  *
  * @author Dazo66
  */
+@Slf4j
 public class AsynchronousTaskPool extends TimedTaskBase {
 
     ExecutorService pool;
@@ -43,7 +45,7 @@ public class AsynchronousTaskPool extends TimedTaskBase {
                     statusMap.get(callback).setStatus(AsynTaskStatus.TASKS_RUNNING);
                     run.run();
                 } catch (Exception e) {
-                    Zibenbot.logWarningStatic("异步线程执行出错！:" + e + "\n" + ExceptionUtils.printStack(e));
+                    log.error("异步线程执行出错！:" + e + "\n" + ExceptionUtils.printStack(e));
                 } finally {
                     latch.countDown();
                 }
@@ -76,7 +78,7 @@ public class AsynchronousTaskPool extends TimedTaskBase {
                     statusMap.get(r).setStatus(AsynTaskStatus.CALL_BACK_RUNNING);
                     r.run();
                 } catch (Exception e) {
-                    Zibenbot.logWarningStatic("异步线程回调执行异常\n" + ExceptionUtils.printStack(e));
+                    log.info("异步线程回调执行异常\n" + ExceptionUtils.printStack(e));
                 } finally {
                     statusMap.get(r).setStatus(AsynTaskStatus.CALL_BACK_RUNNED);
                     //回调完成 实现呼叫

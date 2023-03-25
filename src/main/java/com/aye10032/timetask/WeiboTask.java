@@ -5,6 +5,7 @@ import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.utils.weibo.*;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Dazo66
  */
+@Slf4j
 @Service
 public class WeiboTask extends SubscribableBase {
     @Autowired
@@ -39,7 +41,7 @@ public class WeiboTask extends SubscribableBase {
 
     @Override
     public void run(List<Reciver> recivers, String[] args) {
-        Zibenbot.logInfoStatic("开始检查微博");
+        log.info("开始检查微博");
         if (args == null || args.length == 0) {
             return;
         }
@@ -58,10 +60,10 @@ public class WeiboTask extends SubscribableBase {
                 } else {
                     cacheWeiboIds.add(post.getId());
                     try {
-                        getBot().logInfo(String.format("检测到新的微博：%s", post.getTitle()));
+                        log.info(String.format("检测到新的微博：%s", post.getTitle()));
                         replyAll(recivers, weiboReader.postToUser(WeiboUtils.getWeiboWithPostItem(client, post)));
                     } catch (Exception e) {
-                        getBot().logWarning("获取微博出错：" + ExceptionUtils.printStack(e));
+                        log.error("获取微博出错：" + ExceptionUtils.printStack(e));
                     }
                 }
             }

@@ -5,6 +5,7 @@ import com.aye10032.utils.ExceptionUtils;
 import com.aye10032.utils.timeutil.Reciver;
 import com.aye10032.utils.timeutil.SubscribableBase;
 import com.aye10032.utils.weibo.*;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.Set;
  * @author Dazo66
  */
 @Service
+@Slf4j
 public class GenshinWeiboTask extends SubscribableBase {
 
     private Set<String> postIds = WeiboCacheService.getCacheIds(GenshinWeiboTask.class);
@@ -55,10 +57,10 @@ public class GenshinWeiboTask extends SubscribableBase {
                 } else {
                     postIds.add(post.getId());
                     try {
-                        getBot().logInfo(String.format("检测到原神新的饼：%s", post.getTitle()));
+                        log.info(String.format("检测到原神新的饼：%s", post.getTitle()));
                         replyAll(recivers, weiboReader.postToUser(WeiboUtils.getWeiboWithPostItem(client, post)));
                     } catch (Exception e) {
-                        getBot().logWarning("获取饼出错：" + ExceptionUtils.printStack(e));
+                        log.error("获取饼出错：" + ExceptionUtils.printStack(e));
                     }
                 }
             }
