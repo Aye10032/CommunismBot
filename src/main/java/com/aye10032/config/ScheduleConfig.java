@@ -1,8 +1,8 @@
 package com.aye10032.config;
 
-import com.aye10032.entity.ScheduleProxy;
+import com.aye10032.foundation.entity.dto.ScheduleProxy;
+import com.aye10032.foundation.utils.timeutil.SubscribableBase;
 import com.aye10032.mapper.SubTaskMapper;
-import com.aye10032.utils.timeutil.SubscribableBase;
 import lombok.SneakyThrows;
 import org.apache.http.client.utils.DateUtils;
 import org.quartz.*;
@@ -12,10 +12,8 @@ import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
@@ -44,15 +42,15 @@ public class ScheduleConfig implements ApplicationContextAware, InitializingBean
             // 统一使用代理类去获取唯一的bean对象
             ScheduleProxy.putRealBean(entry.getValue().getName(), entry.getValue());
             JobDetail jobDetail = JobBuilder.newJob(ScheduleProxy.class)
-                .withIdentity(entry.getValue().getName(), "default")
-                .storeDurably()
-                .build();
+                    .withIdentity(entry.getValue().getName(), "default")
+                    .storeDurably()
+                    .build();
             Trigger trigger = TriggerBuilder.newTrigger()
-                .forJob(jobDetail)
-                .withIdentity(entry.getValue().getName(), "default")
-                .startNow()
-                .withSchedule(CronScheduleBuilder.cronSchedule(entry.getValue().getCron()))
-                .build();
+                    .forJob(jobDetail)
+                    .withIdentity(entry.getValue().getName(), "default")
+                    .startNow()
+                    .withSchedule(CronScheduleBuilder.cronSchedule(entry.getValue().getCron()))
+                    .build();
             if (!scheduler.checkExists(jobDetail.getKey())) {
                 scheduler.scheduleJob(jobDetail, trigger);
             } else {
@@ -104,22 +102,6 @@ public class ScheduleConfig implements ApplicationContextAware, InitializingBean
         }
         return jobList;
     }
-
-
-/*    public Object registerSingletonBean(String beanName, Object singletonObject) {
-
-        //将applicationContext转换为ConfigurableApplicationContext
-        ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
-
-        //获取BeanFactory
-        DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getAutowireCapableBeanFactory();
-
-        //动态注册bean.
-        defaultListableBeanFactory.registerSingleton(beanName, singletonObject);
-
-        //获取动态注册的bean.
-        return configurableApplicationContext.getBean(beanName);
-    }*/
 
 
     @Override

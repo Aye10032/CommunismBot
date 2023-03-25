@@ -1,9 +1,9 @@
 package com.aye10032.service.impl;
 
-import com.aye10032.entity.ChatMessage;
+import com.aye10032.foundation.entity.base.ChatMessage;
+import com.aye10032.foundation.utils.RandomUtils;
 import com.aye10032.mapper.ChatMessageMapper;
 import com.aye10032.service.ChatContextService;
-import com.aye10032.utils.RandomUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;

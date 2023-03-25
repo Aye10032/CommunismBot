@@ -1,6 +1,6 @@
 package com.aye10032.mapper;
 
-import com.aye10032.entity.ChatMessage;
+import com.aye10032.foundation.entity.base.ChatMessage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
