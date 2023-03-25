@@ -66,7 +66,7 @@ public class Zibenbot implements ApplicationContextAware {
     public static Proxy proxy = null;
     private static final Pattern AT_REGEX = Pattern.compile("\\[mirai:at:(\\d+)]");
     public List<Long> enableGroup = new ArrayList<>();
-    @Value("{bot.data.cache.path}")
+    @Value("${bot.data.cache.path}")
     public String appDirectory;
     private final Map<String, IMsgUpload> msgUploads = new HashMap<>();
     private final Bot bot;
@@ -80,7 +80,6 @@ public class Zibenbot implements ApplicationContextAware {
 
     {
         // 配置logger
-        appDirectory = "data";
         File logDir = new File(appDirectory + "/log/");
         File[] files = logDir.listFiles(pathname -> System.currentTimeMillis() - pathname.lastModified() > TimeUtils.DAY * 10L);
         Arrays.asList(files != null ? files : new File[0]).forEach(File::delete);

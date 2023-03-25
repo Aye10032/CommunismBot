@@ -30,7 +30,7 @@ public class WeiboReader {
 
     private File cacheDir;
 
-    @Value("weibo.data.cache.path")
+    @Value("${weibo.data.cache.path}")
     private String weiboCachePath;
     @Autowired
     private AsynchronousTaskPool pool;
