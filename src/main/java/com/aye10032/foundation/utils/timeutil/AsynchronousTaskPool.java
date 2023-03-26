@@ -21,6 +21,7 @@ public class AsynchronousTaskPool extends Thread {
 
     public AsynchronousTaskPool() {
         pool = Executors.newCachedThreadPool();
+        this.setDaemon(true);
         this.start();
     }
 
@@ -55,6 +56,7 @@ public class AsynchronousTaskPool extends Thread {
 
     @Override
     public void run() {
+        log.info("异步线程池开始运行");
         while (true) {
             if (runnableMap.size() != 0) {
                 List<Runnable> list = new ArrayList<>();
