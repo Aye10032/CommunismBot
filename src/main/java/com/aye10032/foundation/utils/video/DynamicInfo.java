@@ -60,6 +60,9 @@ public class DynamicInfo {
                     dynamic.setPub_time(dynamic_object.getAsJsonObject("modules").getAsJsonObject("module_author")
                             .get("pub_ts").getAsLong());
 
+                    dynamic.setPub_string(dynamic_object.getAsJsonObject("modules").getAsJsonObject("module_author")
+                            .get("pub_time").getAsString());
+
                     dynamic.setText(dynamic_object.getAsJsonObject("modules").getAsJsonObject("module_dynamic")
                             .getAsJsonObject("desc").get("text").getAsString());
                     JsonArray draws = dynamic_object.getAsJsonObject("modules").getAsJsonObject("module_dynamic")

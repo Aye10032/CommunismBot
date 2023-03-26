@@ -40,7 +40,6 @@ public class BlueArchiveTask extends SubscribableBase {
         Collections.reverse(dynamics);
         for (Dynamic dynamic : dynamics) {
             long l = now.getTime() - dynamic.getPub_time().getTime();
-            long min = ((l / (60 * 1000)));
             if (dynamic.getText().contains("日服资讯") && l < 5 * 60 * 1000) {
                 log.info("获取到一条新动态:" + dynamic.getDynamic_id());
                 builder.append(dynamic.getText());
@@ -50,7 +49,9 @@ public class BlueArchiveTask extends SubscribableBase {
                     ImgUtils.downloadImg(dynamic.getImg_url_list().get(i), "ba" + i, getBot().appDirectory);
                     builder.append(getBot().getImg(new File(getBot().appDirectory + "/image/" + "ba" + i + ".jpg")));
                 }
-                builder.append(dynamic.getDynamic_url());
+                builder.append(dynamic.getDynamic_url()).append("\r\n")
+                        .append(dynamic.getPub_string());
+
                 replyAll(recivers, builder.toString());
             }
         }

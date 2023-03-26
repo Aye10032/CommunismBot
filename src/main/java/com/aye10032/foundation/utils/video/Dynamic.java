@@ -19,6 +19,8 @@ public class Dynamic {
 
     private String text = "";
 
+    private String pub_string = "";
+
     private long pub_time = 0;
 
     private ArrayList<String> img_url_list = new ArrayList<>();
@@ -64,4 +66,11 @@ public class Dynamic {
         this.pub_time = pub_time;
     }
 
+    public String getPub_string() {
+        return pub_string;
+    }
+
+    public void setPub_string(String pub_string) {
+        this.pub_string = pub_string;
+    }
 }
