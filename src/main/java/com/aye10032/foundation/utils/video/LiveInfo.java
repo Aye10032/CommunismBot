@@ -15,17 +15,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+import static com.aye10032.foundation.utils.video.BiliData.*;
+
 @Slf4j
 public class LiveInfo {
-
-    protected String liveapi = "https://api.live.bilibili.com/room/v1/Room/get_info?id=";
-    protected String userapi = "https://api.bilibili.com/x/space/acc/info?mid=";
-
     private int code = 0;
-    private String liveUrl = "https://live.bilibili.com/";
     private String liveTitle = "";
     private String liveBackgroundUrl = "";
     private int uid = 0;
+    private String live_url = "";
     private boolean isLiving = false;
     private String liveTime = "";
     private Date liveDate = null;
@@ -33,7 +31,7 @@ public class LiveInfo {
     private boolean hasLive = true;
 
     public LiveInfo(String liveId) {
-        String url = liveapi + liveId;
+        String url = LIVE_API + liveId;
 
         String body = null;
         try {
@@ -61,7 +59,7 @@ public class LiveInfo {
 
                 JsonObject dataJson = jsonObject.get("data").getAsJsonObject();
                 this.uid = dataJson.get("uid").getAsInt();
-                this.liveUrl += dataJson.get("room_id").getAsString();
+                this.live_url = LIVE_URL + dataJson.get("room_id").getAsString();
                 this.liveTitle = dataJson.get("title").getAsString();
                 this.liveBackgroundUrl = dataJson.get("user_cover").getAsString();
                 this.liveTime = dataJson.get("live_time").getAsString();
@@ -88,7 +86,7 @@ public class LiveInfo {
     }
 
     public String getLiveUrl() {
-        return liveUrl;
+        return live_url;
     }
 
     public String getLiveTitle() {
@@ -114,7 +112,7 @@ public class LiveInfo {
     }
 
     public String getNickName(int uid) {
-        String url = this.userapi + uid + "&jsonp=jsonp";
+        String url = USER_API + uid + "&jsonp=jsonp";
         String body = "";
         String name = "";
         try {

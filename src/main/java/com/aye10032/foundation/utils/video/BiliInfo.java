@@ -15,23 +15,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static com.aye10032.foundation.utils.video.BiliData.*;
+
 @Slf4j
 @Getter
 public class BiliInfo {
-
-    protected static final String apiURL1 = "https://api.bilibili.com/x/web-interface/view?";
-    protected static final String apiURL2 = "&type=jsonp";
-    protected String pvideoapi = "https://api.bilibili.com/pvideo?aid=";
-    protected String apiURL;
+    protected String api_url;
 
     private String title = "";
     private String description = "";
-    private String imgurl = "";
-    private String videoUrlAv = "https://www.bilibili.com/video/av";
-    private String videoUrlBv = "https://www.bilibili.com/video/BV";
-    private String videoUrl;
+    private String img_url = "";
+    private String video_url;
 
-    private String headurl = "";
+    private String head_url = "";
     private String up = "";
 
     private int view = 0;
@@ -52,11 +48,11 @@ public class BiliInfo {
 
     public BiliInfo(String avn, String appDirectory) {
         if (avn.startsWith("a") || avn.startsWith("A")) {
-            this.videoUrl = videoUrlAv + avn.substring(2);
-            this.apiURL = apiURL1 + "aid=" + avn.substring(2) + apiURL2;
+            this.video_url = VIDEO_URL_AV + avn.substring(2);
+            this.api_url = API_URL_1 + "aid=" + avn.substring(2) + API_URL_2;
         } else {
-            this.videoUrl = videoUrlBv + avn.substring(2);
-            this.apiURL = apiURL1 + "bvid=BV" + avn.substring(2) + apiURL2;
+            this.video_url = VIDEO_URL_BV + avn.substring(2);
+            this.api_url = API_URL_1 + "bvid=BV" + avn.substring(2) + API_URL_2;
         }
 
         String body = null;
@@ -64,7 +60,7 @@ public class BiliInfo {
 
             OkHttpClient client = Zibenbot.getOkHttpClient();
             Request request = new Request.Builder()
-                    .url(apiURL)
+                    .url(api_url)
                     .method("GET", null)
                     .build();
 
@@ -87,10 +83,10 @@ public class BiliInfo {
                 JsonObject dataJson = jsonObject.get("data").getAsJsonObject();
                 this.title = dataJson.get("title").getAsString();
                 this.description = dataJson.get("desc").getAsString();
-                this.imgurl = dataJson.get("pic").getAsString();
+                this.img_url = dataJson.get("pic").getAsString();
 
                 JsonObject ownerJson = dataJson.get("owner").getAsJsonObject();
-                this.headurl = ownerJson.get("face").getAsString();
+                this.head_url = ownerJson.get("face").getAsString();
                 this.up = ownerJson.get("name").getAsString();
 
                 JsonObject statJson = dataJson.get("stat").getAsJsonObject();
@@ -107,8 +103,8 @@ public class BiliInfo {
 
             }
 
-            File upImageFile = ImgUtils.downloadImg(headurl, avn + "_head", appDirectory, 200, 200);
-            File faceImageFile = ImgUtils.downloadImg(imgurl, avn + "_img", appDirectory);
+            File upImageFile = ImgUtils.downloadImg(head_url, avn + "_head", appDirectory, 200, 200);
+            File faceImageFile = ImgUtils.downloadImg(img_url, avn + "_img", appDirectory);
             if (upImageFile != null) {
                 upImageFilePath = upImageFile.getPath();
             }

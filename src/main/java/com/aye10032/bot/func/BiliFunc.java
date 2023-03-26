@@ -50,7 +50,7 @@ public class BiliFunc extends BaseFunc {
                             return;
                         }
                         send = biliInfo.getTitle() + "\n"
-                                + biliInfo.getVideoUrl() + "\n"
+                                + biliInfo.getVideo_url() + "\n"
                                 + "封面：" + (StringUtils.isNotEmpty(biliInfo.getFaceImageFilePath()) ? zibenbot.getImg(biliInfo.getFaceImageFilePath()) : "【图片下载出错】")
                                 + "\nup主：" + biliInfo.getUp() + "\n"
                                 + (StringUtils.isNotEmpty(biliInfo.getFaceImageFilePath()) ? zibenbot.getImg(biliInfo.getUpImageFilePath()) : "【图片下载出错】")
