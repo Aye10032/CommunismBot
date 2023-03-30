@@ -13,7 +13,7 @@ import java.util.concurrent.*;
  * @author Dazo66
  */
 @Slf4j
-public class AsynchronousTaskPool extends TimedTaskBase {
+public class AsynchronousTaskPool extends Thread {
 
     ExecutorService pool;
     Map<Runnable, List<Future<?>>> runnableMap = new ConcurrentHashMap<>();
@@ -21,8 +21,8 @@ public class AsynchronousTaskPool extends TimedTaskBase {
 
     public AsynchronousTaskPool() {
         pool = Executors.newCachedThreadPool();
-        setTimes(-1).setCycle(TimeUtils.NEXT_SEC)
-                .setTiggerTime(new Date(System.currentTimeMillis() + 1000));
+        this.setDaemon(true);
+        this.start();
     }
 
     /**
@@ -54,37 +54,45 @@ public class AsynchronousTaskPool extends TimedTaskBase {
         return status;
     }
 
-
     @Override
-    public void run(Date current) {
-        if (runnableMap.size() != 0) {
-            List<Runnable> list = new ArrayList<>();
-            for (Runnable runnable : runnableMap.keySet()) {
-                boolean allExecut = true;
-                for (Future<?> future : runnableMap.get(runnable)) {
-                    if (!future.isDone() && !future.isCancelled()) {
-                        allExecut = false;
+    public void run() {
+        log.info("异步线程池开始运行");
+        while (true) {
+            if (runnableMap.size() != 0) {
+                List<Runnable> list = new ArrayList<>();
+                for (Runnable runnable : runnableMap.keySet()) {
+                    boolean allExecut = true;
+                    for (Future<?> future : runnableMap.get(runnable)) {
+                        if (!future.isDone() && !future.isCancelled()) {
+                            allExecut = false;
+                        }
+                    }
+                    if (allExecut) {
+                        list.add(runnable);
                     }
                 }
-                if (allExecut) {
-                    list.add(runnable);
+                //一定要先移除 再运行
+                list.forEach(r -> runnableMap.remove(r));
+                list.forEach(r -> {
+                    try {
+                        statusMap.get(r).setStatus(AsynTaskStatus.CALL_BACK_RUNNING);
+                        r.run();
+                    } catch (Exception e) {
+                        log.info("异步线程回调执行异常\n" + ExceptionUtils.printStack(e));
+                    } finally {
+                        statusMap.get(r).setStatus(AsynTaskStatus.CALL_BACK_RUNNED);
+                        //回调完成 实现呼叫
+                        statusMap.get(r).countDown();
+                        statusMap.remove(r);
+                    }
+                });
+            } else {
+                try {
+                    Thread.sleep(1000L);
+                } catch (InterruptedException e) {
+                    // ignore
                 }
             }
-            //一定要先移除 再运行
-            list.forEach(r -> runnableMap.remove(r));
-            list.forEach(r -> {
-                try {
-                    statusMap.get(r).setStatus(AsynTaskStatus.CALL_BACK_RUNNING);
-                    r.run();
-                } catch (Exception e) {
-                    log.info("异步线程回调执行异常\n" + ExceptionUtils.printStack(e));
-                } finally {
-                    statusMap.get(r).setStatus(AsynTaskStatus.CALL_BACK_RUNNED);
-                    //回调完成 实现呼叫
-                    statusMap.get(r).countDown();
-                    statusMap.remove(r);
-                }
-            });
         }
     }
 

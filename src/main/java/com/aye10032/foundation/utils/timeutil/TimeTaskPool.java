@@ -32,18 +32,12 @@ public class TimeTaskPool {
     @Autowired
     private AsynchronousTaskPool asynchronousPool;
 
-    public AsynchronousTaskPool getAsynchronousPool() {
-        return asynchronousPool;
-    }
-
     public boolean isContain(Object o) {
         return tasks.contains(o);
     }
 
     public TimeTaskPool() {
         flow = new TimeFlow(this);
-        asynchronousPool = new AsynchronousTaskPool();
-        add(asynchronousPool);
     }
 
     public void add(TimedTaskBase task) {

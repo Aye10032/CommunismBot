@@ -6,6 +6,7 @@ import net.mamoe.mirai.utils.BotConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import xyz.cssxsh.mirai.tool.FixProtocolVersion;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class BotConfig {
     }
 
     @Bean
+    @Profile("!mock")
     public Bot getBot() throws IOException {
         if (qqId == null || password == null) {
             throw new RuntimeException("请在参数中放入qq账号密码");
