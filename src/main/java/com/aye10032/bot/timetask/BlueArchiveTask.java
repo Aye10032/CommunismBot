@@ -35,7 +35,7 @@ public class BlueArchiveTask extends SubscribableBase {
         StringBuilder builder = new StringBuilder();
         Date now = new Date();
         log.info("开始获取资讯站动态");
-        DynamicInfo dynamicInfo = new DynamicInfo("3750792");
+        DynamicInfo dynamicInfo = new DynamicInfo("37507923");
         List<Dynamic> dynamics = dynamicInfo.getDynamics();
         Collections.reverse(dynamics);
         for (Dynamic dynamic : dynamics) {
