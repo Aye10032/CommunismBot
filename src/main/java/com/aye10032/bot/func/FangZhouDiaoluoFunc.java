@@ -10,24 +10,39 @@ import com.aye10032.foundation.utils.fangzhoudiaoluo.MaterialsDeserializer;
 import com.aye10032.foundation.utils.fangzhoudiaoluo.Module;
 import com.aye10032.foundation.utils.timeutil.AsynchronousTaskPool;
 import com.google.gson.*;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.Header;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.*;
 
 import static com.aye10032.foundation.utils.fangzhoudiaoluo.Module.getModules;
@@ -219,6 +234,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         }
     }
 
+    @SneakyThrows
     public void update() {
         //System.out.println(arkonegraphFile);
         log.info("fangzhoudiaoluo load start");
@@ -228,11 +244,43 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                 .setLenient()
                 .create();
         JsonParser parser = new JsonParser();
-        CloseableHttpClient client = HttpClientBuilder.create().setDefaultHeaders(Arrays.asList(getHeaders())).build();
+        // use the TrustSelfSignedStrategy to allow Self Signed Certificates
+
+
+        TrustManager[] trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+                    public void checkClientTrusted(
+                            java.security.cert.X509Certificate[] certs, String authType) {
+                    }
+                    public void checkServerTrusted(
+                            java.security.cert.X509Certificate[] certs, String authType) {
+                    }
+                }
+        };
+
+        SSLContext sslContext = SSLContextBuilder
+                .create()
+                .loadTrustMaterial(new TrustSelfSignedStrategy())
+                .build();
+        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+        HostnameVerifier allowAllHosts = NoopHostnameVerifier.INSTANCE;
+        SSLConnectionSocketFactory connectionFactory = new SSLConnectionSocketFactory(sslContext, allowAllHosts);
+        Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("https", connectionFactory)
+                .build();
+        HttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(registry);
+        CloseableHttpClient client = HttpClientBuilder.create().setDefaultHeaders(Arrays.asList(getHeaders()))
+                .setConnectionManager(connManager)
+                .build();
+
         //更新掉落数据
         DiaoluoType diaoluoType = new DiaoluoType();
         try {
-            InputStream stream = HttpUtils.getInputStreamFromNet("https://arkonegraph.herokuapp.com/total/CN", client);
+            InputStream stream = HttpUtils.getInputStreamFromNet("https://api.aog.wiki/v2/data/total/CN", client);
             JsonObject jsonObject = parser.parse(IOUtils.toString(stream)).getAsJsonObject();
             stream.close();
             for (int i = 1; i <= 5; i++) {
@@ -267,11 +315,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
             String last = jsonObject.get("gacha")
                     .getAsJsonObject().get("last_updated")
                     .getAsString();
-            IOUtils.closeQuietly(stream);
-            DateFormat format1 = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-            Module.lastUpdate = format1.format(new Date(last));
-            String img_url = "https://aog.wiki/";
-            //update_img(img_url);
+            Module.lastUpdate = last;
 
             client.close();
         } catch (Exception e) {
