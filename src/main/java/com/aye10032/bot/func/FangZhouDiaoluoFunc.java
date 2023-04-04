@@ -40,10 +40,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.aye10032.foundation.utils.fangzhoudiaoluo.Module.getModules;
 import static com.aye10032.foundation.utils.fangzhoudiaoluo.Module.getVers;
@@ -57,7 +55,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
 
     private DiaoluoType type;
     private Module module;
-    private List<DiaoluoType.HeChenType> name_idList;
+    private List<DiaoluoType.HeChenType> nameIdList;
     private String arkonegraphFile;
     private String cacheFile;
     private Pair<Long, DiaoluoType.HeChenType> last = null;
@@ -132,7 +130,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
             if (len >= 2) {
                 for (int i = 1; i < len; i++) {
                     boolean flag = true;
-                    if (name_idList == null) {
+                    if (nameIdList == null) {
                         if (zibenbot == null) {
                             System.out.println("方舟掉落：初始化异常");
                         } else {
@@ -140,7 +138,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                         }
                         return;
                     }
-                    for (DiaoluoType.HeChenType type : name_idList) {
+                    for (DiaoluoType.HeChenType type : nameIdList) {
                         if (type.isThis(strings[i])) {
                             retMsg(strings[i].startsWith("*"), type, simpleMsg);
                             flag = false;
@@ -151,7 +149,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                         String raw = strings[i].startsWith("*") ? strings[i].substring(1) : strings[i];
                         lastEnforce = strings[i].startsWith("*");
                         Pair<DiaoluoType.HeChenType, Float> max = Pair.of(null, 0f);
-                        for (DiaoluoType.HeChenType type : name_idList) {
+                        for (DiaoluoType.HeChenType type : nameIdList) {
                             float f = type.maxSimilarity(raw);
                             max = f > max.getValue() ? Pair.of(type, f) : max;
                         }
@@ -187,10 +185,10 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
     private String getAllBestMap() {
         StringBuilder builder = new StringBuilder();
         Set<DiaoluoType.Material> set = new HashSet<>();
-        name_idList.forEach(t -> {
+        nameIdList.forEach(t -> {
             try {
                 if (type.getMaterialFromID(t.id).tier == 3) {
-                    getCalls(name_idList, t).forEach(s -> set.add(this.type.getMaterialFromID(s)));
+                    getCalls(nameIdList, t).forEach(s -> set.add(this.type.getMaterialFromID(s)));
                 }
             } catch (Exception e) {
                 log.warn("获得最佳列表出错：" + t + e.getMessage());
@@ -213,7 +211,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
             ret = module.getString(this.type.getMaterialFromID(type.id));
         } else {
             StringBuilder s = new StringBuilder();
-            List<String> strings1 = getCalls(name_idList, type);
+            List<String> strings1 = getCalls(nameIdList, type);
             for (int i1 = 0; i1 < strings1.size(); i1++) {
                 String s1 = module.getString(this.type.getMaterialFromID(strings1.get(i1)));
                 s.append(s1);
@@ -307,8 +305,21 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                     list.add(new DiaoluoType.HeChenType(s1.trim(), getVers(modules.get(1)).toArray(new String[]{}), getVers(modules.get(2)).toArray(new String[]{})));
                 }
             }
-            name_idList = list;
+            nameIdList = list;
             reader.close();
+
+            for (DiaoluoType.Material material : diaoluoType.material) {
+                for (DiaoluoType.Stage balancedStage : material.balanced_stages) {
+                    fillDropName(balancedStage);
+                }
+                for (DiaoluoType.Stage balancedStage : material.lowest_ap_stages) {
+                    fillDropName(balancedStage);
+                }
+                for (DiaoluoType.Stage balancedStage : material.drop_rate_first_stages) {
+                    fillDropName(balancedStage);
+                }
+            }
+
             Module.update(zibenbot.appDirectory);
             module = Module.module;
 
@@ -324,7 +335,14 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         log.info("fangzhoudiaoluo load end");
     }
 
-    private void update_img(String img_url) throws IOException {
+    private void fillDropName(DiaoluoType.Stage balanced_stage) {
+        for (DiaoluoType.Drop drop : balanced_stage.extra_drop) {
+            Map<String, DiaoluoType.HeChenType> chenTypeMap = nameIdList.stream().collect(Collectors.toMap(type -> type.id, type -> type));
+            drop.name = chenTypeMap.get(String.valueOf(drop.id)).names[0];
+        }
+    }
+
+    private void updateImg(String img_url) throws IOException {
         //更新图片
         File file = new File(arkonegraphFile);
         if (!file.exists()) {

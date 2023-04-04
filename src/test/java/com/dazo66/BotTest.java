@@ -51,7 +51,7 @@ public class BotTest {
 
     @Test
     public void testCommand() {
-        zibenbot.runFuncs(SimpleMsg.getTempMsg("moss 你好"));
+        zibenbot.runFuncs(SimpleMsg.getTempMsg("fz gyy"));
     }
 
 
