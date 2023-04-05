@@ -338,7 +338,10 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
     private void fillDropName(DiaoluoType.Stage balanced_stage) {
         for (DiaoluoType.Drop drop : balanced_stage.extra_drop) {
             Map<String, DiaoluoType.HeChenType> chenTypeMap = nameIdList.stream().collect(Collectors.toMap(type -> type.id, type -> type));
-            drop.name = chenTypeMap.get(String.valueOf(drop.id)).names[0];
+            DiaoluoType.HeChenType heChenType = chenTypeMap.get(String.valueOf(drop.id));
+            if (heChenType != null && heChenType.names != null && heChenType.names.length > 0) {
+                drop.name = heChenType.names[0];
+            }
         }
     }
 
