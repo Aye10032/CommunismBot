@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * @author Dazo66
