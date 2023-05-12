@@ -49,7 +49,7 @@ public class BotConfig {
 
         configuration.fileBasedDeviceInfo("device.json");
         configuration.setHeartbeatStrategy(BotConfiguration.HeartbeatStrategy.STAT_HB);
-        configuration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PAD);
+        configuration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_WATCH);
 
         BotAuthorization authorization = BotAuthorization.byQRCode();
 
