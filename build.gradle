@@ -31,7 +31,7 @@ tasks.withType(JavaCompile).configureEach {
 ext {
     springVersion = '2.6.6'
     miraiVersion = '2.15.0-M1'
-    ktVersion = '1.7.10'
+    ktVersion = '1.8.10'
 }
 
 apply plugin: "ua.eshepelyuk.ManifestClasspath"
@@ -58,10 +58,7 @@ dependencies {
     implementation(group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion) {
         exclude(group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-core-jvm')
         exclude(group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-jdk8')
-        exclude(group: 'net.mamoe', module: 'mirai-core-api-jvm')
     }
-
-    implementation group: 'net.mamoe', name: 'mirai-core-api-jvm', version: rootProject.ext.miraiVersion
 
     implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core-jvm', version: '1.6.4'
     implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-jdk8', version: '1.6.4'
