@@ -25,7 +25,7 @@ public class BotConfig {
     private String password;
     @Value("${spring.profiles.active}")
     private String profiles;
-
+/*
     // 升级协议版本
     public static void update() {
         FixProtocolVersion.update();
@@ -34,7 +34,7 @@ public class BotConfig {
     // 获取协议版本信息 你可以用这个来检查update是否正常工作
     public static Map<BotConfiguration.MiraiProtocol, String> info() {
         return FixProtocolVersion.info();
-    }
+    }*/
 
     @Bean
     @Profile("!mock")
@@ -45,13 +45,14 @@ public class BotConfig {
         BotConfiguration configuration = BotConfiguration.getDefault();
         configuration.copy();
 
-        update();
+        // update();
 
         configuration.fileBasedDeviceInfo("device.json");
         configuration.setHeartbeatStrategy(BotConfiguration.HeartbeatStrategy.STAT_HB);
-        configuration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PHONE);
+        configuration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PAD);
 
-        BotAuthorization authorization = BotAuthorization.byPassword(password);
+        BotAuthorization authorization = BotAuthorization.byQRCode();
+
 
         Bot bot = BotFactory.INSTANCE.newBot(qqId, authorization, configuration);
 //        bot.getLogger().info(info().values().toString());
