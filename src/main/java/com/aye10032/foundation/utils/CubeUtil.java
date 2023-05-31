@@ -57,10 +57,10 @@ public class CubeUtil {
     public static int[][][] initCube() {
         int[][][] cube = new int[6][3][3];
         for (int i = 0; i < 3; i++) {
-            Arrays.fill(cube[UP][i], YELLOW);
-            Arrays.fill(cube[DOWN][i], WHITE);
-            Arrays.fill(cube[FRONT][i], BLUE);
-            Arrays.fill(cube[BACK][i], GREEN);
+            Arrays.fill(cube[UP][i], WHITE);
+            Arrays.fill(cube[DOWN][i], YELLOW);
+            Arrays.fill(cube[FRONT][i], GREEN);
+            Arrays.fill(cube[BACK][i], BLUE);
             Arrays.fill(cube[LEFT][i], ORANGE);
             Arrays.fill(cube[RIGHT][i], RED);
         }
