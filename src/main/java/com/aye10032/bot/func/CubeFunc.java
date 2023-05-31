@@ -6,11 +6,14 @@ import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Random;
 import java.util.Stack;
+
+import static com.aye10032.foundation.utils.CubeUtil.*;
 
 @Service
 public class CubeFunc extends BaseFunc {
@@ -31,7 +34,7 @@ public class CubeFunc extends BaseFunc {
                 .or(".3"::equals)
                 .run((cqmsg) -> {
                     newCuberandom();
-                    zibenbot.replyMsg(cqmsg, getCuberandom());
+                    zibenbot.replyMsg(cqmsg, getCuberandom() + zibenbot.getImg(appDirectory + "/image/cube/cube_done.jpg"));
                 })
                 .or(".cfop"::equalsIgnoreCase)
                 .run((cqmsg) -> {
@@ -141,10 +144,18 @@ public class CubeFunc extends BaseFunc {
         }
 
         setCuberandom(temp);
+
+        int[][][] cube = initCube();
+        scrambleCube(getCuberandom(), cube);
+        drawImage(cube, appDirectory + "/image/cube/cube_done.jpg");
     }
 
     public String getCuberandom() {
-        return this.cuberandom;
+        String str = this.cuberandom.trim();
+        if (str.charAt(str.length() - 1) == ' ') {
+            str = str.substring(0, str.length() - 1);
+        }
+        return str;
     }
 
     public void setCuberandom(String cuberandom) {
