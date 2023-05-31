@@ -1,7 +1,5 @@
 package com.aye10032.foundation.utils;
 
-import org.jetbrains.annotations.NotNull;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -56,7 +54,7 @@ public class CubeUtil {
         COLOR_MAP.put(RED, Color.RED);
     }
 
-    public static int @NotNull [][][] initCube() {
+    public static int[][][] initCube() {
         int[][][] cube = new int[6][3][3];
         for (int i = 0; i < 3; i++) {
             Arrays.fill(cube[UP][i], YELLOW);
@@ -69,7 +67,7 @@ public class CubeUtil {
         return cube;
     }
 
-    public static void scrambleCube(@NotNull String formula, int[][][] cube) {
+    public static void scrambleCube(String formula, int[][][] cube) {
         String[] steps = formula.split(" ");
         for (String step : steps) {
             boolean clockwise = true;
@@ -209,7 +207,7 @@ public class CubeUtil {
         }
     }
 
-    public static int @NotNull [][] rotate(int[][] matrix, boolean clockwise) {
+    public static int[][] rotate(int[][] matrix, boolean clockwise) {
         int[][] newMatrix = new int[3][3];
 
         if (clockwise) {
