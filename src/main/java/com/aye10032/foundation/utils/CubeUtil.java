@@ -90,8 +90,6 @@ public class CubeUtil {
     }
 
     public static void rotateLayer(int[][][] cube, int layer, boolean clockwise) {
-        System.out.println(layer + " " + clockwise);
-
         int[] temp;
         switch (layer) {
             case UP:
