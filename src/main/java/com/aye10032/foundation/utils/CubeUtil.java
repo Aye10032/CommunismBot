@@ -232,8 +232,8 @@ public class CubeUtil {
 
     public static void drawImage(int[][][] cube, String path) {
         try {
-            int width = 140;
-            int height = 110;
+            int width = 280;
+            int height = 220;
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics2D g2d = image.createGraphics();
 
@@ -243,47 +243,48 @@ public class CubeUtil {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     g2d.setColor(COLOR_MAP.get(cube[UP][i][j]));
-                    g2d.fillRect(70 + 10 * i, 10 + 10 * j, 10, 10);
+                    g2d.fillRect(140 + 20 * i, 20 + 20 * j, 20, 20);
 
                     g2d.setColor(COLOR_MAP.get(cube[BACK][i][j]));
-                    g2d.fillRect(10 + 10 * i, 40 + 10 * j, 10, 10);
+                    g2d.fillRect(20 + 20 * i, 80 + 20 * j, 20, 20);
 
                     g2d.setColor(COLOR_MAP.get(cube[LEFT][i][j]));
-                    g2d.fillRect(40 + 10 * i, 40 + 10 * j, 10, 10);
+                    g2d.fillRect(80 + 20 * i, 80 + 20 * j, 20, 20);
 
                     g2d.setColor(COLOR_MAP.get(cube[FRONT][i][j]));
-                    g2d.fillRect(70 + 10 * i, 40 + 10 * j, 10, 10);
+                    g2d.fillRect(140 + 20 * i, 80 + 20 * j, 20, 20);
 
                     g2d.setColor(COLOR_MAP.get(cube[RIGHT][i][j]));
-                    g2d.fillRect(100 + 10 * i, 40 + 10 * j, 10, 10);
+                    g2d.fillRect(200 + 20 * i, 80 + 20 * j, 20, 20);
 
                     g2d.setColor(COLOR_MAP.get(cube[DOWN][i][j]));
-                    g2d.fillRect(70 + 10 * i, 70 + 10 * j, 10, 10);
+                    g2d.fillRect(140 + 20 * i, 140 + 20 * j, 20, 20);
                 }
             }
 
+            g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             g2d.setColor(Color.GRAY);
             for (int i = 1; i <= 13; i++) {
-                g2d.drawLine(10 * i, 40, 10 * i, 70);
+                g2d.drawLine(20 * i, 80, 20 * i, 140);
             }
             for (int i = 1; i <= 10; i++) {
-                g2d.drawLine(70, 10 * i, 100, 10 * i);
+                g2d.drawLine(140, 20 * i, 200, 20 * i);
             }
-            g2d.drawLine(10, 50, 130, 50);
-            g2d.drawLine(10, 60, 130, 60);
-            g2d.drawLine(80, 10, 80, 100);
-            g2d.drawLine(90, 10, 90, 100);
+            g2d.drawLine(20, 100, 260, 100);
+            g2d.drawLine(20, 120, 260, 120);
+            g2d.drawLine(160, 20, 160, 200);
+            g2d.drawLine(180, 20, 180, 200);
 
             g2d.setColor(Color.BLACK);
-            g2d.drawLine(70, 10, 100, 10);
-            g2d.drawLine(70, 100, 100, 100);
-            g2d.drawLine(10, 40, 130, 40);
-            g2d.drawLine(10, 70, 130, 70);
-            g2d.drawLine(10, 40, 10, 70);
-            g2d.drawLine(40, 40, 40, 70);
-            g2d.drawLine(70, 10, 70, 100);
-            g2d.drawLine(100, 10, 100, 100);
-            g2d.drawLine(130, 40, 130, 70);
+            g2d.drawLine(140, 20, 200, 20);
+            g2d.drawLine(140, 200, 200, 200);
+            g2d.drawLine(20, 80, 260, 80);
+            g2d.drawLine(20, 140, 260, 140);
+            g2d.drawLine(20, 80, 20, 140);
+            g2d.drawLine(80, 80, 80, 140);
+            g2d.drawLine(140, 20, 140, 200);
+            g2d.drawLine(200, 20, 200, 200);
+            g2d.drawLine(260, 80, 260, 140);
 
             File output = new File(path);
             ImageIO.write(image, "jpg", output);
