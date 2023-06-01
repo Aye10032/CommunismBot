@@ -135,15 +135,15 @@ public class CubeUtil {
                         .toArray();
                 for (int i = 0; i < 3; i++) {
                     if (clockwise) {
-                        cube[UP][i][2] = cube[BACK][2 - i][0];
-                        cube[BACK][2 - i][0] = cube[DOWN][i][2];
-                        cube[DOWN][i][2] = cube[FRONT][i][2];
-                        cube[FRONT][i][2] = temp[i];
-                    } else {
                         cube[UP][i][2] = cube[FRONT][i][2];
                         cube[FRONT][i][2] = cube[DOWN][i][2];
                         cube[DOWN][i][2] = cube[BACK][2 - i][0];
                         cube[BACK][2 - i][0] = temp[i];
+                    } else {
+                        cube[UP][i][2] = cube[BACK][2 - i][0];
+                        cube[BACK][2 - i][0] = cube[DOWN][i][2];
+                        cube[DOWN][i][2] = cube[FRONT][i][2];
+                        cube[FRONT][i][2] = temp[i];
                     }
                 }
                 break;
@@ -241,22 +241,22 @@ public class CubeUtil {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     g2d.setColor(COLOR_MAP.get(cube[UP][i][j]));
-                    g2d.fillRect(140 + 20 * i, 20 + 20 * j, 20, 20);
+                    g2d.fillRect(140 + 20 * j, 20 + 20 * i, 20, 20);
 
                     g2d.setColor(COLOR_MAP.get(cube[BACK][i][j]));
-                    g2d.fillRect(20 + 20 * i, 80 + 20 * j, 20, 20);
+                    g2d.fillRect(20 + 20 * j, 80 + 20 * i, 20, 20);
 
                     g2d.setColor(COLOR_MAP.get(cube[LEFT][i][j]));
-                    g2d.fillRect(80 + 20 * i, 80 + 20 * j, 20, 20);
+                    g2d.fillRect(80 + 20 * j, 80 + 20 * i, 20, 20);
 
                     g2d.setColor(COLOR_MAP.get(cube[FRONT][i][j]));
-                    g2d.fillRect(140 + 20 * i, 80 + 20 * j, 20, 20);
+                    g2d.fillRect(140 + 20 * j, 80 + 20 * i, 20, 20);
 
                     g2d.setColor(COLOR_MAP.get(cube[RIGHT][i][j]));
-                    g2d.fillRect(200 + 20 * i, 80 + 20 * j, 20, 20);
+                    g2d.fillRect(200 + 20 * j, 80 + 20 * i, 20, 20);
 
                     g2d.setColor(COLOR_MAP.get(cube[DOWN][i][j]));
-                    g2d.fillRect(140 + 20 * i, 140 + 20 * j, 20, 20);
+                    g2d.fillRect(140 + 20 * j, 140 + 20 * i, 20, 20);
                 }
             }
 
