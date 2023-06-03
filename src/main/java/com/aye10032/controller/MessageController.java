@@ -61,9 +61,27 @@ public class MessageController {
         FileUtils.writeStringToFile(file, data, StandardCharsets.UTF_8);
     }*/
 
-    @PostMapping("/github")
-    public void githubEvent(@RequestBody String data_string) throws IOException {
-        log.info("收到一条github hook");
+    @PostMapping("/githubCreat")
+    public void creatEvent(@RequestBody String data_string) throws IOException {
+        log.info("收到一条github仓库动态");
+        String repo = "";
+        String pusher = "";
+        String time = "";
+        JsonObject data = JsonParser.parseString(data_string).getAsJsonObject();
+        repo = data.get("repository").getAsJsonObject().get("html_url").getAsString();
+        pusher = data.get("sender").getAsJsonObject().get("login").getAsString();
+        time = data.get("repository").getAsJsonObject().get("created_at").getAsString();
+
+        if (data.get("action").getAsString().equals("created")) {
+            String msg = pusher + "刚刚创建了一个新的仓库：\n" + repo + "\n----------------\n" + time;
+            zibenbot.toGroupMsg(1044102726L, msg);
+        }
+
+    }
+
+    @PostMapping("/githubPush")
+    public void pushEvent(@RequestBody String data_string) throws IOException {
+        log.info("收到一条push动态");
         String branch = "";
         String repo = "";
         String pusher = "";
@@ -76,17 +94,9 @@ public class MessageController {
         commit = data.get("head_commit").getAsJsonObject().get("message").getAsString();
         time = data.get("head_commit").getAsJsonObject().get("timestamp").getAsString();
 
-        boolean creat = data.get("created").getAsBoolean();
-
-        String msg;
-        if (creat) {
-            msg = pusher + "刚刚创建了一个新的仓库：\n" + repo + "\n----------------" + time;
-
-        } else {
-            msg = "来自 " + repo + " 的消息：\n"
-                    + pusher + "刚刚向" + branch + "分支提交了一个更新，内容为：\n"
-                    + commit + "\n----------------" + time;
-        }
+        String msg = "来自 " + repo + " 的消息：\n"
+                + pusher + "刚刚向" + branch + "分支提交了一个更新，内容为：\n"
+                + commit + "\n----------------\n" + time;
 
         zibenbot.toGroupMsg(1044102726L, msg);
     }
