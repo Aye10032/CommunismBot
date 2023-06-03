@@ -4,10 +4,15 @@ import com.aye10032.bot.Zibenbot;
 import com.aye10032.foundation.entity.dto.Result;
 import com.aye10032.service.FFXIVService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author Dazo66
@@ -33,7 +38,7 @@ public class MessageController {
         }
     }
 
-    @RequestMapping(value = "house", method = RequestMethod.POST)
+    @PostMapping("/house")
     public Result<?> updateHouse(String name) {
         if (name != null) {
             service.updateHouse(name);
@@ -42,6 +47,16 @@ public class MessageController {
         } else {
             return new Result<>("400", "id不可为空", "");
         }
+    }
+
+    @PostMapping("/github")
+    public void githubEvent(@RequestBody String data) throws IOException {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd-HH-mm");
+        String formattedDateTime = now.format(formatter);
+        String filename = formattedDateTime + "-data.json";
+        File file = new File(filename);
+        FileUtils.writeStringToFile(file, data, StandardCharsets.UTF_8);
     }
 
 }
