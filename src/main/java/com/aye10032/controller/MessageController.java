@@ -88,17 +88,20 @@ public class MessageController {
         String commit = "";
         String time = "";
         JsonObject data = JsonParser.parseString(data_string).getAsJsonObject();
-        branch = data.get("ref").getAsString().split("/")[2];
         repo = data.get("repository").getAsJsonObject().get("url").getAsString();
-        pusher = data.get("pusher").getAsJsonObject().get("name").getAsString();
-        commit = data.get("head_commit").getAsJsonObject().get("message").getAsString();
-        time = data.get("head_commit").getAsJsonObject().get("timestamp").getAsString();
 
-        String msg = "来自 " + repo + " 的消息：\n"
-                + pusher + "刚刚向" + branch + "分支提交了一个更新，内容为：\n"
-                + commit + "\n----------------\n" + time;
+        if (repo.equals("https://github.com/Redstone-Tech-Reupload-Group/Subtitles")) {
+            branch = data.get("ref").getAsString().split("/")[2];
+            pusher = data.get("pusher").getAsJsonObject().get("name").getAsString();
+            commit = data.get("head_commit").getAsJsonObject().get("message").getAsString();
+            time = data.get("head_commit").getAsJsonObject().get("timestamp").getAsString();
 
-        zibenbot.toGroupMsg(456919710L, msg);
+            String msg = pusher + "刚刚向" + branch + "分支提交了一个更新，内容为：\n"
+                    + commit + "\n----------------\n"
+                    + time + "\n" + repo;
+
+            zibenbot.toGroupMsg(456919710L, msg);
+        }
     }
 
 }
