@@ -74,7 +74,7 @@ public class MessageController {
 
         if (data.get("action").getAsString().equals("created")) {
             String msg = pusher + "刚刚创建了一个新的仓库：\n" + repo + "\n----------------\n" + time;
-            zibenbot.toGroupMsg(1044102726L, msg);
+            zibenbot.toGroupMsg(456919710L, msg);
         }
 
     }
@@ -98,7 +98,7 @@ public class MessageController {
                 + pusher + "刚刚向" + branch + "分支提交了一个更新，内容为：\n"
                 + commit + "\n----------------\n" + time;
 
-        zibenbot.toGroupMsg(1044102726L, msg);
+        zibenbot.toGroupMsg(456919710L, msg);
     }
 
 }
