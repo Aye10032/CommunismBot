@@ -51,7 +51,7 @@ public class MessageController {
         }
     }
 
-    @PostMapping("/github")
+/*    @PostMapping("/github")
     public void githubEvent(@RequestBody String data) throws IOException {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd-HH-mm");
@@ -59,25 +59,11 @@ public class MessageController {
         String filename = formattedDateTime + "-data.json";
         File file = new File(filename);
         FileUtils.writeStringToFile(file, data, StandardCharsets.UTF_8);
-    }
+    }*/
 
-    @PostMapping("/githubCreat")
-    public void creatEvent(@RequestBody String data_string) throws IOException {
-        String repo = "";
-        String pusher = "";
-        String time = "";
-        JsonObject data = JsonParser.parseString(data_string).getAsJsonObject();
-        repo = data.get("repository").getAsJsonObject().get("url").getAsString();
-        pusher = data.get("pusher").getAsJsonObject().get("name").getAsString();
-        time = data.get("head_commit").getAsJsonObject().get("timestamp").getAsString();
-
-        String msg = pusher + "刚刚创建了一个新的仓库：\n" + repo + "\n----------------" + time;
-
-        zibenbot.toGroupMsg(1044102726L, msg);
-    }
-
-    @PostMapping("/githubPush")
-    public void pushEvent(@RequestBody String data_string) throws IOException {
+    @PostMapping("/github")
+    public void githubEvent(@RequestBody String data_string) throws IOException {
+        log.info("收到一条github hook");
         String branch = "";
         String repo = "";
         String pusher = "";
@@ -90,9 +76,17 @@ public class MessageController {
         commit = data.get("head_commit").getAsJsonObject().get("message").getAsString();
         time = data.get("head_commit").getAsJsonObject().get("timestamp").getAsString();
 
-        String msg = "来自 " + repo + " 的消息：\n"
-                + pusher + "刚刚向" + branch + "分支提交了一个更新，内容为：\n"
-                + commit + "\n----------------" + time;
+        boolean creat = data.get("created").getAsBoolean();
+
+        String msg;
+        if (creat) {
+            msg = pusher + "刚刚创建了一个新的仓库：\n" + repo + "\n----------------" + time;
+
+        } else {
+            msg = "来自 " + repo + " 的消息：\n"
+                    + pusher + "刚刚向" + branch + "分支提交了一个更新，内容为：\n"
+                    + commit + "\n----------------" + time;
+        }
 
         zibenbot.toGroupMsg(1044102726L, msg);
     }
