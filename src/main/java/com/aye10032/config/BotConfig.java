@@ -13,6 +13,7 @@ import xyz.cssxsh.mirai.tool.FixProtocolVersion;
 import java.io.IOException;
 import java.net.*;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +56,7 @@ public class BotConfig {
         ProxySelector proxySelector = new ProxySelector() {
             @Override
             public List<Proxy> select(URI uri) {
-                return Arrays.asList(proxy);
+                return Collections.singletonList(proxy);
             }
             @Override
             public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
