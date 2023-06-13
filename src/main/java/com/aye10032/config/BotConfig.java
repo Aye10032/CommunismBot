@@ -48,8 +48,10 @@ public class BotConfig {
         BotConfiguration configuration = BotConfiguration.getDefault();
         configuration.copy();
 
+        System.setProperty("http.proxyHost", "127.0.0.1");
+        System.setProperty("http.proxyPort", "7890");
         update();
-//        sync();
+        sync();
 
         configuration.fileBasedDeviceInfo("device.json");
         configuration.setHeartbeatStrategy(BotConfiguration.HeartbeatStrategy.STAT_HB);
