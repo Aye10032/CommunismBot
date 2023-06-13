@@ -27,7 +27,6 @@ public class BotConfig {
     private String profiles;
 
     // 升级协议版本
-    // 升级协议版本
     public static void update() {
         FixProtocolVersion.update();
     }
@@ -50,18 +49,19 @@ public class BotConfig {
         configuration.copy();
 
         update();
+        sync();
 
         configuration.fileBasedDeviceInfo("device.json");
         configuration.setHeartbeatStrategy(BotConfiguration.HeartbeatStrategy.STAT_HB);
         configuration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PHONE);
 
-        sync();
 
         BotAuthorization authorization = BotAuthorization.byPassword(password);
 
 
         Bot bot = BotFactory.INSTANCE.newBot(qqId, authorization, configuration);
         bot.getLogger().info(info().values().toString());
+
 
         if (!profiles.contains("test")) {
             bot.login();
