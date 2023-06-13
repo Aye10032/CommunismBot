@@ -49,7 +49,7 @@ public class BotConfig {
         configuration.copy();
 
         update();
-        sync();
+//        sync();
 
         configuration.fileBasedDeviceInfo("device.json");
         configuration.setHeartbeatStrategy(BotConfiguration.HeartbeatStrategy.STAT_HB);
