@@ -11,6 +11,9 @@ import org.springframework.context.annotation.Profile;
 import xyz.cssxsh.mirai.tool.FixProtocolVersion;
 
 import java.io.IOException;
+import java.net.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,8 +51,18 @@ public class BotConfig {
         BotConfiguration configuration = BotConfiguration.getDefault();
         configuration.copy();
 
-        System.setProperty("http.proxyHost", "127.0.0.1");
-        System.setProperty("http.proxyPort", "7890");
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
+        ProxySelector proxySelector = new ProxySelector() {
+            @Override
+            public List<Proxy> select(URI uri) {
+                return Arrays.asList(proxy);
+            }
+            @Override
+            public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
+                //处理连接失败的情况
+            }
+        };
+        ProxySelector.setDefault(proxySelector);
         update();
         sync();
 
