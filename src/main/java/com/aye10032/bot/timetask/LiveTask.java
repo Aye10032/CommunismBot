@@ -28,7 +28,7 @@ public class LiveTask extends SubscribableBase {
         if (recivers != null) {
             for (Reciver reciver : recivers) {
                 LiveInfo liveInfo = new LiveInfo(args[0]);
-                log.debug("直播间" + args[0] + "检查结果：" + liveInfo.Is_living());
+                log.info("直播间" + args[0] + "检查结果：" + liveInfo.Is_living());
                 if (liveInfo.HasLive() && liveInfo.Is_living()) {
                     long l = now.getTime() - liveInfo.getLiveDate().getTime();
                     long min = ((l / (60 * 1000)));
