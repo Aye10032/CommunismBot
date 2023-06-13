@@ -27,10 +27,14 @@ public class BotConfig {
     private String profiles;
 
     // 升级协议版本
+    // 升级协议版本
     public static void update() {
         FixProtocolVersion.update();
     }
-
+    // 同步协议版本
+    public static void sync() {
+        FixProtocolVersion.sync(BotConfiguration.MiraiProtocol.ANDROID_PHONE);
+    }
     // 获取协议版本信息 你可以用这个来检查update是否正常工作
     public static Map<BotConfiguration.MiraiProtocol, String> info() {
         return FixProtocolVersion.info();
@@ -50,6 +54,8 @@ public class BotConfig {
         configuration.fileBasedDeviceInfo("device.json");
         configuration.setHeartbeatStrategy(BotConfiguration.HeartbeatStrategy.STAT_HB);
         configuration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PHONE);
+
+        sync();
 
         BotAuthorization authorization = BotAuthorization.byPassword(password);
 
