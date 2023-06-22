@@ -2,6 +2,7 @@ package com.aye10032.config;
 
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactory;
+import net.mamoe.mirai.auth.BotAuthInfo;
 import net.mamoe.mirai.auth.BotAuthorization;
 import net.mamoe.mirai.utils.BotConfiguration;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,9 +71,7 @@ public class BotConfig {
         configuration.setHeartbeatStrategy(BotConfiguration.HeartbeatStrategy.STAT_HB);
         configuration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PAD);
 
-
         BotAuthorization authorization = BotAuthorization.byPassword(password);
-
 
         Bot bot = BotFactory.INSTANCE.newBot(qqId, authorization, configuration);
         bot.getLogger().info(info().values().toString());
