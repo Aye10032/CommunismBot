@@ -53,7 +53,7 @@ public class BotConfig {
         BotConfiguration configuration = BotConfiguration.getDefault();
         configuration.copy();
 
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
+/*        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
         ProxySelector proxySelector = new ProxySelector() {
             @Override
             public List<Proxy> select(URI uri) {
@@ -67,7 +67,7 @@ public class BotConfig {
         ProxySelector.setDefault(proxySelector);
         update();
         sync();
-        load();
+        load();*/
 
         configuration.fileBasedDeviceInfo("device.json");
         configuration.setHeartbeatStrategy(BotConfiguration.HeartbeatStrategy.STAT_HB);
@@ -77,7 +77,7 @@ public class BotConfig {
 
         Bot bot = BotFactory.INSTANCE.newBot(qqId, authorization, configuration);*/
         Bot bot = BotFactory.INSTANCE.newBot(qqId, BotAuthorization.byQRCode(), configuration);
-        bot.getLogger().info(info().values().toString());
+//        bot.getLogger().info(info().values().toString());
 
 
         if (!profiles.contains("test")) {
