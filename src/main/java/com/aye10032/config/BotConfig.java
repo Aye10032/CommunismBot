@@ -73,9 +73,10 @@ public class BotConfig {
         configuration.setHeartbeatStrategy(BotConfiguration.HeartbeatStrategy.STAT_HB);
         configuration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PAD);
 
-        BotAuthorization authorization = BotAuthorization.byPassword(password);
+/*        BotAuthorization authorization = BotAuthorization.byPassword(password);
 
-        Bot bot = BotFactory.INSTANCE.newBot(qqId, authorization, configuration);
+        Bot bot = BotFactory.INSTANCE.newBot(qqId, authorization, configuration);*/
+        Bot bot = BotFactory.INSTANCE.newBot(qqId, BotAuthorization.byQRCode(), configuration);
         bot.getLogger().info(info().values().toString());
 
 
