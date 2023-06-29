@@ -102,6 +102,13 @@ public class MessageController {
 
             zibenbot.toGroupMsg(456919710L, msg);
         }
+
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd-HH-mm");
+        String formattedDateTime = now.format(formatter);
+        String filename = formattedDateTime + "-data.json";
+        File file = new File(filename);
+        FileUtils.writeStringToFile(file, data.toString(), StandardCharsets.UTF_8);
     }
 
 }
