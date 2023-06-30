@@ -3,6 +3,8 @@ package com.aye10032.controller;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.foundation.entity.dto.Result;
 import com.aye10032.service.FFXIVService;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
@@ -96,19 +98,51 @@ public class MessageController {
             commit = data.get("head_commit").getAsJsonObject().get("message").getAsString();
             time = data.get("head_commit").getAsJsonObject().get("timestamp").getAsString();
 
-            String msg = pusher + "刚刚向" + branch + "分支提交了一个更新，内容为：\n"
-                    + commit + "\n----------------\n"
-                    + time + "\n" + repo;
+            JsonArray add_files_arr = data.get("head_commit").getAsJsonObject().get("added").getAsJsonArray();
+            JsonArray remove_files_arr = data.get("head_commit").getAsJsonObject().get("added").getAsJsonArray();
+            JsonArray modified_files_arr = data.get("head_commit").getAsJsonObject().get("added").getAsJsonArray();
+            Gson gson = new Gson();
 
-            zibenbot.toGroupMsg(456919710L, msg);
+            StringBuilder msg_builder = new StringBuilder();
+            msg_builder.append(pusher).append("刚刚向").append(branch)
+                    .append("分支提交了一个更新，内容为：\n").append(commit);
+
+            if (add_files_arr.size() != 0){
+                String[] add_files = gson.fromJson(add_files_arr, String[].class);
+                msg_builder.append("\n----------------\n添加了：");
+                for (String file:add_files){
+                    msg_builder.append("\n").append(file);
+                }
+            }
+            if (remove_files_arr.size() != 0){
+                String[] remove_files = gson.fromJson(remove_files_arr, String[].class);
+                msg_builder.append("\n----------------\n移除了：");
+                for (String file:remove_files){
+                    msg_builder.append("\n").append(file);
+                }
+            }
+            if (modified_files_arr.size() != 0){
+                String[] modified_files = gson.fromJson(modified_files_arr, String[].class);
+                msg_builder.append("\n----------------\n修改了：");
+                for (String file:modified_files){
+                    msg_builder.append("\n").append(file);
+                }
+            }
+
+            msg_builder.append("\n----------------\n").
+                    append(time).append("\n").append(repo);
+
+
+            zibenbot.toGroupMsg(456919710L, msg_builder.toString());
+            zibenbot.toPrivateMsg(2375985957L, msg_builder.toString());
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd-HH-mm");
-        String formattedDateTime = now.format(formatter);
-        String filename = formattedDateTime + "-data.json";
-        File file = new File(filename);
-        FileUtils.writeStringToFile(file, data.toString(), StandardCharsets.UTF_8);
+//        LocalDateTime now = LocalDateTime.now();
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd-HH-mm");
+//        String formattedDateTime = now.format(formatter);
+//        String filename = formattedDateTime + "-data.json";
+//        File file = new File(filename);
+//        FileUtils.writeStringToFile(file, data.toString(), StandardCharsets.UTF_8);
     }
 
 }
