@@ -166,4 +166,14 @@ public class ImgUtils {
 
     }
 
+    public static BufferedImage toBufferedImage(Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage) image;
+        }
+
+        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        bufferedImage.getGraphics().drawImage(image, 0, 0, null);
+        return bufferedImage;
+    }
+
 }

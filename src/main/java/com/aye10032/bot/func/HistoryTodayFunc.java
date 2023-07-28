@@ -6,12 +6,21 @@ import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.entity.base.history.today.HistoryEventType;
 import com.aye10032.foundation.entity.base.history.today.HistoryToday;
+import com.aye10032.foundation.utils.ImgUtils;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
 import com.aye10032.service.HistoryTodayService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,6 +31,7 @@ import java.util.List;
  * @author: Aye10032
  * @date: 2022/6/2 下午 6:24
  */
+@Slf4j
 @Service
 public class HistoryTodayFunc extends BaseFunc {
 
@@ -122,14 +132,16 @@ public class HistoryTodayFunc extends BaseFunc {
                 .run((msg) -> {
                     if (msg.isPrivateMsg() && msg.getFromClient() == 2375985957L) {
                         String[] msgs = msg.getCommandPieces();
-                        if (msgs.length == 2) {
-                            historyTodayService.insertHistory(msgs[1], "", getTomorrow());
-                            zibenbot.replyMsg(msg, "done");
-                        } else if (msgs.length == 3) {
-                            historyTodayService.insertHistory(msgs[1], msgs[2], getTomorrow());
-                            zibenbot.replyMsg(msg, "done");
-                        } else {
+                        if (msgs.length != 2 && msgs.length != 3) {
                             zibenbot.replyMsg(msg, "格式不正确！");
+                        } else {
+                            if (msgs.length == 2) {
+                                historyTodayService.insertHistory(msgs[1], "", getTomorrow());
+                                zibenbot.replyMsg(msg, "done");
+                            } else {
+                                historyTodayService.insertHistory(msgs[1], msgs[2], getTomorrow());
+                                zibenbot.replyMsg(msg, "done");
+                            }
                         }
                     } else if (msg.isGroupMsg()) {
                         String[] msgs = msg.getCommandPieces();
@@ -167,13 +179,40 @@ public class HistoryTodayFunc extends BaseFunc {
 
     @Override
     public void setUp() {
+        File imageFile = new File(appDirectory + "/history");
 
+        if (!imageFile.exists()) {
+            imageFile.mkdirs();
+        }
     }
 
     @Override
     public void run(SimpleMsg simpleMsg) {
         commander.execute(simpleMsg);
     }
+
+
+//    private SimpleMsg saveImage(SimpleMsg msg) {
+//        List<BufferedImage> images = zibenbot.getImgFromMsg(msg);
+//
+//        if (images.isEmpty()) {
+//            return msg;
+//        } else {
+//            for (BufferedImage image : images) {
+//                String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//                String outputFileName = msg.getFromClient() + "-" + timestamp + ".png";
+//                String outputPath = appDirectory + "/history/" + outputFileName;
+//
+//                try {
+//                    File outputFile = new File(outputPath);
+//                    ImageIO.write(image, "png", outputFile);
+//                    log.info("Image" + outputFileName + " saved successfully!");
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 
     private String getDate() {
         Calendar calendar = Calendar.getInstance();

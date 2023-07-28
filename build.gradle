@@ -30,7 +30,7 @@ tasks.withType(JavaCompile).configureEach {
 
 ext {
     springVersion = '2.6.6'
-    miraiVersion = '2.15.0-RC'
+    miraiVersion = '2.15.0'
     ktVersion = '1.8.10'
 }
 
@@ -53,7 +53,7 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'junit', name: 'junit', version: '4.12'
+    implementation group: 'junit', name: 'junit', version: '4.13.1'
 
 //    implementation group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion
     implementation(group: 'net.mamoe', name: 'mirai-core', version: rootProject.ext.miraiVersion) {
@@ -68,6 +68,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: rootProject.ext.springVersion
+    implementation 'org.projectlombok:lombok:1.18.26'
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: rootProject.ext.springVersion
 
@@ -87,24 +88,24 @@ dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'okhttp-sse', version: '4.10.0'
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
-    implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
+
+    // 1. Use Guava in your implementation only:
+    implementation("com.google.guava:guava:32.1.1-jre")
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation group: 'commons-io', name: 'commons-io', version: '2.7'
 
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
-    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.12'
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore
     implementation group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.13'
 
-    // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
-    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
-
     implementation group: 'com.rometools', name: 'rome', version: '1.18.0'
 
     implementation group: 'com.github.Aye10032', name: 'rtroapiutil', version: 'v1.2'
-    implementation group: 'com.github.Aye10032', name: 'GenshinUtil', version: 'v1.0.0'
+//    implementation group: 'com.github.Aye10032', name: 'GenshinUtil', version: 'v1.0.0'
 
     implementation(fileTree(dir: 'libs', includes: ['*.jar']))
 
