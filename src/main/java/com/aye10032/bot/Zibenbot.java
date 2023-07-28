@@ -614,7 +614,7 @@ public class Zibenbot implements ApplicationContextAware {
         chain.stream()
                 .filter(m -> m instanceof Image)
                 .forEach(m -> {
-                    System.out.println(m.contentToString());
+                    System.out.println(m.toString());
                     try {
                         BufferedImage bufferedImage = ImageIO.read(new URL(Mirai.getInstance().queryImageUrl(bot, (Image) m)));
                         if (bufferedImage != null) {
