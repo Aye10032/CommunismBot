@@ -226,7 +226,7 @@ public class SimpleMsg implements ICommand {
      */
     @Override
     public String[] getCommandPieces() {
-        return msg.trim().replaceAll(" +", " ").split(" ");
+        return msg.trim().replaceAll(" +", " ").split("(?<!\\[\\S*)\\s+(?!\\S*\\])");
     }
 
     /**
