@@ -102,6 +102,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore
     implementation group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.13'
 
+    // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
+    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
+
     implementation group: 'com.rometools', name: 'rome', version: '1.18.0'
 
     implementation group: 'com.github.Aye10032', name: 'rtroapiutil', version: 'v1.2'
