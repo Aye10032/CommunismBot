@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: communismbot
@@ -101,28 +102,29 @@ public class HistoryTodayFunc extends BaseFunc {
                 .next()
                 .orArray(s -> true)
                 .run((msg) -> {
-                    if (msg.isPrivateMsg() && msg.getFromClient() == 2375985957L) {
-                        String[] msgs = msg.getCommandPieces();
+                    SimpleMsg new_msg = saveImage(msg);
+                    if (new_msg.isPrivateMsg() && new_msg.getFromClient() == 2375985957L) {
+                        String[] msgs = new_msg.getCommandPieces();
                         if (msgs.length == 2) {
                             historyTodayService.insertHistory(msgs[1], "", getDate());
-                            zibenbot.replyMsg(msg, "done");
+                            zibenbot.replyMsg(new_msg, "done");
                         } else if (msgs.length == 3) {
                             historyTodayService.insertHistory(msgs[1], msgs[2], getDate());
-                            zibenbot.replyMsg(msg, "done");
+                            zibenbot.replyMsg(new_msg, "done");
                         } else {
-                            zibenbot.replyMsg(msg, "格式不正确！");
+                            zibenbot.replyMsg(new_msg, "格式不正确！");
                         }
-                    } else if (msg.isGroupMsg()) {
-                        String[] msgs = msg.getCommandPieces();
+                    } else if (new_msg.isGroupMsg()) {
+                        String[] msgs = new_msg.getCommandPieces();
                         if (msgs.length == 2) {
-                            historyTodayService.insertHistory(msgs[1], getYear(), getDate(), msg.getFromGroup());
-                            zibenbot.replyMsg(msg, "done");
-                            zibenbot.toPrivateMsg(2375985957L, msg.getFromClient() + "添加了一条历史：" + msgs[1]);
+                            historyTodayService.insertHistory(msgs[1], getYear(), getDate(), new_msg.getFromGroup());
+                            zibenbot.replyMsg(new_msg, "done");
+                            zibenbot.toPrivateMsg(2375985957L, new_msg.getFromClient() + "添加了一条历史：" + msgs[1]);
                         } else {
-                            zibenbot.replyMsg(msg, "格式不正确！");
+                            zibenbot.replyMsg(new_msg, "格式不正确！");
                         }
                     } else {
-                        zibenbot.replyMsg(msg, "no access!");
+                        zibenbot.replyMsg(new_msg, "no access!");
                     }
                 })
                 .pop()
@@ -130,30 +132,31 @@ public class HistoryTodayFunc extends BaseFunc {
                 .next()
                 .orArray(s -> true)
                 .run((msg) -> {
-                    if (msg.isPrivateMsg() && msg.getFromClient() == 2375985957L) {
-                        String[] msgs = msg.getCommandPieces();
+                    SimpleMsg new_msg = saveImage(msg);
+                    if (new_msg.isPrivateMsg() && new_msg.getFromClient() == 2375985957L) {
+                        String[] msgs = new_msg.getCommandPieces();
                         if (msgs.length != 2 && msgs.length != 3) {
-                            zibenbot.replyMsg(msg, "格式不正确！");
+                            zibenbot.replyMsg(new_msg, "格式不正确！");
                         } else {
                             if (msgs.length == 2) {
                                 historyTodayService.insertHistory(msgs[1], "", getTomorrow());
-                                zibenbot.replyMsg(msg, "done");
+                                zibenbot.replyMsg(new_msg, "done");
                             } else {
                                 historyTodayService.insertHistory(msgs[1], msgs[2], getTomorrow());
-                                zibenbot.replyMsg(msg, "done");
+                                zibenbot.replyMsg(new_msg, "done");
                             }
                         }
-                    } else if (msg.isGroupMsg()) {
-                        String[] msgs = msg.getCommandPieces();
+                    } else if (new_msg.isGroupMsg()) {
+                        String[] msgs = new_msg.getCommandPieces();
                         if (msgs.length == 2) {
-                            historyTodayService.insertHistory(msgs[1], getYear(), getTomorrow(), msg.getFromGroup());
-                            zibenbot.replyMsg(msg, "done");
-                            zibenbot.toPrivateMsg(2375985957L, msg.getFromClient() + "添加了一条历史：" + msgs[1]);
+                            historyTodayService.insertHistory(msgs[1], getYear(), getTomorrow(), new_msg.getFromGroup());
+                            zibenbot.replyMsg(new_msg, "done");
+                            zibenbot.toPrivateMsg(2375985957L, new_msg.getFromClient() + "添加了一条历史：" + msgs[1]);
                         } else {
-                            zibenbot.replyMsg(msg, "格式不正确！");
+                            zibenbot.replyMsg(new_msg, "格式不正确！");
                         }
                     } else {
-                        zibenbot.replyMsg(msg, "no access!");
+                        zibenbot.replyMsg(new_msg, "no access!");
                     }
                 })
                 .pop()
@@ -192,27 +195,29 @@ public class HistoryTodayFunc extends BaseFunc {
     }
 
 
-//    private SimpleMsg saveImage(SimpleMsg msg) {
-//        List<BufferedImage> images = zibenbot.getImgFromMsg(msg);
-//
-//        if (images.isEmpty()) {
-//            return msg;
-//        } else {
-//            for (BufferedImage image : images) {
-//                String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//                String outputFileName = msg.getFromClient() + "-" + timestamp + ".png";
-//                String outputPath = appDirectory + "/history/" + outputFileName;
-//
-//                try {
-//                    File outputFile = new File(outputPath);
-//                    ImageIO.write(image, "png", outputFile);
-//                    log.info("Image" + outputFileName + " saved successfully!");
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//    }
+    private SimpleMsg saveImage(SimpleMsg msg) {
+        Map<String, BufferedImage> images = zibenbot.getImgFromMsg(msg);
+
+        if (!images.isEmpty()) {
+            int index = 0;
+            for (Map.Entry<String, BufferedImage> entry : images.entrySet()) {
+                String timestamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
+                String outputFileName = msg.getFromClient() + "-" + timestamp +"_" + index + ".png";
+                String outputPath = appDirectory + "/history/" + outputFileName;
+
+                try {
+                    File outputFile = new File(outputPath);
+                    ImageIO.write(entry.getValue(), "png", outputFile);
+                    msg.setMsg(msg.getMsg().replace(entry.getKey(), zibenbot.getImg(outputPath)));
+                    index ++;
+                    log.info("Image" + outputFileName + " saved successfully!");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return msg;
+    }
 
     private String getDate() {
         Calendar calendar = Calendar.getInstance();
