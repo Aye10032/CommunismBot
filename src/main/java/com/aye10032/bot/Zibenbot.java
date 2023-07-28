@@ -608,23 +608,23 @@ public class Zibenbot implements ApplicationContextAware {
      * @param msg 玩家发的消息
      * @return 返回List of BufferImage
      */
-    public List<BufferedImage> getImgFromMsg(SimpleMsg msg) {
+    public Map<String, BufferedImage> getImgFromMsg(SimpleMsg msg) {
         MessageChain chain = msg.getMsgChain();
-        List<BufferedImage> list = new CopyOnWriteArrayList<>();
+        Map<String, BufferedImage> map = new HashMap<>();
         chain.stream()
                 .filter(m -> m instanceof Image)
                 .forEach(m -> {
-                    System.out.println(((Image) m).serializeToMiraiCode());
+                    System.out.println(m.contentToString());
                     try {
                         BufferedImage bufferedImage = ImageIO.read(new URL(Mirai.getInstance().queryImageUrl(bot, (Image) m)));
                         if (bufferedImage != null) {
-                            list.add(bufferedImage);
+                            map.put(m.contentToString(), bufferedImage);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 });
-        return list;
+        return map;
     }
 
     public File getAudioFromMsg(SimpleMsg msg) {

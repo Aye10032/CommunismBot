@@ -12,11 +12,13 @@ import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TestFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
+
     public TestFunc(Zibenbot zibenbot) {
         super(zibenbot);
         commander = new CommanderBuilder<SimpleMsg>()
@@ -25,8 +27,8 @@ public class TestFunc extends BaseFunc {
                 .or("test"::equalsIgnoreCase)
                 .next()
                 .orArray(s -> true)
-                .run((msg) ->{
-                    List<BufferedImage> list = zibenbot.getImgFromMsg(msg);
+                .run((msg) -> {
+                    Map<String, BufferedImage> map = zibenbot.getImgFromMsg(msg);
                 })
                 .build();
     }
