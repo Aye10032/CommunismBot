@@ -21,16 +21,14 @@ public class TestFunc extends BaseFunc {
 
     public TestFunc(Zibenbot zibenbot) {
         super(zibenbot);
-//        commander = new CommanderBuilder<SimpleMsg>()
-//                .seteHandler(FuncExceptionHandler.INSTENCE)
-//                .start()
-//                .or("test"::equalsIgnoreCase)
-//                .next()
-//                .orArray(s -> true)
-//                .run((msg) -> {
-//                    Map<String, BufferedImage> map = zibenbot.getImgFromMsg(msg);
-//                })
-//                .build();
+        commander = new CommanderBuilder<SimpleMsg>()
+                .seteHandler(FuncExceptionHandler.INSTENCE)
+                .start()
+                .or("test"::equalsIgnoreCase)
+                .run((msg) -> {
+                    zibenbot.replyMsg(msg, "111");
+                })
+                .build();
     }
 
     @Override
