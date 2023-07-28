@@ -24,7 +24,7 @@ public class TestFunc extends BaseFunc {
                 .start()
                 .or("test"::equalsIgnoreCase)
                 .next()
-                .or(s -> true)
+                .orArray(s -> true)
                 .run((msg) ->{
                     List<BufferedImage> list = zibenbot.getImgFromMsg(msg);
                 })
