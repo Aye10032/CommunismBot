@@ -12,6 +12,8 @@ public interface DreamService {
 
     List<Dream> getDream();
 
+    List<Dream> getDream(Integer index);
+
     List<Dream> getDream(Integer index, Integer offset);
 
     List<Dream> getDream(Integer index, Integer offset, Long qq);

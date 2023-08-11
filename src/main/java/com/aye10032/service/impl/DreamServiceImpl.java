@@ -48,8 +48,16 @@ public class DreamServiceImpl implements DreamService {
         example.setLimitSize(1);
         example.setOrderByClause("RAND()");
 
-        mapper.selectByExample(example);
-        return null;
+        return mapper.selectByExample(example);
+    }
+
+    @Override
+    public List<Dream> getDream(Integer index) {
+        DreamExample example = new DreamExample();
+        example.createCriteria()
+                .andIdEqualTo(index);
+
+        return mapper.selectByExample(example);
     }
 
     @Override
@@ -60,8 +68,7 @@ public class DreamServiceImpl implements DreamService {
         example.setLimitSize(offset);
         example.setOrderByClause("year ASC");
 
-        List<Dream> dreams = mapper.selectByExample(example);
-        return dreams;
+        return mapper.selectByExample(example);
     }
 
     @Override
@@ -74,7 +81,6 @@ public class DreamServiceImpl implements DreamService {
         example.setLimitSize(offset);
         example.setOrderByClause("year ASC");
 
-        List<Dream> dreams = mapper.selectByExample(example);
-        return dreams;
+        return mapper.selectByExample(example);
     }
 }
