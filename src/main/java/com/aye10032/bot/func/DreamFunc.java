@@ -8,6 +8,8 @@ import com.aye10032.foundation.entity.base.dream.Dream;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
 import com.aye10032.service.DreamService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -21,6 +23,8 @@ import java.util.List;
  * @create: 2023-08-11 09:06
  **/
 
+@Slf4j
+@Service
 public class DreamFunc extends BaseFunc {
 
     private DreamService dreamService;
@@ -38,6 +42,7 @@ public class DreamFunc extends BaseFunc {
                 .run((msg) -> {
                     int index = dreamService.insertDream(msg.getMsg(), msg.getFromClient());
                     zibenbot.replyMsg(msg, "添加了" + index + "号梦");
+                    log.info("添加了" + index + "号梦");
                 })
                 .pop()
                 .or("来个梦"::equals)
