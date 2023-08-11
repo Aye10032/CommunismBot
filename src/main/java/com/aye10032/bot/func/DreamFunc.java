@@ -50,9 +50,9 @@ public class DreamFunc extends BaseFunc {
                 .orArray(strings -> true)
                 .run((msg) -> {
                     List<Dream> dreams = dreamService.getDream();
-                    if (dreams.isEmpty()){
+                    if (dreams.isEmpty()) {
                         zibenbot.replyMsg(msg, "数据库里没有梦");
-                    }else {
+                    } else {
                         StringBuilder builder = new StringBuilder();
                         Dream dream = dreams.get(0);
 
@@ -80,7 +80,7 @@ public class DreamFunc extends BaseFunc {
 
     @Override
     public void run(SimpleMsg simpleMsg) {
-
+        commander.execute(simpleMsg);
     }
 
     @Override
