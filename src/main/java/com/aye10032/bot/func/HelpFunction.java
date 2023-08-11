@@ -39,9 +39,8 @@ public class HelpFunction extends BaseFunc {
                             "明日方舟\n" +
                             "ff14\n" +
                             "原神\n" +
+                            "梦\n" +
                             "历史上的今天\n" +
-                            "表情合成\n" +
-                            "活字印刷\n" +
                             "pixiv\n" +
                             "红石科技搬运组\n" +
                             "ROLL点\n" +
@@ -124,6 +123,13 @@ public class HelpFunction extends BaseFunc {
                     String message = "原神相关功能\n-----------\n" +
                             ".ysgg|原神公告 <序号>-----返回最近的官方微博\n" +
                             ".订阅|sub 原神微博小助手-----自动转发原神官方微博";
+                    zibenbot.replyMsg(msg, message);
+                })
+                .or("梦"::equals)
+                .run((msg) -> {
+                    String message = "梦境记录相关功能\n-----------\n" +
+                            ".梦 [内容]-----记录一条梦境\n" +
+                            ".来个梦-----自随机返回一条数据库中的梦境记录";
                     zibenbot.replyMsg(msg, message);
                 })
                 .or("历史上的今天"::equals)
