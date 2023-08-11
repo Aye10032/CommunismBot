@@ -37,7 +37,7 @@ public class DreamFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .or("来个梦"::equals)
+                .or(".来个梦"::equals)
                 .run((msg) -> {
                     List<Dream> dreams = dreamService.getDream();
                     if (dreams.isEmpty()) {
@@ -60,7 +60,7 @@ public class DreamFunc extends BaseFunc {
                         zibenbot.replyMsg(msg, builder.toString());
                     }
                 })
-                .or("梦"::equals)
+                .or(".梦"::equals)
                 .next()
                 .or(strings -> true)
                 .run((msg) -> {
