@@ -31,20 +31,12 @@ public class DreamFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
 
-    public DreamFunc(Zibenbot zibenbot) {
+    public DreamFunc(Zibenbot zibenbot, DreamService dreamService) {
         super(zibenbot);
+        this.dreamService = dreamService;
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .or("梦"::equals)
-                .next()
-                .or(strings -> true)
-                .run((msg) -> {
-                    int index = dreamService.insertDream(msg.getMsg(), msg.getFromClient());
-                    zibenbot.replyMsg(msg, "添加了" + index + "号梦");
-                    log.info("添加了" + index + "号梦");
-                })
-                .pop()
                 .or("来个梦"::equals)
                 .run((msg) -> {
                     List<Dream> dreams = dreamService.getDream();
@@ -68,6 +60,15 @@ public class DreamFunc extends BaseFunc {
                         zibenbot.replyMsg(msg, builder.toString());
                     }
                 })
+                .or("梦"::equals)
+                .next()
+                .or(strings -> true)
+                .run((msg) -> {
+                    int index = dreamService.insertDream(msg.getMsg(), msg.getFromClient());
+                    zibenbot.replyMsg(msg, "添加了" + index + "号梦");
+                    log.info("添加了" + index + "号梦");
+                })
+                .pop()
                 .build();
     }
 
@@ -81,8 +82,4 @@ public class DreamFunc extends BaseFunc {
         commander.execute(simpleMsg);
     }
 
-    @Override
-    public void init() {
-        super.init();
-    }
 }
