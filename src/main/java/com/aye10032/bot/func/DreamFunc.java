@@ -38,7 +38,7 @@ public class DreamFunc extends BaseFunc {
                 .start()
                 .or("梦"::equals)
                 .next()
-                .orArray(strings -> true)
+                .or(strings -> true)
                 .run((msg) -> {
                     int index = dreamService.insertDream(msg.getMsg(), msg.getFromClient());
                     zibenbot.replyMsg(msg, "添加了" + index + "号梦");
@@ -46,8 +46,6 @@ public class DreamFunc extends BaseFunc {
                 })
                 .pop()
                 .or("来个梦"::equals)
-                .next()
-                .orArray(strings -> true)
                 .run((msg) -> {
                     List<Dream> dreams = dreamService.getDream();
                     if (dreams.isEmpty()) {
