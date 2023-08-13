@@ -1,5 +1,6 @@
 package com.aye10032.foundation.entity.base.dream;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ public class Dream {
     /**
      * 
      */
+    @TableId
     private Long id;
 
     /**
