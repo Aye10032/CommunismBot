@@ -1,12 +1,14 @@
 package com.aye10032.service.impl;
 
 import com.aye10032.foundation.entity.base.dream.Dream;
+import com.aye10032.foundation.utils.StringUtil;
 import com.aye10032.mapper.DreamMapper;
 import com.aye10032.service.DreamService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rometools.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,11 +62,14 @@ public class DreamServiceImpl implements DreamService {
     }
 
     @Override
-    public Page<Dream> pageDream(Long qq, Integer pageNo, Integer pageSize) {
+    public Page<Dream> pageDream(Long qq, String qqName, Integer pageNo, Integer pageSize) {
         LambdaQueryWrapper<Dream> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.orderByDesc(Dream::getId);
         if (qq != null) {
             queryWrapper.eq(Dream::getFromQq, qq);
+        }
+        if (StringUtils.isNotEmpty(qqName)) {
+            queryWrapper.like(Dream::getQqName, "%%" + qqName + "%%");
         }
         return mapper.selectPage(Page.of(pageNo, pageSize), queryWrapper);
     }

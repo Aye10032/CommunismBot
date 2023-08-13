@@ -15,5 +15,5 @@ public interface DreamService {
 
     Dream getDream(Integer index);
 
-    Page<Dream> pageDream(Long qq, Integer pageNo, Integer pageSize);
+    Page<Dream> pageDream(Long qq, String qqName ,Integer pageNo, Integer pageSize);
 }

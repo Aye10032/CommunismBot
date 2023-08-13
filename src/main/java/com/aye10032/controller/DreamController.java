@@ -20,8 +20,11 @@ public class DreamController {
     private DreamService dreamService;
 
     @GetMapping("/page")
-    public Result<Page<Dream>> pageDream(@RequestParam("qq") Long qq, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize) {
-        return Result.success(dreamService.pageDream(qq, pageNo, pageSize));
+    public Result<Page<Dream>> pageDream(@RequestParam(value = "qq", required = false) Long qq,
+                                         @RequestParam(value = "qqName", required = false) String qqName,
+                                         @RequestParam("pageNo") Integer pageNo,
+                                         @RequestParam("pageSize") Integer pageSize) {
+        return Result.success(dreamService.pageDream(qq, qqName, pageNo, pageSize));
     }
 
 }
