@@ -1,15 +1,16 @@
 package com.aye10032.service.impl;
 
 import com.aye10032.foundation.entity.base.dream.Dream;
-import com.aye10032.foundation.entity.base.dream.DreamExample;
 import com.aye10032.mapper.DreamMapper;
 import com.aye10032.service.DreamService;
-import com.sun.org.apache.bcel.internal.generic.NEW;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.rometools.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @program: communismbot
@@ -25,62 +26,46 @@ public class DreamServiceImpl implements DreamService {
     private DreamMapper mapper;
 
     @Override
-    public int insertDream(String element, Long qq) {
-        Date date = new Date();
-        return insertDream(element, qq, date);
+    public Long insertDream(String element, Long qq, String qqName) {
+        return insertDream(element, qq, new Date(), qqName);
     }
 
     @Override
-    public int insertDream(String element, Long qq, Date date) {
+    public Long insertDream(String element, Long qq, Date date, String qqName) {
         Dream dream = new Dream();
         dream.setElement(element);
         dream.setFromQq(qq);
         dream.setDate(date);
-
+        dream.setQqName(qqName);
         mapper.insert(dream);
         return dream.getId();
     }
 
     @Override
-    public List<Dream> getDream() {
-        DreamExample example = new DreamExample();
+    public Dream getDream() {
+        QueryWrapper<Dream> dreamQueryWrapper = new QueryWrapper<>();
+        dreamQueryWrapper.orderByDesc("RAND()");
 
-        example.setLimitSize(1);
-        example.setOrderByClause("RAND()");
-
-        return mapper.selectByExample(example);
+        Page<Dream> dreamPage = mapper.selectPage(Page.of(1, 1), dreamQueryWrapper);
+        if (Lists.isEmpty(dreamPage.getRecords())) {
+            return null;
+        } else {
+            return dreamPage.getRecords().get(0);
+        }
     }
 
     @Override
-    public List<Dream> getDream(Integer index) {
-        DreamExample example = new DreamExample();
-        example.createCriteria()
-                .andIdEqualTo(index);
-
-        return mapper.selectByExample(example);
+    public Dream getDream(Integer index) {
+        return mapper.selectById(index);
     }
 
     @Override
-    public List<Dream> getDream(Integer index, Integer offset) {
-        DreamExample example = new DreamExample();
-
-        example.setLimitStart(index - 1);
-        example.setLimitSize(offset);
-        example.setOrderByClause("year ASC");
-
-        return mapper.selectByExample(example);
-    }
-
-    @Override
-    public List<Dream> getDream(Integer index, Integer offset, Long qq) {
-        DreamExample example = new DreamExample();
-
-        example.createCriteria()
-                .andFromQqEqualTo(qq);
-        example.setLimitStart(index - 1);
-        example.setLimitSize(offset);
-        example.setOrderByClause("year ASC");
-
-        return mapper.selectByExample(example);
+    public Page<Dream> pageDream(Long qq, Integer pageNo, Integer pageSize) {
+        LambdaQueryWrapper<Dream> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(Dream::getId);
+        if (qq != null) {
+            queryWrapper.eq(Dream::getFromQq, qq);
+        }
+        return mapper.selectPage(Page.of(pageNo, pageSize), queryWrapper);
     }
 }

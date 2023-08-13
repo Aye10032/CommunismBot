@@ -2,6 +2,7 @@ package com.aye10032.bot.func.funcutil;
 
 import com.aye10032.foundation.utils.command.interfaces.ICommand;
 import lombok.extern.slf4j.Slf4j;
+import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.GroupTempMessageEvent;
@@ -19,6 +20,16 @@ public class SimpleMsg implements ICommand {
 
     private long fromGroup = -1;
     private long fromClient = -1;
+
+    /**
+     * 用户名
+     */
+    private String fromClientName = null;
+
+    /**
+     * 用户名
+     */
+    private String fromGroupName = null;
     private String msg;
     private MsgType type;
     private MessageEvent event;
@@ -51,16 +62,17 @@ public class SimpleMsg implements ICommand {
         } else if (event instanceof GroupTempMessageEvent) {
             type = MsgType.PRIVATE_MSG;
         }
-        fromClient = event.getSender().getId();
+        User sender = event.getSender();
+        fromClient = sender.getId();
         QuoteReply quoteReply = event.getMessage().get(QuoteReply.Key);
         if (quoteReply != null) {
             MessageChain quoteChain = quoteReply.getSource().getOriginalMessage();
             quoteMsg = new SimpleMsg(fromGroup, quoteReply.getSource().getFromId(), quoteChain, type);
-            log.info("引用消息不为空:{}, {}", quoteMsg.getQuoteKey(), quoteMsg.getMsg());
         }
         msgChain = event.getMessage();
         msg = getMsgFromEvent(msgChain);
         this.event = event;
+        this.fromClientName = sender.getNick();
     }
 
     private String getMsgFromEvent(MessageChain chain) {
@@ -227,6 +239,14 @@ public class SimpleMsg implements ICommand {
     @Override
     public String[] getCommandPieces() {
         return msg.trim().replaceAll(" +", " ").split("(?<!\\[\\S*)\\s+(?!\\S*\\])");
+    }
+
+    public String getFromClientName() {
+        return fromClientName;
+    }
+
+    public void setFromClientName(String fromClientName) {
+        this.fromClientName = fromClientName;
     }
 
     /**

@@ -1,21 +1,19 @@
 package com.aye10032.service;
 
 import com.aye10032.foundation.entity.base.dream.Dream;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.Date;
 import java.util.List;
 
 public interface DreamService {
 
-    int insertDream(String element, Long qq);
-    int insertDream(String element, Long qq, Date date);
+    Long insertDream(String element, Long qq, String qqName);
+    Long insertDream(String element, Long qq, Date date, String qqName);
 
-    List<Dream> getDream();
+    Dream getDream();
 
-    List<Dream> getDream(Integer index);
+    Dream getDream(Integer index);
 
-    List<Dream> getDream(Integer index, Integer offset);
-
-    List<Dream> getDream(Integer index, Integer offset, Long qq);
-
+    Page<Dream> pageDream(Long qq, Integer pageNo, Integer pageSize);
 }
