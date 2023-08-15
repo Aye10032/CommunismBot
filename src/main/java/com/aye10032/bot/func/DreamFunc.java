@@ -39,13 +39,11 @@ public class DreamFunc extends BaseFunc {
                 .start()
                 .or(".来个梦"::equals)
                 .run((msg) -> {
-                    List<Dream> dreams = dreamService.getDream();
-                    if (dreams.isEmpty()) {
+                    Dream dream = dreamService.getDream();
+                    if (dream == null) {
                         zibenbot.replyMsg(msg, "数据库里没有梦");
                     } else {
                         StringBuilder builder = new StringBuilder();
-                        Dream dream = dreams.get(0);
-
                         LocalDate date = dream.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy年MM月dd日");
 
@@ -64,7 +62,8 @@ public class DreamFunc extends BaseFunc {
                 .next()
                 .or(strings -> true)
                 .run((msg) -> {
-                    int index = dreamService.insertDream(msg.getMsg(), msg.getFromClient());
+
+                    Long index = dreamService.insertDream(msg.getMsg(), msg.getFromClient(), msg.getFromClientName());
                     zibenbot.replyMsg(msg, "添加了" + index + "号梦");
                     log.info("添加了" + index + "号梦");
                 })

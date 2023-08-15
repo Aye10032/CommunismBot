@@ -1,5 +1,10 @@
 package com.aye10032.foundation.entity.base.dream;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
 import java.util.Date;
 
 /**
@@ -8,11 +13,14 @@ import java.util.Date;
  * @author dazo66
  * @date 2023-08-10
  */
+@Data
+@TableName("dream")
 public class Dream {
     /**
      * 
      */
-    private Integer id;
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
     /**
      * 
@@ -29,46 +37,6 @@ public class Dream {
      */
     private Date date;
 
-    public Dream(Integer id, String element, Long fromQq, Date date) {
-        this.id = id;
-        this.element = element;
-        this.fromQq = fromQq;
-        this.date = date;
-    }
+    private String qqName;
 
-    public Dream() {
-        super();
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getElement() {
-        return element;
-    }
-
-    public void setElement(String element) {
-        this.element = element;
-    }
-
-    public Long getFromQq() {
-        return fromQq;
-    }
-
-    public void setFromQq(Long fromQq) {
-        this.fromQq = fromQq;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
 }
