@@ -99,8 +99,8 @@ public class MessageController {
             time = data.get("head_commit").getAsJsonObject().get("timestamp").getAsString();
 
             JsonArray add_files_arr = data.get("head_commit").getAsJsonObject().get("added").getAsJsonArray();
-            JsonArray remove_files_arr = data.get("head_commit").getAsJsonObject().get("added").getAsJsonArray();
-            JsonArray modified_files_arr = data.get("head_commit").getAsJsonObject().get("added").getAsJsonArray();
+            JsonArray remove_files_arr = data.get("head_commit").getAsJsonObject().get("removed").getAsJsonArray();
+            JsonArray modified_files_arr = data.get("head_commit").getAsJsonObject().get("modified").getAsJsonArray();
             Gson gson = new Gson();
 
             StringBuilder msg_builder = new StringBuilder();
