@@ -63,7 +63,7 @@ public class DreamFunc extends BaseFunc {
                 .or(strings -> true)
                 .run((msg) -> {
 
-                    Long index = dreamService.insertDream(msg.getMsg(), msg.getFromClient(), msg.getFromClientName());
+                    Long index = dreamService.insertDream(msg.getMsg().replace(".梦 ", ""), msg.getFromClient(), msg.getFromClientName());
                     zibenbot.replyMsg(msg, "添加了" + index + "号梦");
                     log.info("添加了" + index + "号梦");
                 })
