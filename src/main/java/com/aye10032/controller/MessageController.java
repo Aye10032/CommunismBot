@@ -32,7 +32,8 @@ public class MessageController {
     private FFXIVService service;
 
     @RequestMapping(value = "send", method = {RequestMethod.POST, RequestMethod.GET})
-    public Result<?> sendMessage(Long group, String msg) {
+    public Result<?> sendMessage(@RequestParam(value = "group", required = true) Long group,
+                                 @RequestParam(value = "msg", required = true) String msg) {
         if (group != null) {
             zibenbot.toGroupMsg(group, msg);
             log.info("向群" + group + "发送了消息：" + msg);
@@ -43,7 +44,7 @@ public class MessageController {
     }
 
     @PostMapping("/house")
-    public Result<?> updateHouse(String name) {
+    public Result<?> updateHouse(@RequestParam(value = "name", required = true) String name) {
         if (name != null) {
             service.updateHouse(name);
             log.info("更新了" + name + "的房屋信息");
@@ -107,24 +108,24 @@ public class MessageController {
             msg_builder.append(pusher).append("刚刚向").append(branch)
                     .append("分支提交了一个更新，内容为：\n").append(commit);
 
-            if (add_files_arr.size() != 0){
+            if (add_files_arr.size() != 0) {
                 String[] add_files = gson.fromJson(add_files_arr, String[].class);
                 msg_builder.append("\n----------------\n添加了：");
-                for (String file:add_files){
+                for (String file : add_files) {
                     msg_builder.append("\n").append(file);
                 }
             }
-            if (remove_files_arr.size() != 0){
+            if (remove_files_arr.size() != 0) {
                 String[] remove_files = gson.fromJson(remove_files_arr, String[].class);
                 msg_builder.append("\n----------------\n移除了：");
-                for (String file:remove_files){
+                for (String file : remove_files) {
                     msg_builder.append("\n").append(file);
                 }
             }
-            if (modified_files_arr.size() != 0){
+            if (modified_files_arr.size() != 0) {
                 String[] modified_files = gson.fromJson(modified_files_arr, String[].class);
                 msg_builder.append("\n----------------\n修改了：");
-                for (String file:modified_files){
+                for (String file : modified_files) {
                     msg_builder.append("\n").append(file);
                 }
             }
