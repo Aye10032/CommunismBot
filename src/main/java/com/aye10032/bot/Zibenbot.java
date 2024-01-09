@@ -477,6 +477,37 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     /**
+     * 带引用的回复消息
+     *
+     * @param fromMsg 消息来源
+     * @param msg     要回复的消息
+     */
+    public void quoteReply(SimpleMsg fromMsg, String msg){
+        try {
+            if (fromMsg.isGroupMsg()) {
+                log.info("reply to {}[{}]:{}", fromMsg.getFromGroup(), fromMsg.getFromClient(), msg);
+                Contact contact = _getGroup(fromMsg.getFromGroup());
+                if (contact != null) {
+                    MessageChain chain = new MessageChainBuilder()
+                            .append(new QuoteReply(fromMsg.getMsgChain()))
+                            .append(msg)
+                            .build();
+                    contact.sendMessage(chain);
+                }
+            } else if (fromMsg.isPrivateMsg()) {
+                log.info("reply to {}:{}", fromMsg.getFromClient(), msg);
+                MessageChain chain = new MessageChainBuilder()
+                        .append(new QuoteReply(fromMsg.getMsgChain()))
+                        .append(msg)
+                        .build();
+                toPrivateMsg(fromMsg.getFromClient(), chain);
+            }
+        } catch (Exception e) {
+            log.error(ExceptionUtils.printStack(e));
+        }
+    }
+
+    /**
      * 发送语音
      *
      * @param fromMsg 消息来源
