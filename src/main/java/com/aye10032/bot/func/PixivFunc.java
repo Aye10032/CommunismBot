@@ -4,23 +4,26 @@ import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
+import com.aye10032.foundation.entity.base.FileData;
 import com.aye10032.foundation.utils.RandomUtil;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.aye10032.foundation.utils.FileUtil.*;
 
 @Service
 @Slf4j
 public class PixivFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
-    private RandomUtil randomUtil;
-    private List<String> indexList;
+    private List<String> fileList;
 
     public PixivFunc(Zibenbot zibenbot) {
         super(zibenbot);
@@ -29,22 +32,27 @@ public class PixivFunc extends BaseFunc {
                 .start()
                 .or(".pixiv"::equalsIgnoreCase)
                 .run((msg) -> {
-                    updateIndexList(appDirectory + "/setu/today.txt");
-                    int initialSize = indexList.size();
+                    fileList = getFileIndex(appDirectory + "/setu/today.txt");
+                    int initialSize = fileList.size();
                     log.info("获取到" + initialSize + "条索引路径");
-                    zibenbot.replyMsg(msg, zibenbot.getImg(getRandomImage()));
-                    if (initialSize != indexList.size()) {
-                        saveIndexList(appDirectory + "/setu/today.txt");
+
+                    FileData result = getRandomImage(fileList, "/home/aye/my-data/pixiv_image/");
+
+                    zibenbot.replyMsg(msg, zibenbot.getImg(result.getFile()));
+                    if (initialSize != result.getIndexList().size()) {
+                        saveFileList(result.getIndexList(), appDirectory + "/setu/today.txt");
                     }
                 })
                 .next()
                 .or("all"::equalsIgnoreCase)
                 .run((msg) -> {
-                    updateIndexList(appDirectory + "/setu/mulu.txt");
-                    int initial_size = indexList.size();
-                    zibenbot.replyMsg(msg, zibenbot.getImg(getRandomImage()));
-                    if (initial_size != indexList.size()) {
-                        saveIndexList(appDirectory + "/setu/mulu.txt");
+                    fileList = getFileIndex(appDirectory + "/setu/mulu.txt");
+                    int initial_size = fileList.size();
+
+                    FileData result = getRandomImage(fileList, "/home/aye/my-data/pixiv_image/");
+                    zibenbot.replyMsg(msg, zibenbot.getImg(result.getFile()));
+                    if (initial_size != result.getIndexList().size()) {
+                        saveFileList(result.getIndexList(), appDirectory + "/setu/mulu.txt");
                     }
                 })
                 .pop()
@@ -53,54 +61,10 @@ public class PixivFunc extends BaseFunc {
 
     @Override
     public void setUp() {
-        this.randomUtil = new RandomUtil();
-        this.indexList = new ArrayList<>();
     }
 
     @Override
     public void run(SimpleMsg simpleMsg) {
         commander.execute(simpleMsg);
-    }
-
-    private File getRandomImage() {
-        int index = randomUtil.getRandomIndex(indexList.size());
-        String image_path = "/home/aye/my-data/pixiv_image/" + indexList.get(index);
-        log.info("获取到路径：" + image_path);
-        File image = new File(image_path);
-        if (image.exists()) {
-            return image;
-        } else {
-            log.info("图片不存在，尝试新的路径");
-            indexList.remove(index);
-            return getRandomImage();
-        }
-    }
-
-    private void updateIndexList(String index_path) {
-        File image_index = new File(index_path);
-        indexList.clear();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(image_index));
-            String image_name = null;
-            while ((image_name = reader.readLine()) != null) {
-                indexList.add(image_name);
-            }
-            reader.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void saveIndexList(String index_path) {
-        File image_index = new File(index_path);
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(image_index));
-            for (String name : indexList) {
-                writer.write(name + "\n");
-            }
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
