@@ -7,21 +7,23 @@ import java.util.Random;
  */
 public class RandomUtil {
 
-    private Random random;
-
-    public RandomUtil() {
-        random = new Random();
-    }
-
-    public String getRandom(String[] list) {
+    public static String getRandom(String[] list) {
         String result = "";
         int i = getRandomIndex(list.length);
         result = list[i];
         return result;
     }
 
-    public int getRandomIndex(int size) {
+    public static int getRandomIndex(int size) {
+        Random random = new Random(System.currentTimeMillis());
+
         return random.nextInt(size);
+    }
+
+    public static boolean randomFlag(int percent) {
+        Random random = new Random(System.currentTimeMillis());
+
+        return random.nextInt(100) < percent;
     }
 
     /**
@@ -31,7 +33,9 @@ public class RandomUtil {
      * @param sr_probability  稀有卡概率（1/N）
      * @param ssr_probability 超稀有卡概率（1/N）
      */
-    public String[] getRandomWithSSR(String[] main_list, String[] sr_list, String[] ssr_list, int sr_probability, int ssr_probability) {
+    public static String[] getRandomWithSSR(String[] main_list, String[] sr_list, String[] ssr_list, int sr_probability, int ssr_probability) {
+        Random random = new Random(System.currentTimeMillis());
+
         String[] result = new String[2];
 
         int total = sr_probability * ssr_probability;
