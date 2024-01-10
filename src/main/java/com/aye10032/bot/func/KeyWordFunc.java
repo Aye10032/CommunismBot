@@ -62,7 +62,7 @@ public class KeyWordFunc extends BaseFunc {
 
                         FileData result = getRandomImage(index, appDirectory + "/image/dragon/");
 
-                        zibenbot.replyMsgWithQuote(msg, zibenbot.getImg(result.getFile()) + " 新年快乐");
+                        zibenbot.replyMsgWithQuote(msg, zibenbot.getImg(result.getFile()) + " 龙年快乐");
                         if (initialSize != result.getIndexList().size()) {
                             saveFileList(result.getIndexList(), appDirectory + "/image/dragon.txt");
                         }
