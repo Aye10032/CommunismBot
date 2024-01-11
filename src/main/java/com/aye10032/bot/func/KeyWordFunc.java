@@ -7,6 +7,8 @@ import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.entity.base.FileData;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
+import com.github.houbb.pinyin.constant.enums.PinyinStyleEnum;
+import com.github.houbb.pinyin.util.PinyinHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +33,10 @@ public class KeyWordFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .or("nmsl"::equalsIgnoreCase)
+                .or(this::isDragon)
                 .run((msg) -> {
                     zibenbot.replyMsg(msg, zibenbot.getImg(new File(appDirectory + "/image/dragon.jpg"))
-                            + " 疯牛满地跑，难免输了");
+                            + " " + msg.getMsg());
                 })
                 .or("炼铜"::contains)
                 .run((msg) -> {
@@ -76,5 +78,11 @@ public class KeyWordFunc extends BaseFunc {
     @Override
     public void run(SimpleMsg simpleMsg) {
         commander.execute(simpleMsg);
+    }
+
+    private boolean isDragon(String msg) {
+        String pinyin = PinyinHelper.toPinyin(msg, PinyinStyleEnum.FIRST_LETTER);
+
+        return pinyin.equalsIgnoreCase("n m s l");
     }
 }

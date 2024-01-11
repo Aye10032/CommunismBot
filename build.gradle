@@ -110,6 +110,8 @@ dependencies {
     implementation group: 'com.github.Aye10032', name: 'rtroapiutil', version: 'v1.2'
 //    implementation group: 'com.github.Aye10032', name: 'GenshinUtil', version: 'v1.0.0'
 
+    implementation group: 'io.github.andello', name: 'pinyin4j', version: '0.3.2'
+
     implementation(fileTree(dir: 'libs', includes: ['*.jar']))
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-quartz
