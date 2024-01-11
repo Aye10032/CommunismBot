@@ -8,7 +8,6 @@ import com.aye10032.foundation.entity.base.EatData;
 import com.aye10032.foundation.utils.ArrayUtils;
 import com.aye10032.foundation.utils.ConfigLoader;
 import com.aye10032.foundation.utils.FoodUtil;
-import com.aye10032.foundation.utils.RandomUtil;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
 import com.aye10032.foundation.utils.food.FoodClaass;
