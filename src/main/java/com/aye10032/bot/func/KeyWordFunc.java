@@ -35,8 +35,7 @@ public class KeyWordFunc extends BaseFunc {
                 .start()
                 .or(this::isDragon)
                 .run((msg) -> {
-                    zibenbot.replyMsg(msg, zibenbot.getImg(new File(appDirectory + "/image/dragon.jpg"))
-                            + " " + msg.getMsg());
+                    randomDragon(msg, msg.getMsg());
                 })
                 .or("炼铜"::contains)
                 .run((msg) -> {
@@ -56,16 +55,7 @@ public class KeyWordFunc extends BaseFunc {
                 }).or("新年快乐"::contains)
                 .run((msg) -> {
                     if (randomFlag(60)) {
-                        List<String> index = getFileIndex(appDirectory + "/image/dragon.txt");
-                        int initialSize = index.size();
-                        log.info("获取到" + initialSize + "条索引路径");
-
-                        FileData result = getRandomImage(index, appDirectory + "/image/dragon/");
-
-                        zibenbot.replyMsgWithQuote(msg, zibenbot.getImg(result.getFile()) + " 龙年快乐");
-                        if (initialSize != result.getIndexList().size()) {
-                            saveFileList(result.getIndexList(), appDirectory + "/image/dragon.txt");
-                        }
+                        randomDragon(msg, "龙年快乐");
                     }
                 })
                 .build();
@@ -84,5 +74,18 @@ public class KeyWordFunc extends BaseFunc {
         String pinyin = PinyinHelper.toPinyin(msg, PinyinStyleEnum.FIRST_LETTER);
 
         return pinyin.equalsIgnoreCase("n m s l");
+    }
+
+    private void randomDragon(SimpleMsg msg, String text) {
+        List<String> index = getFileIndex(appDirectory + "/image/dragon.txt");
+        int initialSize = index.size();
+        log.info("获取到" + initialSize + "条索引路径");
+
+        FileData result = getRandomImage(index, appDirectory + "/image/dragon/");
+
+        zibenbot.replyMsgWithQuote(msg, zibenbot.getImg(result.getFile()) + " " + text);
+        if (initialSize != result.getIndexList().size()) {
+            saveFileList(result.getIndexList(), appDirectory + "/image/dragon.txt");
+        }
     }
 }
