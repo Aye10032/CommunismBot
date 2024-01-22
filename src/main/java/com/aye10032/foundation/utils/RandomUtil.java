@@ -34,17 +34,13 @@ public class RandomUtil {
      * @param ssr_probability 超稀有卡概率（1/N）
      */
     public static String[] getRandomWithSSR(String[] main_list, String[] sr_list, String[] ssr_list, int sr_probability, int ssr_probability) {
-        Random random = new Random(System.currentTimeMillis());
 
         String[] result = new String[2];
 
-        int total = sr_probability * ssr_probability;
-        int flag = random.nextInt(total);
-
-        if (flag < sr_probability) {
+        if (randomFlag(ssr_probability)) {
             result[0] = "★★★ " + getRandom(ssr_list);
             result[1] = "3";
-        } else if (flag < ssr_probability) {
+        } else if (randomFlag(sr_probability)) {
             result[0] = "★★ " + getRandom(sr_list);
             result[1] = "2";
         } else {

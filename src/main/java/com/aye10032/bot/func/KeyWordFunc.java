@@ -52,7 +52,7 @@ public class KeyWordFunc extends BaseFunc {
                                 "50可以买TM七八个汉堡\n" +
                                 "吃到不省人事");
                     }
-                }).or("新年快乐"::contains)
+                }).or("新年快乐"::equals)
                 .run((msg) -> {
                     if (randomFlag(60)) {
                         randomDragon(msg, "龙年快乐");
