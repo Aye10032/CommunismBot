@@ -37,13 +37,13 @@ public class KeyWordFunc extends BaseFunc {
                 .run((msg) -> {
                     randomDragon(msg, msg.getMsg());
                 })
-                .or("炼铜"::contains)
+                .or(s -> s.contains("炼铜"))
                 .run((msg) -> {
                     if (randomFlag(40)) {
                         zibenbot.replyMsg(msg, zibenbot.getImg(new File(appDirectory + "/image/liantong.jpg")));
                     }
                 })
-                .or("疯狂星期四"::contains)
+                .or(s -> s.contains("疯狂星期四"))
                 .run((msg) -> {
                     if (randomFlag(80)) {
                         zibenbot.replyMsg(msg, "朋友，我没有50\n" +
@@ -52,7 +52,7 @@ public class KeyWordFunc extends BaseFunc {
                                 "50可以买TM七八个汉堡\n" +
                                 "吃到不省人事");
                     }
-                }).or("新年快乐"::equals)
+                }).or(s -> s.contains("新年快乐"))
                 .run((msg) -> {
                     if (randomFlag(60)) {
                         randomDragon(msg, "龙年快乐");
