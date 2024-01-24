@@ -24,10 +24,21 @@ public class AiResult {
     public static class Choice {
         private int index;
         // 流消息使用这个字段接收
-        private ChatMessage message;
+        private ChatMessage text;
         @JsonProperty("finish_reason")
         private String finishReason;
         private ChatMessage delta;
+    }
+
+    @Data
+    public static class LogProbs{
+        @JsonProperty("text_offset")
+        private List<Double> textOffset;
+        @JsonProperty("token_logprobs")
+        private List<Double> tokenLogprobs;
+        private List<Double> tokens;
+        @JsonProperty("top_logprobs")
+        private List<Double> topLogprobs;
     }
 
     @Data
