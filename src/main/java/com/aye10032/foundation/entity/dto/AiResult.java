@@ -16,16 +16,17 @@ public class AiResult {
     public String object;
     public int created;
     public String model;
+    public String system_fingerprint;
     public Usage usage;
     public List<Choice> choices;
 
     @Data
     public static class Choice {
+        private int index;
+        // 流消息使用这个字段接收
         private ChatMessage message;
         @JsonProperty("finish_reason")
         private String finishReason;
-        private int index;
-        // 流消息使用这个字段接收
         private ChatMessage delta;
     }
 
