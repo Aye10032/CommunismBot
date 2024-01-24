@@ -25,10 +25,10 @@ public class AiResult {
         private int index;
         // 流消息使用这个字段接收
         private ChatMessage text;
-        @JsonProperty("finish_reason")
-        private String finishReason;
         private ChatMessage delta;
         private LogProbs logprobs;
+        @JsonProperty("finish_reason")
+        private String finishReason;
     }
 
     @Data

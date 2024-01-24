@@ -167,7 +167,7 @@ public class OpenAiServiceImpl implements OpenAiService {
         aiResult.setObject(results.get(0).getObject());
         ChatMessage message = ChatMessage.of(role, content.toString());
         AiResult.Choice choice = new AiResult.Choice();
-        choice.setMessage(message);
+        choice.setText(message);
         aiResult.setChoices(Collections.singletonList(choice));
         return aiResult;
     }
