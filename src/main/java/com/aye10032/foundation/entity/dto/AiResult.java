@@ -28,6 +28,7 @@ public class AiResult {
         @JsonProperty("finish_reason")
         private String finishReason;
         private ChatMessage delta;
+        private LogProbs logprobs;
     }
 
     @Data
