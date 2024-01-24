@@ -24,7 +24,8 @@ public class AiResult {
     public static class Choice {
         private int index;
         // 流消息使用这个字段接收
-        private ChatMessage text;
+        @JsonProperty("text")
+        private ChatMessage message;
         private ChatMessage delta;
         private LogProbs logprobs;
         @JsonProperty("finish_reason")
