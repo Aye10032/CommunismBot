@@ -37,9 +37,9 @@ public class MoeTask extends SubscribableBase {
                 msg_builder.append("你订阅的《").append(args[1].replace("-", " ")).append("》有资源更新了：");
                 List<String> result;
                 if (args[0].startsWith("https://www.dmhy.org/topics/rss/")) {
-                    result = RSSUtil.getRSSUpdate(args[0], now, true);
+                    result = RSSUtil.getAnimeUpdate(args[0], now, true);
                 } else {
-                    result = RSSUtil.getRSSUpdate(args[0], now, false);
+                    result = RSSUtil.getAnimeUpdate(args[0], now, false);
                 }
                 if (!result.isEmpty()) {
                     for (String entry : result) {

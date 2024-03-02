@@ -22,8 +22,7 @@ import java.util.List;
  */
 public class RSSUtil {
 
-    public static List<String> getRSSUpdate(String url, Date date, boolean use_proxy) {
-        List<String> result = new ArrayList<>();
+    public static List<SyndEntry> getRSSUpdate(String url, boolean use_proxy) {
         try {
             URLConnection connection;
             if (use_proxy) {
@@ -33,15 +32,7 @@ public class RSSUtil {
                 connection = new URL(url).openConnection();
             }
             SyndFeed feed = new SyndFeedInput().build(new XmlReader(connection));
-            List<SyndEntry> list = feed.getEntries();
-            for (SyndEntry entry : list) {
-                if (entry.getPublishedDate().compareTo(date) > 0) {
-                    String builder = entry.getTitle() + "\n" +
-                            "源地址：" + entry.getLink() + "\n" +
-                            "种子下载：" + entry.getEnclosures().get(0).getUrl();
-                    result.add(builder);
-                }
-            }
+            return feed.getEntries();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (FeedException e) {
@@ -49,6 +40,23 @@ public class RSSUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return null;
+    }
+
+    public static List<String> getAnimeUpdate(String url, Date date, boolean use_proxy) {
+        List<SyndEntry> list = getRSSUpdate(url, use_proxy);
+        List<String> result = new ArrayList<>();
+
+        for (SyndEntry entry : list) {
+            if (entry.getPublishedDate().compareTo(date) > 0) {
+                String builder = entry.getTitle() + "\n" +
+                        "源地址：" + entry.getLink() + "\n" +
+                        "种子下载：" + entry.getEnclosures().get(0).getUrl();
+                result.add(builder);
+            }
+        }
+
         return result;
     }
 
