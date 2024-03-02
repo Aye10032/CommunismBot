@@ -4,7 +4,9 @@ import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.MsgType;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
+import com.aye10032.foundation.entity.base.RssResult;
 import com.aye10032.foundation.utils.ExceptionUtils;
+import com.rometools.rome.feed.synd.SyndEntry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.aye10032.foundation.utils.RSSUtil.getRSSUpdate;
 
 @Service
 @Slf4j
@@ -64,6 +68,21 @@ public class SendGroupFunc extends BaseFunc {
                 simpleMsg.setType(MsgType.PRIVATE_MSG);
                 msg = msg.substring(flag + 1);
                 replyMsg(simpleMsg, msg);
+            } else if (msg.equalsIgnoreCase("sendcas")){
+                RssResult feed = getRSSUpdate("http://www.bulletin.cas.cn/rc-pub/front/rss?periodId=currentIssue&siteId=460", false);
+                String title = feed.getTitle();
+                List<SyndEntry> list = feed.getEntries();
+
+                StringBuilder builder = new StringBuilder();
+                builder.append(title).append("\n==============\n");
+
+                for (SyndEntry entry : list) {
+                    builder.append("-------------\n");
+                    builder.append(entry.getTitle()).append("\n");
+                    builder.append(entry.getUri()).append("\n");
+                }
+
+                zibenbot.toGroupMsg(groupMap.get(1), builder.toString());
             }
         }
     }
