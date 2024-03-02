@@ -77,12 +77,13 @@ public class SendGroupFunc extends BaseFunc {
                 builder.append(title).append("\n==============\n");
 
                 for (SyndEntry entry : list) {
-                    builder.append("-------------\n");
                     builder.append(entry.getTitle()).append("\n");
                     builder.append(entry.getUri()).append("\n");
+                    builder.append("-------------\n");
                 }
 
                 zibenbot.toGroupMsg(groupMap.get(1), builder.toString());
+                zibenbot.toGroupMsg(groupMap.get(2), builder.toString());
             }
         }
     }
