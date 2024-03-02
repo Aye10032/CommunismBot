@@ -34,7 +34,7 @@ public class SendGroupFunc extends BaseFunc {
         oplist.add(2375985957L);
         oplist.add(895981998L);
 
-        groupMap.put(1, 995497677L);
+        groupMap.put(1, 1044102726L);
         groupMap.put(2, 947657871L);
         groupMap.put(3, 792666782L);
         groupMap.put(4, 456919710L);
