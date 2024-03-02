@@ -63,18 +63,4 @@ public class RSSUtil {
         return result;
     }
 
-    public static List<String> getCASUpdate(String url) {
-        RssResult feed = getRSSUpdate(url, false);
-        String title
-        List<SyndEntry> list = feed.getEntries();
-        List<String> result = new ArrayList<>();
-
-        for (SyndEntry entry : list) {
-            String builder = entry.getTitle() + "\n" + entry.getUri();
-            result.add(builder);
-        }
-
-        return result;
-    }
-
 }
