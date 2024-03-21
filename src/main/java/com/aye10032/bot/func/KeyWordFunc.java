@@ -59,9 +59,9 @@ public class KeyWordFunc extends BaseFunc {
                         randomDragon(msg, "龙年快乐");
                     }
                 })
-                .or(s-> s.contains("征兵"))
+                .or(s -> s.contains("征兵"))
                 .run((msg) -> {
-                    if (randomFlag(95)){
+                    if (randomFlag(95)) {
                         zibenbot.replyMsg(msg, "(INVASION)\n" +
                                 "觉得眼熟？\uD83E\uDD14 \n" +
                                 "这样的场景，此时此刻正在星系的各处上演！\uD83D\uDE28 \n" +
@@ -73,6 +73,13 @@ public class KeyWordFunc extends BaseFunc {
                                 "见识奇异的生命体\uD83D\uDC7D \n" +
                                 "让管理式民主惠及整个星系\uD83E\uDD1F \n" +
                                 "成为绝地潜兵！\uD83D\uDE03");
+                    }
+                })
+                .or(s -> s.contains("granbluefantasy.jp"))
+                .run((msg) -> {
+                    if (randomFlag(70)) {
+                        zibenbot.muteMember(msg.getFromGroup(), msg.getFromClient(), 114);
+                        zibenbot.replyMsgWithQuote(msg, "骑空士爪巴" + zibenbot.getImg(appDirectory + "/gbfKiller.jpg"));
                     }
                 })
                 .build();
