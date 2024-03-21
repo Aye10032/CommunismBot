@@ -52,10 +52,27 @@ public class KeyWordFunc extends BaseFunc {
                                 "50可以买TM七八个汉堡\n" +
                                 "吃到不省人事");
                     }
-                }).or(s -> s.contains("新年快乐"))
+                })
+                .or(s -> s.contains("新年快乐"))
                 .run((msg) -> {
                     if (randomFlag(60)) {
                         randomDragon(msg, "龙年快乐");
+                    }
+                })
+                .or(s-> s.contains("征兵"))
+                .run((msg) -> {
+                    if (randomFlag(95)){
+                        zibenbot.replyMsg(msg, "(INVASION)\n" +
+                                "觉得眼熟？\uD83E\uDD14 \n" +
+                                "这样的场景，此时此刻正在星系的各处上演！\uD83D\uDE28 \n" +
+                                "下一个可能就是你\uD83D\uDC48 \n" +
+                                "除非你能做出生命中最重要的决定\uD83E\uDD1B \n" +
+                                "向所有人证明，你拥有追求自由的力量与勇气✊ \n" +
+                                "加入绝地潜兵的行列吧！\uD83D\uDE06 \n" +
+                                "成为维和部队的精英！\uD83E\uDD20 \n" +
+                                "见识奇异的生命体\uD83D\uDC7D \n" +
+                                "让管理式民主惠及整个星系\uD83E\uDD1F \n" +
+                                "成为绝地潜兵！\uD83D\uDE03");
                     }
                 })
                 .build();
