@@ -72,6 +72,8 @@ public class KeyWordFunc extends BaseFunc {
                                 "成为维和部队的精英！\uD83E\uDD20 \n" +
                                 "见识奇异的生命体\uD83D\uDC7D \n" +
                                 "让管理式民主惠及整个星系\uD83E\uDD1F \n" +
+                                "成为英雄\n" +
+                                "成为传奇\uD83D\uDE03\uD83E\uDD32\uD83D\uDE04\n"+
                                 "成为绝地潜兵！\uD83D\uDE03");
                     }
                 })
