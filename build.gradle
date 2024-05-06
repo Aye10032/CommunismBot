@@ -112,6 +112,8 @@ dependencies {
 
     implementation group: 'io.github.andello', name: 'pinyin4j', version: '0.3.2'
 
+    implementation group: 'cn.bigmodel.openapi', name: 'oapi-java-sdk', version: 'release-V4-2.0.2'
+
     implementation(fileTree(dir: 'libs', includes: ['*.jar']))
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-quartz
