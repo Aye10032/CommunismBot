@@ -33,7 +33,7 @@ public class LLMServiceImpl implements LLMService {
 
         List<ChatMessage> messageChain = new ArrayList<>();
         messageChain.add(
-                new ChatMessage(ChatMessageRole.SYSTEM.value(), "你的名字是Bot形态叶，是Aye10032基于GLM模型微调的的AI小助手")
+                new ChatMessage(ChatMessageRole.SYSTEM.value(), "你的名字是Moss，是Aye10032基于GLM模型微调的的AI小助手")
         );
         messageChain.addAll(messages);
 
