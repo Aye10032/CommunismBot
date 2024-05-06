@@ -2,7 +2,20 @@ package com.aye10032.bot.func;
 
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
+import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
+import com.aye10032.foundation.utils.command.Commander;
+import com.aye10032.foundation.utils.command.CommanderBuilder;
+import com.aye10032.service.LLMService;
+import com.aye10032.service.impl.LLMServiceImpl;
+import com.zhipu.oapi.Constants;
+import com.zhipu.oapi.service.v4.model.ChatMessage;
+import com.zhipu.oapi.service.v4.model.ChatMessageRole;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @program: communismbot
@@ -11,10 +24,29 @@ import com.aye10032.bot.func.funcutil.SimpleMsg;
  * @create: 2024-05-06 16:13
  **/
 
+@Service
 public class LLMFunc extends BaseFunc {
+
+    @Autowired
+    LLMService llmService;
+
+    private Commander<SimpleMsg> commander;
 
     public LLMFunc(Zibenbot zibenbot) {
         super(zibenbot);
+        commander = new CommanderBuilder<SimpleMsg>()
+                .seteHandler(FuncExceptionHandler.INSTENCE)
+                .start()
+                .or("moss"::equalsIgnoreCase)
+                .next()
+                .orArray(s -> true)
+                .run(msg -> {
+                    List<ChatMessage> messages = new ArrayList<>();
+                    ChatMessage question = new ChatMessage(ChatMessageRole.USER.value(), msg.getMsg());
+                    messages.add(question);
+                    llmService.glmInvoke(Constants.ModelChatGLM4, messages);
+                })
+                .build();
     }
 
     @Override
@@ -24,7 +56,7 @@ public class LLMFunc extends BaseFunc {
 
     @Override
     public void run(SimpleMsg simpleMsg) {
-
+        commander.execute(simpleMsg);
     }
 
     @Override
