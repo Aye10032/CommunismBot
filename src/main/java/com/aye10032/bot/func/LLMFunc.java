@@ -11,6 +11,8 @@ import com.aye10032.service.impl.LLMServiceImpl;
 import com.zhipu.oapi.Constants;
 import com.zhipu.oapi.service.v4.model.ChatMessage;
 import com.zhipu.oapi.service.v4.model.ChatMessageRole;
+import com.zhipu.oapi.service.v4.model.ModelApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,7 @@ import java.util.List;
  * @create: 2024-05-06 16:13
  **/
 
+@Slf4j
 @Service
 public class LLMFunc extends BaseFunc {
 
@@ -44,7 +47,8 @@ public class LLMFunc extends BaseFunc {
                     List<ChatMessage> messages = new ArrayList<>();
                     ChatMessage question = new ChatMessage(ChatMessageRole.USER.value(), msg.getMsg());
                     messages.add(question);
-                    llmService.glmInvoke(Constants.ModelChatGLM4, messages);
+                    ModelApiResponse modelApiResponse = llmService.glmInvoke(Constants.ModelChatGLM4, messages);
+                    zibenbot.replyMsg(msg, modelApiResponse.getData().getChoices().get(0).getMessage().getContent().toString());
                 })
                 .build();
     }
