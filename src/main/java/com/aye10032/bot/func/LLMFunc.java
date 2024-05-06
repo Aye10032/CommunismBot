@@ -45,7 +45,7 @@ public class LLMFunc extends BaseFunc {
                 .orArray(s -> true)
                 .run(msg -> {
                     List<ChatMessage> messages = new ArrayList<>();
-                    ChatMessage question = new ChatMessage(ChatMessageRole.USER.value(), msg.getMsg());
+                    ChatMessage question = new ChatMessage(ChatMessageRole.USER.value(), msg.getMsg().substring(5));
                     messages.add(question);
                     ModelApiResponse modelApiResponse = llmService.glmInvoke(Constants.ModelChatGLM4, messages);
                     zibenbot.replyMsg(msg, modelApiResponse.getData().getChoices().get(0).getMessage().getContent().toString());
