@@ -60,7 +60,7 @@ public class HistoryTodayFunc extends BaseFunc {
                         for (int i = 0; i < history_today_list.size(); i++) {
                             builder.append(i + 1)
                                     .append("、");
-                            if (!history_today_list.get(i).getYear().equals("")) {
+                            if (!history_today_list.get(i).getYear().isEmpty()) {
                                 builder.append(history_today_list.get(i).getYear())
                                         .append(" ");
                             }
@@ -74,14 +74,14 @@ public class HistoryTodayFunc extends BaseFunc {
                         if (event_count == 0) {
                             zibenbot.replyMsg(msg, "历史上的今天无事发生");
                         } else {
-                            if (group_history_list.size() != 0) {
-                                if (history_today_list.size() != 0) {
+                            if (!group_history_list.isEmpty()) {
+                                if (!history_today_list.isEmpty()) {
                                     builder.append("-------------\n");
                                 }
                                 for (int i = 0; i < group_history_list.size(); i++) {
                                     builder.append(i + 1)
                                             .append("、");
-                                    if (!group_history_list.get(i).getYear().equals("")) {
+                                    if (!group_history_list.get(i).getYear().isEmpty()) {
                                         builder.append(group_history_list.get(i).getYear())
                                                 .append(" ");
                                     }
@@ -210,7 +210,7 @@ public class HistoryTodayFunc extends BaseFunc {
                     ImageIO.write(entry.getValue(), "png", outputFile);
                     msg.setMsg(msg.getMsg().replace(entry.getKey(), zibenbot.getImg(outputPath)));
                     index ++;
-                    log.info("Image" + outputFileName + " saved successfully!");
+                    log.info("Image{} saved successfully!", outputFileName);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
