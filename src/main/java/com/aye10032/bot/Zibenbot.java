@@ -67,12 +67,11 @@ import static com.aye10032.foundation.utils.StringUtil.longMsgSplit;
 @Slf4j
 public class Zibenbot implements ApplicationContextAware {
     public static Proxy proxy = null;
-    private static final Pattern AT_REGEX = Pattern.compile("\\[mirai:at:(\\d+)]");
+    private static final Pattern AT_REGEX = Pattern.compile("\\[CQ:at:(\\d+)]");
     public List<Long> enableGroup = new ArrayList<>();
     @Value("${bot.data.cache.path}")
     public String appDirectory;
     private final Map<String, IMsgUpload> msgUploads = new HashMap<>();
-    private final Bot bot;
     final Pattern MSG_TYPE_PATTERN;
     private ApplicationContext applicationContext;
 
@@ -343,12 +342,8 @@ public class Zibenbot implements ApplicationContextAware {
         group.sendMessage(toMessChain(group, msg));
     }
 
-    private String _at(User user) {
-        return String.format("[mirai:at:%s]", user.getId());
-    }
-
     private String _at(long id) {
-        return String.format("[mirai:at:%s]", id);
+        return String.format("[CQ:at:%s]", id);
     }
 
     /**

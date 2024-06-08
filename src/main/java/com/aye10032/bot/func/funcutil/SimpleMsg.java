@@ -1,6 +1,8 @@
 package com.aye10032.bot.func.funcutil;
 
 import com.aye10032.foundation.utils.command.interfaces.ICommand;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
@@ -16,6 +18,7 @@ import net.mamoe.mirai.message.data.*;
  * @author Dazo66
  */
 @Slf4j
+@Getter
 public class SimpleMsg implements ICommand {
 
     private long fromGroup = -1;
@@ -32,10 +35,6 @@ public class SimpleMsg implements ICommand {
     private String fromGroupName = null;
     private String msg;
     private MsgType type;
-    private MessageEvent event;
-    private MessageSource source;
-
-    private MessageChain msgChain;
 
     private SimpleMsg quoteMsg;
 
@@ -113,97 +112,6 @@ public class SimpleMsg implements ICommand {
     }
 
     /**
-     * 获得这条消息引用的消息
-     *
-     * @return
-     */
-    public SimpleMsg getQuoteMsg() {
-        return quoteMsg;
-    }
-
-    /**
-     * 获取消息从哪个群收到的
-     *
-     * @return 群id 从私聊消息或者ts消息则为-1
-     */
-    public long getFromGroup() {
-        return fromGroup;
-    }
-
-    /**
-     * 设置消息的群来源
-     *
-     * @param fromGroup 群消息来源
-     */
-    public void setFromGroup(long fromGroup) {
-        this.fromGroup = fromGroup;
-    }
-
-    /**
-     * 获取消息是哪个人发送的
-     *
-     * @return 发送者id qq消息则是发送者qq号
-     */
-    public long getFromClient() {
-        return fromClient;
-    }
-
-    /**
-     * 设置发送者id
-     *
-     * @param fromClient 发送者id qq消息则是发送者qq号
-     */
-    public void setFromClient(long fromClient) {
-        this.fromClient = fromClient;
-    }
-
-    /**
-     * 获得消息内容体
-     *
-     * @return 消息内容
-     */
-    public String getMsg() {
-        return msg;
-    }
-
-    /**
-     * 设置消息内容 一般不推荐在func内部设置
-     * 可以通过设置这个为空 让这个消息只被短路处理
-     *
-     * @param msg 消息内容
-     */
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    /**
-     * 消息类型 具体消息类型如下 {@link MsgType}
-     *
-     * @return 当前的消息类型
-     */
-    public MsgType getType() {
-        return type;
-    }
-
-    /**
-     * 设置消息类型 一般不允许设置 如果要自定义返回途径 可以通过new 这个对象
-     *
-     * @param type 消息类型
-     */
-    public void setType(MsgType type) {
-        this.type = type;
-    }
-
-    /**
-     * 获取MessageChain对象 用于处理非文本信息
-     *
-     * @return MessageChain对象
-     */
-    public MessageChain getMsgChain() {
-        return msgChain;
-    }
-
-    /**
      * 是否是qq群消息
      *
      * @return true or false
@@ -239,14 +147,6 @@ public class SimpleMsg implements ICommand {
     @Override
     public String[] getCommandPieces() {
         return msg.trim().replaceAll(" +", " ").split("(?<!\\[\\S*)\\s+(?!\\S*\\])");
-    }
-
-    public String getFromClientName() {
-        return fromClientName;
-    }
-
-    public void setFromClientName(String fromClientName) {
-        this.fromClientName = fromClientName;
     }
 
     /**

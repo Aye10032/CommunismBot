@@ -278,7 +278,7 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         //更新掉落数据
         DiaoluoType diaoluoType = new DiaoluoType();
         try {
-            InputStream stream = HttpUtils.getInputStreamFromNet("https://api.aog.wiki/v2/data/total/CN", client);
+            InputStream stream = HttpUtils.getInputStreamFromNet("https://arkonegraph.herokuapp.com/total/CN", client);
             JsonObject jsonObject = parser.parse(IOUtils.toString(stream)).getAsJsonObject();
             stream.close();
             for (int i = 1; i <= 5; i++) {

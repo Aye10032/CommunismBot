@@ -20,7 +20,7 @@ public class INMFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .or("目力"::contains)
+                .or("目力"::equals)
                 .run((msg) -> {
                     zibenbot.replyAudio(msg, new File(appDirectory + "/inm/目力.amr"));
                 })
@@ -46,7 +46,7 @@ public class INMFunc extends BaseFunc {
     }
 
     private boolean containsYarimasune(String s) {
-        return (s.contains("压力马斯内") || s.equals("确实") || s.equals("压力吗死内"));
+        return (s.equals("压力马斯内") || s.equals("确实") || s.equals("压力吗死内"));
     }
 
     private boolean containsSodayo(String s) {

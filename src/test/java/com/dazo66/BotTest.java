@@ -4,7 +4,7 @@ import com.aye10032.Main;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.junit.jupiter.MockitoExtension;

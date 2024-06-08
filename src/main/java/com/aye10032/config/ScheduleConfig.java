@@ -28,7 +28,7 @@ public class ScheduleConfig implements ApplicationContextAware, InitializingBean
     @Autowired
     private SubTaskMapper mapper;
     public static ApplicationContext applicationContext;
-    @Autowired
+    @Autowired(required = false)
     private Scheduler scheduler;
     @Autowired
     private SchedulerFactoryBean schedulerFactoryBean;
@@ -51,6 +51,9 @@ public class ScheduleConfig implements ApplicationContextAware, InitializingBean
                     .startNow()
                     .withSchedule(CronScheduleBuilder.cronSchedule(entry.getValue().getCron()))
                     .build();
+            if (scheduler == null) {
+                return;
+            }
             if (!scheduler.checkExists(jobDetail.getKey())) {
                 scheduler.scheduleJob(jobDetail, trigger);
             } else {
