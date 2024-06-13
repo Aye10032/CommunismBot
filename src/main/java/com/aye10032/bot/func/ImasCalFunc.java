@@ -22,6 +22,8 @@ public class ImasCalFunc extends BaseFunc {
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
                 .or(".算分"::equals)
+                .next()
+                .orArray(s -> true)
                 .run((cqmsg) -> {
                     String[] strings = cqmsg.getCommandPieces();
 
@@ -42,7 +44,7 @@ public class ImasCalFunc extends BaseFunc {
                     int requiredScoreAPlus = CalculateScore(requiredScorePointAPlus);
                     int requiredScoreS = CalculateScore(requiredScorePointS);
 
-                    zibenbot.replyMsg(cqmsg, "A+ 所需得分: " + requiredScoreAPlus + "\\r\\nS 所需得分: " + requiredScoreS );
+                    zibenbot.replyMsg(cqmsg, "A+ 所需得分: " + requiredScoreAPlus + "\\r\\nS 所需得分: " + requiredScoreS);
 
                 }).build();
     }
@@ -64,7 +66,7 @@ public class ImasCalFunc extends BaseFunc {
         } else {
             result = 40000 + (int) ((requiredPoint - 3650) / 0.01);
         }
-        return  result;
+        return result;
     }
 
 
