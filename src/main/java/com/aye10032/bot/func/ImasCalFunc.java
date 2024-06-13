@@ -6,7 +6,10 @@ import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
+import org.springframework.stereotype.Service;
 
+
+@Service
 public class ImasCalFunc extends BaseFunc {
 
 
