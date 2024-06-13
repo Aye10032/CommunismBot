@@ -35,7 +35,7 @@ public class ImasCalFunc extends BaseFunc {
                     da = (da < 1470) ? da + 30 : 1500;
                     vi = (vi < 1470) ? vi + 30 : 1500;
 
-                    int statusPoint = (int) ((vo + da + vi) * 2.3);
+                    int statusPoint = (vo + da + vi) * 23 / 10;
                     int orderPoint = 1700;
 
                     int requiredScorePointAPlus = 11500 - orderPoint - statusPoint;
@@ -56,15 +56,15 @@ public class ImasCalFunc extends BaseFunc {
         if (requiredPoint <= 1500) {
             result = (int) (requiredPoint / 0.3);
         } else if (requiredPoint <= 2250) {
-            result = 5000 + (int) ((requiredPoint - 1500) / 0.15);
+            result = 5000 + (int) Math.round((requiredPoint - 1500) / 0.15);
         } else if (requiredPoint <= 3050) {
-            result = 10000 + (int) ((requiredPoint - 2250) / 0.08);
+            result = 10000 + (int) Math.round((requiredPoint - 2250) / 0.08);
         } else if (requiredPoint <= 3450) {
-            result = 20000 + (int) ((requiredPoint - 3050) / 0.04);
+            result = 20000 + (int) Math.round((requiredPoint - 3050) / 0.04);
         } else if (requiredPoint <= 3650) {
-            result = 30000 + (int) ((requiredPoint - 3450) / 0.02);
+            result = 30000 + (int) Math.round((requiredPoint - 3450) / 0.02);
         } else {
-            result = 40000 + (int) ((requiredPoint - 3650) / 0.01);
+            result = 40000 + (int) Math.round((requiredPoint - 3650) / 0.01);
         }
         return result;
     }
