@@ -10,11 +10,4 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class QQPrivateMessageEvent extends QQMessageEvent {
-
-    @JsonProperty("target_id")
-    private Long targetId;
-    @JsonProperty("temp_source")
-    private Integer tempSource;
-
-
 }

@@ -8,7 +8,7 @@ import lombok.Data;
  * @author dazo
  */
 @Data
-public class QQBaseEvent {
+public abstract class QQBaseEvent {
 
     /**
      * 事件发生时事件戳
