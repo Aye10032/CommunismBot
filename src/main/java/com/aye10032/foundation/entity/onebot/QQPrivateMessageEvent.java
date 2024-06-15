@@ -9,8 +9,5 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public abstract class QQRequestEvent extends QQBaseEvent {
-
-    @JsonProperty("request_type")
-    private String requestType;
+public class QQPrivateMessageEvent extends QQMessageEvent {
 }

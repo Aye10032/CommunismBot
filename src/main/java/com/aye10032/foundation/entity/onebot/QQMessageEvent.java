@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class QQMessageEvent extends QQBaseEvent {
+public abstract class QQMessageEvent extends QQBaseEvent {
     @JsonProperty("message_type")
     private String messageType;
     @JsonProperty("sub_type")

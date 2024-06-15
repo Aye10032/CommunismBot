@@ -1,15 +1,12 @@
 package com.aye10032.bot.func.funcutil;
 
+import com.aye10032.foundation.entity.onebot.QQGroupMessageEvent;
+import com.aye10032.foundation.entity.onebot.QQMessageEvent;
+import com.aye10032.foundation.entity.onebot.QQPrivateMessageEvent;
+import com.aye10032.foundation.entity.onebot.QQSender;
 import com.aye10032.foundation.utils.command.interfaces.ICommand;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.mamoe.mirai.contact.User;
-import net.mamoe.mirai.event.events.FriendMessageEvent;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.event.events.GroupTempMessageEvent;
-import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.message.data.*;
 
 
 /**
@@ -37,6 +34,7 @@ public class SimpleMsg implements ICommand {
     private MsgType type;
 
     private SimpleMsg quoteMsg;
+    private QQMessageEvent event;
 
     public SimpleMsg(long fromGroup, long fromClient, String msg, MsgType type) {
         this.fromGroup = fromGroup;
@@ -45,70 +43,25 @@ public class SimpleMsg implements ICommand {
         this.type = type;
     }
 
-    public SimpleMsg(long fromGroup, long fromClient, MessageChain chain, MsgType type) {
-        this.fromGroup = fromGroup;
-        this.fromClient = fromClient;
-        this.msg = getMsgFromEvent(chain);
-        this.type = type;
-    }
-
-    public SimpleMsg(MessageEvent event) {
-        if (event instanceof GroupMessageEvent) {
+    public SimpleMsg(QQMessageEvent event) {
+        if (event instanceof QQGroupMessageEvent) {
             type = MsgType.GROUP_MSG;
-            fromGroup = ((GroupMessageEvent) event).getGroup().getId();
-        } else if (event instanceof FriendMessageEvent) {
+            fromGroup = ((QQGroupMessageEvent) event).getGroupId();
+        } else if (event instanceof QQPrivateMessageEvent) {
             type = MsgType.PRIVATE_MSG;
-        } else if (event instanceof GroupTempMessageEvent) {
-            type = MsgType.PRIVATE_MSG;
+        } else {
+            throw new IllegalArgumentException("不支持的消息类型");
         }
-        User sender = event.getSender();
-        fromClient = sender.getId();
-        QuoteReply quoteReply = event.getMessage().get(QuoteReply.Key);
+        QQSender sender = event.getSender();
+        fromClient = sender.getUserId();
+/*        QuoteReply quoteReply = event.getMessageSeq();
         if (quoteReply != null) {
             MessageChain quoteChain = quoteReply.getSource().getOriginalMessage();
             quoteMsg = new SimpleMsg(fromGroup, quoteReply.getSource().getFromId(), quoteChain, type);
-        }
-        msgChain = event.getMessage();
-        msg = getMsgFromEvent(msgChain);
+        }*/
+        msg = event.getRawMessage();
         this.event = event;
-        this.fromClientName = sender.getNick();
-    }
-
-    private String getMsgFromEvent(MessageChain chain) {
-        MessageChainBuilder builder = new MessageChainBuilder();
-        chain.forEach((Message m) -> {
-            if (m instanceof At) {
-                builder.add(m);
-            } else if (m instanceof MessageSource) {
-                source = (MessageSource) m;
-            } else if (m instanceof QuoteReply) {
-                // ignore
-            } else {
-                builder.add(m);
-            }
-        });
-        return builder.build().toString();
-    }
-
-    public String getPlainMsg() {
-        if (msgChain == null) {
-            return msg;
-        }
-        MessageChainBuilder builder = new MessageChainBuilder();
-        msgChain.forEach((Message m) -> {
-            if (m instanceof At) {
-                // ignore
-            } else if (m instanceof MessageSource) {
-                // ignore
-            } else if (m instanceof QuoteReply) {
-                // ignore
-            } else if (m instanceof Image) {
-                // ignore
-            } else {
-                builder.add(m);
-            }
-        });
-        return builder.build().toString().trim();
+        this.fromClientName = sender.getNickname();
     }
 
     /**
@@ -146,7 +99,7 @@ public class SimpleMsg implements ICommand {
      */
     @Override
     public String[] getCommandPieces() {
-        return msg.trim().replaceAll(" +", " ").split("(?<!\\[\\S*)\\s+(?!\\S*\\])");
+        return msg.trim().replaceAll(" +", " ").split("(?<!\\[\\S+)\\s+(?!\\S*\\])");
     }
 
     /**
