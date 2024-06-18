@@ -1,15 +1,8 @@
 package com.dazo66;
 
 import lombok.extern.slf4j.Slf4j;
-import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.contact.Friend;
-import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.event.EventChannel;
-import net.mamoe.mirai.message.data.Message;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -25,7 +18,7 @@ import static org.mockito.ArgumentMatchers.any;
 public class TestBotConfig {
 
 
-    @Primary
+    /*@Primary
     @Bean
     @Profile("mock")
     public Bot getBot() {
@@ -46,7 +39,7 @@ public class TestBotConfig {
             return null;
         });
         return bot;
-    }
+    }*/
 
 
 }

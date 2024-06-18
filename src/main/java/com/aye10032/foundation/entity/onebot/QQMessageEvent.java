@@ -27,5 +27,7 @@ public abstract class QQMessageEvent extends QQBaseEvent {
     private Long font;
     @JsonProperty("message_seq")
     private Long messageSeq;
+    @JsonProperty("message_id")
+    private Integer messageId;
 
 }

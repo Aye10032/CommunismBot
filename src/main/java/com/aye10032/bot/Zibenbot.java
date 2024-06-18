@@ -1,61 +1,40 @@
 package com.aye10032.bot;
 
+import com.aye10032.bot.api.OneBotService;
 import com.aye10032.bot.func.FuncEnableFunc;
 import com.aye10032.bot.func.funcutil.IFunc;
 import com.aye10032.bot.func.funcutil.IQuoteHook;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
-import com.aye10032.config.BotConfig;
+import com.aye10032.foundation.entity.onebot.*;
 import com.aye10032.foundation.utils.ExceptionUtils;
-import com.aye10032.foundation.utils.FutureHelper;
 import com.aye10032.foundation.utils.IMsgUpload;
 import com.aye10032.foundation.utils.StringUtil;
 import com.aye10032.foundation.utils.timeutil.TimeUtils;
-import com.aye10032.mapper.SubTaskMapper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import io.github.mzdluo123.silk4j.AudioUtils;
 import lombok.extern.slf4j.Slf4j;
-import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.Mirai;
-import net.mamoe.mirai.contact.*;
-import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent;
-import net.mamoe.mirai.event.events.BotReloginEvent;
-import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.event.events.NewFriendRequestEvent;
-import net.mamoe.mirai.message.code.MiraiCode;
-import net.mamoe.mirai.message.data.*;
-import net.mamoe.mirai.utils.ExternalResource;
 import okhttp3.OkHttpClient;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.imageio.ImageIO;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
-import java.net.URL;
-import java.nio.file.Files;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.aye10032.foundation.utils.StringUtil.longMsgSplit;
+import java.util.stream.Collectors;
 
 /**
  * 机器人的主类 连接了mirai 进行实现
@@ -63,7 +42,6 @@ import static com.aye10032.foundation.utils.StringUtil.longMsgSplit;
  * @author Dazo66
  */
 @Component
-@AutoConfigureAfter(BotConfig.class)
 @Slf4j
 public class Zibenbot implements ApplicationContextAware {
     public static Proxy proxy = null;
@@ -71,9 +49,13 @@ public class Zibenbot implements ApplicationContextAware {
     public List<Long> enableGroup = new ArrayList<>();
     @Value("${bot.data.cache.path}")
     public String appDirectory;
+    @Value("${onebot.upload.protocol}")
+    private UploadProtocolEnum uploadProtocolEnum;
     private final Map<String, IMsgUpload> msgUploads = new HashMap<>();
     final Pattern MSG_TYPE_PATTERN;
     private ApplicationContext applicationContext;
+    @Autowired
+    private OneBotService oneBotService;
 
     public static OkHttpClient getOkHttpClient() {
         return new OkHttpClient().newBuilder().callTimeout(30, TimeUnit.SECONDS).build();
@@ -85,34 +67,38 @@ public class Zibenbot implements ApplicationContextAware {
         File logDir = new File(appDirectory + "/log/");
         File[] files = logDir.listFiles(pathname -> System.currentTimeMillis() - pathname.lastModified() > TimeUtils.DAY * 10L);
         Arrays.asList(files != null ? files : new File[0]).forEach(File::delete);
-        msgUploads.put("IMAGE", (conect, source) -> {
-            if ("null".equals(source)) {
-                return "[IMAGE]";
-            }
-            File file = new File(source);
-            if (!file.exists()) {
-                return "[IMAGE]";
-            }
-            ExternalResource externalResource = ExternalResource.create(new File(source));
-            String s = MiraiCode.serializeToMiraiCode(conect.uploadImage(externalResource));
-            externalResource.close();
-            return s;
-        });
-        msgUploads.put("AT", (conect, source) -> {
-            if (conect instanceof User) {
-                return at(Long.parseLong(source));
-            } else {
-                return "@" + source;
+        msgUploads.put("IMAGE", (source) -> {
+            switch (uploadProtocolEnum) {
+                case FILE:
+                    return String.format("[CQ:image,file=file:///%s]", new File(source).getAbsolutePath());
+                case BASE64:
+                    return String.format("[CQ:image,file=base64://%s]", StringUtil.encryptToBase64(source));
+                default:
+                    throw new IllegalArgumentException("不支持的协议");
             }
         });
-        MSG_TYPE_PATTERN = Pattern.compile(String.format("\\[type=(%s),[ ]*source=\"([[^\"\\f\\n\\r\\t\\v]]+)\"]"
-                , StringUtil.splicing("|", msgUploads.keySet())));
+        msgUploads.put("AT", (source) -> String.format("[CQ:at,qq=%s]", source));
+        msgUploads.put("VOICE", (source) -> {
+            switch (uploadProtocolEnum) {
+                case FILE:
+                    return String.format("[CQ:record,file=file:///%s]", new File(source).getAbsolutePath());
+                case BASE64:
+                    return String.format("[CQ:record,file=base64://%s]", StringUtil.encryptToBase64(source));
+                default:
+                    throw new IllegalArgumentException("不支持的协议");
+            }
+        });
+        MSG_TYPE_PATTERN = Pattern.compile(String.format("\\[type=(%s),[ ]*source=\"([[^\"\\f\\n\\r\\t\\v]]+)\"]",
+                StringUtil.splicing("|", msgUploads.keySet())));
     }
 
-    public Zibenbot(@Autowired Bot bot) {
-        this.bot = bot;
+    public Zibenbot() {
+    }
+
+    @PostConstruct
+    public int startup() {
         // bot启用的群
-//        enableGroup.add(995497677L); //提醒人 死于2022年10月27日11:08分
+        //enableGroup.add(995497677L); //提醒人 死于2022年10月27日11:08分
         enableGroup.add(1044102726L); //提醒人
         enableGroup.add(792666782L); //实验室
         enableGroup.add(517709950L); //植物群
@@ -129,16 +115,11 @@ public class Zibenbot implements ApplicationContextAware {
         enableGroup.add(866613076L);
         enableGroup.add(300496876L);
         enableGroup.add(609372702L); //部队群
-    }
-
-    @Autowired
-    private SubTaskMapper subTaskMapper;
-
-    @PostConstruct
-    public int startup() {
+        QQResponse<QQLoginInfo> loginInfo = oneBotService.getLoginInfo();
+        log.info("login info: {}", loginInfo);
         //改成了手动注册
         log.info("registe func start");
-        bot.getEventChannel().subscribeAlways(MessageEvent.class, messageEvent -> {
+/*        bot.getEventChannel().subscribeAlways(MessageEvent.class, messageEvent -> {
             SimpleMsg simpleMsg = new SimpleMsg(messageEvent);
             if (simpleMsg.isGroupMsg()) {
                 log.info("收到群消息：[{}]{}: {}", simpleMsg.getFromGroup(), messageEvent.getSender().getNick(), simpleMsg.getMsg());
@@ -159,13 +140,13 @@ public class Zibenbot implements ApplicationContextAware {
         });
         // 自动接受入群邀请
         bot.getEventChannel().subscribeAlways(BotInvitedJoinGroupRequestEvent.class,
-                BotInvitedJoinGroupRequestEvent::accept);
+                BotInvitedJoinGroupRequestEvent::accept);*/
         return 0;
     }
 
 
     public Long getBotQQId() {
-        return bot.getId();
+        return oneBotService.getLoginInfo().getData().getUserId();
     }
 
     public static Proxy getProxy() {
@@ -213,17 +194,12 @@ public class Zibenbot implements ApplicationContextAware {
         }
     }
 
-    private void muteMember(NormalMember member, int second) {
-        member.mute(second);
-    }
-
-    public void muteMember(long groupId, long memberId, int second) {
-        try {
-            NormalMember member = _getGroup(groupId).get(memberId);
-            muteMember(member, second);
-        } catch (Exception e) {
-            log.warn("禁言失败：" + memberId + e);
-        }
+    public void muteMember(@NotNull Long groupId, @NotNull Long memberId, @NotNull @Min(0) Integer second) {
+        QQSetGroupBanRequest request = new QQSetGroupBanRequest();
+        request.setDuration(second);
+        request.setGroupId(groupId);
+        request.setUserId(memberId);
+        oneBotService.setGroupBan(request);
     }
 
     /**
@@ -232,17 +208,11 @@ public class Zibenbot implements ApplicationContextAware {
      * @param groupId 群id
      * @param muteAll 启用或者禁用
      */
-    public void setMuteAll(long groupId, boolean muteAll) {
-        Group g = _getGroup(groupId);
-        if (g == null) {
-            log.warn("全体禁言失败，找不到group：" + groupId);
-            return;
-        }
-        g.getSettings().setMuteAll(muteAll);
-    }
-
-    private void unMute(NormalMember member) {
-        member.unmute();
+    public void setMuteAll(@NotNull Long groupId, boolean muteAll) {
+        QQSetGroupWholeBanRequest request = new QQSetGroupWholeBanRequest();
+        request.setGroupId(groupId);
+        request.setEnable(muteAll);
+        oneBotService.setGroupWholeBan(request);
     }
 
     /**
@@ -257,93 +227,33 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     public void unMute(long groupId, long memberId) {
-        NormalMember member = null;
-        try {
-            member = _getGroup(groupId).get(memberId);
-            unMute(member);
-        } catch (Exception e) {
-            log.warn("取消禁言失败：" + memberId + e);
-        }
+        QQSetGroupBanRequest request = new QQSetGroupBanRequest();
+        request.setDuration(0);
+        request.setGroupId(groupId);
+        request.setUserId(memberId);
+        oneBotService.setGroupBan(request);
     }
 
     public void toPrivateMsg(long clientId, String msg) {
-        toPrivateMsg(clientId, toMessChain(getUser(clientId), msg));
-    }
-
-    private void toPrivateMsg(long clientId, MessageChain chain, boolean flag) {
-        Contact contact = getUser(clientId);
-        if (contact == null) {
-            log.warn("找不到Contact：" + clientId);
-            return;
-        }
-        if (!flag) {
-            contact.sendMessage(chain);
-            return;
-        }
-        try {
-            contact.sendMessage(chain);
-        } catch (IllegalStateException e) {
-            String s = e.getMessage();
-            if (s.contains("resultType=10")) {
-                if (contact instanceof Member) {
-                    contact.sendMessage("发送消息失败，可能需要添加好友。");
-                    return;
-                }
-                contact.sendMessage("发送消息失败，消息过长，将分段发送。");
-                longMsgSplit(chain, 250).forEach(c -> toPrivateMsg(clientId, c, false));
-            } else if (s.contains("resultType=32")) {
-                contact.sendMessage("发送消息失败，请尝试添加好友再获取。");
-            } else {
-                log.warn(ExceptionUtils.printStack(e));
-            }
-        } catch (Exception e) {
-            log.error("发送消息失败：");
-            log.error(ExceptionUtils.printStack(e));
-        }
-    }
-
-    private User getUser(long clientId) {
-        try {
-            User user = bot.getFriend(clientId);
-            if (user == null) {
-                return getMember(clientId);
-            } else {
-                return user;
-            }
-        } catch (NoSuchElementException e) {
-            return bot.getStranger(clientId);
-        }
-    }
-
-    private Member getMember(long clientId) {
-        for (Group group : bot.getGroups()) {
-            try {
-                return group.get(clientId);
-            } catch (NoSuchElementException ignored) {
-            }
-        }
-        return null;
-    }
-
-    private Friend getFriend(long clientId) {
-        try {
-            return bot.getFriend(clientId);
-        } catch (NoSuchElementException e) {
-            return null;
-        }
+        String s = replaceMsgType(msg);
+        QQSendPrivateMessageRequest request = new QQSendPrivateMessageRequest();
+        request.setUserId(clientId);
+        request.setMessage(s);
+        QQResponse<QQSendMessageResponse> qqSendMessageResponseQQResponse = oneBotService.sendPrivateMsg(request);
+        log.info("发送消息回执：{}", qqSendMessageResponseQQResponse);
     }
 
     public void toGroupMsg(long groupId, String msg) {
-        Group group = _getGroup(groupId);
-        if (group == null) {
-            log.warn("找不到Group：" + groupId);
-            return;
-        }
-        group.sendMessage(toMessChain(group, msg));
+        String s = replaceMsgType(msg);
+        QQSendGroupMessageRequest request = new QQSendGroupMessageRequest();
+        request.setGroupId(groupId);
+        request.setMessage(s);
+        QQResponse<QQSendMessageResponse> qqSendMessageResponseQQResponse = oneBotService.sendGroupMsg(request);
+        log.info("发送消息回执：{}", qqSendMessageResponseQQResponse);
     }
 
     private String _at(long id) {
-        return String.format("[CQ:at:%s]", id);
+        return getMsg("AT", String.valueOf(id));
     }
 
     /**
@@ -355,11 +265,7 @@ public class Zibenbot implements ApplicationContextAware {
         return applicationContext.getBeansOfType(IFunc.class);
     }
 
-    private void toPrivateMsg(long clientId, MessageChain chain) {
-        toPrivateMsg(clientId, chain, true);
-    }
-
-    private static QuoteReply getQuote(SimpleMsg msg) {
+/*    private static QuoteReply getQuote(SimpleMsg msg) {
         Class<SimpleMsg> clazz = SimpleMsg.class;
         try {
             Field field = clazz.getDeclaredField("source");
@@ -369,7 +275,7 @@ public class Zibenbot implements ApplicationContextAware {
             log.error("getQuote exception: {}", e);
             return null;
         }
-    }
+    }*/
 
     /**
      * 回复消息伴随着引用
@@ -378,34 +284,11 @@ public class Zibenbot implements ApplicationContextAware {
      * @param msg     要回复的消息
      */
     public void replyMsgWithQuote(SimpleMsg fromMsg, String msg) {
-        try {
-            if (fromMsg.isGroupMsg()) {
-                Contact contact = _getGroup(fromMsg.getFromGroup());
-                if (contact != null) {
-                    MessageChain chain = toMessChain(contact, msg);
-                    MessageChainBuilder ret = new MessageChainBuilder();
-                    QuoteReply quote = getQuote(fromMsg);
-                    if (quote != null) {
-                        ret.add(getQuote(fromMsg));
-                    }
-                    ret.addAll(chain);
-                    contact.sendMessage(ret.asMessageChain());
-                }
-            } else if (fromMsg.isPrivateMsg()) {
-                MessageChain chain = toMessChain(getUser(fromMsg.getFromClient()), msg);
-                MessageChainBuilder ret = new MessageChainBuilder();
-                QuoteReply quote = getQuote(fromMsg);
-                if (quote != null) {
-                    ret.add(quote);
-                }
-                ret.addAll(chain);
-                toPrivateMsg(fromMsg.getFromClient(), chain);
-            } else if (fromMsg.isTeamspealMsg()) {
 
-            }
-        } catch (Exception e) {
-            log.error(ExceptionUtils.printStack(e));
-        }
+            Integer messageId = fromMsg.getMessageId();
+            msg = String.format("[CQ:reply,id=%d]", messageId) + msg;
+            replyMsg(fromMsg, msg);
+
     }
 
     /**
@@ -418,15 +301,10 @@ public class Zibenbot implements ApplicationContextAware {
         try {
             if (fromMsg.isGroupMsg()) {
                 log.info("send to {}[{}]:{}", fromMsg.getFromGroup(), fromMsg.getFromClient(), msg);
-                Contact contact = _getGroup(fromMsg.getFromGroup());
-                if (contact != null) {
-                    MessageChain chain = toMessChain(contact, msg);
-                    contact.sendMessage(chain);
-                }
+                toGroupMsg(fromMsg.getFromGroup(), msg);
             } else if (fromMsg.isPrivateMsg()) {
                 log.info("send to {}:{}", fromMsg.getFromClient(), msg);
-                MessageChain chain = toMessChain(getUser(fromMsg.getFromClient()), msg);
-                toPrivateMsg(fromMsg.getFromClient(), chain);
+                toPrivateMsg(fromMsg.getFromClient(), msg);
             } else if (fromMsg.isTeamspealMsg()) {
 
             }
@@ -442,7 +320,7 @@ public class Zibenbot implements ApplicationContextAware {
      * @param msgs    要回复的消息
      */
     public void replyZipMsg(SimpleMsg fromMsg, String... msgs) {
-        try {
+        /*try {
             if (fromMsg.isGroupMsg()) {
                 Contact contact = _getGroup(fromMsg.getFromGroup());
                 if (contact != null) {
@@ -468,7 +346,7 @@ public class Zibenbot implements ApplicationContextAware {
             }
         } catch (Exception e) {
             log.error(ExceptionUtils.printStack(e));
-        }
+        }*/
     }
 
     /**
@@ -478,103 +356,45 @@ public class Zibenbot implements ApplicationContextAware {
      * @param file    语音文件
      */
     public void replyAudio(SimpleMsg fromMsg, File file) {
-        ExternalResource resource = ExternalResource.create(file);
-        try {
-            if (fromMsg.isGroupMsg()) {
-                Group group = _getGroup(fromMsg.getFromGroup());
-                if (group != null) {
-                    Audio audio = group.uploadAudio(resource);
-                    group.sendMessage(audio);
-                }
-            }
-        } finally {
-            try {
-                resource.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        String voice = getMsg("VOICE", file.getAbsolutePath());
+        replyMsg(fromMsg, voice);
     }
 
-    public void logVerbose(String verboseMsg) {
-        log.debug(verboseMsg);
-    }
-
-    public void onFriendEvent(NewFriendRequestEvent event) {
-        event.accept();
-    }
-
-    private MessageChain toMessChain(Contact send, String msg) {
-        String s = replaceMsgType(send, msg);
-        return MiraiCode.deserializeMiraiCode(s);
-    }
-
-
-    /**
-     * 根据groupid返回group对象
-     *
-     * @param id groupid
-     * @return 返回group对象 找不到时返回null
-     */
-    private Group _getGroup(long id) {
-        try {
-            return bot.getGroup(id);
-        } catch (NoSuchElementException e) {
-            return null;
-        }
+    public void onFriendEvent(QQFriendRequestEvent event) {
+        QQSetFriendAddRequest request = new QQSetFriendAddRequest();
+        request.setApprove(true);
+        request.setFlag(event.getFlag());
+        request.setRemark("");
+        oneBotService.setFriendAddRequest(request);
     }
 
     public String getGroupName(long id) {
-        Group group = _getGroup(id);
-        if (group != null) {
-            return group.getName();
-        }
-        return "";
+        QQGetGroupInfoRequest request = new QQGetGroupInfoRequest();
+        request.setGroupId(id);
+        return oneBotService.getGroupInfo(request).getData().getGroupName();
     }
 
     public List<Long> getGroups() {
-        List<Long> list = new ArrayList<>();
-        bot.getGroups().forEach(group -> list.add(group.getId()));
-        return list;
+        return oneBotService.getGroupList(new QQGetGroupListRequest()).getData().stream().map(QQGroupInfo::getGroupId).collect(Collectors.toList());
     }
 
+    @Deprecated
     public List<Long> getFriends() {
-        List<Long> list = new ArrayList<>();
+        /*List<Long> list = new ArrayList<>();
         bot.getFriends().forEach(friend -> list.add(friend.getId()));
-        return list;
+        return list;*/
+        return Collections.emptyList();
     }
 
+    @Deprecated
     public List<Long> getMembers(long groupId) {
-        List<Long> list = new ArrayList<>();
-        Group group = _getGroup(groupId);
-        if (group != null) {
-            group.getMembers().forEach(member -> list.add(member.getId()));
-        }
-        return list;
+        return Collections.emptyList();
     }
 
     public String getUserName(long userId) {
-        User user = getUser(userId);
-        if (user != null) {
-            return user.getNick();
-        }
-        Member member = getMember(userId);
-        if (member != null) {
-            if (!StringUtils.isEmpty(member.getNick())) {
-                return member.getNick();
-            }
-        }
-        return "null";
-    }
-
-    public int getMuteTimeRemaining(long groupId, long memberId) {
-        Group group = _getGroup(groupId);
-        try {
-            NormalMember member = group.get(memberId);
-            return member.getMuteTimeRemaining();
-        } catch (Exception e) {
-            return 0;
-        }
+        QQGetStrangerInfoRequest request = new QQGetStrangerInfoRequest();
+        request.setUserId(userId);
+        return oneBotService.getStrangerInfo(request).getData().getNickname();
     }
 
     /**
@@ -604,25 +424,11 @@ public class Zibenbot implements ApplicationContextAware {
      * @return 返回List of BufferImage
      */
     public Map<String, BufferedImage> getImgFromMsg(SimpleMsg msg) {
-        MessageChain chain = msg.getMsgChain();
-        Map<String, BufferedImage> map = new HashMap<>();
-        chain.stream()
-                .filter(m -> m instanceof Image)
-                .forEach(m -> {
-                    try {
-                        BufferedImage bufferedImage = ImageIO.read(new URL(Mirai.getInstance().queryImageUrl(bot, (Image) m)));
-                        if (bufferedImage != null) {
-                            map.put(m.toString(), bufferedImage);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-        return map;
+        return Collections.emptyMap();
     }
 
     public File getAudioFromMsg(SimpleMsg msg) {
-        File silkFile;
+       /* File silkFile;
         try {
             MessageChain chain = msg.getMsgChain();
             OnlineAudio audio = chain.get(OnlineAudio.Key);
@@ -642,31 +448,29 @@ public class Zibenbot implements ApplicationContextAware {
             return mp3File;
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
+        }*/
+        return null;
     }
 
-    public String getMsg(String type, String source) {
-        if (source == null) {
-            source = "null";
-        }
+    public String getMsg(@NotEmpty String type, @NotNull String source) {
         return String.format("[type=%s, source=\"%s\"]", type, source);
     }
 
-    private String replaceMsgType(Contact contact, String msg) {
+    private String replaceMsgType(String msg) {
         Matcher matcher = MSG_TYPE_PATTERN.matcher(msg);
         int i = 0;
         while (matcher.find(i)) {
-            msg = msg.replace(matcher.group(0), _upload(contact, matcher.group(1), matcher.group(2)));
+            msg = msg.replace(matcher.group(0), _upload(matcher.group(1), matcher.group(2)));
             i = matcher.start() + 1;
         }
         return msg;
     }
 
-    private String _upload(Contact contact, String type, String source) {
+    private String _upload(String type, String source) {
         Exception e = null;
         for (int i = 0; i < 3; i++) {
             try {
-                return msgUploads.get(type).upload(contact, source);
+                return msgUploads.get(type).upload(source);
             } catch (Exception e1) {
                 e = e1;
                 // ignore
@@ -713,9 +517,8 @@ public class Zibenbot implements ApplicationContextAware {
 
 
     public void replyMsgWithQuoteHook(SimpleMsg fromMsg, String msg, IQuoteHook hook) {
-        hookCache.put(SimpleMsg.getQuoteKeyStatic(fromMsg.getFromGroup(), bot.getBot().getId(), msg), hook);
-        replyMsg(fromMsg, msg);
-
+/*        hookCache.put(SimpleMsg.getQuoteKeyStatic(fromMsg.getFromGroup(), bot.getBot().getId(), msg), hook);
+        replyMsg(fromMsg, msg);*/
     }
 
 }

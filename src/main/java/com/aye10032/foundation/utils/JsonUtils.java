@@ -18,8 +18,6 @@ import java.io.IOException;
  */
 public final class JsonUtils {
 
-    public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-
     /**
      * 如果有不识别的属性，不会报错，只会忽略。
      */
@@ -47,7 +45,7 @@ public final class JsonUtils {
 
         try {
 
-            return JSON_MAPPER.writeValueAsString(object);
+            return IGNORE_JSON_MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
 
             throw new RuntimeException("转换Json出错", e);
@@ -64,7 +62,7 @@ public final class JsonUtils {
      */
     public static <T> T fromJson(String content, Class<T> type) {
 
-        return toObject(JSON_MAPPER, content, type);
+        return toObject(IGNORE_JSON_MAPPER, content, type);
     }
 
     /**

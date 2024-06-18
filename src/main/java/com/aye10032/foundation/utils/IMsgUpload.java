@@ -1,7 +1,5 @@
 package com.aye10032.foundation.utils;
 
-import net.mamoe.mirai.contact.Contact;
-
 /**
  * @author Dazo66
  */
@@ -15,6 +13,6 @@ public interface IMsgUpload {
      * @param source  上传的资源
      * @return
      */
-    String upload(Contact contact, String source) throws Exception;
+    String upload(String source) throws Exception;
 
 }

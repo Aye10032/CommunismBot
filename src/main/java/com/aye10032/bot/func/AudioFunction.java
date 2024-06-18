@@ -44,7 +44,7 @@ public class AudioFunction extends BaseFunc {
                         log.info("下载音频文件" + filename);
                         try {
                             MediaType mediaType = MediaType.parse("text/plain");
-                            RequestBody requestBody = RequestBody.create("", mediaType);
+                            RequestBody requestBody = RequestBody.create(mediaType,"");
                             Request request = new Request.Builder()
                                     .url("http://127.0.0.1:5000/daofang?filename=" + filename)
                                     .method("POST", requestBody)

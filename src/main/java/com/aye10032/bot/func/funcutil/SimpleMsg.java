@@ -4,9 +4,14 @@ import com.aye10032.foundation.entity.onebot.QQGroupMessageEvent;
 import com.aye10032.foundation.entity.onebot.QQMessageEvent;
 import com.aye10032.foundation.entity.onebot.QQPrivateMessageEvent;
 import com.aye10032.foundation.entity.onebot.QQSender;
+import com.aye10032.foundation.utils.CQDecoder;
 import com.aye10032.foundation.utils.command.interfaces.ICommand;
+import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -15,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Dazo66
  */
 @Slf4j
-@Getter
+@Data
 public class SimpleMsg implements ICommand {
 
     private long fromGroup = -1;
@@ -32,9 +37,15 @@ public class SimpleMsg implements ICommand {
     private String fromGroupName = null;
     private String msg;
     private MsgType type;
+    private Integer messageId;
 
     private SimpleMsg quoteMsg;
     private QQMessageEvent event;
+    /**
+     * 原始的消息可能会有很多CQCODE 为了减少解析次数，这里进行预处理
+     *
+     */
+    private List<Map<String, String>> messageSplitResult;
 
     public SimpleMsg(long fromGroup, long fromClient, String msg, MsgType type) {
         this.fromGroup = fromGroup;
@@ -44,6 +55,7 @@ public class SimpleMsg implements ICommand {
     }
 
     public SimpleMsg(QQMessageEvent event) {
+        messageSplitResult = CQDecoder.decode(event.getRawMessage());
         if (event instanceof QQGroupMessageEvent) {
             type = MsgType.GROUP_MSG;
             fromGroup = ((QQGroupMessageEvent) event).getGroupId();
@@ -62,6 +74,7 @@ public class SimpleMsg implements ICommand {
         msg = event.getRawMessage();
         this.event = event;
         this.fromClientName = sender.getNickname();
+        this.messageId = event.getMessageId();
     }
 
     /**
@@ -117,6 +130,7 @@ public class SimpleMsg implements ICommand {
     }
 
 
+
     public static int getQuoteKeyStatic(Long fromGroup, Long fromClient, String msg) {
         String msgTemp = msg.replace("\\", "");
         if (msgTemp.length() > 20) {
@@ -126,8 +140,4 @@ public class SimpleMsg implements ICommand {
         return key.hashCode();
     }
 
-    @Override
-    public int hashCode() {
-        return getMsg().hashCode();
-    }
 }
