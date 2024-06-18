@@ -31,6 +31,8 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,6 +58,10 @@ public class Zibenbot implements ApplicationContextAware {
     private ApplicationContext applicationContext;
     @Autowired
     private OneBotService oneBotService;
+
+    private LinkedBlockingDeque<Runnable> messageQueue = new LinkedBlockingDeque<>(1000);
+
+    private Thread messageThread;
 
     public static OkHttpClient getOkHttpClient() {
         return new OkHttpClient().newBuilder().callTimeout(30, TimeUnit.SECONDS).build();
@@ -119,6 +125,20 @@ public class Zibenbot implements ApplicationContextAware {
         log.info("login info: {}", loginInfo);
         //改成了手动注册
         log.info("registe func start");
+        messageThread = new Thread(() -> {
+            while (true) {
+                try {
+                    messageQueue.take().run();
+                    // 一秒最多发两条
+                    Thread.sleep(500L);
+                } catch (InterruptedException e) {
+                    log.info("消息线程中断");
+                } catch (Exception e) {
+                    log.error("发送消息出错：", e);
+                }
+            }
+        });
+        messageThread.start();
 /*        bot.getEventChannel().subscribeAlways(MessageEvent.class, messageEvent -> {
             SimpleMsg simpleMsg = new SimpleMsg(messageEvent);
             if (simpleMsg.isGroupMsg()) {
@@ -235,21 +255,25 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
     public void toPrivateMsg(long clientId, String msg) {
-        String s = replaceMsgType(msg);
-        QQSendPrivateMessageRequest request = new QQSendPrivateMessageRequest();
-        request.setUserId(clientId);
-        request.setMessage(s);
-        QQResponse<QQSendMessageResponse> qqSendMessageResponseQQResponse = oneBotService.sendPrivateMsg(request);
-        log.info("发送消息回执：{}", qqSendMessageResponseQQResponse);
+        messageQueue.add(() ->{
+            String s = replaceMsgType(msg);
+            QQSendPrivateMessageRequest request = new QQSendPrivateMessageRequest();
+            request.setUserId(clientId);
+            request.setMessage(s);
+            QQResponse<QQSendMessageResponse> qqSendMessageResponseQQResponse = oneBotService.sendPrivateMsg(request);
+            log.info("发送消息回执：{}", qqSendMessageResponseQQResponse);
+        });
     }
 
     public void toGroupMsg(long groupId, String msg) {
-        String s = replaceMsgType(msg);
-        QQSendGroupMessageRequest request = new QQSendGroupMessageRequest();
-        request.setGroupId(groupId);
-        request.setMessage(s);
-        QQResponse<QQSendMessageResponse> qqSendMessageResponseQQResponse = oneBotService.sendGroupMsg(request);
-        log.info("发送消息回执：{}", qqSendMessageResponseQQResponse);
+        messageQueue.add(() -> {
+            String s = replaceMsgType(msg);
+            QQSendGroupMessageRequest request = new QQSendGroupMessageRequest();
+            request.setGroupId(groupId);
+            request.setMessage(s);
+            QQResponse<QQSendMessageResponse> qqSendMessageResponseQQResponse = oneBotService.sendGroupMsg(request);
+            log.info("发送消息回执：{}", qqSendMessageResponseQQResponse);
+        });
     }
 
     private String _at(long id) {

@@ -44,7 +44,7 @@ public class ImasCalFunc extends BaseFunc {
                     int requiredScoreAPlus = CalculateScore(requiredScorePointAPlus);
                     int requiredScoreS = CalculateScore(requiredScorePointS);
 
-                    zibenbot.replyMsg(cqmsg, "A+ 所需得分: " + requiredScoreAPlus + "\\r\\nS 所需得分: " + requiredScoreS);
+                    zibenbot.replyMsg(cqmsg, "A+ 所需得分: " + requiredScoreAPlus + "\r\nS 所需得分: " + requiredScoreS);
 
                 }).build();
     }
