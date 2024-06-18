@@ -20,7 +20,7 @@ public class MessageInformFunc extends BaseFunc {
                 .start()
                 .or(this::containsMe)
                 .run((msg) -> {
-                    if (msg.getFromClient() != 2375985957L && msg.getFromClient() != 2155231604L) {
+                    if (msg.getFromClient() != 2375985957L && msg.getFromClient() != 2155231604L  && msg.isGroupMsg()) {
                         String text = "来自群【" + zibenbot.getGroupName(msg.getFromGroup()) + "】的消息\n" +
                                 zibenbot.getUserName(msg.getFromClient()) + "[" + msg.getFromClient() + "]：" +
                                 msg.getMsg();

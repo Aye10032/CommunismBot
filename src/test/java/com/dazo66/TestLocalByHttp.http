@@ -1,0 +1,43 @@
+### 测试目力
+POST http://127.0.0.1:8080/onebot/send
+Content-Type: application/json
+
+{
+  "isGroup": true,
+  "sendUserId": 895981998,
+  "groupId": 1044102726,
+  "message": "尼玛输了"
+}
+
+### 测试目力
+POST http://127.0.0.1:8080/onebot/send
+Content-Type: application/json
+
+{
+  "isGroup": true,
+  "sendUserId": 895981998,
+  "groupId": 1044102726,
+  "message": "目力"
+}
+
+### 测试BV-群组
+POST http://127.0.0.1:8080/onebot/send
+Content-Type: application/json
+
+{
+"isGroup": true,
+"sendUserId": 895981998,
+"groupId": 1044102726,
+"message": "BV18Z421u765"
+}
+
+### 测试BV-群组
+POST http://127.0.0.1:8080/onebot/send
+Content-Type: application/json
+
+{
+  "isGroup": false,
+  "sendUserId": 895981998,
+  "groupId": 1044102726,
+  "message": "BV18Z421u765"
+}

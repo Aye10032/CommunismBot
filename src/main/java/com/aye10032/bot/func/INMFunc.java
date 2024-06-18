@@ -42,7 +42,7 @@ public class INMFunc extends BaseFunc {
 
     @Override
     public void run(SimpleMsg simpleMsg) {
-//        commander.execute(simpleMsg);
+        commander.execute(simpleMsg);
     }
 
     private boolean containsYarimasune(String s) {

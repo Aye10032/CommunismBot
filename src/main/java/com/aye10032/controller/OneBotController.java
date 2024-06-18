@@ -10,8 +10,10 @@ import com.aye10032.util.JSONUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.cms.PasswordRecipient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,13 +60,53 @@ public class OneBotController {
         if (Objects.equals(actualObj.at("/post_type").asText(), "request")) {
             QQRequestEvent event = null;
             if (Objects.equals(actualObj.at("/request_type").asText(), "friend")) {
-                ResultVO<QQFriendRequestEvent> resultVO = JSONUtil.json2entity(json, QQFriendRequestEvent.class);
-                zibenbot.onFriendEvent(resultVO.getData());
+                QQFriendRequestEvent resultVO = JsonUtils.fromJson(json, QQFriendRequestEvent.class);
+                zibenbot.onFriendEvent(resultVO);
             }
         }
 
         return Result.success("ok");
+    }
 
+    @PostMapping("/send")
+    public Result<String> sendMessage(@RequestBody SendMessageRequest request) {
+        QQMessageEvent event;
+        if (request.getIsGroup()) {
+            QQGroupMessageEvent event1 = new QQGroupMessageEvent();
+            event1.setMessageId(-1);
+            event1.setMessageSeq(-1L);
+            event1.setGroupId(request.getGroupId());
+            event1.setUserId(request.getSendUserId());
+            QQSender sender = new QQSender();
+            sender.setUserId(request.getSendUserId());
+            sender.setNickname("未知");
+            event1.setSender(sender);
+            event1.setRawMessage(request.getMessage());
+            event1.setTime(System.currentTimeMillis());
+            event = event1;
+        } else {
+            QQPrivateMessageEvent event1 = new QQPrivateMessageEvent();
+            event1.setMessageId(-1);
+            event1.setMessageSeq(-1L);
+            event1.setUserId(request.getSendUserId());
+            QQSender sender = new QQSender();
+            sender.setUserId(request.getSendUserId());
+            sender.setNickname("未知");
+            event1.setSender(sender);
+            event1.setRawMessage(request.getMessage());
+            event1.setTime(System.currentTimeMillis());
+            event = event1;
+        }
+        zibenbot.runFuncs(new SimpleMsg(event));
+        return Result.success("success");
+    }
+
+    @Data
+    public static class SendMessageRequest {
+        private Boolean isGroup;
+        private Long groupId;
+        private String message;
+        private Long sendUserId;
     }
 
 

@@ -218,7 +218,8 @@ public class WeiboUtils {
                 .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
                 .header("X-Requested-With", "XMLHttpRequest")
                 .build();
-        JsonObject object = parser.parse(client.newCall(weiboListRequest).execute().body().string()).getAsJsonObject();
+        String string = client.newCall(weiboListRequest).execute().body().string();
+        JsonObject object = parser.parse(string).getAsJsonObject();
         JsonArray array = object.getAsJsonObject("data").getAsJsonArray("cards");
         array.forEach(ele -> retSet.add(buildItem(ele.getAsJsonObject().getAsJsonObject("mblog"))));
         return retSet;
@@ -245,8 +246,8 @@ public class WeiboUtils {
         itme.setText(builder.toString());
         JsonElement isLongText = o.get("isLongText");
         itme.setLongText(isLongText == null ? false : isLongText.getAsBoolean());
-        itme.setUserID(o.getAsJsonObject("user").get("id").getAsString());
-        itme.setUserName(o.getAsJsonObject("user").get("screen_name").getAsString());
+        itme.setUserID(o.get("user").isJsonNull() ? "-1L" : o.getAsJsonObject("user").get("id").getAsString());
+        itme.setUserName(o.get("user").isJsonNull() ? "无权限" : o.getAsJsonObject("user").get("screen_name").getAsString());
         //itme.setPerma();
         if (o.get("retweeted_status") != null) {
                 /*title = getTitle(o.getAsJsonObject("retweeted_status").get("text").getAsString());

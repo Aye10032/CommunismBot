@@ -10,8 +10,10 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -23,8 +25,8 @@ import java.util.Map;
 @Data
 public class SimpleMsg implements ICommand {
 
-    private long fromGroup = -1;
-    private long fromClient = -1;
+    private Long fromGroup = -1L;
+    private Long fromClient = -1L;
 
     /**
      * 用户名
@@ -45,7 +47,7 @@ public class SimpleMsg implements ICommand {
      * 原始的消息可能会有很多CQCODE 为了减少解析次数，这里进行预处理
      *
      */
-    private List<Map<String, String>> messageSplitResult;
+    private List<Map<String, String>> messageSplitResult = Collections.emptyList();
 
     public SimpleMsg(long fromGroup, long fromClient, String msg, MsgType type) {
         this.fromGroup = fromGroup;
@@ -58,7 +60,8 @@ public class SimpleMsg implements ICommand {
         messageSplitResult = CQDecoder.decode(event.getRawMessage());
         if (event instanceof QQGroupMessageEvent) {
             type = MsgType.GROUP_MSG;
-            fromGroup = ((QQGroupMessageEvent) event).getGroupId();
+            QQGroupMessageEvent event1 = (QQGroupMessageEvent) event;
+            fromGroup = event1.getGroupId();
         } else if (event instanceof QQPrivateMessageEvent) {
             type = MsgType.PRIVATE_MSG;
         } else {
@@ -112,7 +115,10 @@ public class SimpleMsg implements ICommand {
      */
     @Override
     public String[] getCommandPieces() {
-        return msg.trim().replaceAll(" +", " ").split("(?<!\\[\\S+)\\s+(?!\\S*\\])");
+        if (messageSplitResult.isEmpty()) {
+            return msg.split(" +");
+        }
+        return messageSplitResult.stream().map(map -> map.get("raw")).toArray(String[]::new);
     }
 
     /**
@@ -139,5 +145,6 @@ public class SimpleMsg implements ICommand {
         String key = fromGroup + fromClient + msgTemp;
         return key.hashCode();
     }
+
 
 }

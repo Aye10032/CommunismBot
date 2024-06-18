@@ -11,6 +11,6 @@ import lombok.EqualsAndHashCode;
 @Data
 public class QQGroupMessageEvent extends QQMessageEvent {
 
-    @JsonProperty("groupId")
+    @JsonProperty("group_id")
     private Long groupId;
 }

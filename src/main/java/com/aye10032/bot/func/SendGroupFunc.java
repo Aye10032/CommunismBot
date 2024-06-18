@@ -64,7 +64,7 @@ public class SendGroupFunc extends BaseFunc {
                 long sendId = Long.parseLong(msg.split(" ")[1]);
                 int flag = msg.indexOf(" ", msg.indexOf(" ") + 1);
                 simpleMsg.setFromClient(sendId);
-                simpleMsg.setFromGroup(-1);
+                simpleMsg.setFromGroup(-1L);
                 simpleMsg.setType(MsgType.PRIVATE_MSG);
                 msg = msg.substring(flag + 1);
                 replyMsg(simpleMsg, msg);
