@@ -20,6 +20,7 @@ plugins {
 
 compileJava {
     sourceCompatibility = '1.8'
+    targetCompatibility = '1.8' // 设置目标字节码兼容性版本
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -37,7 +38,7 @@ apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
 
 group 'com.aye10032'
-version '2.1.0'
+version '3.0.0'
 
 repositories {
     mavenLocal()
