@@ -22,7 +22,7 @@ public class LiveInfo {
     private int code = 0;
     private String liveTitle = "";
     private String liveBackgroundUrl = "";
-    private int uid = 0;
+    private long uid = 0;
     private String live_url = "";
     private boolean isLiving = false;
     private String liveTime = "";
@@ -58,7 +58,7 @@ public class LiveInfo {
                 }
 
                 JsonObject dataJson = jsonObject.get("data").getAsJsonObject();
-                this.uid = dataJson.get("uid").getAsInt();
+                this.uid = dataJson.get("uid").getAsLong();
                 this.live_url = LIVE_URL + dataJson.get("room_id").getAsString();
                 this.liveTitle = dataJson.get("title").getAsString();
                 this.liveBackgroundUrl = dataJson.get("user_cover").getAsString();
@@ -81,7 +81,7 @@ public class LiveInfo {
         return isLiving;
     }
 
-    public int getUid() {
+    public long getUid() {
         return uid;
     }
 
@@ -111,7 +111,7 @@ public class LiveInfo {
         return liveDate;
     }
 
-    public String getNickName(int uid) {
+    public String getNickName(long uid) {
         String url = USER_API + uid + "&jsonp=jsonp";
         String body = "";
         String name = "";
