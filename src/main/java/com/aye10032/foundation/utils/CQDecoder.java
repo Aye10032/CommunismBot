@@ -79,9 +79,10 @@ public class CQDecoder {
                 map.put("raw", element);
             }
         } else {
-            map.put("CQ", "TEXT");
-            map.put("value", decodeText(element));
-            map.put("raw", element);
+            map.put("CQ", "text");
+            String value = decodeText(element);
+            map.put("value", value);
+            map.put("raw", value);
         }
         if (map.get("CQ").equals("json")) {
             map.put("data", map.get("data").replaceAll("\\\\", ""));

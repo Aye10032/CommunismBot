@@ -461,7 +461,7 @@ public class Zibenbot implements ApplicationContextAware {
             for (Map<String, String> stringMap : msg.getMessageSplitResult()) {
                 if ("image".equals(stringMap.get("CQ"))) {
                     URL url = new URL(stringMap.get("url"));
-                    imageMap.put(stringMap.get("file"), ImageIO.read(url.openStream()));
+                    imageMap.put(stringMap.get("raw"), ImageIO.read(url.openStream()));
                 }
             }
         }
