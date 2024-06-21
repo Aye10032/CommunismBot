@@ -132,7 +132,7 @@ public class SimpleMsg implements ICommand {
         List<String> commandPieces = new ArrayList<>();
         for (Map<String, String> stringMap : messageSplitResult) {
             if ("text".equals(stringMap.get("CQ"))) {
-                commandPieces.addAll(Arrays.asList(stringMap.get("text").split(" +")));
+                commandPieces.addAll(Arrays.asList(stringMap.get("raw").split(" +")));
             } else {
                 commandPieces.add(stringMap.get("raw"));
             }
