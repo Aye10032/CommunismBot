@@ -44,7 +44,7 @@ repositories {
     mavenLocal()
     maven { url 'https://maven.aliyun.com/repository/public/' }
     maven { url 'https://jitpack.io' }
-    maven { url "https://repo.mirai.mamoe.net/snapshots" }
+//    maven { url "https://repo.mirai.mamoe.net/snapshots" }
     mavenCentral()
 }
 
@@ -108,7 +108,7 @@ dependencies {
 
     implementation group: 'io.github.andello', name: 'pinyin4j', version: '0.3.2'
 
-    implementation group: 'cn.bigmodel.openapi', name: 'oapi-java-sdk', version: 'release-V4-2.0.2'
+    implementation group: 'cn.bigmodel.openapi', name: 'oapi-java-sdk', version: 'release-V4-2.1.0'
 
     implementation(fileTree(dir: 'libs', includes: ['*.jar']))
 

@@ -7,7 +7,6 @@ import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
 import com.aye10032.service.LLMService;
-import com.aye10032.service.impl.LLMServiceImpl;
 import com.zhipu.oapi.Constants;
 import com.zhipu.oapi.service.v4.model.ChatMessage;
 import com.zhipu.oapi.service.v4.model.ChatMessageRole;
