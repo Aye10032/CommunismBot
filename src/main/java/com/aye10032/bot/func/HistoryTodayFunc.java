@@ -19,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Year;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -103,16 +104,17 @@ public class HistoryTodayFunc extends BaseFunc {
                 .run((msg) -> {
                     SimpleMsg new_msg = saveImage(msg);
                     if (new_msg.isPrivateMsg() && new_msg.getFromClient() == 2375985957L) {
-                        String[] msgs = new_msg.getCommandPieces();
-                        if (msgs.length == 2) {
-                            historyTodayService.insertHistory(msgs[1], "", getDate());
-                            zibenbot.replyMsg(new_msg, "done");
-                        } else if (msgs.length == 3) {
-                            historyTodayService.insertHistory(msgs[1], msgs[2], getDate());
+                        String[] origin_msg = new_msg.getCommandPieces();
+                        if (origin_msg[origin_msg.length - 1].endsWith("年")) {
+                            String year = origin_msg[origin_msg.length - 1].replace("年", "");
+                            historyTodayService.insertHistory(origin_msg[1], year, getDate());
                             zibenbot.replyMsg(new_msg, "done");
                         } else {
-                            zibenbot.replyMsg(new_msg, "格式不正确！");
+                            String msg_str = Arrays.stream(origin_msg, 1, origin_msg.length).collect(Collectors.joining());
+                            historyTodayService.insertHistory(msg_str, "", getDate());
+                            zibenbot.replyMsg(new_msg, "done");
                         }
+
                     } else if (new_msg.isGroupMsg()) {
                         String[] origin_msg = new_msg.getCommandPieces();
                         String msg_str = Arrays.stream(origin_msg, 1, origin_msg.length).collect(Collectors.joining());
