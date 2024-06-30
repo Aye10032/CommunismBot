@@ -8,12 +8,15 @@ import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.entity.onebot.*;
 import com.aye10032.foundation.utils.ExceptionUtils;
 import com.aye10032.foundation.utils.IMsgUpload;
+import com.aye10032.foundation.utils.IOUtil;
 import com.aye10032.foundation.utils.StringUtil;
 import com.aye10032.foundation.utils.timeutil.TimeUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
+import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +26,16 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -457,7 +463,17 @@ public class Zibenbot implements ApplicationContextAware {
      * @param msg 玩家发的消息
      * @return 返回List of BufferImage
      */
+    @SneakyThrows
     public Map<String, BufferedImage> getImgFromMsg(SimpleMsg msg) {
+        if (!msg.getMessageSplitResult().isEmpty()) {
+            Map<String, BufferedImage> imageMap = new HashMap<>();
+            for (Map<String, String> stringMap : msg.getMessageSplitResult()) {
+                if ("image".equals(stringMap.get("CQ"))) {
+                    URL url = new URL(stringMap.get("url"));
+                    imageMap.put(stringMap.get("raw"), ImageIO.read(url.openStream()));
+                }
+            }
+        }
         return Collections.emptyMap();
     }
 

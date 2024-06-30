@@ -44,7 +44,6 @@ repositories {
     mavenLocal()
     maven { url 'https://maven.aliyun.com/repository/public/' }
     maven { url 'https://jitpack.io' }
-    maven { url "https://repo.mirai.mamoe.net/snapshots" }
     mavenCentral()
 }
 
@@ -68,6 +67,7 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.26'
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    implementation 'javax.validation:validation-api:2.0.1.Final'
 
     // https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-boot-starter
     implementation group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.5.1'
@@ -108,9 +108,9 @@ dependencies {
 
     implementation group: 'io.github.andello', name: 'pinyin4j', version: '0.3.2'
 
-    implementation group: 'cn.bigmodel.openapi', name: 'oapi-java-sdk', version: 'release-V4-2.0.2'
+    implementation group: 'cn.bigmodel.openapi', name: 'oapi-java-sdk', version: 'release-V4-2.1.0'
 
-    implementation(fileTree(dir: 'libs', includes: ['*.jar']))
+    implementation 'com.alibaba:fastjson:2.0.51'
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-quartz
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-quartz'

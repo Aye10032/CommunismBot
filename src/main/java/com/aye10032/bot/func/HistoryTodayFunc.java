@@ -19,10 +19,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Year;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @program: communismbot
@@ -104,25 +104,24 @@ public class HistoryTodayFunc extends BaseFunc {
                 .run((msg) -> {
                     SimpleMsg new_msg = saveImage(msg);
                     if (new_msg.isPrivateMsg() && new_msg.getFromClient() == 2375985957L) {
-                        String[] msgs = new_msg.getCommandPieces();
-                        if (msgs.length == 2) {
-                            historyTodayService.insertHistory(msgs[1], "", getDate());
-                            zibenbot.replyMsg(new_msg, "done");
-                        } else if (msgs.length == 3) {
-                            historyTodayService.insertHistory(msgs[1], msgs[2], getDate());
+                        String[] origin_msg = new_msg.getCommandPieces();
+                        if (origin_msg[origin_msg.length - 1].endsWith("年")) {
+                            String year = origin_msg[origin_msg.length - 1].replace("年", "");
+                            historyTodayService.insertHistory(origin_msg[1], year, getDate());
                             zibenbot.replyMsg(new_msg, "done");
                         } else {
-                            zibenbot.replyMsg(new_msg, "格式不正确！");
+                            String msg_str = Arrays.stream(origin_msg, 1, origin_msg.length).collect(Collectors.joining());
+                            historyTodayService.insertHistory(msg_str, "", getDate());
+                            zibenbot.replyMsg(new_msg, "done");
                         }
+
                     } else if (new_msg.isGroupMsg()) {
-                        String[] msgs = new_msg.getCommandPieces();
-                        if (msgs.length == 2) {
-                            historyTodayService.insertHistory(msgs[1], getYear(), getDate(), new_msg.getFromGroup());
-                            zibenbot.replyMsg(new_msg, "done");
-                            zibenbot.toPrivateMsg(2375985957L, new_msg.getFromClient() + "添加了一条历史：" + msgs[1]);
-                        } else {
-                            zibenbot.replyMsg(new_msg, "格式不正确！");
-                        }
+                        String[] origin_msg = new_msg.getCommandPieces();
+                        String msg_str = Arrays.stream(origin_msg, 1, origin_msg.length).collect(Collectors.joining());
+
+                        historyTodayService.insertHistory(msg_str, getYear(), getDate(), new_msg.getFromGroup());
+                        zibenbot.replyMsg(new_msg, "done");
+                        zibenbot.toPrivateMsg(2375985957L, new_msg.getFromClient() + "添加了一条历史：" + msg_str);
                     } else {
                         zibenbot.replyMsg(new_msg, "no access!");
                     }
@@ -202,14 +201,14 @@ public class HistoryTodayFunc extends BaseFunc {
             int index = 0;
             for (Map.Entry<String, BufferedImage> entry : images.entrySet()) {
                 String timestamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
-                String outputFileName = msg.getFromClient() + "-" + timestamp +"_" + index + ".png";
+                String outputFileName = msg.getFromClient() + "-" + timestamp + "_" + index + ".png";
                 String outputPath = appDirectory + "/history/" + outputFileName;
 
                 try {
                     File outputFile = new File(outputPath);
                     ImageIO.write(entry.getValue(), "png", outputFile);
                     msg.setMsg(msg.getMsg().replace(entry.getKey(), zibenbot.getImg(outputPath)));
-                    index ++;
+                    index++;
                     log.info("Image{} saved successfully!", outputFileName);
                 } catch (IOException e) {
                     e.printStackTrace();

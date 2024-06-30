@@ -6,13 +6,13 @@ import com.aye10032.foundation.entity.onebot.QQPrivateMessageEvent;
 import com.aye10032.foundation.entity.onebot.QQSender;
 import com.aye10032.foundation.utils.CQDecoder;
 import com.aye10032.foundation.utils.command.interfaces.ICommand;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -40,7 +40,6 @@ public class SimpleMsg implements ICommand {
     private String msg;
     private MsgType type;
     private Integer messageId;
-
     private SimpleMsg quoteMsg;
     private QQMessageEvent event;
     /**
@@ -48,6 +47,15 @@ public class SimpleMsg implements ICommand {
      *
      */
     private List<Map<String, String>> messageSplitResult = Collections.emptyList();
+
+    /**
+     * 消息的分片方法 推荐使用这个 在获取消息的时候 会自动替换掉多空格 再分片
+     * 也是用于Commander的方法
+     *
+     * @return 消息分片后的数组
+     */
+    @Getter(AccessLevel.NONE)
+    private String[] commandPieces = null;
 
     public SimpleMsg(long fromGroup, long fromClient, String msg, MsgType type) {
         this.fromGroup = fromGroup;
@@ -118,7 +126,20 @@ public class SimpleMsg implements ICommand {
         if (messageSplitResult.isEmpty()) {
             return msg.split(" +");
         }
-        return messageSplitResult.stream().map(map -> map.get("raw")).toArray(String[]::new);
+        if (this.commandPieces != null) {
+            return commandPieces;
+        }
+        List<String> commandPieces = new ArrayList<>();
+        for (Map<String, String> stringMap : messageSplitResult) {
+            if ("text".equals(stringMap.get("CQ"))) {
+                commandPieces.addAll(Arrays.asList(stringMap.get("raw").split(" +")));
+            } else {
+                commandPieces.add(stringMap.get("raw"));
+            }
+        }
+        String[] array = commandPieces.toArray(new String[0]);
+        this.commandPieces = array;
+        return array;
     }
 
     /**
