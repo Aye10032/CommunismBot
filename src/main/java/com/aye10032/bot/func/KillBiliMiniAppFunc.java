@@ -79,9 +79,9 @@ public class KillBiliMiniAppFunc extends BaseFunc {
             if (!biliInfo.isHasVideo()) {
                 return;
             }
-            if (zibenbot.deleteMsg(simpleMsg)) {
+/*            if (zibenbot.deleteMsg(simpleMsg)) {
                 send += "检测到B站QQ小程序，已击杀\n";
-            }
+            }*/
             send += biliInfo.getTitle() + "\n"
                     + biliInfo.getVideo_url() + "\n"
                     + "封面：" + (StringUtils.isNotEmpty(biliInfo.getFaceImageFilePath()) ? zibenbot.getImg(biliInfo.getFaceImageFilePath()) : "【图片下载出错】")
