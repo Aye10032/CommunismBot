@@ -44,4 +44,8 @@ public interface OneBotService {
     @PostMapping("/get_stranger_info")
     QQResponse<QQStrangerInfo> getStrangerInfo(@RequestBody QQGetStrangerInfoRequest request);
 
+    // delete_msg
+    @PostMapping("/delete_msg")
+    QQResponse<String> deleteMsg(@RequestBody QQDeleteMsgRequest request);
+
 }

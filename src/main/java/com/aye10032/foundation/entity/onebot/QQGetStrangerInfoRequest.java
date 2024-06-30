@@ -1,6 +1,7 @@
 package com.aye10032.foundation.entity.onebot;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**

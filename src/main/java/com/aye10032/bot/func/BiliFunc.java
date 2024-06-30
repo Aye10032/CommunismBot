@@ -17,8 +17,7 @@ import java.util.Map;
 
 @Service
 public class BiliFunc extends BaseFunc {
-    Map<Integer, String> codeMsg = new HashMap<>();
-    AyeCompile compile;
+
     private Commander<SimpleMsg> commander;
 
     public BiliFunc(Zibenbot zibenbot) {
@@ -26,8 +25,19 @@ public class BiliFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .orArray(this::isBili)
                 .run((cqmsg) -> {
+                    String hasBvMsg = null;
+                    AyeCompile compile = null;
+                    for (String msg : cqmsg.getCommandPieces()) {
+                        compile = new AyeCompile(msg);
+                        if (compile.hasAV() || compile.hasBV()) {
+                            hasBvMsg = msg;
+                            break;
+                        }
+                    }
+                    if (hasBvMsg == null) {
+                        return;
+                    }
                     if (cqmsg.getFromClient() != 2155231604L) {
                         BiliInfo biliInfo;
                         try {
@@ -45,7 +55,7 @@ public class BiliFunc extends BaseFunc {
                             send += "错误代码：";
                             send += biliInfo.getCode();
                             send += " ";
-                            send += codeMsg.get(biliInfo.getCode());
+                            send += biliInfo.getErrMsg();
                             zibenbot.replyMsg(cqmsg, send);
                             return;
                         }
@@ -70,13 +80,7 @@ public class BiliFunc extends BaseFunc {
 
     @Override
     public void setUp() {
-        codeMsg.put(-200, "视频撞车了，请访问源视频。");
-        codeMsg.put(-400, "视频找不到。");
-        codeMsg.put(62002, "视频找不到。");
-        codeMsg.put(62003, "视频审核已通过，正在发布中。");
-        codeMsg.put(62004, "视频正在审核中，请耐心等待。");
-        codeMsg.put(62005, "视频需要登陆后查看。");
-        codeMsg.put(-403, "视频需要登陆后查看。");
+
     }
 
     @Override
@@ -85,12 +89,7 @@ public class BiliFunc extends BaseFunc {
     }
 
     public boolean isBili(String[] msgs) {
-        for (String msg : msgs) {
-            compile = new AyeCompile(msg);
-            if (compile.hasAV() | compile.hasBV()) {
-                return true;
-            }
-        }
+
 
         return false;
     }

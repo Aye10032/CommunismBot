@@ -13,7 +13,9 @@ import okhttp3.Response;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.aye10032.foundation.utils.video.BiliData.*;
 
@@ -44,7 +46,18 @@ public class BiliInfo {
     private int code = 0;
     private String faceImageFilePath = null;
     private String upImageFilePath = null;
+    private String errMsg;
+    private static final Map<Integer, String> codeMsg = new HashMap<>();
 
+    static {
+        codeMsg.put(-200, "视频撞车了，请访问源视频。");
+        codeMsg.put(-400, "视频找不到。");
+        codeMsg.put(62002, "视频找不到。");
+        codeMsg.put(62003, "视频审核已通过，正在发布中。");
+        codeMsg.put(62004, "视频正在审核中，请耐心等待。");
+        codeMsg.put(62005, "视频需要登陆后查看。");
+        codeMsg.put(-403, "视频需要登陆后查看。");
+    }
 
     public BiliInfo(String avn, String appDirectory) {
         if (avn.startsWith("a") || avn.startsWith("A")) {
@@ -77,6 +90,7 @@ public class BiliInfo {
                 code = jsonObject.get("code").getAsInt();
                 if (code != 0) {
                     hasVideo = false;
+                    errMsg = codeMsg.get(code);
                     return;
                 }
 
