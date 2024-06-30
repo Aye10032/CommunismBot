@@ -46,7 +46,12 @@ public class KillBiliMiniAppFunc extends BaseFunc {
         String data = jsonCQCode.get(0).get("data");
         log.info("获取到的data为：{}", data);
         JSONObject jsonObject = JSONObject.parseObject(data);
-        String qqdocurl = jsonObject.getString("qqdocurl");
+        String qqdocurl = null;
+        try {
+            qqdocurl = jsonObject.getJSONObject("meta").getJSONObject("detail_1").getString("qqdocurl");
+        } catch (Exception e) {
+            // ignore
+        }
         log.info("获取到的qqdocurl为：{}", qqdocurl);
 
         if (StringUtils.isEmpty(qqdocurl) || !qqdocurl.contains("b23.tv")) {
