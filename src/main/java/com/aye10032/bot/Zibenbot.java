@@ -227,6 +227,7 @@ public class Zibenbot implements ApplicationContextAware {
      */
     public boolean deleteMsg(SimpleMsg simpleMsg) {
         QQResponse<String> response = oneBotService.deleteMsg(new QQDeleteMsgRequest(simpleMsg.getMessageId()));
+        log.info("撤回消息回执：{}", response);
         return response.getRetcode() == 0;
     }
 
