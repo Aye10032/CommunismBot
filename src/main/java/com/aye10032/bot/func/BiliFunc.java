@@ -7,6 +7,7 @@ import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.utils.AyeCompile;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
+import com.aye10032.foundation.utils.command.interfaces.ArrayCheck;
 import com.aye10032.foundation.utils.video.BiliInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class BiliFunc extends BaseFunc {
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
+                .orArray(strings -> true)
                 .run((cqmsg) -> {
                     String hasBvMsg = null;
                     AyeCompile compile = null;
