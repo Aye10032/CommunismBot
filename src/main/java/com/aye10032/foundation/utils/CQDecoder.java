@@ -68,6 +68,7 @@ public class CQDecoder {
 
     private static Map<String, String> parseElement(String element) {
         Map<String, String> map = new HashMap<>();
+        final String raw = element;
         if (element.startsWith("[CQ:")) {
             element = element.substring(0, element.length() - 1);
             String[] split = element.split(",");
@@ -76,13 +77,13 @@ public class CQDecoder {
             for (int i = 1; i < split.length; i++) {
                 int i1 = split[i].indexOf("=");
                 map.put(split[i].substring(0, i1), decodeValue(split[i].substring(i1 + 1)));
-                map.put("raw", element);
+                map.put("raw", raw);
             }
         } else {
             map.put("CQ", "text");
             String value = decodeText(element);
             map.put("value", value);
-            map.put("raw", value);
+            map.put("raw", raw);
         }
         if (map.get("CQ").equals("json")) {
             map.put("data", map.get("data").replaceAll("\\\\", ""));
