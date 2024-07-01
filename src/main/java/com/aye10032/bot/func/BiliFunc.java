@@ -30,10 +30,13 @@ public class BiliFunc extends BaseFunc {
                 .run((cqmsg) -> {
                     String hasBvMsg = null;
                     AyeCompile compile = null;
-                    for (String msg : cqmsg.getCommandPieces()) {
-                        compile = new AyeCompile(msg);
+                    for (Map<String, String> map : cqmsg.getMessageSplitResult()) {
+                        if (!"text".equals(map.get("CQ"))) {
+                            continue;
+                        }
+                        compile = new AyeCompile(map.get("raw"));
                         if (compile.hasAV() || compile.hasBV()) {
-                            hasBvMsg = msg;
+                            hasBvMsg = map.get("raw");
                             break;
                         }
                     }
