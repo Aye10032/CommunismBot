@@ -21,7 +21,12 @@ public class ScheduleProxy extends QuartzJobBean {
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         try {
-            realBeanMap.get(context.getJobDetail().getKey().getName()).execute(context);
+            QuartzJobBean quartzJobBean = realBeanMap.get(context.getJobDetail().getKey().getName());
+            if (quartzJobBean == null) {
+                log.error("找不到任务：{}，可能是未加载", context.getJobDetail().getKey().getName());
+                return;
+            }
+            quartzJobBean.execute(context);
         } catch (Throwable e) {
             log.info("运行定时任务失败：" + ExceptionUtils.printStack(e));
         }

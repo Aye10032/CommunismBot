@@ -4,6 +4,7 @@ import com.aye10032.foundation.entity.dto.ScheduleProxy;
 import com.aye10032.foundation.utils.timeutil.SubscribableBase;
 import com.aye10032.mapper.SubTaskMapper;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.DateUtils;
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
@@ -12,10 +13,12 @@ import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +26,7 @@ import java.util.*;
 
 @Configuration
 @DependsOn("springUtils")
+@Slf4j
 public class ScheduleConfig implements ApplicationContextAware, InitializingBean {
 
     @Autowired
@@ -35,7 +39,7 @@ public class ScheduleConfig implements ApplicationContextAware, InitializingBean
 
 
     @SneakyThrows
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     public void init() {
         Map<String, SubscribableBase> beansOfType = applicationContext.getBeansOfType(SubscribableBase.class);
         for (Map.Entry<String, SubscribableBase> entry : beansOfType.entrySet()) {
@@ -60,6 +64,7 @@ public class ScheduleConfig implements ApplicationContextAware, InitializingBean
                 scheduler.deleteJob(jobDetail.getKey());
                 scheduler.scheduleJob(jobDetail, trigger);
             }
+            log.info("已加载定时器：{}", entry.getKey());
         }
     }
 
@@ -114,6 +119,5 @@ public class ScheduleConfig implements ApplicationContextAware, InitializingBean
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        init();
     }
 }

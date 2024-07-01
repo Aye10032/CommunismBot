@@ -5,6 +5,9 @@ import com.aye10032.bot.timetask.SimpleSubscription;
 import com.aye10032.foundation.utils.timeutil.AsynchronousTaskPool;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.event.SimpleApplicationEventMulticaster;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 @Configuration
 public class BeanConfig {
@@ -37,6 +40,15 @@ public class BeanConfig {
                 return "提肛小助手";
             }
         };
+    }
+
+    @Bean(name = "applicationEventMulticaster")
+    public ApplicationEventMulticaster simpleApplicationEventMulticaster() {
+        SimpleApplicationEventMulticaster eventMulticaster = new SimpleApplicationEventMulticaster();
+        SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
+        taskExecutor.setConcurrencyLimit(10);
+        eventMulticaster.setTaskExecutor(taskExecutor);
+        return eventMulticaster;
     }
 
 }

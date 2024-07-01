@@ -130,8 +130,6 @@ public class Zibenbot implements ApplicationContextAware {
         enableGroup.add(688383693L); // 第七史诗群
         QQResponse<QQLoginInfo> loginInfo = oneBotService.getLoginInfo();
         log.info("login info: {}", loginInfo);
-        //改成了手动注册
-        log.info("registe func start");
         messageThread = new Thread(() -> {
             while (true) {
                 try {

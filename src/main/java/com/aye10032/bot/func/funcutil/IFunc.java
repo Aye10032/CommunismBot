@@ -1,5 +1,11 @@
 package com.aye10032.bot.func.funcutil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
+
 import javax.annotation.PostConstruct;
 
 /**
@@ -25,9 +31,11 @@ public interface IFunc {
      */
     void run(SimpleMsg simpleMsg);
 
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     default void init() {
+        Logger logger = LoggerFactory.getLogger(IFunc.class);
         setUp();
+        logger.info("已加载：{}", this.getClass().getSimpleName());
     }
 
 
