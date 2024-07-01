@@ -198,6 +198,7 @@ public class HistoryTodayFunc extends BaseFunc {
         Map<String, BufferedImage> images = zibenbot.getImgFromMsg(msg);
 
         if (!images.isEmpty()) {
+            log.info("发现图片");
             int index = 0;
             for (Map.Entry<String, BufferedImage> entry : images.entrySet()) {
                 String timestamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
