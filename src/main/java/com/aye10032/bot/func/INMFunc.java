@@ -46,7 +46,7 @@ public class INMFunc extends BaseFunc {
     }
 
     private boolean containsYarimasune(String s) {
-        return (s.equals("压力马斯内") || s.equals("确实") || s.equals("压力吗死内"));
+        return (s.equals("压力马斯内") || s.equals("压力吗死内"));
     }
 
     private boolean containsSodayo(String s) {

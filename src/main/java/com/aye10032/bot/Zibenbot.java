@@ -221,6 +221,16 @@ public class Zibenbot implements ApplicationContextAware {
         }
     }
 
+    /**
+     * 撤回消息
+     * @param simpleMsg
+     */
+    public boolean deleteMsg(SimpleMsg simpleMsg) {
+        QQResponse<String> response = oneBotService.deleteMsg(new QQDeleteMsgRequest(simpleMsg.getMessageId()));
+        log.info("撤回消息回执：{}", response);
+        return response.getRetcode() == 0;
+    }
+
     public void muteMember(@NotNull Long groupId, @NotNull Long memberId, @NotNull @Min(0) Integer second) {
         QQSetGroupBanRequest request = new QQSetGroupBanRequest();
         request.setDuration(second);
