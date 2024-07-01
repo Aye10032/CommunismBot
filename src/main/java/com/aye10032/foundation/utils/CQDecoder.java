@@ -81,7 +81,7 @@ public class CQDecoder {
             }
         } else {
             map.put("CQ", "text");
-            String value = decodeText(element);
+            String value = decodeText(raw);
             map.put("value", value);
             map.put("raw", raw);
         }

@@ -34,9 +34,9 @@ public class BiliFunc extends BaseFunc {
                         if (!"text".equals(map.get("CQ"))) {
                             continue;
                         }
-                        compile = new AyeCompile(map.get("raw"));
+                        compile = new AyeCompile(map.get("value"));
                         if (compile.hasAV() || compile.hasBV()) {
-                            hasBvMsg = map.get("raw");
+                            hasBvMsg = map.get("value");
                             break;
                         }
                     }
