@@ -464,6 +464,7 @@ public class Zibenbot implements ApplicationContextAware {
                     imageMap.put(stringMap.get("raw"), ImageIO.read(url.openStream()));
                 }
             }
+            return imageMap;
         }
         return Collections.emptyMap();
     }
