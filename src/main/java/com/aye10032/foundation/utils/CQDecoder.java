@@ -2,10 +2,7 @@ package com.aye10032.foundation.utils;
 
 import com.zhipu.oapi.utils.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * CQ码解析
@@ -62,6 +59,9 @@ public class CQDecoder {
             }
             if (i1 == -1) break;
 
+        }
+        if (list.isEmpty()) {
+            return Collections.singletonList(cqCodeMessage);
         }
         return list;
     }

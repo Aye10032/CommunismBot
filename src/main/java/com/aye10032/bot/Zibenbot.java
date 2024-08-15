@@ -323,7 +323,6 @@ public class Zibenbot implements ApplicationContextAware {
      * @param msg     要回复的消息
      */
     public void replyMsgWithQuote(SimpleMsg fromMsg, String msg) {
-
             Integer messageId = fromMsg.getMessageId();
             msg = String.format("[CQ:reply,id=%d]", messageId) + msg;
             replyMsg(fromMsg, msg);
