@@ -110,6 +110,9 @@ public class SendGroupFunc extends BaseFunc {
             String msg = simpleMsg.getMsg();
             int flag = msg.indexOf(" ");
             msg = msg.substring(flag + 1);
+            msg = msg.replaceAll("&#91;", "[");
+            msg = msg.replaceAll("&amp;", "&");
+            msg = msg.replaceAll("&#93;", "]");
             zibenbot.toGroupMsg(group, msg);
             simpleMsg.setFromGroup(group);
             simpleMsg.setType(MsgType.GROUP_MSG);
