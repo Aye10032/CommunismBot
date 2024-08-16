@@ -224,7 +224,7 @@ public class Zibenbot implements ApplicationContextAware {
      * @param messageId
      */
     public boolean setEssenceMsg(Integer messageId) {
-        QQResponse<String> response = oneBotService.setEssenceMsg(new QQMessageIdRequest(messageId));
+        QQResponse<Map<String, Object>> response = oneBotService.setEssenceMsg(new QQMessageIdRequest(messageId));
         log.info("设置消息回执：{}", response);
         return response.getRetcode() == 0;
     }

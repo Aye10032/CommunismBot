@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Map;
 
 @FeignClient(name = "onebot", url = "${bot.onebot.api.url}", configuration = FeignRequestInterceptor.class)
 public interface OneBotService {
@@ -50,6 +51,6 @@ public interface OneBotService {
 
     // set_essence_msg
     @PostMapping("/set_essence_msg")
-    QQResponse<String> setEssenceMsg(@RequestBody QQMessageIdRequest request);
+    QQResponse<Map<String, Object>> setEssenceMsg(@RequestBody QQMessageIdRequest request);
 
 }
