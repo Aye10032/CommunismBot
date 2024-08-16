@@ -8,7 +8,6 @@ import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.entity.onebot.*;
 import com.aye10032.foundation.utils.ExceptionUtils;
 import com.aye10032.foundation.utils.IMsgUpload;
-import com.aye10032.foundation.utils.IOUtil;
 import com.aye10032.foundation.utils.StringUtil;
 import com.aye10032.foundation.utils.timeutil.TimeUtils;
 import com.google.common.cache.Cache;
@@ -16,7 +15,6 @@ import com.google.common.cache.CacheBuilder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
-import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +29,11 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -187,8 +183,8 @@ public class Zibenbot implements ApplicationContextAware {
      * @param s 消息语句
      * @return
      */
-    public long getAtMember(String s) {
-        List<Long> list = getAtMembers(s);
+    public long getAtMember(SimpleMsg simpleMsg) {
+        List<Long> list = getAtMembers(simpleMsg);
         if (list.size() != 0) {
             return list.get(0);
         } else {
@@ -203,20 +199,14 @@ public class Zibenbot implements ApplicationContextAware {
      * @param s 消息语句
      * @return
      */
-    public List<Long> getAtMembers(String s) {
-        List<Long> rets = new ArrayList<>();
-        try {
-            Matcher matcher = AT_REGEX.matcher(s);
-            int i = 0;
-            while (matcher.find(i)) {
-                rets.add(Long.parseLong(matcher.group(1)));
-                i = matcher.start() + 1;
+    public List<Long> getAtMembers(SimpleMsg simpleMsg) {
+        List<Long> list = new ArrayList<>();
+        for (Map<String, String> split : simpleMsg.getMessageSplitResult()) {
+            if ("AT".equals(split.get("CQ"))) {
+                list.add(Long.parseLong(split.get("qq")));
             }
-            return rets;
-        } catch (Exception e) {
-            System.out.println(rets);
-            return rets;
         }
+        return list;
     }
 
     /**
