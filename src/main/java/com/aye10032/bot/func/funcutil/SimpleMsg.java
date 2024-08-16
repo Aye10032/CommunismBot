@@ -142,6 +142,12 @@ public class SimpleMsg implements ICommand {
         return array;
     }
 
+    public static SimpleMsg build(long fromGroup, long fromClient, String msg, MsgType type) {
+        SimpleMsg simpleMsg = new SimpleMsg(fromGroup, fromClient, msg, type);
+        simpleMsg.setMessageSplitResult(CQDecoder.decode(msg));
+        return simpleMsg;
+    }
+
     /**
      * 生成一个测试用的CQmsg对象
      *
