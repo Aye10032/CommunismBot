@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class QQDeleteMsgRequest {
+public class QQMessageIdRequest {
 
     @JsonProperty("message_id")
     private Integer messageId;

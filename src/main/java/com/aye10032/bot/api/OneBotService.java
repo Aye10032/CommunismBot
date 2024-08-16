@@ -46,6 +46,10 @@ public interface OneBotService {
 
     // delete_msg
     @PostMapping("/delete_msg")
-    QQResponse<String> deleteMsg(@RequestBody QQDeleteMsgRequest request);
+    QQResponse<String> deleteMsg(@RequestBody QQMessageIdRequest request);
+
+    // set_essence_msg
+    @PostMapping("/set_essence_msg")
+    QQResponse<String> setEssenceMsg(@RequestBody QQMessageIdRequest request);
 
 }
