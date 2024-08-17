@@ -81,6 +81,7 @@ public class KillBiliMiniAppFunc extends BaseFunc {
             }
             zibenbot.deleteMsg(simpleMsg);
             if (zibenbot.checkRecall(simpleMsg.getMessageId(), 5000L)) {
+                zibenbot.muteMember(simpleMsg.getFromGroup(), simpleMsg.getFromClient(), 60);
                 send += "检测到B站QQ小程序，已击杀\n";
             }
             send += biliInfo.getTitle() + "\n"
