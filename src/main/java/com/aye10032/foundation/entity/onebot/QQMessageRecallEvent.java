@@ -21,13 +21,13 @@ import lombok.EqualsAndHashCode;
 @Data
 public class QQMessageRecallEvent extends QQNoticeEvent {
     @JsonProperty("operator_id")
-    private String operatorId;
+    private Long operatorId;
 
     @JsonProperty("user_id")
     private Long userId;
 
     @JsonProperty("group_id")
-    private QQSender groupId;
+    private Long groupId;
     @JsonProperty("message_id")
     private Integer messageId;
 
