@@ -79,7 +79,7 @@ public class KillBiliMiniAppFunc extends BaseFunc {
             if (!biliInfo.isHasVideo()) {
                 return;
             }
-            if (zibenbot.deleteMsg(simpleMsg) && simpleMsg.getFromGroup().equals(1044102726L)) {
+            if (simpleMsg.getFromGroup().equals(1044102726L) && zibenbot.deleteMsg(simpleMsg)) {
                 send += "检测到B站QQ小程序，已击杀\n";
             }
             send += biliInfo.getTitle() + "\n"
