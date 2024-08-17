@@ -19,7 +19,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public abstract class QQMessageRecallEvent extends QQNoticeEvent {
+public class QQMessageRecallEvent extends QQNoticeEvent {
     @JsonProperty("operator_id")
     private String operatorId;
 
@@ -28,8 +28,6 @@ public abstract class QQMessageRecallEvent extends QQNoticeEvent {
 
     @JsonProperty("group_id")
     private QQSender groupId;
-
-
     @JsonProperty("message_id")
     private Integer messageId;
 
