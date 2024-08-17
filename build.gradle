@@ -108,7 +108,7 @@ dependencies {
 
     implementation group: 'io.github.andello', name: 'pinyin4j', version: '0.3.2'
 
-    implementation group: 'cn.bigmodel.openapi', name: 'oapi-java-sdk', version: 'release-V4-2.1.0'
+    implementation group: 'cn.bigmodel.openapi', name: 'oapi-java-sdk', version: 'release-V4-2.3.0'
 
     implementation 'com.alibaba:fastjson:2.0.51'
 

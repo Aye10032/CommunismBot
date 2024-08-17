@@ -110,11 +110,12 @@ public class SendGroupFunc extends BaseFunc {
             String msg = simpleMsg.getMsg();
             int flag = msg.indexOf(" ");
             msg = msg.substring(flag + 1);
+            msg = msg.replaceAll("&#91;", "[");
+            msg = msg.replaceAll("&amp;", "&");
+            msg = msg.replaceAll("&#93;", "]");
             zibenbot.toGroupMsg(group, msg);
-            simpleMsg.setFromGroup(group);
-            simpleMsg.setType(MsgType.GROUP_MSG);
-            simpleMsg.setMsg(msg);
-            zibenbot.runFuncs(simpleMsg);
+            SimpleMsg simpleMsg1 = SimpleMsg.build(simpleMsg.getFromGroup(), simpleMsg.getFromClient(), msg, MsgType.GROUP_MSG);
+            zibenbot.runFuncs(simpleMsg1);
         } catch (Exception e) {
             replyMsg(simpleMsg, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
             log.warn("运行出错：" + e + "\n" + ExceptionUtils.printStack(e));

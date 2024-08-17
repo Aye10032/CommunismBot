@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @program: communismbot
@@ -29,7 +30,11 @@ public class LLMServiceImpl implements LLMService {
     @Override
     public ModelApiResponse glmInvoke(String moduleType, List<ChatMessage> messages) {
         String requestId = String.format("chat-%d", System.currentTimeMillis());
-        ClientV4 client = new ClientV4.Builder(glmKey).build();
+        ClientV4 client = new ClientV4.Builder(glmKey)
+                .enableTokenCache()
+                .networkConfig(300, 100, 100, 100, TimeUnit.SECONDS)
+                .connectionPool(new okhttp3.ConnectionPool(8, 1, TimeUnit.SECONDS))
+                .build();
 
         List<ChatMessage> messageChain = new ArrayList<>();
         messageChain.add(
@@ -54,7 +59,7 @@ public class LLMServiceImpl implements LLMService {
         llmService.glmKey = "";
         ChatMessage question = new ChatMessage(ChatMessageRole.USER.value(), "什么是生物信息学？");
         messages.add(question);
-        ModelApiResponse result = llmService.glmInvoke(Constants.ModelChatGLM4, messages);
+        ModelApiResponse result = llmService.glmInvoke("glm-4-flash", messages);
         System.out.println(JSON.toJSONString(result));
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Map;
 
 @FeignClient(name = "onebot", url = "${bot.onebot.api.url}", configuration = FeignRequestInterceptor.class)
 public interface OneBotService {
@@ -46,6 +47,10 @@ public interface OneBotService {
 
     // delete_msg
     @PostMapping("/delete_msg")
-    QQResponse<String> deleteMsg(@RequestBody QQDeleteMsgRequest request);
+    QQResponse<String> deleteMsg(@RequestBody QQMessageIdRequest request);
+
+    // set_essence_msg
+    @PostMapping("/set_essence_msg")
+    QQResponse<Map<String, Object>> setEssenceMsg(@RequestBody QQMessageIdRequest request);
 
 }

@@ -40,15 +40,11 @@ public class BanFunc extends BaseFunc {
                 .or(".大赦"::equals)
                 .run((msg) -> done(msg.getFromGroup()))
                 .or(".禁言"::equals)
-                .next()
-                .or(s -> zibenbot.getAtMember(s) != -1)
-                .next()
-                .or(NumberUtils::isDigits)
                 .run((msg) -> {
                     String[] strings = msg.getCommandPieces();
-                    long banId = zibenbot.getAtMember(msg.getMsg());
+                    long banId = zibenbot.getAtMember(msg);
                     try {
-                        if (banId == 2375985957L) {
+/*                        if (banId == 2375985957L) {
                             zibenbot.replyMsg(msg, "对不起，做不到。");
                             if (msg.getFromClient() != 2375985957L) {
                                 zibenbot.muteMember(msg.getFromGroup(),
@@ -58,25 +54,23 @@ public class BanFunc extends BaseFunc {
                                 killRecordService.addKillRecord(msg.getFromClient(), msg.getFromGroup(), KILLER);
                                 killRecordService.addKillRecord(msg.getFromClient(), msg.getFromGroup(), VICTIM);
                             }
-                        }
+                        }*/
 /*                        else if (banId == 895981998L) {
                             zibenbot.muteMember(cqmsg.getFromGroup(), banId, 100);
                             banRecord.getGroupObject(cqmsg.getFromGroup()).addBan(banId);
                             banRecord.getGroupObject(cqmsg.getFromGroup()).addMemebrBanedTime(cqmsg.getFromClient(), banId);
                         } */
-                        else {
+                        if (banId != -1) {
                             zibenbot.muteMember(msg.getFromGroup(), banId, Integer.parseInt(strings[2]));
-
                             banRecordService.updateBanRecord(banId, msg.getFromGroup(), Integer.parseInt(strings[2]));
                             killRecordService.addKillRecord(msg.getFromClient(), msg.getFromGroup(), KILLER);
                             killRecordService.addKillRecord(banId, msg.getFromGroup(), VICTIM);
                         }
+
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
                 })
-                .pop()
-                .pop()
                 .or(".击杀榜"::equals)
                 .run((msg) -> {
                     List<KillRecord> records = killRecordService.selectKillRecordByGroup(msg.getFromGroup(), KILLER);
@@ -116,6 +110,7 @@ public class BanFunc extends BaseFunc {
     }
 
     public void done(long fromGroup) {
+        zibenbot.setMuteAll(fromGroup, false);
         String msg;
         List<BanRecord> banList = banRecordService.selectBanRecordByGroup(fromGroup);
         boolean isEmpty = true;
