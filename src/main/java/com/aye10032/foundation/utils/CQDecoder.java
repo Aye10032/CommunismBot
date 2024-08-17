@@ -86,7 +86,7 @@ public class CQDecoder {
             map.put("raw", raw);
         }
         if (map.get("CQ").equals("json")) {
-            map.put("data", map.get("data").replaceAll("\\\\", ""));
+            //map.put("data", map.get("data").replaceAll("\\\\", ""));
         }
         return map;
     }
@@ -94,10 +94,10 @@ public class CQDecoder {
     public static void main(String[] args) {
         String data = "your encoded data here[CQ:image,file=http://baidu.com/1.jpg,type=show,id=40004] [CQ:at,qq=10001000]";
         decodeTest(data);
-        data = "[CQ:json,data={\\\"ver\\\":\\\"1.0.0.19\\\"&#44;\\\"desc\\\":\\\"【第七史诗】维度裂缝二期!无猴哥阵容+有猴哥阵容推荐！\\\"&#44;\\\"prompt\\\":\\\"&#91;QQ小程序&#93;【第七史诗】维度裂缝二期!无猴哥阵容+有猴哥阵容推荐！\\\"&#44;\\\"config\\\":{\\\"type\\\":\\\"normal\\\"&#44;\\\"width\\\":0&#44;\\\"height\\\":0&#44;\\\"forward\\\":1&#44;\\\"autoSize\\\":0&#44;\\\"ctime\\\":1718878900&#44;\\\"token\\\":\\\"56b9ad0382714072cd0bcbc1c74f39dd\\\"}&#44;\\\"needShareCallBack\\\":false&#44;\\\"app\\\":\\\"com.tencent.miniapp_01\\\"&#44;\\\"view\\\":\\\"view_8C8E89B49BE609866298ADDFF2DBABA4\\\"&#44;\\\"meta\\\":{\\\"detail_1\\\":{\\\"appid\\\":\\\"1109937557\\\"&#44;\\\"appType\\\":0&#44;\\\"title\\\":\\\"哔哩哔哩\\\"&#44;\\\"desc\\\":\\\"【第七史诗】维度裂缝二期!无猴哥阵容+有猴哥阵容推荐！\\\"&#44;\\\"icon\\\":\\\"https:\\\\/\\\\/open.gtimg.cn\\\\/open\\\\/app_icon\\\\/00\\\\/95\\\\/17\\\\/76\\\\/100951776_100_m.png?t=1718791179\\\"&#44;\\\"preview\\\":\\\"pubminishare-30161.picsz.qpic.cn\\\\/f1853e26-6162-4a75-90f1-34f971a3ef60\\\"&#44;\\\"url\\\":\\\"m.q.qq.com\\\\/a\\\\/s\\\\/d93cc86956632b5e6ee8ec8492c7bafa\\\"&#44;\\\"scene\\\":1036&#44;\\\"host\\\":{\\\"uin\\\":2962911082&#44;\\\"nick\\\":\\\"鸥萌首席成员\\\"}&#44;\\\"shareTemplateId\\\":\\\"8C8E89B49BE609866298ADDFF2DBABA4\\\"&#44;\\\"shareTemplateData\\\":{}&#44;\\\"qqdocurl\\\":\\\"https:\\\\/\\\\/b23.tv\\\\/afWBc5z?share_medium=android&amp;share_source=qq&amp;bbid=XX8E274881DFAF887E9C3147E9626627CAB37&amp;ts=1718878897114\\\"&#44;\\\"showLittleTail\\\":\\\"\\\"&#44;\\\"gamePoints\\\":\\\"\\\"&#44;\\\"gamePointsUrl\\\":\\\"\\\"}}}]";
+        data = "[CQ:json,data={\"ver\":\"1.0.0.19\"&#44;\"prompt\":\"&#91;QQ小程序&#93;大伟哥泪洒原神FES舞台！正面回应\\\"原神制作组傲慢\\\"的说法&#44;大伟哥带领项目组到处跑去找各地的旅行者聊真正的想法！直言我们什么都可以变，只要旅行者开心就好！看哭了\"&#44;\"config\":{\"type\":\"normal\"&#44;\"width\":0&#44;\"height\":0&#44;\"forward\":1&#44;\"autoSize\":0&#44;\"ctime\":1723877560&#44;\"token\":\"34f37f723e4b8f6c33d79a9bbeb5a1b1\"}&#44;\"needShareCallBack\":false&#44;\"app\":\"com.tencent.miniapp_01\"&#44;\"view\":\"view_8C8E89B49BE609866298ADDFF2DBABA4\"&#44;\"meta\":{\"detail_1\":{\"appid\":\"1109937557\"&#44;\"appType\":0&#44;\"title\":\"哔哩哔哩\"&#44;\"desc\":\"大伟哥泪洒原神FES舞台！正面回应\\\"原神制作组傲慢\\\"的说法&#44;大伟哥带领项目组到处跑去找各地的旅行者聊真正的想法！直言我们什么都可以变，只要旅行者开心就好！看哭了\"&#44;\"icon\":\"https:\\/\\/open.gtimg.cn\\/open\\/app_icon\\/00\\/95\\/17\\/76\\/100951776_100_m.png?t=1723629628\"&#44;\"preview\":\"i0.hdslb.com\\/bfs\\/share_ttl\\/302ca5bd24206f64e1f4a3d63730292b8080b499.jpg\"&#44;\"url\":\"m.q.qq.com\\/a\\/s\\/abb32ee00b29eea4c1ce7d620e95b736\"&#44;\"scene\":1036&#44;\"host\":{\"uin\":939290931&#44;\"nick\":\"赤月\"}&#44;\"shareTemplateId\":\"8C8E89B49BE609866298ADDFF2DBABA4\"&#44;\"shareTemplateData\":{}&#44;\"qqdocurl\":\"https:\\/\\/b23.tv\\/WuA9dPx?share_medium=android&amp;share_source=qq&amp;bbid=XY9E8119F492C7CA5E31E0FE0098D37394261&amp;ts=1723877560121\"&#44;\"showLittleTail\":\"\"&#44;\"gamePoints\":\"\"&#44;\"gamePointsUrl\":\"\"}}}]";
         List<Map<String, String>> maps = decodeTest(data);
         String data1 = maps.get(0).get("data");
-        System.out.println(JsonUtils.fromJson(data1.replaceAll("\\\\", ""), Map.class));
+        System.out.println(JsonUtils.fromJson(data1, Map.class));
     }
 
     private static List<Map<String, String>> decodeTest(String string) {
