@@ -71,18 +71,12 @@ public class Zibenbot implements ApplicationContextAware {
     /**
      * 初始化缓存
      */
-    private final LoadingCache<Integer, Long> recallCache = CacheBuilder.newBuilder()
+    private final Cache<Integer, Long> recallCache = CacheBuilder.newBuilder()
             // 缓存池大小，在缓存项接近该大小时， Guava开始回收旧的缓存项
             .maximumSize(16)
             // 设置缓存在写入之后在设定时间后失效
             .expireAfterWrite(3, TimeUnit.SECONDS)
-            .build(new CacheLoader<Integer, Long>() {
-                @Override
-                public Long load(Integer key) {
-                    // 处理缓存键不存在缓存值时的处理逻辑
-                    return null;
-                }
-            });
+            .build();
 
 
     public static OkHttpClient getOkHttpClient() {
@@ -434,11 +428,11 @@ public class Zibenbot implements ApplicationContextAware {
         long l = System.currentTimeMillis();
         while (l + waitTime > System.currentTimeMillis()) {
             try {
-                if (recallCache.get(messageId) != null) {
+                if (recallCache.getIfPresent(messageId) != null) {
                     return true;
                 }
                 Thread.sleep(10L);
-            } catch (ExecutionException | InterruptedException e) {
+            } catch (InterruptedException e) {
                 log.error("wait recall error ", e);
             }
         }
