@@ -64,6 +64,14 @@ public class OneBotController {
                 zibenbot.onFriendEvent(resultVO);
             }
         }
+        if (Objects.equals(actualObj.at("/post_type").asText(), "notice")) {
+            QQMessageRecallEvent event = null;
+            if (Objects.equals(actualObj.at("/notice_type").asText(), "group_recall")) {
+                QQMessageRecallEvent resultVO = JsonUtils.fromJson(json, QQMessageRecallEvent.class);
+                log.info("收到消息撤回事件：{}", resultVO);
+                zibenbot.onGroupMessageRecallEvent(resultVO);
+            }
+        }
 
         return Result.success("ok");
     }

@@ -12,6 +12,8 @@ import com.aye10032.foundation.utils.StringUtil;
 import com.aye10032.foundation.utils.timeutil.TimeUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -34,6 +36,7 @@ import java.net.Proxy;
 import java.net.Socket;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -64,6 +67,23 @@ public class Zibenbot implements ApplicationContextAware {
     private LinkedBlockingDeque<Runnable> messageQueue = new LinkedBlockingDeque<>(1000);
 
     private Thread messageThread;
+
+    /**
+     * 初始化缓存
+     */
+    private final LoadingCache<Integer, Long> recallCache = CacheBuilder.newBuilder()
+            // 缓存池大小，在缓存项接近该大小时， Guava开始回收旧的缓存项
+            .maximumSize(16)
+            // 设置缓存在写入之后在设定时间后失效
+            .expireAfterWrite(3, TimeUnit.SECONDS)
+            .build(new CacheLoader<Integer, Long>() {
+                @Override
+                public Long load(Integer key) {
+                    // 处理缓存键不存在缓存值时的处理逻辑
+                    return null;
+                }
+            });
+
 
     public static OkHttpClient getOkHttpClient() {
         return new OkHttpClient().newBuilder().callTimeout(30, TimeUnit.SECONDS).build();
@@ -404,6 +424,25 @@ public class Zibenbot implements ApplicationContextAware {
         request.setFlag(event.getFlag());
         request.setRemark("");
         oneBotService.setFriendAddRequest(request);
+    }
+
+    public void onGroupMessageRecallEvent(QQMessageRecallEvent event) {
+        recallCache.put(event.getMessageId(), System.currentTimeMillis());
+    }
+
+    public boolean checkRecall(Integer messageId, Long waitTime) {
+        long l = System.currentTimeMillis();
+        while (l + waitTime > System.currentTimeMillis()) {
+            try {
+                if (recallCache.get(messageId) != null) {
+                    return true;
+                }
+                Thread.sleep(10L);
+            } catch (ExecutionException | InterruptedException e) {
+                log.error("wait recall error ", e);
+            }
+        }
+        return false;
     }
 
     public String getGroupName(long id) {
