@@ -5,6 +5,7 @@ import lombok.Data;
 
 /**
  * 相关文档：https://docs.go-cqhttp.org/event/#%E6%89%80%E6%9C%89%E4%B8%8A%E6%8A%A5
+ *
  * @author dazo
  */
 @Data

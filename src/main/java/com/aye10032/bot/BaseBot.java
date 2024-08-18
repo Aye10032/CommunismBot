@@ -3,13 +3,7 @@ package com.aye10032.bot;
 import com.aye10032.bot.func.FuncEnableFunc;
 import com.aye10032.bot.func.funcutil.IFunc;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
-import com.aye10032.foundation.entity.onebot.UploadProtocolEnum;
 import com.aye10032.foundation.utils.ExceptionUtils;
-import com.aye10032.foundation.utils.IMsgUpload;
-import com.aye10032.foundation.utils.StringUtil;
-import com.aye10032.foundation.utils.timeutil.TimeUtils;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -22,13 +16,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 public abstract class BaseBot implements ApplicationContextAware {
@@ -183,7 +172,6 @@ public abstract class BaseBot implements ApplicationContextAware {
     public Map<String, IFunc> getRegisterFunc() {
         return applicationContext.getBeansOfType(IFunc.class);
     }
-
 
 
     public void runFuncs(SimpleMsg simpleMsg) {

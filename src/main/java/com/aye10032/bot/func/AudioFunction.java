@@ -1,7 +1,6 @@
 package com.aye10032.bot.func;
 
 import com.aye10032.bot.BaseBot;
-import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
@@ -45,7 +44,7 @@ public class AudioFunction extends BaseFunc {
                         log.info("下载音频文件" + filename);
                         try {
                             MediaType mediaType = MediaType.parse("text/plain");
-                            RequestBody requestBody = RequestBody.create(mediaType,"");
+                            RequestBody requestBody = RequestBody.create(mediaType, "");
                             Request request = new Request.Builder()
                                     .url("http://127.0.0.1:5000/daofang?filename=" + filename)
                                     .method("POST", requestBody)

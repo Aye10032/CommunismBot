@@ -16,7 +16,6 @@ public class QQStrangerInfo {
      * qid	string	qid ID身份卡
      * level	int32	等级
      * login_days	int32	等级
-     *
      */
     @JsonProperty("user_id")
     private Long userId;

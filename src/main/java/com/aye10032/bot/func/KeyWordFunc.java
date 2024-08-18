@@ -1,7 +1,6 @@
 package com.aye10032.bot.func;
 
 import com.aye10032.bot.BaseBot;
-import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
@@ -74,7 +73,7 @@ public class KeyWordFunc extends BaseFunc {
                                 "见识奇异的生命体\uD83D\uDC7D \n" +
                                 "让管理式民主惠及整个星系\uD83E\uDD1F \n" +
                                 "成为英雄\n" +
-                                "成为传奇\uD83D\uDE03\uD83E\uDD32\uD83D\uDE04\n"+
+                                "成为传奇\uD83D\uDE03\uD83E\uDD32\uD83D\uDE04\n" +
                                 "成为绝地潜兵！\uD83D\uDE03");
                     }
                 })

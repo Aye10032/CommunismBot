@@ -8,8 +8,6 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 
- *
  * @author dazo66
  * @date 2023-08-10
  */
@@ -17,23 +15,23 @@ import java.util.Date;
 @TableName("dream")
 public class Dream {
     /**
-     * 
+     *
      */
     @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
-     * 
+     *
      */
     private String element;
 
     /**
-     * 
+     *
      */
     private Long fromQq;
 
     /**
-     * 
+     *
      */
     private Date date;
 

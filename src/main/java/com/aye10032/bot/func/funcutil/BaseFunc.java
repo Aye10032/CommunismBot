@@ -1,7 +1,6 @@
 package com.aye10032.bot.func.funcutil;
 
 import com.aye10032.bot.BaseBot;
-import com.aye10032.bot.Zibenbot;
 
 /**
  * 方法的基础类 所有方法只需要继承了IFunc

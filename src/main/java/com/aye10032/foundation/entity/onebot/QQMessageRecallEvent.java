@@ -15,6 +15,7 @@ import lombok.EqualsAndHashCode;
  * operator_id	int64		操作者 QQ 号
  * message_id	int64		被撤回的消息 ID
  * #群成员增加
+ *
  * @author dazo
  */
 @EqualsAndHashCode(callSuper = true)

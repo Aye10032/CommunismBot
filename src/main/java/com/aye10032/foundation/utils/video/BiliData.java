@@ -11,7 +11,7 @@ package com.aye10032.foundation.utils.video;
 public class BiliData {
 
     public static String API_URL_1 = "https://api.bilibili.com/x/web-interface/view?";
-    public static  String API_URL_2 = "&type=jsonp";
+    public static String API_URL_2 = "&type=jsonp";
     public static String P_VIDEO_API = "https://api.bilibili.com/pvideo?aid=";
 
     public static String LIVE_API = "https://api.live.bilibili.com/room/v1/Room/get_info?id=";

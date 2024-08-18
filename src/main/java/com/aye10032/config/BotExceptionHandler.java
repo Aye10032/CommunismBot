@@ -16,7 +16,7 @@ public class BotExceptionHandler {
 
 
     @ExceptionHandler(Exception.class)
-    public Result<?> exceptionHandler(Exception e){
+    public Result<?> exceptionHandler(Exception e) {
         log.error("出现异常：" + org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace(e));
         return new Result<>("400", ExceptionUtils.printStack(e), null);
     }

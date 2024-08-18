@@ -9,11 +9,9 @@ import com.aye10032.foundation.utils.command.interfaces.ICommand;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -44,7 +42,6 @@ public class SimpleMsg implements ICommand {
     private QQMessageEvent event;
     /**
      * 原始的消息可能会有很多CQCODE 为了减少解析次数，这里进行预处理
-     *
      */
     private List<Map<String, String>> messageSplitResult = Collections.emptyList();
 
@@ -161,7 +158,6 @@ public class SimpleMsg implements ICommand {
     public int getQuoteKey() {
         return SimpleMsg.getQuoteKeyStatic(fromGroup, fromClient, msg);
     }
-
 
 
     public static int getQuoteKeyStatic(Long fromGroup, Long fromClient, String msg) {

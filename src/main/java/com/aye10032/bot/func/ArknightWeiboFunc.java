@@ -13,7 +13,6 @@ import com.aye10032.foundation.utils.weibo.WeiboSet;
 import com.aye10032.foundation.utils.weibo.WeiboSetItem;
 import com.aye10032.foundation.utils.weibo.WeiboUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 

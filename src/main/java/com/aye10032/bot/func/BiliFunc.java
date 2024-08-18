@@ -1,21 +1,18 @@
 package com.aye10032.bot.func;
 
 import com.aye10032.bot.BaseBot;
-import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.utils.AyeCompile;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
-import com.aye10032.foundation.utils.command.interfaces.ArrayCheck;
 import com.aye10032.foundation.utils.video.BiliInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service

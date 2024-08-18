@@ -6,6 +6,7 @@ import java.util.*;
 
 /**
  * CQ码解析
+ *
  * @author dazo
  */
 public class CQDecoder {
@@ -35,6 +36,7 @@ public class CQDecoder {
 
     /**
      * 分割含有CQ码的消息
+     *
      * @param cqCodeMessage
      * @return
      */

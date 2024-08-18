@@ -12,7 +12,6 @@ import okhttp3.Response;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +31,7 @@ public class DynamicInfo {
 
     private List<Dynamic> dynamics = new ArrayList<>();
 
-    public DynamicInfo(String mid){
+    public DynamicInfo(String mid) {
         OkHttpClient client = Zibenbot.getOkHttpClient();
         String body = "";
 
@@ -43,7 +42,7 @@ public class DynamicInfo {
                 .method("GET", null)
                 .build();
 
-        try(Response response = client.newBuilder().callTimeout(30, TimeUnit.SECONDS).build().newCall(request).execute()){
+        try (Response response = client.newBuilder().callTimeout(30, TimeUnit.SECONDS).build().newCall(request).execute()) {
             if (response.body() != null) {
                 body = new String(Objects.requireNonNull(response.body()).bytes());
             }
@@ -51,7 +50,7 @@ public class DynamicInfo {
 
             for (JsonElement _dynamic : dynamics) {
                 JsonObject dynamic_object = _dynamic.getAsJsonObject();
-                if (dynamic_object.get("type").getAsString().equals(TYPE_DRAW) ) {
+                if (dynamic_object.get("type").getAsString().equals(TYPE_DRAW)) {
                     Dynamic dynamic = new Dynamic();
 
                     dynamic.setDynamic_url("https://" + dynamic_object.getAsJsonObject("basic").get("jump_url").getAsString());

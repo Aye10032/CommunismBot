@@ -1,19 +1,12 @@
 package com.aye10032.bot.func;
 
 import com.aye10032.bot.BaseBot;
-import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
-import com.aye10032.service.BanRecordService;
-import com.aye10032.service.KillRecordService;
 import org.springframework.stereotype.Service;
-
-import java.awt.image.BufferedImage;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class TestFunc extends BaseFunc {

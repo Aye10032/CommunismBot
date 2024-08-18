@@ -1,7 +1,6 @@
 package com.aye10032.bot.func;
 
 import com.aye10032.bot.BaseBot;
-import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.MsgType;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
@@ -69,7 +68,7 @@ public class SendGroupFunc extends BaseFunc {
                 simpleMsg.setType(MsgType.PRIVATE_MSG);
                 msg = msg.substring(flag + 1);
                 replyMsg(simpleMsg, msg);
-            } else if (msg.equalsIgnoreCase("sendcas")){
+            } else if (msg.equalsIgnoreCase("sendcas")) {
                 RssResult feed = getRSSUpdate("http://www.bulletin.cas.cn/rc-pub/front/rss?periodId=currentIssue&siteId=460", false);
                 String title = feed.getTitle();
                 List<SyndEntry> list = feed.getEntries();

@@ -4,9 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
-
-import javax.annotation.PostConstruct;
 
 /**
  * 方法的基础类 所有方法只需要继承了IFunc

@@ -1,10 +1,6 @@
 package com.aye10032.foundation.entity.dto;
 
 //import com.aye10032.foundation.entity.base.ChatMessage;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-
-import java.util.List;
 
 /**
  * @author dazo66(sundazhong.sdz)

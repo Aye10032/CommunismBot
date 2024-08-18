@@ -1,10 +1,5 @@
 package com.aye10032.foundation.entity.base;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
-import java.util.Date;
-
 /**
  * @author dazo66(sundazhong.sdz)
  * @date 2023/3/11 11:03

@@ -1,7 +1,6 @@
 package com.aye10032.config;
 
 import com.aye10032.bot.BaseBot;
-import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.timetask.SimpleSubscription;
 import com.aye10032.foundation.utils.timeutil.AsynchronousTaskPool;
 import org.springframework.context.annotation.Bean;
