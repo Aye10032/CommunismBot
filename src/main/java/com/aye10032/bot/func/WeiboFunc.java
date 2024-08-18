@@ -52,7 +52,7 @@ public class WeiboFunc extends BaseFunc {
                 try {
                     replyMsg(simpleMsg, weiboReader.postToUser(WeiboUtils.getWeiboWithId(Zibenbot.getOkHttpClient(), id)));
                 } catch (Exception e) {
-                    log.info("读取微博数据异常：" + ExceptionUtils.printStack(e));
+                    log.info("读取微博 {} 数据异常：" + ExceptionUtils.printStack(e), id);
                 }
             }
         }

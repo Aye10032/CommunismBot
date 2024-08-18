@@ -2,6 +2,7 @@ package com.aye10032.foundation.utils.weibo;
 
 import com.aye10032.foundation.utils.ExceptionUtils;
 import com.aye10032.foundation.utils.HttpUtils;
+import com.aye10032.foundation.utils.JsonUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -338,6 +339,12 @@ public class WeiboUtils {
 
     private static InputStream loadFromWeiboRSS(OkHttpClient client, String weiboToRssUrl) throws IOException {
         return HttpUtils.getInputStreamFromNet(weiboToRssUrl, client);
+    }
+
+    public static void main(String[] args) throws IOException, ParseException {
+        // https://weibo.com/7727274475/5068650967732422
+
+        System.out.println(JsonUtils.toJson(getWeiboWithId(new OkHttpClient(), "5068650967732422")));
     }
 
 
