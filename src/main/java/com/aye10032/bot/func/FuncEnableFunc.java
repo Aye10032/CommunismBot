@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.IFunc;
@@ -22,7 +23,7 @@ public class FuncEnableFunc extends BaseFunc {
 
     Map<Long, List<String>> disableList;
 
-    public FuncEnableFunc(Zibenbot zibenbot) {
+    public FuncEnableFunc(BaseBot zibenbot) {
         super(zibenbot);
     }
 
@@ -53,7 +54,7 @@ public class FuncEnableFunc extends BaseFunc {
                 if (msgs.length == 1) {
                     StringBuilder builder = new StringBuilder();
                     builder.append("本群当前启用的模块有：\n");
-                    Map<String, IFunc> list = zibenbot.getRegisterFunc();
+                    Map<String, IFunc> list = bot.getRegisterFunc();
                     IFunc func;
                     for (Map.Entry<String, IFunc> entry : list.entrySet()) {
                         func = entry.getValue();
@@ -74,7 +75,7 @@ public class FuncEnableFunc extends BaseFunc {
                 } else if (msgs.length == 2) {
                     //查找是否有对应的
                     boolean a = false;
-                    Map<String, IFunc> list = zibenbot.getRegisterFunc();
+                    Map<String, IFunc> list = bot.getRegisterFunc();
                     IFunc func;
                     for (Map.Entry<String, IFunc> entry : list.entrySet()) {
                         func = entry.getValue();
@@ -151,13 +152,13 @@ public class FuncEnableFunc extends BaseFunc {
     }
 
     public Map<Long, List<String>> load() {
-        return ConfigLoader.load(new File(zibenbot.appDirectory + "/disable.json")
+        return ConfigLoader.load(new File(bot.getAppDirectory() + "/disable.json")
                 , new TypeToken<Map<Long, List<String>>>() {
                 }.getType());
     }
 
     public void save() {
-        ConfigLoader.save(new File(zibenbot.appDirectory + "/disable.json")
+        ConfigLoader.save(new File(bot.getAppDirectory() + "/disable.json")
                 , new TypeToken<Map<Long, List<String>>>() {
                 }.getType(), disableList);
     }

@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
@@ -31,7 +32,7 @@ public class DreamFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
 
-    public DreamFunc(Zibenbot zibenbot, DreamService dreamService) {
+    public DreamFunc(BaseBot zibenbot, DreamService dreamService) {
         super(zibenbot);
         this.dreamService = dreamService;
         commander = new CommanderBuilder<SimpleMsg>()

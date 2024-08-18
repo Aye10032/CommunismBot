@@ -1,5 +1,6 @@
 package com.aye10032.foundation.utils.timeutil;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.MsgType;
 import com.aye10032.foundation.entity.base.sub.SubTask;
@@ -9,6 +10,7 @@ import com.aye10032.foundation.utils.FutureHelper;
 import com.aye10032.mapper.SubTaskMapper;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.gson.Gson;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -35,11 +37,13 @@ import java.util.stream.Collectors;
 public abstract class SubscribableBase extends QuartzJobBean {
 
     private SubTaskMapper subTaskMapper;
-    private Zibenbot bot;
+
+    @Getter
+    private BaseBot bot;
     private static SimpleTimeLimiter timeLimiter = SimpleTimeLimiter.create(new ThreadPoolExecutor(10, 200, 10, TimeUnit.MINUTES, new ArrayBlockingQueue<>(10)));
 
     @Autowired
-    public void setBot(Zibenbot bot) {
+    public void setBot(BaseBot bot) {
         this.bot = bot;
     }
 
@@ -48,8 +52,8 @@ public abstract class SubscribableBase extends QuartzJobBean {
         this.subTaskMapper = subTaskMapper;
     }
 
-    public Zibenbot getBot() {
-        return bot;
+    public String getAppDirectory() {
+        return bot.getAppDirectory();
     }
 
     /**

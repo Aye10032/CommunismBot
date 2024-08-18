@@ -45,7 +45,7 @@ public class DragraliaTask extends SubscribableBase {
 
     @PostConstruct
     public void init() {
-        loader = new ConfigLoader<>(getBot().appDirectory + "/dragralia_4.json", Config.class);
+        loader = new ConfigLoader<>(getAppDirectory() + "/dragralia_4.json", Config.class);
         config = loader.load();
     }
 
@@ -169,7 +169,7 @@ public class DragraliaTask extends SubscribableBase {
             calendar.add(Calendar.DAY_OF_MONTH, -1);
             day = dateFormat.format(calendar.getTimeInMillis());
         }
-        File file = new File(getBot().appDirectory + "\\" + "dragralia" + "\\" + day + ".json");
+        File file = new File(getAppDirectory() + "\\" + "dragralia" + "\\" + day + ".json");
         String hisRow = "{}";
         if (!file.exists()) {
             file.getParentFile().mkdirs();
@@ -306,10 +306,10 @@ public class DragraliaTask extends SubscribableBase {
 
     private File getScreenshot(Article a) {
         String dir;
-        if ("test".equals(getBot().appDirectory)) {
+        if ("test".equals(getAppDirectory())) {
             dir = "res";
         } else {
-            dir = getBot().appDirectory;
+            dir = getAppDirectory();
         }
         String url = "https://dragalialost.com/chs/news/detail/" + a.articleId;
         String outputfile = dir + "/dragraliatemp/" + a.articleId + ".png";
@@ -374,7 +374,7 @@ public class DragraliaTask extends SubscribableBase {
     private String getFileName(String url) {
         Matcher matcher = img_name_pattern.matcher(url);
         matcher.find();
-        return getBot().appDirectory + "\\dragraliatemp\\" + matcher.group();
+        return getAppDirectory() + "\\dragraliatemp\\" + matcher.group();
     }
 
     private File downloadImg(String url) {
@@ -439,7 +439,7 @@ public class DragraliaTask extends SubscribableBase {
     }
 
     private void cleanImg() {
-        File dir = new File(getBot().appDirectory + "\\dragraliatemp");
+        File dir = new File(getAppDirectory() + "\\dragraliatemp");
         long current = System.currentTimeMillis();
         int i = 0;
         for (File f : dir.listFiles()) {

@@ -6,7 +6,6 @@ import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.entity.base.history.today.HistoryEventType;
 import com.aye10032.foundation.entity.base.history.today.HistoryToday;
-import com.aye10032.foundation.utils.ImgUtils;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
 import com.aye10032.service.HistoryTodayService;
@@ -14,12 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.Year;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -195,7 +192,7 @@ public class HistoryTodayFunc extends BaseFunc {
 
 
     private SimpleMsg saveImage(SimpleMsg msg) {
-        Map<String, BufferedImage> images = zibenbot.getImgFromMsg(msg);
+        Map<String, BufferedImage> images = bot.getImgFromMsg(msg);
 
         if (!images.isEmpty()) {
             log.info("发现图片");
@@ -208,7 +205,7 @@ public class HistoryTodayFunc extends BaseFunc {
                 try {
                     File outputFile = new File(outputPath);
                     ImageIO.write(entry.getValue(), "png", outputFile);
-                    msg.setMsg(msg.getMsg().replace(entry.getKey(), zibenbot.getImg(outputPath)));
+                    msg.setMsg(msg.getMsg().replace(entry.getKey(), bot.getImg(outputPath)));
                     index++;
                     log.info("Image{} saved successfully!", outputFileName);
                 } catch (IOException e) {

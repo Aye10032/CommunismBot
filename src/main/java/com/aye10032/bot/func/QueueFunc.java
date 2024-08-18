@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
@@ -30,7 +31,7 @@ public class QueueFunc extends BaseFunc {
     private Map<Long, List<QueueDataClass>> data;
     private Commander<SimpleMsg> commander;
 
-    public QueueFunc(Zibenbot zibenbot) {
+    public QueueFunc(BaseBot zibenbot) {
         super(zibenbot);
         commander = new CommanderBuilder<SimpleMsg>()
                 .start()
@@ -104,7 +105,7 @@ public class QueueFunc extends BaseFunc {
     public void load() {
         Gson gson = new GsonBuilder().create();
         try {
-            File file = new File(zibenbot.appDirectory + "/queue.json");
+            File file = new File(appDirectory + "/queue.json");
             if (file.exists()) {
                 FileReader input = new FileReader(file);
                 data = gson.fromJson(IOUtils.toString(input)
@@ -127,7 +128,7 @@ public class QueueFunc extends BaseFunc {
     public void save() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try {
-            File file = new File(zibenbot.appDirectory + "\\queue.json");
+            File file = new File(appDirectory + "\\queue.json");
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
                 file.createNewFile();

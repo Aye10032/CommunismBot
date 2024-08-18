@@ -28,7 +28,7 @@ public class WeiboTask extends SubscribableBase {
 
     @PostConstruct
     public void init() {
-        File file = new File(getBot().appDirectory + "/weibo/");
+        File file = new File(getAppDirectory() + "/weibo/");
         if (!file.exists()) {
             file.mkdirs();
         }

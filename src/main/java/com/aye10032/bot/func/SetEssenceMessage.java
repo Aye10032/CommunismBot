@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class SetEssenceMessage extends BaseFunc {
 
 
-    public SetEssenceMessage(Zibenbot zibenbot) {
+    public SetEssenceMessage(BaseBot zibenbot) {
         super(zibenbot);
     }
 
@@ -37,7 +38,7 @@ public class SetEssenceMessage extends BaseFunc {
                         || simpleMsg.getMsg().contains("设精")
                         || simpleMsg.getMsg().contains("设置精华")
                         || simpleMsg.getMsg().contains("设了"))) {
-            zibenbot.setEssenceMsg(messageId);
+            bot.setEssenceMsg(messageId);
         }
     }
 }

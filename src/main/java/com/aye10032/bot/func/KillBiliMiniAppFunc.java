@@ -1,19 +1,17 @@
 package com.aye10032.bot.func;
 
 import com.alibaba.fastjson.JSONObject;
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.utils.AyeCompile;
 import com.aye10032.foundation.utils.video.BiliInfo;
-import com.aye10032.util.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,7 +26,7 @@ import static com.aye10032.bot.func.BiliFunc.formatToW;
 public class KillBiliMiniAppFunc extends BaseFunc {
 
 
-    public KillBiliMiniAppFunc(Zibenbot zibenbot) {
+    public KillBiliMiniAppFunc(BaseBot zibenbot) {
         super(zibenbot);
     }
 
@@ -79,16 +77,15 @@ public class KillBiliMiniAppFunc extends BaseFunc {
             if (!biliInfo.isHasVideo()) {
                 return;
             }
-            zibenbot.deleteMsg(simpleMsg);
-            if (zibenbot.checkRecall(simpleMsg.getMessageId(), 1500L)) {
-                zibenbot.muteMember(simpleMsg.getFromGroup(), simpleMsg.getFromClient(), 60);
+            if (bot.deleteMsg(simpleMsg)) {
+                bot.muteMember(simpleMsg.getFromGroup(), simpleMsg.getFromClient(), 60);
                 send += "检测到B站QQ小程序，已击杀\n";
             }
             send += biliInfo.getTitle() + "\n"
                     + biliInfo.getVideo_url() + "\n"
-                    + "封面：" + (StringUtils.isNotEmpty(biliInfo.getFaceImageFilePath()) ? zibenbot.getImg(biliInfo.getFaceImageFilePath()) : "【图片下载出错】")
+                    + "封面：" + (StringUtils.isNotEmpty(biliInfo.getFaceImageFilePath()) ? bot.getImg(biliInfo.getFaceImageFilePath()) : "【图片下载出错】")
                     + "\nup主：" + biliInfo.getUp() + "\n"
-                    + (StringUtils.isNotEmpty(biliInfo.getFaceImageFilePath()) ? zibenbot.getImg(biliInfo.getUpImageFilePath()) : "【图片下载出错】")
+                    + (StringUtils.isNotEmpty(biliInfo.getFaceImageFilePath()) ? bot.getImg(biliInfo.getUpImageFilePath()) : "【图片下载出错】")
                     + "\n播放：" + formatToW(biliInfo.getView())
                     + " 弹幕：" + formatToW(biliInfo.getDanmaku())
                     + "\n点赞：" + formatToW(biliInfo.getLike())
@@ -96,7 +93,7 @@ public class KillBiliMiniAppFunc extends BaseFunc {
                     + " 收藏：" + formatToW(biliInfo.getFavorite())
                     + " 评论：" + formatToW(biliInfo.getReply())
                     + "\n简介：" + biliInfo.getDescription();
-            zibenbot.replyMsg(simpleMsg, send);
+            bot.replyMsg(simpleMsg, send);
         }
     }
 }

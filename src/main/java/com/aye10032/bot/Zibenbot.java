@@ -1,9 +1,6 @@
 package com.aye10032.bot;
 
 import com.aye10032.bot.api.OneBotService;
-import com.aye10032.bot.func.FuncEnableFunc;
-import com.aye10032.bot.func.funcutil.IFunc;
-import com.aye10032.bot.func.funcutil.IQuoteHook;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.entity.onebot.*;
 import com.aye10032.foundation.utils.ExceptionUtils;
@@ -12,23 +9,17 @@ import com.aye10032.foundation.utils.StringUtil;
 import com.aye10032.foundation.utils.timeutil.TimeUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.InetSocketAddress;
@@ -36,7 +27,6 @@ import java.net.Proxy;
 import java.net.Socket;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -50,43 +40,22 @@ import java.util.stream.Collectors;
  */
 @Component
 @Slf4j
-public class Zibenbot implements ApplicationContextAware {
+public class Zibenbot extends BaseBot {
     public static Proxy proxy = null;
-    private static final Pattern AT_REGEX = Pattern.compile("\\[CQ:at:(\\d+)]");
     public List<Long> enableGroup = new ArrayList<>();
-    @Value("${bot.data.cache.path}")
-    public String appDirectory;
     @Value("${onebot.upload.protocol}")
     private UploadProtocolEnum uploadProtocolEnum;
-    private final Map<String, IMsgUpload> msgUploads = new HashMap<>();
     final Pattern MSG_TYPE_PATTERN;
-    private ApplicationContext applicationContext;
     @Autowired
     private OneBotService oneBotService;
-
     private LinkedBlockingDeque<Runnable> messageQueue = new LinkedBlockingDeque<>(1000);
-
     private Thread messageThread;
 
-    /**
-     * 初始化缓存
-     */
-    private final Cache<Integer, Long> recallCache = CacheBuilder.newBuilder()
-            // 缓存池大小，在缓存项接近该大小时， Guava开始回收旧的缓存项
-            .maximumSize(16)
-            // 设置缓存在写入之后在设定时间后失效
-            .expireAfterWrite(3, TimeUnit.SECONDS)
-            .build();
-
-
-    public static OkHttpClient getOkHttpClient() {
-        return new OkHttpClient().newBuilder().callTimeout(30, TimeUnit.SECONDS).build();
-//                .proxy(Zibenbot.getProxy()).build();
-    }
+    private final Map<String, IMsgUpload> msgUploads = new HashMap<>();
 
     {
         // 配置logger
-        File logDir = new File(appDirectory + "/log/");
+        File logDir = new File(getAppDirectory() + "/log/");
         File[] files = logDir.listFiles(pathname -> System.currentTimeMillis() - pathname.lastModified() > TimeUtils.DAY * 10L);
         Arrays.asList(files != null ? files : new File[0]).forEach(File::delete);
         msgUploads.put("IMAGE", (source) -> {
@@ -113,6 +82,23 @@ public class Zibenbot implements ApplicationContextAware {
         MSG_TYPE_PATTERN = Pattern.compile(String.format("\\[type=(%s),[ ]*source=\"([[^\"\\f\\n\\r\\t\\v]]+)\"]",
                 StringUtil.splicing("|", msgUploads.keySet())));
     }
+
+    /**
+     * 初始化缓存
+     */
+    private final Cache<Integer, Long> recallCache = CacheBuilder.newBuilder()
+            // 缓存池大小，在缓存项接近该大小时， Guava开始回收旧的缓存项
+            .maximumSize(16)
+            // 设置缓存在写入之后在设定时间后失效
+            .expireAfterWrite(3, TimeUnit.SECONDS)
+            .build();
+
+
+    public static OkHttpClient getOkHttpClient() {
+        return new OkHttpClient().newBuilder().callTimeout(30, TimeUnit.SECONDS).build();
+//                .proxy(Zibenbot.getProxy()).build();
+    }
+
 
     public Zibenbot() {
     }
@@ -180,6 +166,7 @@ public class Zibenbot implements ApplicationContextAware {
     }
 
 
+    @Override
     public Long getBotQQId() {
         return oneBotService.getLoginInfo().getData().getUserId();
     }
@@ -190,13 +177,7 @@ public class Zibenbot implements ApplicationContextAware {
         return proxy;
     }
 
-    /**
-     * 得到第一个被AT的对象的id
-     * 没找到则返回 -1
-     *
-     * @param s 消息语句
-     * @return
-     */
+    @Override
     public long getAtMember(SimpleMsg simpleMsg) {
         List<Long> list = getAtMembers(simpleMsg);
         if (list.size() != 0) {
@@ -206,13 +187,7 @@ public class Zibenbot implements ApplicationContextAware {
         }
     }
 
-    /**
-     * 得到被at的对象的id列表
-     * 没有则会返回空id
-     *
-     * @param s 消息语句
-     * @return
-     */
+    @Override
     public List<Long> getAtMembers(SimpleMsg simpleMsg) {
         List<Long> list = new ArrayList<>();
         for (Map<String, String> split : simpleMsg.getMessageSplitResult()) {
@@ -225,24 +200,29 @@ public class Zibenbot implements ApplicationContextAware {
 
     /**
      * 撤回消息
+     *
      * @param simpleMsg
      */
+    @Override
     public boolean deleteMsg(SimpleMsg simpleMsg) {
         QQResponse<String> response = oneBotService.deleteMsg(new QQMessageIdRequest(simpleMsg.getMessageId()));
         log.info("撤回消息回执：{}", response);
-        return response.getRetcode() == 0;
+        return checkRecall(simpleMsg.getMessageId(), 1500L);
     }
 
     /**
      * 设置精华消息
+     *
      * @param messageId
      */
+    @Override
     public boolean setEssenceMsg(Integer messageId) {
         QQResponse<Map<String, Object>> response = oneBotService.setEssenceMsg(new QQMessageIdRequest(messageId));
         log.info("设置消息回执：{}", response);
         return response.getRetcode() == 0;
     }
 
+    @Override
     public void muteMember(@NotNull Long groupId, @NotNull Long memberId, @NotNull @Min(0) Integer second) {
         QQSetGroupBanRequest request = new QQSetGroupBanRequest();
         request.setDuration(second);
@@ -257,6 +237,7 @@ public class Zibenbot implements ApplicationContextAware {
      * @param groupId 群id
      * @param muteAll 启用或者禁用
      */
+    @Override
     public void setMuteAll(@NotNull Long groupId, boolean muteAll) {
         QQSetGroupWholeBanRequest request = new QQSetGroupWholeBanRequest();
         request.setGroupId(groupId);
@@ -264,18 +245,8 @@ public class Zibenbot implements ApplicationContextAware {
         oneBotService.setGroupWholeBan(request);
     }
 
-    /**
-     * 获得AT的字符串 如果不存在这个id则返回 "null"
-     * 如果艾特的不是群成员 将会变成 "@昵称"
-     *
-     * @param clientId id
-     * @return at MiraiCode
-     */
-    public String at(long clientId) {
-        return _at(clientId);
-    }
-
-    public void unMute(long groupId, long memberId) {
+    @Override
+    public void unMute(Long groupId, Long memberId) {
         QQSetGroupBanRequest request = new QQSetGroupBanRequest();
         request.setDuration(0);
         request.setGroupId(groupId);
@@ -283,8 +254,9 @@ public class Zibenbot implements ApplicationContextAware {
         oneBotService.setGroupBan(request);
     }
 
+    @Override
     public void toPrivateMsg(long clientId, String msg) {
-        messageQueue.add(() ->{
+        messageQueue.add(() -> {
             String s = replaceMsgType(msg);
             QQSendPrivateMessageRequest request = new QQSendPrivateMessageRequest();
             request.setUserId(clientId);
@@ -294,6 +266,7 @@ public class Zibenbot implements ApplicationContextAware {
         });
     }
 
+    @Override
     public void toGroupMsg(long groupId, String msg) {
         messageQueue.add(() -> {
             String s = replaceMsgType(msg);
@@ -305,18 +278,8 @@ public class Zibenbot implements ApplicationContextAware {
         });
     }
 
-    private String _at(long id) {
-        return getMsg("AT", String.valueOf(id));
-    }
 
-    /**
-     * 得到已经注册的方法模块
-     *
-     * @return 已经注册的方法列表 不可修改
-     */
-    public Map<String, IFunc> getRegisterFunc() {
-        return applicationContext.getBeansOfType(IFunc.class);
-    }
+
 
 /*    private static QuoteReply getQuote(SimpleMsg msg) {
         Class<SimpleMsg> clazz = SimpleMsg.class;
@@ -336,10 +299,11 @@ public class Zibenbot implements ApplicationContextAware {
      * @param fromMsg 消息来源
      * @param msg     要回复的消息
      */
+    @Override
     public void replyMsgWithQuote(SimpleMsg fromMsg, String msg) {
-            Integer messageId = fromMsg.getMessageId();
-            msg = String.format("[CQ:reply,id=%d]", messageId) + msg;
-            replyMsg(fromMsg, msg);
+        Integer messageId = fromMsg.getMessageId();
+        msg = String.format("[CQ:reply,id=%d]", messageId) + msg;
+        replyMsg(fromMsg, msg);
 
     }
 
@@ -349,6 +313,7 @@ public class Zibenbot implements ApplicationContextAware {
      * @param fromMsg 消息来源
      * @param msg     要回复的消息
      */
+    @Override
     public void replyMsg(SimpleMsg fromMsg, String msg) {
         try {
             if (fromMsg.isGroupMsg()) {
@@ -401,17 +366,6 @@ public class Zibenbot implements ApplicationContextAware {
         }*/
     }
 
-    /**
-     * 发送语音
-     *
-     * @param fromMsg 消息来源
-     * @param file    语音文件
-     */
-    public void replyAudio(SimpleMsg fromMsg, File file) {
-        String voice = getMsg("VOICE", file.getAbsolutePath());
-        replyMsg(fromMsg, voice);
-    }
-
     public void onFriendEvent(QQFriendRequestEvent event) {
         QQSetFriendAddRequest request = new QQSetFriendAddRequest();
         request.setApprove(true);
@@ -424,7 +378,7 @@ public class Zibenbot implements ApplicationContextAware {
         recallCache.put(event.getMessageId(), System.currentTimeMillis());
     }
 
-    public boolean checkRecall(Integer messageId, Long waitTime) {
+    private boolean checkRecall(Integer messageId, Long waitTime) {
         long l = System.currentTimeMillis();
         while (l + waitTime > System.currentTimeMillis()) {
             try {
@@ -439,54 +393,25 @@ public class Zibenbot implements ApplicationContextAware {
         return false;
     }
 
+    @Override
     public String getGroupName(long id) {
         QQGetGroupInfoRequest request = new QQGetGroupInfoRequest();
         request.setGroupId(id);
         return oneBotService.getGroupInfo(request).getData().getGroupName();
     }
 
+    @Override
     public List<Long> getGroups() {
         return oneBotService.getGroupList(new QQGetGroupListRequest()).getData().stream().map(QQGroupInfo::getGroupId).collect(Collectors.toList());
     }
 
-    @Deprecated
-    public List<Long> getFriends() {
-        /*List<Long> list = new ArrayList<>();
-        bot.getFriends().forEach(friend -> list.add(friend.getId()));
-        return list;*/
-        return Collections.emptyList();
-    }
-
-    @Deprecated
-    public List<Long> getMembers(long groupId) {
-        return Collections.emptyList();
-    }
-
+    @Override
     public String getUserName(long userId) {
         QQGetStrangerInfoRequest request = new QQGetStrangerInfoRequest();
         request.setUserId(userId);
         return oneBotService.getStrangerInfo(request).getData().getNickname();
     }
 
-    /**
-     * 根据文件路径返回图片字符串
-     *
-     * @param path 文件路径
-     * @return 图片字符串
-     */
-    public String getImg(String path) {
-        return getMsg("IMAGE", path);
-    }
-
-    /**
-     * 根据文件返回图片字符串
-     *
-     * @param file 文件
-     * @return 图片字符串
-     */
-    public String getImg(File file) {
-        return getMsg("IMAGE", file.getAbsolutePath());
-    }
 
     /**
      * 获得消息中的所有图片
@@ -495,6 +420,7 @@ public class Zibenbot implements ApplicationContextAware {
      * @return 返回List of BufferImage
      */
     @SneakyThrows
+    @Override
     public Map<String, BufferedImage> getImgFromMsg(SimpleMsg msg) {
         if (!msg.getMessageSplitResult().isEmpty()) {
             Map<String, BufferedImage> imageMap = new HashMap<>();
@@ -509,6 +435,7 @@ public class Zibenbot implements ApplicationContextAware {
         return Collections.emptyMap();
     }
 
+    @Override
     public File getAudioFromMsg(SimpleMsg msg) {
        /* File silkFile;
         try {
@@ -534,11 +461,7 @@ public class Zibenbot implements ApplicationContextAware {
         return null;
     }
 
-    public String getMsg(@NotEmpty String type, @NotNull String source) {
-        return String.format("[type=%s, source=\"%s\"]", type, source);
-    }
-
-    private String replaceMsgType(String msg) {
+    protected String replaceMsgType(String msg) {
         Matcher matcher = MSG_TYPE_PATTERN.matcher(msg);
         int i = 0;
         while (matcher.find(i)) {
@@ -548,7 +471,7 @@ public class Zibenbot implements ApplicationContextAware {
         return msg;
     }
 
-    private String _upload(String type, String source) {
+    protected String _upload(String type, String source) {
         Exception e = null;
         for (int i = 0; i < 3; i++) {
             try {
@@ -560,47 +483,6 @@ public class Zibenbot implements ApplicationContextAware {
         }
         log.error(String.format("上传%s失败：%s", type, ExceptionUtils.printStack(e)));
         return "[" + type + "]";
-    }
-
-    public void runFuncs(SimpleMsg simpleMsg) {
-        if (simpleMsg.getQuoteMsg() != null) {
-            try {
-                IQuoteHook hook = hookCache.getIfPresent(simpleMsg.getQuoteMsg().getQuoteKey());
-                if (hook != null) {
-                    hook.run(simpleMsg.getQuoteMsg(), simpleMsg);
-                }
-            } catch (Exception e) {
-                log.error("回调触发出错：" + simpleMsg.getQuoteMsg().getMsg() + "\n", simpleMsg.getMsg());
-            }
-        }
-        FuncEnableFunc funcEnableFunc = applicationContext.getBean(FuncEnableFunc.class);
-        for (IFunc func : getRegisterFunc().values()) {
-            if (funcEnableFunc.isEnable(simpleMsg.getFromGroup(), func)) {
-                try {
-                    func.run(simpleMsg);
-                } catch (Exception e) {
-                    replyMsg(simpleMsg, String.format("运行出错（%s）：%s", func.toString(), e));
-                    log.error(ExceptionUtils.printStack(e));
-                }
-            }
-        }
-
-    }
-
-    @Override
-    public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    private final Cache<Integer, IQuoteHook> hookCache = CacheBuilder.newBuilder()
-            .maximumSize(1000)
-            .expireAfterAccess(240, TimeUnit.MINUTES)
-            .build();
-
-
-    public void replyMsgWithQuoteHook(SimpleMsg fromMsg, String msg, IQuoteHook hook) {
-/*        hookCache.put(SimpleMsg.getQuoteKeyStatic(fromMsg.getFromGroup(), bot.getBot().getId(), msg), hook);
-        replyMsg(fromMsg, msg);*/
     }
 
 }

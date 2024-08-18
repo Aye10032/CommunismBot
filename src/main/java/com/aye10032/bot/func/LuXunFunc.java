@@ -1,6 +1,7 @@
 package com.aye10032.bot.func;
 
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
@@ -20,7 +21,7 @@ public class LuXunFunc extends BaseFunc {
     private Commander<SimpleMsg> commander;
     Map<Integer, String> ImgMap = new HashMap<>();
 
-    public LuXunFunc(Zibenbot zibenbot) {
+    public LuXunFunc(BaseBot zibenbot) {
         super(zibenbot);
         new File(appDirectory + "/image/biaoqing/output").mkdirs();
     }

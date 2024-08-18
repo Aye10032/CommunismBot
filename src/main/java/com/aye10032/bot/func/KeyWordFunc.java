@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
@@ -28,7 +29,7 @@ public class KeyWordFunc extends BaseFunc {
 
     private List<String> indexList;
 
-    public KeyWordFunc(Zibenbot zibenbot) {
+    public KeyWordFunc(BaseBot zibenbot) {
         super(zibenbot);
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
@@ -109,7 +110,7 @@ public class KeyWordFunc extends BaseFunc {
 
         FileData result = getRandomImage(index, appDirectory + "/image/dragon/");
 
-        zibenbot.replyMsgWithQuote(msg, zibenbot.getImg(result.getFile()) + " " + text);
+        bot.replyMsgWithQuote(msg, bot.getImg(result.getFile()) + " " + text);
         if (initialSize != result.getIndexList().size()) {
             saveFileList(result.getIndexList(), appDirectory + "/image/dragon.txt");
         }

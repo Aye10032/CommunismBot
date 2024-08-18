@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
@@ -26,7 +27,7 @@ public class CubeFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
 
-    public CubeFunc(Zibenbot zibenbot) {
+    public CubeFunc(BaseBot zibenbot) {
         super(zibenbot);
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
@@ -39,77 +40,77 @@ public class CubeFunc extends BaseFunc {
                 .or(".cfop"::equalsIgnoreCase)
                 .run((cqmsg) -> {
                     zibenbot.replyMsg(cqmsg,
-                            zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/CFOP1.jpg"))
-                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/CFOP2.jpg"))
-                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/CFOP3.jpg"))
-                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/CFOP4.jpg")));
+                            zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/CFOP1.jpg"))
+                                    + zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/CFOP2.jpg"))
+                                    + zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/CFOP3.jpg"))
+                                    + zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/CFOP4.jpg")));
                 })
                 .next()
                 .or("f2l"::equalsIgnoreCase)
                 .run((cqmsg) -> {
-                    zibenbot.replyMsg(cqmsg, zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/CFOP2.jpg")));
+                    zibenbot.replyMsg(cqmsg, zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/CFOP2.jpg")));
                 })
                 .or("oll"::equalsIgnoreCase)
                 .run((cqmsg) -> {
-                    zibenbot.replyMsg(cqmsg, zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/CFOP3.jpg")));
+                    zibenbot.replyMsg(cqmsg, zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/CFOP3.jpg")));
                 })
                 .or("pll"::equalsIgnoreCase)
                 .run((cqmsg) -> {
-                    zibenbot.replyMsg(cqmsg, zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/CFOP4.jpg")));
+                    zibenbot.replyMsg(cqmsg, zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/CFOP4.jpg")));
                 })
                 .pop()
                 .or(".mega"::equalsIgnoreCase)
                 .run((cqmsg) -> {
                     zibenbot.replyMsg(cqmsg,
-                            zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/Mega1.jpg"))
-                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/Mega2.jpg")));
+                            zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/Mega1.jpg"))
+                                    + zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/Mega2.jpg")));
                 })
                 .or(".22"::equals)
                 .run((cqmsg) -> {
                     zibenbot.replyMsg(cqmsg,
-                            zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/2X201.png"))
-                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/2X202.png"))
-                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/2X203.png")));
+                            zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/2X201.png"))
+                                    + zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/2X202.png"))
+                                    + zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/2X203.png")));
                 })
                 .or(".彳亍"::equals)
                 .run((cqmsg) -> {
                     zibenbot.replyMsg(cqmsg,
-                            zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/chichu01.png"))
-                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/chichu02.png"))
-                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/chichu03.png"))
-                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/chichu04.png"))
-                                    + zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/chichu05.png")));
+                            zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/chichu01.png"))
+                                    + zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/chichu02.png"))
+                                    + zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/chichu03.png"))
+                                    + zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/chichu04.png"))
+                                    + zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/chichu05.png")));
                 })
                 .next()
                 .or("编码"::equals)
                 .run((cqmsg) -> {
                     zibenbot.replyMsg(cqmsg,
-                            zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/chichu_bianma.png")));
+                            zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/chichu_bianma.png")));
                 })
                 .or("角"::equals)
                 .run((cqmsg) -> {
                     zibenbot.replyMsg(cqmsg,
-                            zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/chichu_jiao.png")));
+                            zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/chichu_jiao.png")));
                 })
                 .or("棱1"::equals)
                 .run((cqmsg) -> {
                     zibenbot.replyMsg(cqmsg,
-                            zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/chichu_leng.png")));
+                            zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/chichu_leng.png")));
                 })
                 .or("棱2"::equals)
                 .run((cqmsg) -> {
                     zibenbot.replyMsg(cqmsg,
-                            zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/chichu_leng2.png")));
+                            zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/chichu_leng2.png")));
                 })
                 .or("翻棱"::equals)
                 .run((cqmsg) -> {
                     zibenbot.replyMsg(cqmsg,
-                            zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/chichu_fanleng.png")));
+                            zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/chichu_fanleng.png")));
                 })
                 .or("翻角"::equals)
                 .run((cqmsg) -> {
                     zibenbot.replyMsg(cqmsg,
-                            zibenbot.getImg(new File(zibenbot.appDirectory + "/image/cube/chichu_fanjiao.png")));
+                            zibenbot.getImg(new File(zibenbot.getAppDirectory() + "/image/cube/chichu_fanjiao.png")));
                 })
                 .pop()
                 .build();

@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
@@ -27,7 +28,7 @@ public class WeiboFunc extends BaseFunc {
             Pattern.compile("weibo_id=([0-9]{16})"),
             Pattern.compile("m\\.weibo\\.cn\\\\/status\\\\/([0-9]{16})")};
 
-    public WeiboFunc(Zibenbot zibenbot, WeiboReader weiboReader) {
+    public WeiboFunc(BaseBot zibenbot, WeiboReader weiboReader) {
         super(zibenbot);
         this.weiboReader = weiboReader;
     }

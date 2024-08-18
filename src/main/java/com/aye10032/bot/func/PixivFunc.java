@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
@@ -25,7 +26,7 @@ public class PixivFunc extends BaseFunc {
     private Commander<SimpleMsg> commander;
     private List<String> fileList;
 
-    public PixivFunc(Zibenbot zibenbot) {
+    public PixivFunc(BaseBot zibenbot) {
         super(zibenbot);
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)

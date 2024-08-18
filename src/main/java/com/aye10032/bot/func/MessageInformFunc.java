@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
@@ -13,7 +14,7 @@ public class MessageInformFunc extends BaseFunc {
 
     private Commander<SimpleMsg> commander;
 
-    public MessageInformFunc(Zibenbot zibenbot) {
+    public MessageInformFunc(BaseBot zibenbot) {
         super(zibenbot);
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)

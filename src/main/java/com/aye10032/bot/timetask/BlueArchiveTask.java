@@ -46,8 +46,8 @@ public class BlueArchiveTask extends SubscribableBase {
 
                 int img_count = dynamic.getImg_url_list().size();
                 for (int i = 0; i < img_count; i++) {
-                    ImgUtils.downloadImg(dynamic.getImg_url_list().get(i), "ba" + i, getBot().appDirectory);
-                    builder.append(getBot().getImg(new File(getBot().appDirectory + "/image/" + "ba" + i + ".jpg")));
+                    ImgUtils.downloadImg(dynamic.getImg_url_list().get(i), "ba" + i, getAppDirectory());
+                    builder.append(getBot().getImg(new File(getAppDirectory() + "/image/" + "ba" + i + ".jpg")));
                 }
                 builder.append(dynamic.getDynamic_url()).append("\r\n")
                         .append(dynamic.getPub_string());

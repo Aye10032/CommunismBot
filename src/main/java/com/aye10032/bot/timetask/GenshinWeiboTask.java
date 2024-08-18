@@ -30,7 +30,7 @@ public class GenshinWeiboTask extends SubscribableBase {
 
     @PostConstruct
     public void init() {
-        File file = new File(getBot().appDirectory + "/genshin/");
+        File file = new File(getAppDirectory() + "/genshin/");
         if (!file.exists()) {
             file.mkdirs();
         }

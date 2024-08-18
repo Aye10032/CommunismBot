@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
@@ -10,7 +11,6 @@ import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
 import com.aye10032.service.BanRecordService;
 import com.aye10032.service.KillRecordService;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -26,7 +26,7 @@ public class BanFunc extends BaseFunc {
     private BanRecordService banRecordService;
     private KillRecordService killRecordService;
 
-    public BanFunc(Zibenbot zibenbot, BanRecordService banRecordService, KillRecordService killRecordService) {
+    public BanFunc(BaseBot zibenbot, BanRecordService banRecordService, KillRecordService killRecordService) {
         super(zibenbot);
         this.banRecordService = banRecordService;
         this.killRecordService = killRecordService;
@@ -110,7 +110,7 @@ public class BanFunc extends BaseFunc {
     }
 
     public void done(long fromGroup) {
-        zibenbot.setMuteAll(fromGroup, false);
+        bot.setMuteAll(fromGroup, false);
         String msg;
         List<BanRecord> banList = banRecordService.selectBanRecordByGroup(fromGroup);
         boolean isEmpty = true;
@@ -118,7 +118,7 @@ public class BanFunc extends BaseFunc {
         for (BanRecord record : banList) {
             if (!isFree(record.getLastBanDate(), record.getBanTime())) {
                 isEmpty = false;
-                zibenbot.unMute(record.getFromGroup(), record.getQqId());
+                bot.unMute(record.getFromGroup(), record.getQqId());
             }
             record.setStatus(FREE);
             banRecordService.updateBanRecord(record);
@@ -137,7 +137,7 @@ public class BanFunc extends BaseFunc {
         } else if (fromGroup == 792666782L) {
             msg += "------《史记 卞高祖本纪》";
         }
-        zibenbot.toGroupMsg(fromGroup, msg);
+        bot.toGroupMsg(fromGroup, msg);
 
     }
 

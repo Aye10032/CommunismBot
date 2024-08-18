@@ -35,7 +35,7 @@ public class SubscriptFunc implements IFunc {
         if (zibenbot == null) {
             appDirectory = "";
         } else {
-            appDirectory = zibenbot.appDirectory;
+            appDirectory = zibenbot.getAppDirectory();
         }
     }
 

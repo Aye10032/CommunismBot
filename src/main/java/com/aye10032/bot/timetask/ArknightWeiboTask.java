@@ -37,7 +37,7 @@ public class ArknightWeiboTask extends SubscribableBase {
 
     @PostConstruct
     public void init() {
-        File file = new File(getBot().appDirectory + "/arknight/");
+        File file = new File(getAppDirectory() + "/arknight/");
         if (!file.exists()) {
             file.mkdirs();
         }

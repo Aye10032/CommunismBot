@@ -1,5 +1,6 @@
 package com.aye10032.bot.func.funcutil;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 
 /**
@@ -11,16 +12,16 @@ import com.aye10032.bot.Zibenbot;
  */
 public abstract class BaseFunc implements IFunc {
 
-    public Zibenbot zibenbot;
+    public BaseBot bot;
     protected String appDirectory;
 
 
-    public BaseFunc(Zibenbot zibenbot) {
-        this.zibenbot = zibenbot;
-        if (zibenbot == null) {
+    public BaseFunc(BaseBot bot) {
+        this.bot = bot;
+        if (bot == null) {
             appDirectory = "";
         } else {
-            appDirectory = zibenbot.appDirectory;
+            appDirectory = bot.getAppDirectory();
         }
     }
 
@@ -31,8 +32,8 @@ public abstract class BaseFunc implements IFunc {
      * @param msg     要回复的内容
      */
     public void replyMsg(SimpleMsg fromMsg, String msg) {
-        if (zibenbot != null) {
-            zibenbot.replyMsg(fromMsg, msg);
+        if (bot != null) {
+            bot.replyMsg(fromMsg, msg);
         } else {
             System.out.println(msg);
         }
@@ -45,24 +46,11 @@ public abstract class BaseFunc implements IFunc {
      * @param msg     要回复的内容
      */
     public void replyMsgWithQuote(SimpleMsg fromMsg, String msg) {
-        if (zibenbot != null) {
-            zibenbot.replyMsgWithQuote(fromMsg, msg);
+        if (bot != null) {
+            bot.replyMsgWithQuote(fromMsg, msg);
         } else {
             System.out.println(msg);
         }
     }
 
-    /**
-     * 回复消息 并且施加回复钩子 如果有用户回复这个消息会触发钩子
-     *
-     * @param fromMsg 从哪来的什么消息
-     * @param msg     要回复的内容
-     */
-    public void replyMsgWithQuoteHook(SimpleMsg fromMsg, String msg, IQuoteHook hook) {
-        if (zibenbot != null) {
-            zibenbot.replyMsgWithQuoteHook(fromMsg, msg, hook);
-        } else {
-            System.out.println(msg);
-        }
-    }
 }

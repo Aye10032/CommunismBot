@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
@@ -16,7 +17,7 @@ import java.util.List;
 @Service
 public class ZipMessageTestFunc extends BaseFunc {
 
-    public ZipMessageTestFunc(Zibenbot zibenbot) {
+    public ZipMessageTestFunc(BaseBot zibenbot) {
         super(zibenbot);
     }
 
@@ -33,7 +34,7 @@ public class ZipMessageTestFunc extends BaseFunc {
             for (int i = 0; i < 10; i++) {
                 list.add(RandomStringUtils.random(50));
             }
-            zibenbot.replyZipMsg(simpleMsg, list.toArray(new String[0]));
+            bot.replyZipMsg(simpleMsg, list.toArray(new String[0]));
         }
     }
 }

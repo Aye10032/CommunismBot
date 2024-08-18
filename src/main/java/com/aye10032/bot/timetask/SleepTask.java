@@ -28,12 +28,12 @@ public class SleepTask extends SubscribableBase {
             if (compareTo(7)) {
                 for (Reciver reciver : recivers) {
                     getBot().replyMsg(reciver.getSender(),
-                            getBot().getImg(new File(getBot().appDirectory + "/image/getup.jpg")));
+                            getBot().getImg(new File(getAppDirectory() + "/image/getup.jpg")));
                 }
             } else if (compareTo(23)) {
                 for (Reciver reciver : recivers) {
                     getBot().replyMsg(reciver.getSender(),
-                            getBot().getImg(new File(getBot().appDirectory + "/image/sleep.jpg")));
+                            getBot().getImg(new File(getAppDirectory() + "/image/sleep.jpg")));
                 }
             }
         }

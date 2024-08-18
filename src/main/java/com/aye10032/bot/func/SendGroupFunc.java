@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.MsgType;
@@ -24,7 +25,7 @@ public class SendGroupFunc extends BaseFunc {
     private List<Long> oplist = new ArrayList<>();
     private Map<Integer, Long> groupMap = new HashMap<>();
 
-    public SendGroupFunc(Zibenbot zibenbot) {
+    public SendGroupFunc(BaseBot zibenbot) {
         super(zibenbot);
     }
 
@@ -49,7 +50,7 @@ public class SendGroupFunc extends BaseFunc {
                 sendGroupMSG(simpleMsg);
             } else if ("send".equals(msg)) {
                 String desc = "send1 XP交流群\nsend2 TIS\nsend3 实验室\nsend4 搬运组\nsend5 LAB";
-                zibenbot.replyMsg(simpleMsg, desc);
+                bot.replyMsg(simpleMsg, desc);
             } else if (msg.startsWith("send1")) {
                 sendGroupMSG(simpleMsg, groupMap.get(1));
             } else if (msg.startsWith("send2")) {
@@ -82,8 +83,8 @@ public class SendGroupFunc extends BaseFunc {
                     builder.append("-------------\n");
                 }
 
-                zibenbot.toGroupMsg(groupMap.get(1), builder.toString());
-                zibenbot.toGroupMsg(groupMap.get(2), builder.toString());
+                bot.toGroupMsg(groupMap.get(1), builder.toString());
+                bot.toGroupMsg(groupMap.get(2), builder.toString());
             }
         }
     }
@@ -94,11 +95,11 @@ public class SendGroupFunc extends BaseFunc {
             long group = Long.parseLong(msg.split(" ")[1]);
             int flag = msg.indexOf(" ", msg.indexOf(" ") + 1);
             msg = msg.substring(flag + 1);
-            zibenbot.toGroupMsg(group, msg);
+            bot.toGroupMsg(group, msg);
             simpleMsg.setFromGroup(group);
             simpleMsg.setType(MsgType.GROUP_MSG);
             simpleMsg.setMsg(msg);
-            zibenbot.runFuncs(simpleMsg);
+            bot.runFuncs(simpleMsg);
         } catch (Exception e) {
             replyMsg(simpleMsg, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
             log.warn("运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
@@ -113,9 +114,9 @@ public class SendGroupFunc extends BaseFunc {
             msg = msg.replaceAll("&#91;", "[");
             msg = msg.replaceAll("&amp;", "&");
             msg = msg.replaceAll("&#93;", "]");
-            zibenbot.toGroupMsg(group, msg);
+            bot.toGroupMsg(group, msg);
             SimpleMsg simpleMsg1 = SimpleMsg.build(simpleMsg.getFromGroup(), simpleMsg.getFromClient(), msg, MsgType.GROUP_MSG);
-            zibenbot.runFuncs(simpleMsg1);
+            bot.runFuncs(simpleMsg1);
         } catch (Exception e) {
             replyMsg(simpleMsg, "运行出错：" + e + "\n" + ExceptionUtils.printStack(e));
             log.warn("运行出错：" + e + "\n" + ExceptionUtils.printStack(e));

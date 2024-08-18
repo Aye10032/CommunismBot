@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 /**
  * @author Dazo66
  */
-@Service
 @Slf4j
 public class ArknightWeiboFunc extends BaseFunc {
 
@@ -27,8 +27,8 @@ public class ArknightWeiboFunc extends BaseFunc {
     private WeiboSet posts = null;
     private WeiboReader reader;
 
-    public ArknightWeiboFunc(Zibenbot zibenbot, WeiboReader reader) {
-        super(zibenbot);
+    public ArknightWeiboFunc(BaseBot bot, WeiboReader reader) {
+        super(bot);
         this.reader = reader;
     }
 

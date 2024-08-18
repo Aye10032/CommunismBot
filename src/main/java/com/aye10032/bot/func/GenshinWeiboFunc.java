@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
@@ -25,7 +26,7 @@ public class GenshinWeiboFunc extends BaseFunc {
     private WeiboSet posts = null;
     private WeiboReader reader;
 
-    public GenshinWeiboFunc(Zibenbot zibenbot, WeiboReader reader) {
+    public GenshinWeiboFunc(BaseBot zibenbot, WeiboReader reader) {
         super(zibenbot);
         this.reader = reader;
     }

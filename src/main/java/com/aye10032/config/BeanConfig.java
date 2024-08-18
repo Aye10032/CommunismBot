@@ -1,5 +1,6 @@
 package com.aye10032.config;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.timetask.SimpleSubscription;
 import com.aye10032.foundation.utils.timeutil.AsynchronousTaskPool;
@@ -18,9 +19,9 @@ public class BeanConfig {
     }
 
     @Bean("maiyao")
-    public SimpleSubscription maiyao(Zibenbot zibenbot) {
+    public SimpleSubscription maiyao(BaseBot zibenbot) {
         return new SimpleSubscription("0 0 0,6,12,18 * * ? ",
-                zibenbot.getImg(zibenbot.appDirectory + "/image/提醒买药小助手.jpg")) {
+                zibenbot.getImg(zibenbot.getAppDirectory() + "/image/提醒买药小助手.jpg")) {
             private final static String NAME = "提醒买药小助手";
 
             @Override
@@ -31,10 +32,10 @@ public class BeanConfig {
     }
 
     @Bean("tigangSub")
-    public SimpleSubscription tigang(Zibenbot zibenbot) {
+    public SimpleSubscription tigang(BaseBot zibenbot) {
         return new SimpleSubscription(
                 "0 0 19 * * ? ",
-                zibenbot.getImg(zibenbot.appDirectory + "/tigang.jpg")) {
+                zibenbot.getImg(zibenbot.getAppDirectory() + "/tigang.jpg")) {
             @Override
             public String getName() {
                 return "提肛小助手";

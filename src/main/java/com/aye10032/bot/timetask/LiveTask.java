@@ -33,13 +33,13 @@ public class LiveTask extends SubscribableBase {
                     long l = now.getTime() - liveInfo.getLiveDate().getTime();
                     long min = ((l / (60 * 1000)));
                     if (l < 5 * 60 * 1000) {
-                        ImgUtils.downloadImg(liveInfo.getLiveBackgroundUrl(), args[0], getBot().appDirectory);
+                        ImgUtils.downloadImg(liveInfo.getLiveBackgroundUrl(), args[0], getAppDirectory());
 
                         log.debug("尝试获取" + liveInfo.getUid() + "昵称");
                         builder.append(liveInfo.getNickName(liveInfo.getUid()))
                                 .append("在").append(min).append("分钟前开始了直播：")
                                 .append(liveInfo.getLiveTitle())
-                                .append(getBot().getImg(new File(getBot().appDirectory + "/image/" + args[0] + ".jpg")))
+                                .append(getBot().getImg(new File(getAppDirectory() + "/image/" + args[0] + ".jpg")))
                                 .append("\n").append(liveInfo.getLiveUrl());
                         getBot().replyMsg(reciver.getSender(), builder.toString());
                     }

@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
@@ -24,10 +25,10 @@ public class EatFunc extends BaseFunc {
 
     private FoodUtil foodUtil;
     private EatData eatData;
-    FoodClaass foodClaass = ConfigLoader.load(zibenbot.appDirectory + "/foodData.json", FoodClaass.class);
+    FoodClaass foodClaass = ConfigLoader.load(bot.getAppDirectory() + "/foodData.json", FoodClaass.class);
     private Commander<SimpleMsg> commander;
 
-    public EatFunc(Zibenbot zibenbot) {
+    public EatFunc(BaseBot zibenbot) {
         super(zibenbot);
         commander = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)

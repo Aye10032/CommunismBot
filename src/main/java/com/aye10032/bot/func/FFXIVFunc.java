@@ -1,5 +1,6 @@
 package com.aye10032.bot.func;
 
+import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
@@ -44,7 +45,7 @@ public class FFXIVFunc extends BaseFunc {
             .expireAfterAccess(240, TimeUnit.MINUTES)
             .build();
 
-    public FFXIVFunc(Zibenbot zibenbot, FFXIVService service) {
+    public FFXIVFunc(BaseBot zibenbot, FFXIVService service) {
         super(zibenbot);
         this.service = service;
         commander = new CommanderBuilder<SimpleMsg>()
@@ -170,7 +171,7 @@ public class FFXIVFunc extends BaseFunc {
                         String replyMsg = builder.substring(0, builder.length() - 1);
                         searchListCache.put(SimpleMsg.getQuoteKeyStatic(msg.getFromGroup(), zibenbot.getBotQQId(), replyMsg), ids);
 
-                        replyMsgWithQuoteHook(msg, replyMsg, (originMsg, replyMsg1) -> {
+/*                        replyMsgWithQuoteHook(msg, replyMsg, (originMsg, replyMsg1) -> {
                             List<String> historyIds = searchListCache.getIfPresent(originMsg.getQuoteKey());
                             if (historyIds == null) {
                                 return;
@@ -189,7 +190,7 @@ public class FFXIVFunc extends BaseFunc {
                             }
                             replyMsg(msg, ffxivMarketHelper.getPrintText(name, ffxivMarketHelper.searchItemWithId(historyIds.get(index - 1))));
 
-                        });
+                        });*/
                     }
                 })
                 .pop()
