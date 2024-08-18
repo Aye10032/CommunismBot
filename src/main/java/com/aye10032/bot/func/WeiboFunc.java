@@ -22,6 +22,7 @@ public class WeiboFunc extends BaseFunc {
 
     private final WeiboReader weiboReader;
     Pattern[] idPatterns = new Pattern[]{
+            Pattern.compile("weibo\\.com/[0-9]+/([0-9]{16})"),
             Pattern.compile("weibo\\.com/[0-9]+/([0-9a-zA-Z]{9})"),
             Pattern.compile("m\\.weibo\\.cn/status/([0-9]{16})"),
             Pattern.compile("m\\.weibo\\.cn/[0-9]+/([0-9]{16})"),
@@ -54,6 +55,7 @@ public class WeiboFunc extends BaseFunc {
                 } catch (Exception e) {
                     log.info("读取微博 {} 数据异常：" + ExceptionUtils.printStack(e), id);
                 }
+                return;
             }
         }
     }
