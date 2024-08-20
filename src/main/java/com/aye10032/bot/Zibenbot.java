@@ -191,7 +191,7 @@ public class Zibenbot extends BaseBot {
     public List<Long> getAtMembers(SimpleMsg simpleMsg) {
         List<Long> list = new ArrayList<>();
         for (Map<String, String> split : simpleMsg.getMessageSplitResult()) {
-            if ("AT".equals(split.get("CQ"))) {
+            if ("at".equals(split.get("CQ"))) {
                 list.add(Long.parseLong(split.get("qq")));
             }
         }
