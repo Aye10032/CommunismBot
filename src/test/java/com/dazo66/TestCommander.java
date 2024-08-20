@@ -1,16 +1,23 @@
 package com.dazo66;
 
 import com.aye10032.bot.func.funcutil.FuncExceptionHandler;
+import com.aye10032.bot.func.funcutil.MsgType;
+import com.aye10032.bot.func.funcutil.SimpleMsg;
+import com.aye10032.foundation.entity.base.ban.record.KillRecord;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
 import com.aye10032.foundation.utils.command.CommanderUtils;
 import com.aye10032.foundation.utils.command.StringCommand;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static com.aye10032.foundation.entity.base.ban.record.BanStatusType.KILLER;
+import static com.aye10032.foundation.entity.base.ban.record.BanStatusType.VICTIM;
 
 public class TestCommander {
 
@@ -23,43 +30,49 @@ public class TestCommander {
 
     public static void main(String[] args) throws UnsupportedEncodingException {
         System.out.println(URLEncoder.encode("陆行鸟", StandardCharsets.UTF_8.name()));
-        Commander<StringCommand> commander1 = new CommanderBuilder<StringCommand>()
+        Commander<SimpleMsg> commander1 = new CommanderBuilder<SimpleMsg>()
                 .seteHandler(FuncExceptionHandler.INSTENCE)
                 .start()
-                .or(".ff14"::equalsIgnoreCase)
-                .next()
-                .or("绑定"::equals)
-                .next()
-                .orArray(strings -> true)
+                .or(".肃静"::equals)
                 .run((msg) -> {
-                    System.out.println(msg.getCommand());
+                    System.out.println("shujin");
                 })
-                .pop()
-                .or("房屋"::equals)
+                .or(".大赦"::equals)
                 .run((msg) -> {
-                    System.out.println(msg.getCommand());
+                    System.out.println("dase");
                 })
-                .or("帮助"::equals)
-                .run((msg) -> {
-                    System.out.println(msg.getCommand());
-                })
-                .or("雇员"::equals)
+                .or(".禁言"::equals)
                 .next()
-                .orArray(strings -> true)
-                .run((msg) -> {
-                    System.out.println(msg.getCommand());
+                .or(s -> {
+                    return true;
                 })
-                .pop()
-                .or(s -> CommanderUtils.multiMatch(Arrays.asList("查价", "比价", "市场"), s))
                 .next()
-                .or(s -> true)
-                .run(msg -> {
-                    System.out.println(msg.getCommand());
+                .or(s -> {
+                    return NumberUtils.isDigits(s);
+                })
+                .run((msg) -> {
+                    System.out.println("jinyan");
                 })
                 .pop()
                 .pop()
+                .or(".击杀榜"::equals)
+                .run((msg) -> {
+                    System.out.println("jisa");
+                })
+                .or(".口球榜"::equals)
+                .run((msg) -> {
+                    System.out.println("kouq");
+                })
                 .build();
-        commander1.execute(StringCommand.of(".ff14 市场 桦木"));
+
+        SimpleMsg build = SimpleMsg.build(-1, -1, ".禁言 [CQ:at,qq=895981998,name=dazo] 1", MsgType.GROUP_MSG);
+        commander1.execute(build);
+        build = SimpleMsg.build(-1, -1, ".击杀榜", MsgType.GROUP_MSG);
+        commander1.execute(build);
+        build = SimpleMsg.build(-1, -1, ".口球榜", MsgType.GROUP_MSG);
+        commander1.execute(build);
+        build = SimpleMsg.build(-1, -1, ".肃静", MsgType.GROUP_MSG);
+        commander1.execute(build);
 
 
         CommanderBuilder<StringCommand> builder = new CommanderBuilder<>();

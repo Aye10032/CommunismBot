@@ -59,7 +59,12 @@ public class CQDecoder {
                     return list;
                 }
             }
-            if (i1 == -1) break;
+            if (i1 == -1) {
+                if (cqCodeMessage.length() -1 > i) {
+                    list.add(cqCodeMessage.substring(i));
+                }
+                break;
+            }
 
         }
         if (list.isEmpty()) {
@@ -70,7 +75,7 @@ public class CQDecoder {
 
     private static Map<String, String> parseElement(String element) {
         Map<String, String> map = new HashMap<>();
-        final String raw = element;
+        final String raw = element.trim();
         if (element.startsWith("[CQ:")) {
             element = element.substring(0, element.length() - 1);
             String[] split = element.split(",");
