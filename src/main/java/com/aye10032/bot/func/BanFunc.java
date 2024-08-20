@@ -75,6 +75,8 @@ public class BanFunc extends BaseFunc {
                         e.printStackTrace();
                     }
                 })
+                .pop()
+                .pop()
                 .or(".击杀榜"::equals)
                 .run((msg) -> {
                     List<KillRecord> records = killRecordService.selectKillRecordByGroup(msg.getFromGroup(), KILLER);
