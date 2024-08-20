@@ -40,7 +40,10 @@ public class BanFunc extends BaseFunc {
                 .or(".大赦"::equals)
                 .run((msg) -> done(msg.getFromGroup()))
                 .or(".禁言"::equals)
-                .orArray(array -> array.length == 3 && NumberUtils.isDigits(array[2]))
+                .next()
+                .or(s -> true)
+                .next()
+                .or(NumberUtils::isDigits)
                 .run((msg) -> {
                     String[] strings = msg.getCommandPieces();
                     long banId = zibenbot.getAtMember(msg);
