@@ -74,8 +74,7 @@ public class Commander<S extends ICommand> {
             if (patchs.size() > 0) {
                 CommandPiece<S> p = patchs.get(patchs.size() - 1);
                 if (patchs.size() < list.size()) {
-                    List<or<S>> ors =
-                            p.match(list.subList(patchs.size() - 1, list.size()).toArray(new String[]{}), eHandler);
+                    List<or<S>> ors = p.match(list.subList(patchs.size() - 1, list.size()).toArray(new String[]{}), eHandler);
                     if (ors.size() > 0) {
                         try {
                             throw new RedundantParametersException("Redundant Parameters " +

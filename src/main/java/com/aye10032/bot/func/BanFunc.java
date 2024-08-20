@@ -10,6 +10,7 @@ import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
 import com.aye10032.service.BanRecordService;
 import com.aye10032.service.KillRecordService;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -39,6 +40,7 @@ public class BanFunc extends BaseFunc {
                 .or(".大赦"::equals)
                 .run((msg) -> done(msg.getFromGroup()))
                 .or(".禁言"::equals)
+                .orArray(array -> array.length == 3 && NumberUtils.isDigits(array[2]))
                 .run((msg) -> {
                     String[] strings = msg.getCommandPieces();
                     long banId = zibenbot.getAtMember(msg);
