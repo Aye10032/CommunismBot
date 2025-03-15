@@ -32,7 +32,7 @@ public class LiveTask extends SubscribableBase {
                 if (liveInfo.HasLive() && liveInfo.Is_living()) {
                     long l = now.getTime() - liveInfo.getLiveDate().getTime();
                     long min = ((l / (60 * 1000)));
-                    if (l < 5 * 60 * 1000) {
+                    if (l < 5 * 60 * 1000 && l > 0) {
                         ImgUtils.downloadImg(liveInfo.getLiveBackgroundUrl(), args[0], getAppDirectory());
 
                         log.debug("尝试获取" + liveInfo.getUid() + "昵称");
