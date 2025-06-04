@@ -77,7 +77,7 @@ public class KillBiliMiniAppFunc extends BaseFunc {
                 return;
             }
             if (bot.deleteMsg(simpleMsg)) {
-                bot.muteMember(simpleMsg.getFromGroup(), simpleMsg.getFromClient(), 60);
+//                bot.muteMember(simpleMsg.getFromGroup(), simpleMsg.getFromClient(), 60);
                 send += "检测到B站QQ小程序，已击杀\n";
             }
             send += biliInfo.getTitle() + "\n"
