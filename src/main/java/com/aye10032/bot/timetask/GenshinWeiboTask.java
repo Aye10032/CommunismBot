@@ -57,7 +57,10 @@ public class GenshinWeiboTask extends SubscribableBase {
                     postIds.add(post.getId());
                     try {
                         log.info(String.format("检测到原神新的饼：%s", post.getTitle()));
-                        replyAll(recivers, weiboReader.postToUser(WeiboUtils.getWeiboWithPostItem(client, post)));
+                        WeiboPost weiboWithPostItem = WeiboUtils.getWeiboWithPostItem(client, post);
+                        // 原神的微博不返回转推
+                        if (weiboWithPostItem.isPermaLink()) continue;
+                        replyAll(recivers, weiboReader.postToUser(weiboWithPostItem));
                     } catch (Exception e) {
                         log.error("获取饼出错：" + ExceptionUtils.printStack(e));
                     }

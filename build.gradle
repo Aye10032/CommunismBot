@@ -6,14 +6,13 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
         classpath "gradle.plugin.ua.eshepelyuk:ManifestClasspath:1.0.0"
     }
 }
 
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.1'
     id 'org.springframework.boot' version '2.3.3.RELEASE'
     id "io.spring.dependency-management" version "1.1.5"
 }
@@ -60,8 +59,6 @@ dependencies {
     implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
     implementation platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:${springCloudAlibabaVersion}")
 
-    implementation group: 'junit', name: 'junit', version: '4.13.1'
-
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
     implementation 'org.projectlombok:lombok:1.18.26'
@@ -91,6 +88,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation group: 'commons-io', name: 'commons-io', version: '2.7'
+
 
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
