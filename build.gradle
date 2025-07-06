@@ -89,13 +89,6 @@ dependencies {
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation group: 'commons-io', name: 'commons-io', version: '2.7'
 
-
-    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
-    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
-
-    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore
-    implementation group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.13'
-
     // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
     implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
 

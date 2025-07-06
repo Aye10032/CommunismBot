@@ -1,5 +1,7 @@
 package com.aye10032.foundation.entity.onebot;
 
+import com.aye10032.bot.api.OneBotService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,9 +11,9 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public abstract class QQMessageEvent extends QQBaseEvent {
+public class QQMessageEvent extends QQBaseEvent {
     @JsonProperty("message_type")
-    private String messageType;
+    private QQMessageTypeEnum messageType;
     @JsonProperty("sub_type")
     private String subType;
 
@@ -29,5 +31,9 @@ public abstract class QQMessageEvent extends QQBaseEvent {
     private Long messageSeq;
     @JsonProperty("message_id")
     private Integer messageId;
+    @JsonProperty("group_id")
+    private Long groupId;
+    @JsonIgnore
+    private OneBotService oneBotService;
 
 }

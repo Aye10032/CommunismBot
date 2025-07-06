@@ -1,6 +1,7 @@
 package com.aye10032.bot.func;
 
 import com.aye10032.bot.BaseBot;
+import com.aye10032.bot.Zibenbot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.utils.HttpUtils;
@@ -16,20 +17,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.Header;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.ssl.SSLContextBuilder;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -48,7 +38,7 @@ import static com.aye10032.foundation.utils.fangzhoudiaoluo.Module.getVers;
 /**
  * @author Dazo66
  */
-//@Service
+@Service
 @Slf4j
 public class FangZhouDiaoluoFunc extends BaseFunc {
 
@@ -72,24 +62,6 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
             arkonegraphFile = "res/Arkonegraph.jpg";
             cacheFile = "cacheFile.json";
         }
-    }
-
-    public static Header[] getHeaders() {
-        return new Header[]{
-                buildHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"), buildHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36"),
-                buildHeader("Accept-Encoding", "gzip, deflate, sdch"),
-                buildHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6"),
-                buildHeader("pragma", "no-cache"),
-                buildHeader("origin", "https://aog.wiki"),
-                buildHeader("referer", "https://aog.wiki/"),
-                buildHeader("Connection", "keep-alive"),
-                buildHeader("sec-fetch-site", "same-site"),
-                buildHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36")
-        };
-    }
-
-    public static Header buildHeader(String name, String value) {
-        return new BasicHeader(name, value);
     }
 
     @Override
@@ -244,42 +216,10 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
         // use the TrustSelfSignedStrategy to allow Self Signed Certificates
 
 
-        TrustManager[] trustAllCerts = new TrustManager[]{
-                new X509TrustManager() {
-                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
-
-                    public void checkClientTrusted(
-                            java.security.cert.X509Certificate[] certs, String authType) {
-                    }
-
-                    public void checkServerTrusted(
-                            java.security.cert.X509Certificate[] certs, String authType) {
-                    }
-                }
-        };
-
-        SSLContext sslContext = SSLContextBuilder
-                .create()
-                .loadTrustMaterial(new TrustSelfSignedStrategy())
-                .build();
-        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-
-        HostnameVerifier allowAllHosts = NoopHostnameVerifier.INSTANCE;
-        SSLConnectionSocketFactory connectionFactory = new SSLConnectionSocketFactory(sslContext, allowAllHosts);
-        Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("https", connectionFactory)
-                .build();
-        HttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(registry);
-        CloseableHttpClient client = HttpClientBuilder.create().setDefaultHeaders(Arrays.asList(getHeaders()))
-                .setConnectionManager(connManager)
-                .build();
-
         //更新掉落数据
         DiaoluoType diaoluoType = new DiaoluoType();
         try {
-            InputStream stream = HttpUtils.getInputStreamFromNet("https://arkonegraph.herokuapp.com/total/CN", client);
+            InputStream stream = HttpUtils.getInputStreamFromNet("https://arkonegraph.herokuapp.com/total/CN", Zibenbot.getOkHttpClientWithProxy());
             JsonObject jsonObject = parser.parse(IOUtils.toString(stream)).getAsJsonObject();
             stream.close();
             for (int i = 1; i <= 5; i++) {
@@ -328,8 +268,6 @@ public class FangZhouDiaoluoFunc extends BaseFunc {
                     .getAsJsonObject().get("last_updated")
                     .getAsString();
             Module.lastUpdate = last;
-
-            client.close();
         } catch (Exception e) {
             log.info("方舟掉落更新出错：" + ExceptionUtils.getStackTrace(e));
         }

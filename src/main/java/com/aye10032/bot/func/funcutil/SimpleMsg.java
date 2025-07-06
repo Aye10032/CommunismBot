@@ -1,9 +1,6 @@
 package com.aye10032.bot.func.funcutil;
 
-import com.aye10032.foundation.entity.onebot.QQGroupMessageEvent;
-import com.aye10032.foundation.entity.onebot.QQMessageEvent;
-import com.aye10032.foundation.entity.onebot.QQPrivateMessageEvent;
-import com.aye10032.foundation.entity.onebot.QQSender;
+import com.aye10032.foundation.entity.onebot.*;
 import com.aye10032.foundation.utils.CQDecoder;
 import com.aye10032.foundation.utils.command.interfaces.ICommand;
 import lombok.AccessLevel;
@@ -39,7 +36,6 @@ public class SimpleMsg implements ICommand {
     private MsgType type;
     private Integer messageId;
     private SimpleMsg quoteMsg;
-    private QQMessageEvent event;
     /**
      * 原始的消息可能会有很多CQCODE 为了减少解析次数，这里进行预处理
      */
@@ -63,24 +59,27 @@ public class SimpleMsg implements ICommand {
 
     public SimpleMsg(QQMessageEvent event) {
         messageSplitResult = CQDecoder.decode(event.getRawMessage());
-        if (event instanceof QQGroupMessageEvent) {
+        if (event.getMessageType() == QQMessageTypeEnum.GROUP) {
             type = MsgType.GROUP_MSG;
-            QQGroupMessageEvent event1 = (QQGroupMessageEvent) event;
-            fromGroup = event1.getGroupId();
-        } else if (event instanceof QQPrivateMessageEvent) {
+            fromGroup = event.getGroupId();
+        } else if (event.getMessageType() == QQMessageTypeEnum.PRIVATE) {
             type = MsgType.PRIVATE_MSG;
         } else {
             throw new IllegalArgumentException("不支持的消息类型");
         }
         QQSender sender = event.getSender();
         fromClient = sender.getUserId();
-/*        QuoteReply quoteReply = event.getMessageSeq();
-        if (quoteReply != null) {
-            MessageChain quoteChain = quoteReply.getSource().getOriginalMessage();
-            quoteMsg = new SimpleMsg(fromGroup, quoteReply.getSource().getFromId(), quoteChain, type);
-        }*/
         msg = event.getRawMessage();
-        this.event = event;
+        if (!messageSplitResult.isEmpty() && messageSplitResult.get(0).containsKey("CQ")) {
+            // 如果第一个元素是回复消息 设置回复
+            Map<String, String> reply = messageSplitResult.get(0);
+            if (reply.get("CQ").equalsIgnoreCase("reply")) {
+                if (reply.containsKey("id")) {
+                    QQResponse<QQMessageEvent> eventQQResponse = event.getOneBotService().getMsg(new QQMessageIdRequest(Integer.valueOf(reply.get("id"))));
+                    this.quoteMsg = new SimpleMsg(eventQQResponse.getData());
+                }
+            }
+        }
         this.fromClientName = sender.getNickname();
         this.messageId = event.getMessageId();
     }

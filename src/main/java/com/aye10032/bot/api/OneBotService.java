@@ -3,6 +3,7 @@ package com.aye10032.bot.api;
 import com.aye10032.config.FeignRequestInterceptor;
 import com.aye10032.foundation.entity.onebot.*;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Map;
 
+@Profile("!mock")
 @FeignClient(name = "onebot", url = "${bot.onebot.api.url}", configuration = FeignRequestInterceptor.class)
 public interface OneBotService {
 
@@ -52,5 +54,9 @@ public interface OneBotService {
     // set_essence_msg
     @PostMapping("/set_essence_msg")
     QQResponse<Map<String, Object>> setEssenceMsg(@RequestBody QQMessageIdRequest request);
+
+    // get_msg
+    @GetMapping("/get_msg")
+    QQResponse<QQMessageEvent> getMsg(@RequestBody QQMessageIdRequest request);
 
 }

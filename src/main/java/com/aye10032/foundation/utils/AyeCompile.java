@@ -1,11 +1,9 @@
 package com.aye10032.foundation.utils;
 
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import com.aye10032.bot.Zibenbot;
+import okhttp3.Response;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,8 +11,6 @@ import java.util.regex.Pattern;
 
 public class AyeCompile {
 
-    private static RequestConfig config = RequestConfig.custom().setConnectTimeout(50000).setConnectionRequestTimeout(10000).setSocketTimeout(50000).setRedirectsEnabled(false).build();
-    private static CloseableHttpClient httpClient = HttpClients.custom().setMaxConnTotal(2).setDefaultRequestConfig(config).build();
     private String msg = "";
     private boolean hasCode = false;
 
@@ -42,10 +38,14 @@ public class AyeCompile {
             }
         }
         if (flag) {
-            try (CloseableHttpResponse conn = httpClient.execute(new HttpGet(msg))) {
-                this.msg = conn.getHeaders("Location")[0].getValue();
-            } catch (Exception e) {
-                //ignore
+            Response responseFromNet = null;
+            try {
+                responseFromNet = HttpUtils.getResponseFromNet(msg, Zibenbot.getOkHttpClient());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            if (responseFromNet != null) {
+                this.msg = responseFromNet.request().url().toString();
             }
 
         }

@@ -1,5 +1,9 @@
 package com.dazo66;
 
+import com.aye10032.bot.api.OneBotService;
+import com.aye10032.foundation.entity.onebot.QQLoginInfo;
+import com.aye10032.foundation.entity.onebot.QQResponse;
+import com.aye10032.util.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
@@ -18,28 +22,35 @@ import static org.mockito.ArgumentMatchers.any;
 public class TestBotConfig {
 
 
-    /*@Primary
+    @Primary
     @Bean
     @Profile("mock")
-    public Bot getBot() {
-        Bot bot = Mockito.mock(Bot.class);
-        Friend friend = Mockito.mock(Friend.class);
-        EventChannel eventChannel = Mockito.mock(EventChannel.class);
-        Group group = Mockito.mock(Group.class);
-        Mockito.when(bot.getId()).thenReturn(114514L);
-        Mockito.when(bot.getFriend(Mockito.anyLong())).thenReturn(friend);
-        Mockito.when(bot.getGroup(Mockito.anyLong())).thenReturn(group);
-        Mockito.when(bot.getEventChannel()).thenReturn(eventChannel);
-        Mockito.when(friend.sendMessage(((Message) any()))).then(invocationOnMock -> {
-            log.info(invocationOnMock.getArguments()[0].toString());
-            return null;
+    public OneBotService getBot() {
+        return Mockito.mock(OneBotService.class, invocationOnMock -> {
+            QQResponse<Object> response1 = new QQResponse<>();
+            response1.setStatus("ok");
+            response1.setRetcode(0);
+            QQResponse<QQLoginInfo> response = new QQResponse<>();
+            QQLoginInfo loginInfo = new QQLoginInfo();
+            loginInfo.setUserId(123456789L);
+            loginInfo.setNickname("mock nickname");
+            response.setStatus("ok");
+            response.setRetcode(0);
+            response.setData(loginInfo);
+            String methodName = invocationOnMock.getMethod().getName();
+            if (methodName.equals("getLoginInfo")) {
+                return response;
+            }
+            if (methodName.equals("sendGroupMsg") || methodName.equals("sendPrivateMsg")) {
+                // Mock response for sendGroupMsg
+                System.out.println(JSONUtil.entity2json(invocationOnMock.getArguments()[0]));
+                return response1;
+
+            }
+
+            return response1;
         });
-        Mockito.when(group.sendMessage(((Message) any()))).then(invocationOnMock -> {
-            log.info(invocationOnMock.getArguments()[0].toString());
-            return null;
-        });
-        return bot;
-    }*/
+    }
 
 
 }

@@ -1,6 +1,7 @@
 package com.aye10032.controller;
 
 import com.aye10032.bot.Zibenbot;
+import com.aye10032.bot.api.OneBotService;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.entity.dto.Result;
 import com.aye10032.foundation.entity.onebot.*;
@@ -28,6 +29,8 @@ public class OneBotController {
 
     @Autowired
     private Zibenbot zibenbot;
+    @Autowired
+    private OneBotService oneBotService;
 
     @PostMapping("/event")
     public Result<String> event(@RequestBody String json) throws JsonProcessingException {
@@ -35,14 +38,8 @@ public class OneBotController {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.readTree(json);
         if (Objects.equals(actualObj.at("/post_type").asText(), "message")) {
-            QQMessageEvent event = null;
-            if (Objects.equals(actualObj.at("/message_type").asText(), "group")) {
-                event = JsonUtils.fromJson(json, QQGroupMessageEvent.class);
-
-            }
-            if (Objects.equals(actualObj.at("/message_type").asText(), "private")) {
-                event = JsonUtils.fromJson(json, QQPrivateMessageEvent.class);
-            }
+            QQMessageEvent event = JsonUtils.fromJson(json, QQMessageEvent.class);
+            event.setOneBotService(oneBotService);
             if (event != null) {
                 SimpleMsg simpleMsg = new SimpleMsg(event);
                 if (simpleMsg.isGroupMsg()) {
@@ -76,7 +73,7 @@ public class OneBotController {
     public Result<String> sendMessage(@RequestBody SendMessageRequest request) {
         QQMessageEvent event;
         if (request.getIsGroup()) {
-            QQGroupMessageEvent event1 = new QQGroupMessageEvent();
+            QQMessageEvent event1 = new QQMessageEvent();
             event1.setMessageId(-1);
             event1.setMessageSeq(-1L);
             event1.setGroupId(request.getGroupId());
@@ -89,7 +86,7 @@ public class OneBotController {
             event1.setTime(System.currentTimeMillis());
             event = event1;
         } else {
-            QQPrivateMessageEvent event1 = new QQPrivateMessageEvent();
+            QQMessageEvent event1 = new QQMessageEvent();
             event1.setMessageId(-1);
             event1.setMessageSeq(-1L);
             event1.setUserId(request.getSendUserId());

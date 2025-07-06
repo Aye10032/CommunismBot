@@ -1,11 +1,11 @@
 package com.aye10032.config;
 
 import com.aye10032.foundation.entity.dto.ScheduleProxy;
+import com.aye10032.foundation.utils.DateUtils;
 import com.aye10032.foundation.utils.timeutil.SubscribableBase;
 import com.aye10032.mapper.SubTaskMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.utils.DateUtils;
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.matchers.GroupMatcher;

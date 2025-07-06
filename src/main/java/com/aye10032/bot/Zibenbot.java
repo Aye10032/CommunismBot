@@ -5,6 +5,7 @@ import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.entity.onebot.*;
 import com.aye10032.foundation.utils.ExceptionUtils;
 import com.aye10032.foundation.utils.IMsgUpload;
+import com.aye10032.foundation.utils.RandomUtil;
 import com.aye10032.foundation.utils.StringUtil;
 import com.aye10032.foundation.utils.timeutil.TimeUtils;
 import com.google.common.cache.Cache;
@@ -99,6 +100,11 @@ public class Zibenbot extends BaseBot {
 //                .proxy(Zibenbot.getProxy()).build();
     }
 
+    public static OkHttpClient getOkHttpClientWithProxy() {
+        return new OkHttpClient().newBuilder().callTimeout(30, TimeUnit.SECONDS)
+                .proxy(Zibenbot.getProxy()).build();
+    }
+
 
     public Zibenbot() {
     }
@@ -131,7 +137,7 @@ public class Zibenbot extends BaseBot {
                 try {
                     messageQueue.take().run();
                     // 一秒最多发两条
-                    Thread.sleep(500L);
+                    Thread.sleep(500L + RandomUtil.getRandomIndex(500));
                 } catch (InterruptedException e) {
                     log.info("消息线程中断");
                 } catch (Exception e) {
@@ -139,6 +145,8 @@ public class Zibenbot extends BaseBot {
                 }
             }
         });
+        // 设置收护线程
+        messageThread.setDaemon(true);
         messageThread.start();
 /*        bot.getEventChannel().subscribeAlways(MessageEvent.class, messageEvent -> {
             SimpleMsg simpleMsg = new SimpleMsg(messageEvent);
