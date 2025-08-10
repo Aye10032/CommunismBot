@@ -46,14 +46,6 @@ jobs:
     - name: Build with Gradle (skip tests)
       run: ./gradlew clean bootJar -x test --no-daemon
       
-    - name: Verify build output
-      run: |
-        echo "🔍 Checking build directory..."
-        ls -la build/ || echo "❌ No build directory"
-        ls -la build/libs/ || echo "❌ No build/libs directory"
-        echo "📦 JAR files:"
-        find . -name "*.jar" -type f || echo "❌ No JAR files found"
-      
     - name: Extract version from build.gradle
       id: get-version
       run: |
@@ -61,6 +53,12 @@ jobs:
         echo "PROJECT_VERSION=$VERSION" >> $GITHUB_ENV
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "📦 Project version: $VERSION"
+        
+    - name: Prepare JAR for Docker
+      run: |
+        echo "🔄 Renaming JAR file for Docker..."
+        cp build/libs/CommunismBot-*.jar build/libs/app.jar
+        ls -la build/libs/
       
     - name: Log in to Container Registry
       uses: docker/login-action@v3
