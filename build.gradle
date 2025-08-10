@@ -12,13 +12,13 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '7.1.1'
-    id 'org.springframework.boot' version '2.3.3.RELEASE'
-    id "io.spring.dependency-management" version "1.1.5"
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'org.springframework.boot' version '2.7.18'
+    id "io.spring.dependency-management" version "1.1.6"
 }
 
 compileJava {
-    sourceCompatibility = '17'
+    sourceCompatibility = '1.8'
     targetCompatibility = '17' // 设置目标字节码兼容性版本
 }
 
