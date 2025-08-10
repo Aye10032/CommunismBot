@@ -7,7 +7,7 @@ RUN apk add --no-cache tzdata && \
 
 WORKDIR /app
 
-COPY build/libs/app.jar ./app.jar
+COPY app.jar ./app.jar
 
 RUN mkdir -p /app/config
 

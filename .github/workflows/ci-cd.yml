@@ -54,11 +54,14 @@ jobs:
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "📦 Project version: $VERSION"
         
-    - name: Prepare JAR for Docker
+    - name: Prepare Docker build directory
       run: |
-        echo "🔄 Renaming JAR file for Docker..."
-        cp build/libs/CommunismBot-*.jar build/libs/app.jar
-        ls -la build/libs/
+        echo "🔄 Creating Docker build directory..."
+        mkdir -p docker-build
+        cp build/libs/CommunismBot-*.jar docker-build/app.jar
+        cp Dockerfile docker-build/
+        cp -r data docker-build/ 2>/dev/null || echo "No data directory to copy"
+        ls -la docker-build/
       
     - name: Log in to Container Registry
       uses: docker/login-action@v3
@@ -88,8 +91,8 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: .
-        file: ./Dockerfile
+        context: ./docker-build
+        file: ./docker-build/Dockerfile
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
