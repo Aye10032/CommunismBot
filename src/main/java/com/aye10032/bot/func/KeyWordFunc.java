@@ -81,7 +81,7 @@ public class KeyWordFunc extends BaseFunc {
                 .run((msg) -> {
                     if (randomFlag(70)) {
                         zibenbot.muteMember(msg.getFromGroup(), msg.getFromClient(), 114);
-                        zibenbot.replyMsgWithQuote(msg, "骑空士爪巴" + zibenbot.getImg(appDirectory + "/gbfKiller.jpg"));
+                        zibenbot.replyMsgWithQuote(msg, "骑空士爪巴" + zibenbot.getImg(appDirectory + "/image/gbfKiller.jpg"));
                     }
                 })
                 .build();
