@@ -1,4 +1,4 @@
-FROM openjdk:17-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 ENV TZ=Asia/Shanghai
 RUN apk add --no-cache tzdata && \
