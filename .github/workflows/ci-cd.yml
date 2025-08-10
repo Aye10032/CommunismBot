@@ -44,7 +44,15 @@ jobs:
       run: chmod +x gradlew
       
     - name: Build with Gradle (skip tests)
-      run: ./gradlew bootJar -x test --no-daemon
+      run: ./gradlew clean bootJar -x test --no-daemon
+      
+    - name: Verify build output
+      run: |
+        echo "🔍 Checking build directory..."
+        ls -la build/ || echo "❌ No build directory"
+        ls -la build/libs/ || echo "❌ No build/libs directory"
+        echo "📦 JAR files:"
+        find . -name "*.jar" -type f || echo "❌ No JAR files found"
       
     - name: Extract version from build.gradle
       id: get-version
