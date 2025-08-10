@@ -18,8 +18,8 @@ plugins {
 }
 
 compileJava {
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8' // 设置目标字节码兼容性版本
+    sourceCompatibility = '17'
+    targetCompatibility = '17' // 设置目标字节码兼容性版本
 }
 
 tasks.withType(JavaCompile).configureEach {

@@ -1,4 +1,4 @@
-FROM openjdk:21-jre-alpine
+FROM openjdk:17-jre-alpine
 
 ENV TZ=Asia/Shanghai
 RUN apk add --no-cache tzdata && \

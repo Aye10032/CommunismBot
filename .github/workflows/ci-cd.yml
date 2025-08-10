@@ -24,10 +24,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up JDK 21
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '21'
+        java-version: '17'
         distribution: 'temurin'
         
     - name: Cache Gradle packages
@@ -44,7 +44,7 @@ jobs:
       run: chmod +x gradlew
       
     - name: Build with Gradle (skip tests)
-      run: ./gradlew clean bootJar
+      run: ./gradlew clean bootJar -x test --no-daemon
       
     - name: Extract version from build.gradle
       id: get-version
