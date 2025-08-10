@@ -34,7 +34,7 @@ public class BeanConfig {
     public SimpleSubscription tigang(BaseBot zibenbot) {
         return new SimpleSubscription(
                 "0 0 19 * * ? ",
-                zibenbot.getImg(zibenbot.getAppDirectory() + "/tigang.jpg")) {
+                zibenbot.getImg(zibenbot.getAppDirectory() + "/image/tigang.jpg")) {
             @Override
             public String getName() {
                 return "提肛小助手";
