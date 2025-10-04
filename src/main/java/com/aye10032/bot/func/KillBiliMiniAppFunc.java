@@ -36,7 +36,7 @@ public class KillBiliMiniAppFunc extends BaseFunc {
 
     @Override
     public void run(SimpleMsg simpleMsg) {
-        List<Map<String, String>> jsonCQCode = simpleMsg.getMessageSplitResult().stream().filter(map -> "json".equals(map.get("CQ"))).collect(Collectors.toList());
+        List<Map<String, String>> jsonCQCode = simpleMsg.getMessageSplitResult().stream().filter(map -> "json".equals(map.get("CQ"))).toList();
         if (CollectionUtils.isEmpty(jsonCQCode)) {
             return;
         }
@@ -76,10 +76,10 @@ public class KillBiliMiniAppFunc extends BaseFunc {
             if (!biliInfo.isHasVideo()) {
                 return;
             }
-            if (bot.deleteMsg(simpleMsg)) {
+//            if (bot.deleteMsg(simpleMsg)) {
 //                bot.muteMember(simpleMsg.getFromGroup(), simpleMsg.getFromClient(), 60);
-                send += "检测到B站QQ小程序，已击杀\n";
-            }
+//                send += "检测到B站QQ小程序，已击杀\n";
+//            }
             send += biliInfo.getTitle() + "\n"
                     + biliInfo.getVideo_url() + "\n"
                     + "封面：" + (StringUtils.isNotEmpty(biliInfo.getFaceImageFilePath()) ? bot.getImg(biliInfo.getFaceImageFilePath()) : "【图片下载出错】")
