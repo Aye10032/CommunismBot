@@ -71,14 +71,11 @@ dependencies {
     // https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-boot-starter
     implementation group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.5.1'
 
-    // https://mvnrepository.com/artifact/org.jdom/jdom
-    implementation group: 'org.jdom', name: 'jdom', version: '2.0.2'
+    // https://mvnrepository.com/artifact/org.jdom/jdom2
+    implementation group: 'org.jdom', name: 'jdom2', version: '2.0.6.1'
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
-
-    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp-sse
-    implementation group: 'com.squareup.okhttp3', name: 'okhttp-sse', version: '4.10.0'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.18.0'
 
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
@@ -89,10 +86,10 @@ dependencies {
     implementation("com.google.guava:guava:32.1.1-jre")
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
-    implementation group: 'commons-io', name: 'commons-io', version: '2.7'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.14.0'
 
     // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
-    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
+    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.38.0'
 
     implementation group: 'com.rometools', name: 'rome', version: '1.18.0'
 

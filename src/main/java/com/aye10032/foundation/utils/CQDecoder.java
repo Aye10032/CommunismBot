@@ -1,6 +1,6 @@
 package com.aye10032.foundation.utils;
 
-import com.zhipu.oapi.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -60,7 +60,7 @@ public class CQDecoder {
                 }
             }
             if (i1 == -1) {
-                if (cqCodeMessage.length() -1 > i) {
+                if (cqCodeMessage.length() - 1 > i) {
                     list.add(cqCodeMessage.substring(i));
                 }
                 break;
