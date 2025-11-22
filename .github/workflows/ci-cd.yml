@@ -1,11 +1,8 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches: [ main, master, develop ]
-    tags: [ 'v*' ]
-  pull_request:
-    branches: [ main, master ]
+  release:
+    types: [ published ]
 
 env:
   REGISTRY: ghcr.io
@@ -46,13 +43,13 @@ jobs:
     - name: Build with Gradle (skip tests)
       run: ./gradlew clean bootJar -x test --no-daemon
       
-    - name: Extract version from build.gradle
+    - name: Extract version from release tag
       id: get-version
       run: |
-        VERSION=$(grep "^version " build.gradle | cut -d "'" -f 2)
+        VERSION="${GITHUB_REF_NAME}"
         echo "PROJECT_VERSION=$VERSION" >> $GITHUB_ENV
         echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "📦 Project version: $VERSION"
+        echo "📦 Release version: $VERSION"
         
     - name: Prepare Docker build directory
       run: |
@@ -76,14 +73,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=sha,prefix={{branch}}-
-          type=raw,value=latest,enable={{is_default_branch}}
           type=raw,value=${{ steps.get-version.outputs.version }}
-          type=raw,value=v${{ steps.get-version.outputs.version }}
           
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -113,7 +103,6 @@ jobs:
         echo "📦 可用的镜像标签:"
         echo "  - ghcr.io/Aye10032/communismbot:latest"
         echo "  - ghcr.io/Aye10032/communismbot:${{ needs.build-and-push.outputs.version }}"
-        echo "  - ghcr.io/Aye10032/communismbot:v${{ needs.build-and-push.outputs.version }}"
         echo "🚀 部署命令: docker-compose pull && docker-compose up -d"
         
     - name: Build Failed
