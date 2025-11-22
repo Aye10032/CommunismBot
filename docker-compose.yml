@@ -1,0 +1,28 @@
+services:
+  napcat:
+    image: docker.io/mlikiowa/napcat-docker:latest
+    container_name: napcat
+    restart: always
+    network_mode: host
+    environment:
+      - NAPCAT_UID=${NAPCAT_UID}
+      - NAPCAT_GID=${NAPCAT_GID}
+    volumes:
+      - ${HOME}/Service/bot/napcat:/app/napcat
+      - ${HOME}/Service/bot/ntqq:/app/.config/QQ
+      - ${HOME}/Service/bot/napcat/config:/app/napcat/config
+      - ${HOME}/Service/bot/data:/app/data
+
+  bot:
+    image: ghcr.io/aye10032/communismbot:latest
+    container_name: bot
+    restart: always
+    network_mode: host
+    depends_on:
+      - napcat
+    volumes:
+      - /etc/localtime:/etc/localtime:ro  # 挂载宿主机时间
+      - /etc/timezone:/etc/timezone:ro     # 挂载宿主机时区配置
+      - ${HOME}/Service/bot/application.properties:/app/config/application.properties:ro
+      - ${HOME}/Service/bot/data:/app/data
+      - ${HOME}/Service/bot/logs:/app/logs
