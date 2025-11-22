@@ -4,7 +4,7 @@ import com.aye10032.foundation.utils.timeutil.Reciver;
 import com.aye10032.foundation.utils.timeutil.SubConfig;
 import com.aye10032.foundation.utils.timeutil.SubscribableBase;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 

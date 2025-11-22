@@ -1,6 +1,6 @@
 package com.aye10032.bot.func;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.aye10032.bot.BaseBot;
 import com.aye10032.bot.func.funcutil.BaseFunc;
 import com.aye10032.bot.func.funcutil.SimpleMsg;
@@ -13,7 +13,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.aye10032.bot.func.BiliFunc.formatToW;
 
@@ -76,10 +75,6 @@ public class KillBiliMiniAppFunc extends BaseFunc {
             if (!biliInfo.isHasVideo()) {
                 return;
             }
-//            if (bot.deleteMsg(simpleMsg)) {
-//                bot.muteMember(simpleMsg.getFromGroup(), simpleMsg.getFromClient(), 60);
-//                send += "检测到B站QQ小程序，已击杀\n";
-//            }
             send += biliInfo.getTitle() + "\n"
                     + biliInfo.getVideo_url() + "\n"
                     + "封面：" + (StringUtils.isNotEmpty(biliInfo.getFaceImageFilePath()) ? bot.getImg(biliInfo.getFaceImageFilePath()) : "【图片下载出错】")

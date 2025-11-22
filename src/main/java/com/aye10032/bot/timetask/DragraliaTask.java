@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
