@@ -1,12 +1,13 @@
 package com.aye10032.service;
 
-import com.zhipu.oapi.service.v4.model.ChatMessage;
-import com.zhipu.oapi.service.v4.model.ModelApiResponse;
-
-import java.util.List;
-
 public interface LLMService {
 
-    ModelApiResponse glmInvoke(String moduleType, List<ChatMessage> messages);
+    /**
+     * Invoke chat model with Spring AI.
+     *
+     * @param prompt user input content
+     * @return model reply content
+     */
+    String chat(String prompt);
 
 }

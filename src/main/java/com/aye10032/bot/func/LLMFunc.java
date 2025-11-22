@@ -7,15 +7,9 @@ import com.aye10032.bot.func.funcutil.SimpleMsg;
 import com.aye10032.foundation.utils.command.Commander;
 import com.aye10032.foundation.utils.command.CommanderBuilder;
 import com.aye10032.service.LLMService;
-import com.zhipu.oapi.service.v4.model.ChatMessage;
-import com.zhipu.oapi.service.v4.model.ChatMessageRole;
-import com.zhipu.oapi.service.v4.model.ModelApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @program: communismbot
@@ -42,11 +36,9 @@ public class LLMFunc extends BaseFunc {
                 .next()
                 .orArray(s -> true)
                 .run(msg -> {
-                    List<ChatMessage> messages = new ArrayList<>();
-                    ChatMessage question = new ChatMessage(ChatMessageRole.USER.value(), msg.getMsg().substring(5));
-                    messages.add(question);
-                    ModelApiResponse modelApiResponse = llmService.glmInvoke("glm-4-flash", messages);
-                    zibenbot.replyMsg(msg, modelApiResponse.getData().getChoices().get(0).getMessage().getContent().toString());
+                    String prompt = msg.getMsg().substring(5);
+                    String reply = llmService.chat(prompt);
+                    zibenbot.replyMsg(msg, reply);
                 })
                 .build();
     }

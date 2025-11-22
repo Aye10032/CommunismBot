@@ -29,6 +29,7 @@ tasks.withType(JavaCompile).configureEach {
 ext {
     set('springCloudVersion', "2021.0.9")
     set('springCloudAlibabaVersion', "2021.0.5.0")
+    set('springAiVersion', "1.0.0")
 }
 
 apply plugin: "ua.eshepelyuk.ManifestClasspath"
@@ -58,6 +59,7 @@ dependencies {
 
     implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
     implementation platform("com.alibaba.cloud:spring-cloud-alibaba-dependencies:${springCloudAlibabaVersion}")
+    implementation platform("org.springframework.ai:spring-ai-bom:${springAiVersion}")
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
@@ -99,7 +101,7 @@ dependencies {
 
     implementation group: 'io.github.andello', name: 'pinyin4j', version: '0.3.2'
 
-    implementation group: 'cn.bigmodel.openapi', name: 'oapi-java-sdk', version: 'release-V4-2.3.0'
+    implementation group: 'org.springframework.ai', name: 'spring-ai-starter-model-openai', version: springAiVersion
 
     implementation 'com.alibaba:fastjson:2.0.51'
 
