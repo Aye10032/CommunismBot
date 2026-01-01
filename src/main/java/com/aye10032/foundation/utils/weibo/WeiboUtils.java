@@ -10,6 +10,8 @@ import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -32,9 +34,8 @@ import java.util.TimeZone;
 @Slf4j
 public class WeiboUtils {
 
-    private static SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.ENGLISH);
-    private static SimpleDateFormat format2 = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZ yyyy", Locale.ENGLISH);
-    private static JsonParser parser = new JsonParser();
+    private static final SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.ENGLISH);
+    private static final SimpleDateFormat format2 = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZ yyyy", Locale.ENGLISH);
     //https://weibo.com/6279793937/JFqBeFy4X
 
 
@@ -138,11 +139,21 @@ public class WeiboUtils {
                 .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
                 .header("X-Requested-With", "XMLHttpRequest")
                 .build();
-        String string = client.newCall(weiboListRequest).execute().body().string();
-        log.info(string);
-        JsonObject object = parser.parse(string).getAsJsonObject().getAsJsonObject("data");
-        WeiboPost post = buildPostFromJsonObject(object);
-        return post;
+        try (Response response = client.newCall(weiboListRequest).execute()) {
+            ResponseBody body = response.body();
+            if (body == null) {
+                throw new IOException("Empty response body from weibo status");
+            }
+            String string = body.string();
+            log.info(string);
+            JsonObject root = parseToJsonObject(string, "weibo status detail");
+            if (root == null || !root.has("data") || root.get("data").isJsonNull()) {
+                throw new IOException("Invalid weibo status payload");
+            }
+            JsonObject object = root.getAsJsonObject("data");
+            WeiboPost post = buildPostFromJsonObject(object);
+            return post;
+        }
     }
 
     private static WeiboPost buildPostFromJsonObject(JsonObject object) throws ParseException {
@@ -219,10 +230,29 @@ public class WeiboUtils {
                 .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
                 .header("X-Requested-With", "XMLHttpRequest")
                 .build();
-        String string = client.newCall(weiboListRequest).execute().body().string();
-        JsonObject object = parser.parse(string).getAsJsonObject();
-        JsonArray array = object.getAsJsonObject("data").getAsJsonArray("cards");
-        array.forEach(ele -> retSet.add(buildItem(ele.getAsJsonObject().getAsJsonObject("mblog"))));
+        try (Response response = client.newCall(weiboListRequest).execute()) {
+            ResponseBody body = response.body();
+            if (body == null) {
+                log.warn("Empty weibo list response");
+                return retSet;
+            }
+            String string = body.string();
+            JsonObject object = parseToJsonObject(string, "weibo id list");
+            if (object == null) {
+                return retSet;
+            }
+            JsonObject data = object.getAsJsonObject("data");
+            if (data == null || data.isJsonNull()) {
+                log.warn("Weibo list response missing data field: {}", string);
+                return retSet;
+            }
+            JsonArray array = data.getAsJsonArray("cards");
+            if (array == null || array.isJsonNull()) {
+                log.warn("Weibo list response missing cards field: {}", string);
+                return retSet;
+            }
+            array.forEach(ele -> retSet.add(buildItem(ele.getAsJsonObject().getAsJsonObject("mblog"))));
+        }
         return retSet;
     }
 
@@ -284,13 +314,56 @@ public class WeiboUtils {
                 .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
                 .header("X-Requested-With", "XMLHttpRequest")
                 .build();
-        JsonObject object = parser.parse(client.newCall(userInfoRequest).execute().body().string()).getAsJsonObject();
-        JsonArray array = object.getAsJsonObject("data").getAsJsonObject("tabsInfo").getAsJsonArray("tabs");
-        for (JsonElement ele : array) {
-            JsonObject o = ele.getAsJsonObject();
-            if (o.get("tabKey").getAsString().equals(tabKey)) {
-                return o.get("containerid").getAsString();
+
+        try (Response response = client.newCall(userInfoRequest).execute()) {
+            ResponseBody body = response.body();
+            if (body == null) {
+                log.warn("Empty user info response for uid {}", userId);
+                return null;
             }
+            String responseStr = body.string();
+            JsonObject object = parseToJsonObject(responseStr, "user info");
+            if (object == null) {
+                return null;
+            }
+            JsonObject data = object.getAsJsonObject("data");
+            if (data == null || data.isJsonNull()) {
+                log.warn("User info response missing data field: {}", responseStr);
+                return null;
+            }
+            JsonObject tabsInfo = data.getAsJsonObject("tabsInfo");
+            if (tabsInfo == null || tabsInfo.isJsonNull()) {
+                log.warn("User info response missing tabsInfo field: {}", responseStr);
+                return null;
+            }
+            JsonArray array = tabsInfo.getAsJsonArray("tabs");
+            if (array == null || array.isJsonNull()) {
+                log.warn("User info response missing tabs field: {}", responseStr);
+                return null;
+            }
+            for (JsonElement ele : array) {
+                JsonObject o = ele.getAsJsonObject();
+                if (o.get("tabKey").getAsString().equals(tabKey)) {
+                    return o.get("containerid").getAsString();
+                }
+            }
+            return null;
+        }
+    }
+
+    private static JsonObject parseToJsonObject(String payload, String scene) {
+        if (payload == null || payload.isBlank()) {
+            log.warn("{} response is empty", scene);
+            return null;
+        }
+        try {
+            JsonElement element = JsonParser.parseString(payload);
+            if (element != null && element.isJsonObject()) {
+                return element.getAsJsonObject();
+            }
+            log.warn("{} response is not a JSON object: {}", scene, payload);
+        } catch (Exception e) {
+            log.warn("Failed to parse {} response: {}", scene, payload, e);
         }
         return null;
     }

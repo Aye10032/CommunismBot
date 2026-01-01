@@ -26,21 +26,11 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        
-    - name: Cache Gradle packages
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
           
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
       
-    - name: Build with Gradle (skip tests)
+    - name: Build with Gradle
       run: ./gradlew clean bootJar -x test --no-daemon
       
     - name: Extract version from release tag
@@ -73,6 +63,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
+          type=raw,value=latest
           type=raw,value=${{ steps.get-version.outputs.version }}
           
     - name: Set up Docker Buildx

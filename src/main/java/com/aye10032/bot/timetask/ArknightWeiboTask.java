@@ -11,10 +11,12 @@ import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -32,7 +34,6 @@ public class ArknightWeiboTask extends SubscribableBase {
     private Set<String> postIds = WeiboCacheService.getCacheIds(ArknightWeiboTask.class);
     @Autowired
     private WeiboReader weiboReader;
-    private static JsonParser parser = new JsonParser();
     private WeiboSetItem offAnnounce = null;
 
     @PostConstruct
@@ -57,8 +58,10 @@ public class ArknightWeiboTask extends SubscribableBase {
             posts.forEach(post -> postIds.add(post.getId()));
             try {
                 offAnnounce = getPostUrlFromOff();
+            } catch (IOException e) {
+                log.warn("获取方舟官网公告失败（网络问题）：{}", e.getMessage());
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("获取方舟官网公告出现未知错误：{}", ExceptionUtils.printStack(e));
             }
         } else {
             Iterator<WeiboSetItem> postIterator = posts.iterator();
@@ -108,15 +111,20 @@ public class ArknightWeiboTask extends SubscribableBase {
                     .method("GET", null)
                     .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
                     .build();
-            String offWeb = client.newCall(officialWebsiteRequest).execute().body().string();
-            WeiboPost post = new WeiboPost();
-            post.setUserId("-1");
-            post.setTitle(item.getTitle());
-            post.setUserName("明日方舟Arknights");
-            post.setLink(item.getId());
-            post.setPermaLink(post.getLink());
-            post.setDescription(post.getTitle() + "\n" + cleanDes(offWeb));
-            return post;
+
+            try (Response response = client.newCall(officialWebsiteRequest).execute()) {
+                if (response.body() != null) {
+                    String offWeb = response.body().string();
+                    WeiboPost post = new WeiboPost();
+                    post.setUserId("-1");
+                    post.setTitle(item.getTitle());
+                    post.setUserName("明日方舟Arknights");
+                    post.setLink(item.getId());
+                    post.setPermaLink(post.getLink());
+                    post.setDescription(post.getTitle() + "\n" + cleanDes(offWeb));
+                    return post;
+                }
+            }
         }
         return null;
     }
@@ -142,18 +150,22 @@ public class ArknightWeiboTask extends SubscribableBase {
                 .method("GET", null)
                 .header("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
                 .build();
-        String offWeb = client.newCall(officialWebsiteRequest).execute().body().string();
-        JsonObject offWebJson = parser.parse(offWeb).getAsJsonObject();
-        for (JsonElement jsonElement : offWebJson.getAsJsonArray("announceList")) {
-            JsonObject object1 = jsonElement.getAsJsonObject();
-            if (object1.get("title").getAsString().contains("制作组通讯")) {
-                WeiboSetItem item = new WeiboSetItem();
-                item.setOffAnnounce(true);
-                item.setPerma(false);
-                String temp = object1.get("webUrl").toString();
-                item.setId(clean(object1.get("webUrl").toString()));
-                item.setTitle(clean(object1.get("title").toString()).replaceAll("\n", ""));
-                return item;
+
+        try (Response response = client.newCall(officialWebsiteRequest).execute()) {
+            if (response.body() != null) {
+                String offWeb = response.body().string();
+                JsonObject offWebJson = JsonParser.parseString(offWeb).getAsJsonObject();
+                for (JsonElement jsonElement : offWebJson.getAsJsonArray("announceList")) {
+                    JsonObject object1 = jsonElement.getAsJsonObject();
+                    if (object1.get("title").getAsString().contains("制作组通讯")) {
+                        WeiboSetItem item = new WeiboSetItem();
+                        item.setOffAnnounce(true);
+                        item.setPerma(false);
+                        item.setId(clean(object1.get("webUrl").toString()));
+                        item.setTitle(clean(object1.get("title").toString()).replaceAll("\n", ""));
+                        return item;
+                    }
+                }
             }
         }
         return null;

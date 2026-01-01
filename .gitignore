@@ -3,6 +3,9 @@
 /build/
 /.idea/
 *.iml
+
+/logs/
+
 /data/dragraliatemp/
 /out/
 local.properties
@@ -14,3 +17,5 @@ local.properties
 /data/log
 
 /data/HuoZiYinShua/.idea/
+
+AGENTS.md
