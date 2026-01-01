@@ -2,7 +2,7 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url = "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
@@ -17,8 +17,8 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group 'com.aye10032'
-version '3.2.0-SNAPSHOT'
+group = 'com.aye10032'
+version = '3.2.0-SNAPSHOT'
 
 java {
     toolchain {
@@ -37,16 +37,11 @@ ext {
     set('springCloudVersion', "2024.0.2")
 }
 
-//apply plugin: "ua.eshepelyuk.ManifestClasspath"
-//apply plugin: 'com.github.johnrengelman.shadow'
-//apply plugin: 'java'
-//apply plugin: 'io.spring.dependency-management'
-
 
 repositories {
     mavenLocal()
-    maven { url 'https://maven.aliyun.com/repository/public/' }
-    maven { url 'https://jitpack.io' }
+    maven { url = 'https://maven.aliyun.com/repository/public/' }
+    maven { url = 'https://jitpack.io' }
     mavenCentral()
 }
 
