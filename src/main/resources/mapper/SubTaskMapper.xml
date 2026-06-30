@@ -105,19 +105,13 @@
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insert" parameterType="com.aye10032.foundation.entity.base.sub.SubTask">
-        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
+    <insert id="insert" parameterType="com.aye10032.foundation.entity.base.sub.SubTask" useGeneratedKeys="true" keyProperty="id">
         insert into sub_task (reciver_type, reciver_id, args,
         sub_name)
         values (#{reciverType,jdbcType=INTEGER}, #{reciverId,jdbcType=BIGINT}, #{args,jdbcType=VARCHAR},
         #{subName,jdbcType=VARCHAR})
     </insert>
-    <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.sub.SubTask">
-        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
+    <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.sub.SubTask" useGeneratedKeys="true" keyProperty="id">
         insert into sub_task
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="reciverType != null">

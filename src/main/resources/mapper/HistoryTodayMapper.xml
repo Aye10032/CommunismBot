@@ -107,19 +107,13 @@
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insert" parameterType="com.aye10032.foundation.entity.base.history.today.HistoryToday">
-        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
+    <insert id="insert" parameterType="com.aye10032.foundation.entity.base.history.today.HistoryToday" useGeneratedKeys="true" keyProperty="id">
         insert into history_today (history, year, event_date,
         event_type, from_group)
         values (#{history,jdbcType=VARCHAR}, #{year,jdbcType=VARCHAR}, #{eventDate,jdbcType=VARCHAR},
         #{eventType,jdbcType=INTEGER}, #{fromGroup,jdbcType=BIGINT})
     </insert>
-    <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.history.today.HistoryToday">
-        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
+    <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.history.today.HistoryToday" useGeneratedKeys="true" keyProperty="id">
         insert into history_today
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="history != null">

@@ -1,9 +1,35 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: always
+    networks:
+      - botnet
+    environment:
+      - POSTGRES_DB=bot_test
+      - POSTGRES_USER=bot_user
+      - POSTGRES_PASSWORD=dusgadiud8231   # 必须与 application.properties 中的密码一致
+      - TZ=Asia/Shanghai
+    volumes:
+      - ${HOME}/Service/bot/postgres:/var/lib/postgresql/data
+      # 初始化脚本仅在数据目录为空（首次启动）时执行
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bot_user -d bot_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # 不映射端口到宿主机，仅在 botnet 内部可达
+
   napcat:
     image: docker.io/mlikiowa/napcat-docker:latest
     container_name: napcat
     restart: always
-    network_mode: host
+    networks:
+      - botnet
+    ports:
+      # napcat WebUI 仅绑定到本机回环，用于扫码登录，不对公网暴露
+      - "127.0.0.1:6099:6099"
     environment:
       - NAPCAT_UID=${NAPCAT_UID}
       - NAPCAT_GID=${NAPCAT_GID}
@@ -17,12 +43,20 @@ services:
     image: ghcr.io/aye10032/communismbot:latest
     container_name: bot
     restart: always
-    network_mode: host
+    networks:
+      - botnet
     depends_on:
-      - napcat
+      napcat:
+        condition: service_started
+      postgres:
+        condition: service_healthy
     volumes:
       - /etc/localtime:/etc/localtime:ro  # 挂载宿主机时间
       - /etc/timezone:/etc/timezone:ro     # 挂载宿主机时区配置
       - ${HOME}/Service/bot/application.properties:/app/config/application.properties:ro
       - ${HOME}/Service/bot/data:/app/data
       - ${HOME}/Service/bot/logs:/app/logs
+
+networks:
+  botnet:
+    driver: bridge

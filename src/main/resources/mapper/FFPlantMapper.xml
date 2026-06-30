@@ -102,19 +102,13 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.aye10032.foundation.entity.base.ffxiv.FFPlant">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insert" parameterType="com.aye10032.foundation.entity.base.ffxiv.FFPlant" useGeneratedKeys="true" keyProperty="id">
     insert into ffxiv_plant (item_rank, item_name, item_count, 
       value_required, gain_exp)
     values (#{itemRank,jdbcType=INTEGER}, #{itemName,jdbcType=VARCHAR}, #{itemCount,jdbcType=VARCHAR}, 
       #{valueRequired,jdbcType=VARCHAR}, #{gainExp,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.ffxiv.FFPlant">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.ffxiv.FFPlant" useGeneratedKeys="true" keyProperty="id">
     insert into ffxiv_plant
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="itemRank != null">

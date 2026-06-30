@@ -99,17 +99,11 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.aye10032.foundation.entity.base.ffxiv.FFData">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insert" parameterType="com.aye10032.foundation.entity.base.ffxiv.FFData" useGeneratedKeys="true" keyProperty="id">
     insert into ffxiv_group (name, from_group)
     values (#{name,jdbcType=VARCHAR}, #{fromGroup,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.ffxiv.FFData">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.ffxiv.FFData" useGeneratedKeys="true" keyProperty="id">
     insert into ffxiv_group
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="name != null">

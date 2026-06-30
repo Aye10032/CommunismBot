@@ -101,19 +101,13 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.aye10032.foundation.entity.base.ban.record.KillRecord">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insert" parameterType="com.aye10032.foundation.entity.base.ban.record.KillRecord" useGeneratedKeys="true" keyProperty="id">
     insert into kill_record (qq_id, from_group, killed_times, 
       kill_times)
     values (#{qqId,jdbcType=BIGINT}, #{fromGroup,jdbcType=BIGINT}, #{killedTimes,jdbcType=INTEGER}, 
       #{killTimes,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.ban.record.KillRecord">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.ban.record.KillRecord" useGeneratedKeys="true" keyProperty="id">
     insert into kill_record
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="qqId != null">

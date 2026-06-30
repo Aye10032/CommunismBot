@@ -102,19 +102,13 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.aye10032.foundation.entity.base.ban.record.BanRecord">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insert" parameterType="com.aye10032.foundation.entity.base.ban.record.BanRecord" useGeneratedKeys="true" keyProperty="id">
     insert into ban_record (qq_id, from_group, status, 
       last_ban_date, ban_time)
     values (#{qqId,jdbcType=BIGINT}, #{fromGroup,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, 
       #{lastBanDate,jdbcType=TIMESTAMP}, #{banTime,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.ban.record.BanRecord">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insertSelective" parameterType="com.aye10032.foundation.entity.base.ban.record.BanRecord" useGeneratedKeys="true" keyProperty="id">
     insert into ban_record
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="qqId != null">
